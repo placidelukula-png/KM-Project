@@ -4,7 +4,15 @@ from functools import wraps
 from datetime import datetime
 import psycopg
 
+
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+
+
 #########
+
+from flask_wtf.csrf import CSRFProtect
+
 import os
 import psycopg
 
@@ -12,15 +20,30 @@ DATABASE_URL = os.getenv("DATABASE_URL")  # fourni par Render
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-only-change-me")
 
 app = Flask(__name__)
+
+from werkzeug.middleware.proxy_fix import ProxyFix
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
+
+limiter = Limiter(get_remote_address, app=app, default_limits=[])
+
+csrf = CSRFProtect(app)
+
+
 #
+#import os
+
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="Lax",
+    SESSION_COOKIE_SECURE=True,          # OK car Render est en HTTPS
+    PERMANENT_SESSION_LIFETIME=1800,     # 30 minutes
 )
 
-app.config.update(SESSION_COOKIE_SECURE=True)  #en production HTTPS (Render est HTTPS)
+#
+#app.config.update(SESSION_COOKIE_SECURE=True)  #en production HTTPS (Render est HTTPS)
 #
 app.secret_key = SECRET_KEY
+
 
 def get_conn():
     if not DATABASE_URL:
@@ -263,6 +286,9 @@ PAGE = """
   <div class="card">
     <h2 style="margin-top:0;">Entry of new members</h2>
     <form method="post" action="{{ url_for('add') }}">
+      #
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      #
       <div class="grid">
         <div>
           <label>Last name</label>
@@ -295,6 +321,9 @@ PAGE = """
   <div class="card">
     <h2 style="margin-top:0;">Update selected member (ID {{ edit_row[0] }})</h2>
     <form method="post" action="{{ url_for('update', member_id=edit_row[0]) }}">
+      #
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      #
       <div class="grid">
         <div>
           <label>Last name</label>
@@ -348,6 +377,9 @@ PAGE = """
                   action="{{ url_for('delete', member_id=r[0]) }}"
                   style="display:inline;"
                   onsubmit="return confirm('Supprimer ce membre (ID {{ r[0] }}) ?');">
+              #    
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              #
               <button type="submit" class="btn secondary" style="padding:6px 10px; margin-left:8px;">
                 Delete
               </button>
@@ -390,6 +422,9 @@ LOGIN_PAGE = """
   <div class="card">
     <h2 style="margin-top:0;">Login</h2>
     <form method="post" action="{{ url_for('login') }}">
+      #
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      #
       <label>Username</label>
       <input name="username" value="admin" required>
       <label>Password</label>
@@ -413,12 +448,18 @@ def login():
 
 
 @app.post("/login")
+#
+@limiter.limit("5 per minute")
+#
 def login_post():
     username = (request.form.get("username") or "").strip()
     password = request.form.get("password") or ""
 
     if verify_user(username, password):
         session["user"] = username
+#
+        session.permanent = True
+#
         return redirect(url_for("home"))
 
     return render_template_string(LOGIN_PAGE, message="Identifiants invalides.")
@@ -430,6 +471,15 @@ def logout():
     return redirect(url_for("login"))
 
 ##
+
+##################
+from flask_wtf.csrf import generate_csrf
+
+@app.context_processor
+def inject_csrf_token():
+    return dict(csrf_token=generate_csrf)
+##################
+
 
 # ----------------------------
 # Routes
@@ -540,6 +590,16 @@ def delete(member_id: int):
     delete_member(member_id)
     return redirect(url_for("home"))
 
+
+###
+@app.after_request
+def add_security_headers(resp):
+    resp.headers["X-Content-Type-Options"] = "nosniff"
+    resp.headers["X-Frame-Options"] = "DENY"
+    resp.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    resp.headers["Content-Security-Policy"] = "default-src 'self' 'unsafe-inline';"
+    return resp
+###
 
 # ----------------------------
 # Main

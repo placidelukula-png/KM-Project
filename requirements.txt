@@ -2,3 +2,5 @@ Flask
 psycopg[binary]
 gunicorn
 Werkzeug
+Flask-WTF
+Flask-Limiter
