@@ -1,9 +1,0 @@
-# Exported from Render on 2026-01-13T21:48:10Z
-version: "1"
-services:
-- type: keyvalue
-  name: km-redis
-  plan: starter
-  region: virginia
-  maxmemoryPolicy: allkeys-lru
-  ipAllowList: []
