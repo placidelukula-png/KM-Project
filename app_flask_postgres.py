@@ -1,4 +1,6 @@
 from flask import Flask, request, redirect, url_for, render_template_string, session
+app = Flask(__name__)
+
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from datetime import datetime
@@ -9,15 +11,24 @@ import os
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
-REDIS_URL = os.getenv("REDIS_URL")  # ex: rediss://:password@host:port
-
 limiter = Limiter(
     key_func=get_remote_address,
     app=app,
     default_limits=[],
-    storage_uri=REDIS_URL or "memory://",
+    storage_uri=os.getenv("RATELIMIT_STORAGE_URI", "memory://"),
 )
 
+
+#import os
+#from flask_limiter import Limiter
+#from flask_limiter.util import get_remote_address
+#REDIS_URL = os.getenv("REDIS_URL")  # ex: rediss://:password@host:port
+#limiter = Limiter(
+#    key_func=get_remote_address,
+#    app=app,
+#    default_limits=[],
+#    storage_uri=REDIS_URL or "memory://",
+#)
 #
 
 from flask_wtf.csrf import CSRFProtect
@@ -28,7 +39,7 @@ from flask_wtf.csrf import CSRFProtect
 DATABASE_URL = os.getenv("DATABASE_URL")  # fourni par Render
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-only-change-me")
 
-app = Flask(__name__)
+#app = Flask(__name__)
 
 from werkzeug.middleware.proxy_fix import ProxyFix
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
@@ -39,13 +50,13 @@ csrf = CSRFProtect(app)
 
 
 #
-#import os
+from datetime import timedelta
 
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="Lax",
-    SESSION_COOKIE_SECURE=True,          # OK car Render est en HTTPS
-    PERMANENT_SESSION_LIFETIME=1800,     # 30 minutes
+    SESSION_COOKIE_SECURE=True,
+    PERMANENT_SESSION_LIFETIME=timedelta(minutes=30),
 )
 
 #
