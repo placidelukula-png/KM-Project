@@ -4,17 +4,26 @@ from functools import wraps
 from datetime import datetime
 import psycopg
 
-
+#
+import os
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
+REDIS_URL = os.getenv("REDIS_URL")  # ex: rediss://:password@host:port
 
-#########
+limiter = Limiter(
+    key_func=get_remote_address,
+    app=app,
+    default_limits=[],
+    storage_uri=REDIS_URL or "memory://",
+)
+
+#
 
 from flask_wtf.csrf import CSRFProtect
 
-import os
-import psycopg
+#import os
+#import psycopg
 
 DATABASE_URL = os.getenv("DATABASE_URL")  # fourni par Render
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-only-change-me")

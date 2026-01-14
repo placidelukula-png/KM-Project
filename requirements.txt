@@ -4,3 +4,4 @@ gunicorn
 Werkzeug
 Flask-WTF
 Flask-Limiter
+redis
