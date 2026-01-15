@@ -154,6 +154,15 @@ def init_db():
 
         conn.commit()
 
+
+# ---- Auto-init DB on startup (Render/Gunicorn)
+try:
+    init_db()
+except Exception as e:
+    # On log, mais on ne bloque pas le démarrage (tu verras l'erreur dans Render Logs)
+    print("init_db() failed:", repr(e))
+#
+
 #def init_db():
 #    """Crée la table si elle n'existe pas (id BIGSERIAL)."""
 #    with get_conn() as conn:
