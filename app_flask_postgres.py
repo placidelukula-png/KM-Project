@@ -79,13 +79,13 @@ def init_db():
                   id             BIGSERIAL PRIMARY KEY,
                   phone          TEXT NOT NULL,
                   membertype     TEXT NOT NULL,
-                  mentor         TEXT NOT NULL DEFAULT "Admin",       
+                  mentor         TEXT NOT NULL,
                   lastname       TEXT NOT NULL,
                   firstname      TEXT NOT NULL,
                   birthdate      DATE NOT NULL,
                   idtype         TEXT NOT NULL,
                   idpicture_url  TEXT,
-                  currentstatute TEXT NOT NULL DEFAULT "inactif",
+                  currentstatute TEXT NOT NULL,
                   updatedate     DATE NOT NULL DEFAULT CURRENT_DATE,
                   updateuser     TEXT NOT NULL,
                   password_hash  TEXT NOT NULL,
@@ -97,7 +97,7 @@ def init_db():
             """)
 
             cur.execute("CREATE UNIQUE INDEX IF NOT EXISTS members_phone_uq ON members(phone);")
-            cur.execute("CREATE INDEX IF NOT EXISTS members_phone_idx ON members(phone);")
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_members_phone ON members(phone);")
 
             # Admin par défaut si absent
             cur.execute("SELECT 1 FROM members WHERE phone = %s", (ADMIN_PHONE,))
