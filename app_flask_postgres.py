@@ -220,9 +220,9 @@ def verify_user(phone: str, password: str) -> bool:
         return False
     pwd_hash, statut = row
 
-    # bloque login pour inactif/suspendu/radié
+    # bloque login pour suspendu & radié
     #if statut in ("inactif", "suspendu", "radié"):
-    if statut in ("radié"," "):
+    if statut in ("radié","suspendu"):
         return False
 
     return check_password_hash(pwd_hash, password)
