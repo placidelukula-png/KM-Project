@@ -73,13 +73,13 @@ def init_db():
     """Crée la table members (structure définitive) + admin par défaut si absent."""
     with get_conn() as conn:
         with conn.cursor() as cur:
-            cur.execute("DROP TABLE IF EXISTS members;")
+#            cur.execute("DROP TABLE IF EXISTS members;")
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS members (
                   id             BIGSERIAL PRIMARY KEY,
                   phone          TEXT NOT NULL,
                   membertype     TEXT NOT NULL,
-                  mentor         TEXT NOT NULL DEFAULT "Mentor",       
+                  mentor         TEXT NOT NULL DEFAULT "Admin",       
                   lastname       TEXT NOT NULL,
                   firstname      TEXT NOT NULL,
                   birthdate      DATE NOT NULL,
@@ -90,10 +90,9 @@ def init_db():
                   updateuser     TEXT NOT NULL,
                   password_hash  TEXT NOT NULL,
                   CONSTRAINT members_membertype_chk
-                    CHECK (membertype IN ('admin','memberR','memberM')),
+                    CHECK (membertype IN ('admin','memberR','memberM','memberI')),
                   CONSTRAINT members_currentstatute_chk
-
-                                            CHECK (currentstatute IN ('actif','inactif','suspendu','radié'))
+                    CHECK (currentstatute IN ('actif','inactif','suspendu','radié'))
                 );
             """)
 
@@ -108,7 +107,7 @@ def init_db():
                     (phone, membertype, mentor, lastname, firstname, birthdate, idtype, idpicture_url,
                      currentstatute, updatedate, updateuser, password_hash)
                     VALUES
-                    (%s, 'admin', 'Admin','Admin', 'KM', %s, 'N/A', NULL, 'actif', CURRENT_DATE, %s, %s)
+                    (%s, 'admin', 'Admin','Admin', 'KM', %s, 'N/A', NULL, 'inactif', CURRENT_DATE, %s, %s)
                 """, (
                     ADMIN_PHONE,
                     datetime.strptime("01/01/2000", "%d/%m/%Y").date(),
@@ -314,7 +313,7 @@ LOGIN_PAGE = """
     {% endif %}
 
     <div class="small">
-      Accès refusé si statut = inactif/suspendu/radié.
+      Accès refusé si statut = 'radié' ou inexistant.
     </div>
   </div>
 </div>
