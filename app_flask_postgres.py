@@ -219,12 +219,12 @@ def verify_user(phone: str, password: str) -> bool:
     if not row:
         return False
     pwd_hash, statut = row
-
+    print(f"Statut={statut}")
     # bloque login pour suspendu & radié
     #if statut in ("inactif", "suspendu", "radié"):
     if statut in ("radié","suspendu"):
         return False
-
+    print(f"Statut={statut} autorisé pour Login.")
     return check_password_hash(pwd_hash, password)
 
 
