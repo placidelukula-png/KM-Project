@@ -256,8 +256,8 @@ def verify_user(phone: str, password: str) -> bool:
         return False
 
     pwd_hash, statut = row
-    log.info("Login attempt phone=%s statut=%s", phone, statut)
-    log.info("Login attempt row=%s password=%s", row, password)
+    log.info("Login attempt; data from SQLtable : phone=%s statut=%s pwd_hash=%s", phone, statut, pwd_hash)
+    log.info("Login attempt; data from HTMLscreen : row=%s password=%s", row, password)
 
     # bloque login pour suspendu & radié
     if statut in ("radié", "suspendu"):
@@ -351,7 +351,7 @@ LOGIN_PAGE = """
     {% endif %}
 
     <div class="small">
-      Accès refusé si statut = 'suspendu' ou 'radié', ou compte inexistant.
+      Accès refusé si statut = 'suspendu' ou 'radié', ou membre inexistant.
     </div>
   </div>
 </div>
@@ -644,7 +644,7 @@ def login_post():
         session.permanent = True
         return redirect(url_for("home"))
 
-    return render_template_string(LOGIN_PAGE, message="Identifiants invalides ou compte suspendu/radié.")
+    return render_template_string(LOGIN_PAGE, message="Identifiants invalides ou membre suspendu/radié.")
 
 
 @app.get("/logout")
