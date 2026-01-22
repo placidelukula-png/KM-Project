@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 import os
-from datetime import datetime, timedelta, date
+import logging
+from datetime import datetime, timedelta
 from functools import wraps
 
 import psycopg
+from psycopg.rows import tuple_row
+
 from flask import Flask, request, redirect, url_for, render_template_string, session, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -15,6 +18,13 @@ from flask_limiter.util import get_remote_address
 
 
 # ----------------------------
+# Logging
+# ----------------------------
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger(__name__)
+
+
+# ----------------------------
 # Config
 # ----------------------------
 DATABASE_URL = os.getenv("DATABASE_URL")  # fourni par Render
@@ -22,12 +32,15 @@ SECRET_KEY = os.getenv("SECRET_KEY", "dev-only-change-me")
 ADMIN_PHONE = os.getenv("ADMIN_PHONE", "admin")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "1959")
 
-MEMBER_TYPES = ("admin", "memberR", "memberM","memberI")
+MEMBER_TYPES = ("admin", "memberR", "memberM", "memberI")
 STATUTES = ("actif", "inactif", "suspendu", "radié")
 
 RATELIMIT_STORAGE_URI = os.getenv("RATELIMIT_STORAGE_URI", "memory://")
 
 
+# ----------------------------
+# App
+# ----------------------------
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
 
@@ -65,15 +78,15 @@ limiter = Limiter(
 # ----------------------------
 def get_conn():
     if not DATABASE_URL:
-        raise RuntimeError("DATABASE_URL manquant (Render > Environment).")
-    return psycopg.connect(DATABASE_URL)
+        raise RuntimeError("DATABASE_URL manquant (Render > KM-Project > Environment).")
+    # tuple_row => on garde des tuples (r[0], r[1]...) cohérents avec ton HTML
+    return psycopg.connect(DATABASE_URL, row_factory=tuple_row)
 
 
 def init_db():
-    """Crée la table members (structure définitive) + admin par défaut si absent."""
+    """Crée la table members + admin par défaut si absent."""
     with get_conn() as conn:
         with conn.cursor() as cur:
-#            cur.execute("DROP TABLE IF EXISTS members;")
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS members (
                   id             BIGSERIAL PRIMARY KEY,
@@ -102,12 +115,13 @@ def init_db():
             # Admin par défaut si absent
             cur.execute("SELECT 1 FROM members WHERE phone = %s", (ADMIN_PHONE,))
             if cur.fetchone() is None:
+                log.info("Admin absent -> création du compte admin par défaut")
                 cur.execute("""
                     INSERT INTO members
                     (phone, membertype, mentor, lastname, firstname, birthdate, idtype, idpicture_url,
                      currentstatute, updatedate, updateuser, password_hash)
                     VALUES
-                    (%s, 'admin', 'Admin','Admin', 'KM', %s, 'N/A', NULL, 'inactif', CURRENT_DATE, %s, %s)
+                    (%s, 'admin', 'Admin', 'Admin', 'KM', %s, 'N/A', NULL, 'actif', CURRENT_DATE, %s, %s)
                 """, (
                     ADMIN_PHONE,
                     datetime.strptime("01/01/2000", "%d/%m/%Y").date(),
@@ -118,27 +132,49 @@ def init_db():
         conn.commit()
 
 
+# ✅ IMPORTANT : exécuté aussi sous gunicorn (Render)
+try:
+    init_db()
+except Exception:
+    log.exception("init_db() a échoué au démarrage")
+    # on laisse continuer pour que les logs apparaissent, mais l'app sera probablement inutilisable
+
+
+# ----------------------------
+# Queries (ORDER des colonnes = contrat avec le HTML)
+# ----------------------------
+# Contrat tuple (r[index]) :
+# 0 id
+# 1 phone
+# 2 membertype
+# 3 mentor
+# 4 lastname
+# 5 firstname
+# 6 birthdate
+# 7 idtype
+# 8 idpicture_url
+# 9 currentstatute
+# 10 updatedate
+# 11 updateuser
+
+SELECT_MEMBERS = """
+    SELECT id, phone, membertype, mentor, lastname, firstname, birthdate,
+           idtype, idpicture_url, currentstatute, updatedate, updateuser
+    FROM members
+"""
+
+
 def fetch_all_members():
     with get_conn() as conn:
         with conn.cursor() as cur:
-            cur.execute("""
-                SELECT id, phone, membertype, mentor, lastname, firstname, birthdate,
-                       idtype, idpicture_url, currentstatute, updatedate, updateuser
-                FROM members
-                ORDER BY id DESC
-            """)
+            cur.execute(SELECT_MEMBERS + " ORDER BY id DESC")
             return cur.fetchall()
 
 
 def fetch_one(member_id: int):
     with get_conn() as conn:
         with conn.cursor() as cur:
-            cur.execute("""
-                SELECT id, phone, membertype, mentor, lastname, firstname, birthdate,
-                       idtype, idpicture_url, currentstatute, updatedate, updateuser
-                FROM members
-                WHERE id = %s
-            """, (member_id,))
+            cur.execute(SELECT_MEMBERS + " WHERE id = %s", (member_id,))
             return cur.fetchone()
 
 
@@ -218,13 +254,14 @@ def verify_user(phone: str, password: str) -> bool:
     row = fetch_password_hash_and_statute_by_phone(phone)
     if not row:
         return False
+
     pwd_hash, statut = row
-    print(f"Statut={statut}")
+    log.info("Login attempt phone=%s statut=%s", phone, statut)
+
     # bloque login pour suspendu & radié
-    #if statut in ("inactif", "suspendu", "radié"):
-    if statut in ("radié","suspendu"):
+    if statut in ("radié", "suspendu"):
         return False
-    print(f"Statut={statut} autorisé pour Login.")
+
     return check_password_hash(pwd_hash, password)
 
 
@@ -313,7 +350,7 @@ LOGIN_PAGE = """
     {% endif %}
 
     <div class="small">
-      Accès refusé si statut = 'radié' ou inexistant.
+      Accès refusé si statut = 'suspendu' ou 'radié', ou compte inexistant.
     </div>
   </div>
 </div>
@@ -329,7 +366,7 @@ PAGE = """
   <title>Members (Flask + PostgreSQL)</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 30px; }
-    .wrap { max-width: 1100px; margin: 0 auto; }
+    .wrap { max-width: 1150px; margin: 0 auto; }
     h1 { margin-bottom: 6px; }
     .muted { color:#555; margin-top:0; }
     .card { border:1px solid #ddd; border-radius: 10px; padding: 16px; margin: 18px 0; }
@@ -382,6 +419,11 @@ PAGE = """
             <option value="memberI">memberI</option>
             <option value="admin">admin</option>
           </select>
+        </div>
+
+        <div>
+          <label>Mentor</label>
+          <input name="mentor" placeholder="Ex: Admin / Nom mentor..." required>
         </div>
 
         <div>
@@ -457,13 +499,18 @@ PAGE = """
         </div>
 
         <div>
+          <label>Mentor</label>
+          <input name="mentor" value="{{ edit_row[3] }}" required>
+        </div>
+
+        <div>
           <label>Last name</label>
-          <input name="lastname" value="{{ edit_row[3] }}" required>
+          <input name="lastname" value="{{ edit_row[4] }}" required>
         </div>
 
         <div>
           <label>First name</label>
-          <input name="firstname" value="{{ edit_row[4] }}" required>
+          <input name="firstname" value="{{ edit_row[5] }}" required>
         </div>
 
         <div>
@@ -473,15 +520,15 @@ PAGE = """
 
         <div>
           <label>IdType (texte libre)</label>
-          <input name="idtype" value="{{ edit_row[6] }}" required>
+          <input name="idtype" value="{{ edit_row[7] }}" required>
         </div>
 
         <div>
           <label>IdPicture URL (optionnel)</label>
-          <input name="idpicture_url" value="{{ edit_row[7] or '' }}" placeholder="https://...">
-          {% if edit_row[7] %}
+          <input name="idpicture_url" value="{{ edit_row[8] or '' }}" placeholder="https://...">
+          {% if edit_row[8] %}
             <div class="small" style="margin-top:6px;">
-              <a href="{{ edit_row[7] }}" target="_blank" rel="noopener">Open ID picture</a>
+              <a href="{{ edit_row[8] }}" target="_blank" rel="noopener">Open ID picture</a>
             </div>
           {% endif %}
         </div>
@@ -490,7 +537,7 @@ PAGE = """
           <label>Statut</label>
           <select name="currentstatute" required>
             {% for s in statutes %}
-              <option value="{{ s }}" {{ 'selected' if s==edit_row[8] else '' }}>{{ s }}</option>
+              <option value="{{ s }}" {{ 'selected' if s==edit_row[9] else '' }}>{{ s }}</option>
             {% endfor %}
           </select>
         </div>
@@ -517,6 +564,7 @@ PAGE = """
           <th style="width:70px;">ID</th>
           <th>Phone</th>
           <th>Type</th>
+          <th>Mentor</th>
           <th>Lastname</th>
           <th>Firstname</th>
           <th>Birthdate</th>
@@ -536,18 +584,19 @@ PAGE = """
           <td>{{ r[2] }}</td>
           <td>{{ r[3] }}</td>
           <td>{{ r[4] }}</td>
-          <td>{{ r[5].strftime('%d/%m/%Y') }}</td>
-          <td>{{ r[6] }}</td>
+          <td>{{ r[5] }}</td>
+          <td>{{ r[6].strftime('%d/%m/%Y') }}</td>
+          <td>{{ r[7] }}</td>
           <td>
-            {% if r[7] %}
-              <a href="{{ r[7] }}" target="_blank" rel="noopener">link</a>
+            {% if r[8] %}
+              <a href="{{ r[8] }}" target="_blank" rel="noopener">link</a>
             {% else %}
               <span class="small">—</span>
             {% endif %}
           </td>
-          <td>{{ r[8] }}</td>
-          <td>{{ r[9].strftime('%d/%m/%Y') }}</td>
-          <td>{{ r[10] }}</td>
+          <td>{{ r[9] }}</td>
+          <td>{{ r[10].strftime('%d/%m/%Y') }}</td>
+          <td>{{ r[11] }}</td>
           <td>
             <a href="{{ url_for('edit', member_id=r[0]) }}">Edit</a>
             <form method="post"
@@ -563,7 +612,7 @@ PAGE = """
         </tr>
         {% endfor %}
         {% if not rows %}
-        <tr><td colspan="12" class="small">Aucune donnée pour le moment.</td></tr>
+        <tr><td colspan="13" class="small">Aucune donnée pour le moment.</td></tr>
         {% endif %}
       </tbody>
     </table>
@@ -594,7 +643,7 @@ def login_post():
         session.permanent = True
         return redirect(url_for("home"))
 
-    return render_template_string(LOGIN_PAGE, message="Identifiants invalides ou compte radié.")
+    return render_template_string(LOGIN_PAGE, message="Identifiants invalides ou compte suspendu/radié.")
 
 
 @app.get("/logout")
@@ -624,7 +673,7 @@ def home():
 def add():
     try:
         data = validate_member_form(request.form, for_update=False)
-        updateuser = session.get("user") or "admin"
+        updateuser = session.get("user") or ADMIN_PHONE
 
         insert_member(
             phone=data["phone"],
@@ -684,7 +733,7 @@ def edit(member_id: int):
             statutes=STATUTES,
         )
 
-    edit_birthdate = row[5].strftime("%d/%m/%Y")
+    edit_birthdate = row[6].strftime("%d/%m/%Y")
     return render_template_string(
         PAGE,
         rows=rows,
@@ -702,8 +751,7 @@ def edit(member_id: int):
 def update(member_id: int):
     try:
         data = validate_member_form(request.form, for_update=True)
-        updateuser = session.get("user") or "admin"
-
+        updateuser = session.get("user") or ADMIN_PHONE
         new_pwd = (data["password"] or "").strip() or None
 
         update_member(
@@ -725,7 +773,7 @@ def update(member_id: int):
     except Exception as e:
         rows = fetch_all_members()
         row = fetch_one(member_id)
-        edit_birthdate = row[5].strftime("%d/%m/%Y") if row else ""
+        edit_birthdate = row[6].strftime("%d/%m/%Y") if row else ""
         return render_template_string(
             PAGE,
             rows=rows,
@@ -741,7 +789,7 @@ def update(member_id: int):
 @app.post("/delete/<int:member_id>")
 @login_required
 def delete(member_id: int):
-    # sécurité simple: empêcher suppression de l'admin par défaut
+    # empêcher suppression de l'admin par défaut
     row = fetch_one(member_id)
     if row and row[1] == ADMIN_PHONE:
         abort(403)
@@ -759,10 +807,6 @@ def add_security_headers(resp):
     return resp
 
 
-# ----------------------------
-# Main
-# ----------------------------
 if __name__ == "__main__":
-    init_db()
     # Local uniquement. En prod Render, gunicorn gère le port.
     app.run(host="0.0.0.0", port=5000, debug=True)
