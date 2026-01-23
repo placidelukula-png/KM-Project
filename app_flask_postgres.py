@@ -654,11 +654,13 @@ def login_post():
 #    return render_template_string(LOGIN_PAGE, message="Identifiants invalides ou membre suspendu/radié.")
 ############
 
-############ DO           
-    log.info("Login attempt: LA SESSION DEMARRE OK")
-    session["user"] = phone
-    session.permanent = True
-    redirect(url_for("home"))
+############ DO
+    if not verify_user(phone, password):           
+      log.info("Login attempt: LA SESSION DEMARRE OK")
+      session["user"] = phone
+      session.permanent = True
+      redirect(url_for("home"))
+    return render_template_string(LOGIN_PAGE, message="Identifiants invalides ou membre suspendu/radié.")
 ############ END DO
 
 
