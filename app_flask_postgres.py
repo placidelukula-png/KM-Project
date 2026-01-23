@@ -644,6 +644,7 @@ def login_post():
 ### 
 
     if verify_user(phone, password):
+        log.info("Login attempt: LA SESSION DEMARRE OK")
         session["user"] = phone
         session.permanent = True
         return redirect(url_for("home"))
