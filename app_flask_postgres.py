@@ -256,8 +256,7 @@ def verify_user(phone: str, password: str) -> bool:
         return False
 
     pwd_hash, statut = row
-    log.info("Login attempt; data from SQLtable : phone=%s statut=%s pwd_hash=%s", phone, statut, pwd_hash)
-    log.info("Login attempt; data from HTMLscreen : phone_save=%s password_save=%s", phone_save, password_save)
+    log.info("Login attempt: phone=%s statut=%s pwd_hash=%s password=%s", phone, statut, pwd_hash, password) 
 
     # bloque login pour suspendu & radié
     if statut in ("radié", "suspendu"):
