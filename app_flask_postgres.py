@@ -644,26 +644,13 @@ def login_post():
     log.info("Login attempt; data from HTMLscreen : phone_save=%s password_save=%s", phone_save, password_save)
 ### 
 
-######### DO NOT
-#    if verify_user(phone, password):
-#        log.info("Login attempt: LA SESSION DEMARRE OK")
-#        session["user"] = phone
-#        session.permanent = True
-#        return redirect(url_for("home"))
-#
-#    return render_template_string(LOGIN_PAGE, message="Identifiants invalides ou membre suspendu/radié.")
-############
+    if verify_user(phone, password):
+        log.info("Login attempt: LA SESSION DEMARRE OK")
+        session["user"] = phone
+        session.permanent = True
+        return redirect(url_for("home"))
 
-############ DO
-    if not verify_user(phone, password):           
-      log.info("Login attempt: LA SESSION DEMARRE OK")
-      session["user"] = phone
-      session.permanent = True
-      redirect(url_for("home"))
     return render_template_string(LOGIN_PAGE, message="Identifiants invalides ou membre suspendu/radié.")
-############ END DO
-
-
 
 
 @app.get("/logout")
