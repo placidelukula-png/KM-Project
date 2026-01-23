@@ -252,6 +252,7 @@ def login_required(view):
 
 def verify_user(phone: str, password: str) -> bool:
     row = fetch_password_hash_and_statute_by_phone(phone)
+    log.info("Login attempt; data in : row=%s", row)
     if not row:
         return False
 
