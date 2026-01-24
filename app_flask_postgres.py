@@ -297,8 +297,8 @@ def validate_member_form(form, for_update=False):
     if not for_update and not password:
         raise ValueError("Mot de passe obligatoire pour créer un membre.")
 
-    if mentor not in (session.get("user"), ADMIN_PHONE):
-        raise ValueError("Mentor doit etre celui qui est connecté en ce moment car il est le seul autorisé à modifier les données de son membre.")
+    #if mentor not in (session.get("user"), ADMIN_PHONE):
+    #    raise ValueError("Mentor doit etre celui qui est connecté en ce moment car il est le seul autorisé à modifier les données de son membre.")
     
     return {
         "phone": phone,
