@@ -84,7 +84,7 @@ def get_conn():
 
 
 def init_db():
-    """Crée la table members + admin par défaut si absent."""
+    """Crée la table membres + admin par défaut si absent."""
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
@@ -102,21 +102,21 @@ def init_db():
                   updatedate     DATE NOT NULL DEFAULT CURRENT_DATE,
                   updateuser     TEXT NOT NULL,
                   password_hash  TEXT NOT NULL,
-                  CONSTRAINT members_membertype_chk
+                  CONSTRAINT membres_membertype_chk
                     CHECK (membertype IN ('membre','independant','mentor','admin')),
-                  CONSTRAINT members_currentstatute_chk
+                  CONSTRAINT membres_currentstatute_chk
                     CHECK (currentstatute IN ('probatoire','actif','inactif','suspendu','radié'))
                 );
             """)  
-            cur.execute("CREATE UNIQUE INDEX IF NOT EXISTS members_phone_uq ON members(phone);")
-            cur.execute("CREATE INDEX IF NOT EXISTS idx_members_phone ON members(phone);")
+            cur.execute("CREATE UNIQUE INDEX IF NOT EXISTS membres_phone_uq ON membres(phone);")
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_membres_phone ON membres(phone);")
 
             # Admin par défaut si absent
-            cur.execute("SELECT 1 FROM members WHERE phone = %s", (ADMIN_PHONE,))
+            cur.execute("SELECT 1 FROM membres WHERE phone = %s", (ADMIN_PHONE,))
             if cur.fetchone() is None:
                 log.info("Admin absent -> création du compte admin par défaut")
                 cur.execute("""
-                    INSERT INTO members
+                    INSERT INTO membres
                     (phone, membertype, mentor, lastname, firstname, birthdate, idtype, idpicture_url,
                      currentstatute, updatedate, updateuser, password_hash)
                     VALUES
@@ -156,24 +156,24 @@ except Exception:
 # 10 updatedate
 # 11 updateuser
 
-SELECT_MEMBERS = """
+SELECT_membres = """
     SELECT id, phone, membertype, mentor, lastname, firstname, birthdate,
            idtype, idpicture_url, currentstatute, updatedate, updateuser
-    FROM members
+    FROM membres
 """
 
 
-def fetch_all_members():
+def fetch_all_membres():
     with get_conn() as conn:
         with conn.cursor() as cur:
-            cur.execute(SELECT_MEMBERS + " ORDER BY id DESC")
+            cur.execute(SELECT_membres + " ORDER BY id DESC")
             return cur.fetchall()
 
 
 def fetch_one(member_id: int):
     with get_conn() as conn:
         with conn.cursor() as cur:
-            cur.execute(SELECT_MEMBERS + " WHERE id = %s", (member_id,))
+            cur.execute(SELECT_membres + " WHERE id = %s", (member_id,))
             return cur.fetchone()
 
 
@@ -182,7 +182,7 @@ def fetch_password_hash_and_statute_by_phone(phone: str):
         with conn.cursor() as cur:
             cur.execute("""
                 SELECT password_hash, currentstatute
-                FROM members
+                FROM membres
                 WHERE phone = %s
             """, (phone,))
             return cur.fetchone()
@@ -194,7 +194,7 @@ def insert_member(phone, membertype, mentor, lastname, firstname, birthdate_date
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                INSERT INTO members
+                INSERT INTO membres
                 (phone, membertype, mentor, lastname, firstname, birthdate, idtype, idpicture_url,
                  currentstatute, updatedate, updateuser, password_hash)
                 VALUES
@@ -211,7 +211,7 @@ def update_member(member_id, phone, membertype, mentor, lastname, firstname, bir
             if new_password_plain:
                 pwd_hash = generate_password_hash(new_password_plain)
                 cur.execute("""
-                    UPDATE members
+                    UPDATE membres
                     SET phone=%s, membertype=%s, mentor=%s, lastname=%s, firstname=%s, birthdate=%s,
                         idtype=%s, idpicture_url=%s, currentstatute=%s,
                         updatedate=CURRENT_DATE, updateuser=%s, password_hash=%s
@@ -220,7 +220,7 @@ def update_member(member_id, phone, membertype, mentor, lastname, firstname, bir
                       currentstatute, updateuser, pwd_hash, member_id))
             else:
                 cur.execute("""
-                    UPDATE members
+                    UPDATE membres
                     SET phone=%s, membertype=%s, mentor=%s, lastname=%s, firstname=%s, birthdate=%s,
                         idtype=%s, idpicture_url=%s, currentstatute=%s,
                         updatedate=CURRENT_DATE, updateuser=%s
@@ -233,7 +233,7 @@ def update_member(member_id, phone, membertype, mentor, lastname, firstname, bir
 def delete_member(member_id: int):
     with get_conn() as conn:
         with conn.cursor() as cur:
-            cur.execute("DELETE FROM members WHERE id = %s", (member_id,))
+            cur.execute("DELETE FROM membres WHERE id = %s", (member_id,))
         conn.commit()
 
 
@@ -366,7 +366,7 @@ PAGE = """
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Members (Flask + PostgreSQL)</title>
+  <title>membres (Flask + PostgreSQL)</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 30px; }
     .wrap { max-width: 1150px; margin: 0 auto; }
@@ -394,7 +394,7 @@ PAGE = """
 
 <body>
 <div class="wrap">
-  <h1>KM Members</h1>
+  <h1>KM membres</h1>
   <p class="muted">
     Logged in as <b>{{ session.get('user') }}</b> —
     <a href="{{ url_for('logout') }}">Logout</a>
@@ -561,7 +561,7 @@ PAGE = """
   {% endif %}
 
   <div class="card">
-    <h2 style="margin-top:0;">Members list</h2>
+    <h2 style="margin-top:0;">membres list</h2>
     <table>
       <thead>
         <tr>
@@ -665,7 +665,7 @@ def logout():
 @app.get("/")
 @login_required
 def home():
-    rows = fetch_all_members()
+    rows = fetch_all_membres()
     return render_template_string(
         PAGE,
         rows=rows,
@@ -703,7 +703,7 @@ def add():
         return redirect(url_for("home"))
 
     except psycopg.errors.UniqueViolation:
-        rows = fetch_all_members()
+        rows = fetch_all_membres()
         return render_template_string(
             PAGE,
             rows=rows,
@@ -715,7 +715,7 @@ def add():
             statutes=STATUTES,
         )
     except Exception as e:
-        rows = fetch_all_members()
+        rows = fetch_all_membres()
         return render_template_string(
             PAGE,
             rows=rows,
@@ -732,7 +732,7 @@ def add():
 @login_required
 def edit(member_id: int):
     row = fetch_one(member_id)
-    rows = fetch_all_members()
+    rows = fetch_all_membres()
     if not row:
         return render_template_string(
             PAGE,
@@ -783,7 +783,7 @@ def update(member_id: int):
         return redirect(url_for("home"))
 
     except Exception as e:
-        rows = fetch_all_members()
+        rows = fetch_all_membres()
         row = fetch_one(member_id)
         edit_birthdate = row[6].strftime("%d/%m/%Y") if row else ""
         return render_template_string(
