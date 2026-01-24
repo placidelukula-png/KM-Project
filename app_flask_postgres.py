@@ -32,7 +32,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", "dev-only-change-me")
 ADMIN_PHONE = os.getenv("ADMIN_PHONE", "admin")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "Melissa@1991")
 
-MEMBER_TYPES = ("admin", "memberR", "memberM", "memberI")
+MEMBER_TYPES = ("membre", "independant", "mentor", "admin")
 STATUTES = ("probatoire","actif", "inactif", "suspendu", "radié")
 
 RATELIMIT_STORAGE_URI = os.getenv("RATELIMIT_STORAGE_URI", "memory://")
@@ -103,12 +103,11 @@ def init_db():
                   updateuser     TEXT NOT NULL,
                   password_hash  TEXT NOT NULL,
                   CONSTRAINT members_membertype_chk
-                    CHECK (membertype IN ('admin','memberR','memberM','memberI')),
+                    CHECK (membertype IN ('membre','independant','mentor','admin')),
                   CONSTRAINT members_currentstatute_chk
                     CHECK (currentstatute IN ('probatoire','actif','inactif','suspendu','radié'))
                 );
-            """)
-
+            """)  
             cur.execute("CREATE UNIQUE INDEX IF NOT EXISTS members_phone_uq ON members(phone);")
             cur.execute("CREATE INDEX IF NOT EXISTS idx_members_phone ON members(phone);")
 
@@ -418,9 +417,9 @@ PAGE = """
         <div>
           <label>Member type</label>
           <select name="membertype" required>
-            <option value="memberR">memberR</option>
-            <option value="memberM">memberM</option>
-            <option value="memberI">memberI</option>
+            <option value="membre">membre</option>
+            <option value="independant">independant</option>
+            <option value="mentor">mentor</option>
             <option value="admin">admin</option>
           </select>
         </div>
