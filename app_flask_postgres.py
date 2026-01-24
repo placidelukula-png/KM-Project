@@ -88,7 +88,7 @@ def init_db():
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                CREATE TABLE IF NOT EXISTS members (
+                CREATE TABLE IF NOT EXISTS membres (
                   id             BIGSERIAL PRIMARY KEY,
                   phone          TEXT NOT NULL,
                   membertype     TEXT NOT NULL,
