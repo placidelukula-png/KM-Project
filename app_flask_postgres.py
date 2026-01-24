@@ -30,10 +30,10 @@ log = logging.getLogger(__name__)
 DATABASE_URL = os.getenv("DATABASE_URL")  # fourni par Render
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-only-change-me")
 ADMIN_PHONE = os.getenv("ADMIN_PHONE", "admin")
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "1959")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "Melissa@1991")
 
 MEMBER_TYPES = ("admin", "memberR", "memberM", "memberI")
-STATUTES = ("actif", "inactif", "suspendu", "radié")
+STATUTES = ("probatoire","actif", "inactif", "suspendu", "radié")
 
 RATELIMIT_STORAGE_URI = os.getenv("RATELIMIT_STORAGE_URI", "memory://")
 
@@ -105,7 +105,7 @@ def init_db():
                   CONSTRAINT members_membertype_chk
                     CHECK (membertype IN ('admin','memberR','memberM','memberI')),
                   CONSTRAINT members_currentstatute_chk
-                    CHECK (currentstatute IN ('actif','inactif','suspendu','radié'))
+                    CHECK (currentstatute IN ('probatoire','actif','inactif','suspendu','radié'))
                 );
             """)
 
@@ -298,6 +298,9 @@ def validate_member_form(form, for_update=False):
     if not for_update and not password:
         raise ValueError("Mot de passe obligatoire pour créer un membre.")
 
+    if mentor not in (session.get("user"), ADMIN_PHONE):
+        raise ValueError("Mentor doit etre celui qui est connecté en ce moment car il est le seul autorisé à modifier les données de son membre.")
+    
     return {
         "phone": phone,
         "membertype": membertype,
@@ -455,8 +458,9 @@ PAGE = """
         <div>
           <label>Statut</label>
           <select name="currentstatute" required>
-            <option value="actif">actif</option>
+            <option value="probatoire">probatoire</option>
             <option value="inactif">inactif</option>
+            <option value="actif">actif</option>
             <option value="suspendu">suspendu</option>
             <option value="radié">radié</option>
           </select>
@@ -681,11 +685,13 @@ def add():
     try:
         data = validate_member_form(request.form, for_update=False)
         updateuser = session.get("user") or ADMIN_PHONE
+        mentor = session.get("user") or ADMIN_PHONE
 
         insert_member(
             phone=data["phone"],
             membertype=data["membertype"],
-            mentor=data["mentor"],
+            mentor=mentor,
+            #mentor=data["mentor"],
             lastname=data["lastname"],
             firstname=data["firstname"],
             birthdate_date=data["birthdate_date"],
