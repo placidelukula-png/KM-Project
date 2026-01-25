@@ -394,9 +394,9 @@ PAGE = """
 
 <body>
 <div class="wrap">
-  <h1>KM membres</h1>
+  <h1>KM Membres</h1>
   <p class="muted">
-    Logged in as <b>{{ session.get('user') }}</b> —
+    Utilisateur connecté <b>{{ session.get('user') }}</b> —
     <a href="{{ url_for('logout') }}">Logout</a>
   </p>
 
@@ -426,7 +426,7 @@ PAGE = """
 
         <div>
           <label>Mentor</label>
-          <input name="mentor" placeholder="Ex: Admin / Nom mentor..." required>
+          <input name="mentor" placeholder="rempli automatiquement par le nº d'utilisateur connecté" value="{{ session.get('user') }}" readonly>
         </div>
 
         <div>
@@ -477,7 +477,7 @@ PAGE = """
       </div>
 
       <p class="small" style="margin-bottom:0;">
-        Notes: phone est unique. password sera stocké hashé. updatedate/updateuser sont auto.
+        Notes: phone est unique. password sera stocké hashé. updatedate/updateuser/mentor sont auto.
       </p>
     </form>
   </div>
@@ -561,7 +561,7 @@ PAGE = """
   {% endif %}
 
   <div class="card">
-    <h2 style="margin-top:0;">membres list</h2>
+    <h2 style="margin-top:0;">Liste des membres</h2>
     <table>
       <thead>
         <tr>
