@@ -396,7 +396,7 @@ PAGE = """
 <div class="wrap">
   <h1>KM Membres</h1>
   <p class="muted">
-    Utilisateur connecté <b>{{session.get('user')}," ",firstname," ",lastname}</b> — 
+    Utilisateur connecté <b>{{session.get('user')}}</b> — 
     <a href="{{ url_for('logout') }}">Logout</a>
   </p>
 
