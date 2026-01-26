@@ -63,6 +63,24 @@ csrf = CSRFProtect(app)
 def inject_csrf_token():
     return dict(csrf_token=generate_csrf)
 
+@app.context_processor
+def inject_logged_user_label():
+    phone = session.get("user")
+    if not phone:
+        return dict(logged_user_label="")
+
+    try:
+        row = fetch_first_last_by_phone(phone)
+        if row:
+            firstname, lastname = row
+            # ex: "8324940214 — Clarisse Lukula"
+            return dict(logged_user_label=f"{phone} — {firstname} {lastname}")
+    except Exception:
+        log.exception("Impossible de récupérer firstname/lastname pour phone=%s", phone)
+
+    # fallback si pas trouvé
+    return dict(logged_user_label=f"{phone}")
+
 
 # Rate limiting
 limiter = Limiter(
@@ -129,6 +147,17 @@ def init_db():
                 ))
 
         conn.commit()
+
+def fetch_first_last_by_phone(phone: str):
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT firstname, lastname
+                FROM membres
+                WHERE phone = %s
+                LIMIT 1
+            """, (phone,))
+            return cur.fetchone()   # tuple: (firstname, lastname) ou None
 
 
 # ✅ IMPORTANT : exécuté aussi sous gunicorn (Render)
@@ -395,10 +424,16 @@ PAGE = """
 <body>
 <div class="wrap">
   <h1>KM Membres</h1>
+  #<p class="muted">
+  #  Utilisateur connecté <b>{{session.get('user')}}</b> — 
+  #  <a href="{{ url_for('logout') }}">Logout</a>
+  #</p>
+
   <p class="muted">
-    Utilisateur connecté <b>{{session.get('user')}}</b> — 
+    Utilisateur connecté <b>{{ logged_user_label }}</b> —
     <a href="{{ url_for('logout') }}">Logout</a>
   </p>
+
 
   {% if message %}
     <div class="msg {{ 'error' if is_error else 'ok' }}">{{ message }}</div>
