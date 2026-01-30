@@ -119,6 +119,8 @@ def init_db():
                   updatedate     DATE NOT NULL DEFAULT CURRENT_DATE,
                   updateuser     TEXT NOT NULL,
                   password_hash  TEXT NOT NULL,
+                  balance        DECIMAL(14,2) NOT NULL DEFAULT 0,      
+                  membershipdate DATE NOT NULL DEFAULT CURRENT_DATE,                        
                   CONSTRAINT membres_membertype_chk
                     CHECK (membertype IN ('membre','independant','mentor','admin')),
                   CONSTRAINT membres_currentstatute_chk
@@ -144,7 +146,29 @@ def init_db():
                     ADMIN_PHONE,
                     generate_password_hash(ADMIN_PASSWORD),
                 ))
-
+###
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS deces (
+                  id             BIGSERIAL PRIMARY KEY,
+                  defunt         TEXT NOT NULL,
+                  annonceur      TEXT NOT NULL,
+                  date_deces     TEXT NOT NULL,
+		              date_annonce	 DATE NOT NULL DEFAULT CURRENT_DATE,
+                  lastname       TEXT NOT NULL,
+                  firstname      TEXT NOT NULL,
+                  birthdate      DATE NOT NULL,
+                  document_url   TEXT,
+		              commentaire    TEXT NOT NULL, 
+		              confirmation   TEXT NOT NULL,
+                  montant		     DECIMAL(14,2) NOT NULL DEFAULT 0,
+                  membershipdate DATE NOT NULL DEFAULT CURRENT_DATE,                        
+                  updatedate     DATE NOT NULL DEFAULT CURRENT_DATE,
+                  updateuser     TEXT NOT NULL,
+                  CONSTRAINT deces_confirmation_check
+                    CHECK (confirmation IN ('attente','refusé','confirmé'))			
+                );        
+            """)  
+### 
         conn.commit()
 
 def fetch_first_last_by_phone(phone: str):
@@ -166,6 +190,133 @@ except Exception:
     log.exception("init_db() a échoué au démarrage")
     # on laisse continuer pour que les logs apparaissent, mais l'app sera probablement inutilisable
 
+#####> 1 Jan 2026
+# Ajoute ce helper (Python) et passe menu_zone1/2/3 au template PAGE
+
+def get_menu_for_user():
+    role = get_current_user_type()  # "membre"/"independant"/"mentor"/"admin"
+    zone1 = [
+        ("Profil", "profil"),
+        ("Mouvements", "mouvements"),
+        ("Décès", "deces"),
+        ("Mentor application", "mentorapplication"),
+    ]
+    zone2 = [
+        ("Groupe", "groupe"),
+        ("Ajouter membre", "addmember"),
+    ] if role in ("mentor", "admin") else []
+    zone3 = [
+        ("Import", "import_mouvements"),
+        ("Check mouvements", "checkmouvements"),
+        ("Data general follow-up", "datageneralfollowup"),
+    ] if role == "admin" else []
+    return zone1, zone2, zone3
+
+# Dans home():
+# menu_zone1, menu_zone2, menu_zone3 = get_menu_for_user()
+# ... render_template_string(PAGE, ..., menu_zone1=menu_zone1, menu_zone2=menu_zone2, menu_zone3=menu_zone3)
+
+
+# ----------------------------
+# RBAC (Access control)
+# ----------------------------
+def get_current_user_type() -> str | None:
+    """Retourne le membertype du user connecté (ou None)."""
+    phone = session.get("user")
+    if not phone:
+        return None
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT membertype FROM membres WHERE phone = %s", (phone,))
+            row = cur.fetchone()
+            return row[0] if row else None
+
+
+def role_required(*allowed_roles):
+    """Decorator d'accès selon membertype."""
+    def deco(view):
+        @wraps(view)
+        def wrapped(*args, **kwargs):
+            if not session.get("user"):
+                return redirect(url_for("login"))
+            role = get_current_user_type()
+            if role not in allowed_roles:
+                abort(403)
+            return view(*args, **kwargs)
+        return wrapped
+    return deco
+
+
+# Helpers de zones
+member_access = role_required("membre", "independant", "mentor", "admin")
+mentor_access = role_required("mentor", "admin")
+admin_access  = role_required("admin")
+
+
+# ----------------------------
+# Endpoints (9)
+# ----------------------------
+
+# Zone 1 (tous)
+@app.get("/profil")
+@login_required
+@member_access
+def profil():
+    return "TODO: profil"
+
+@app.get("/mouvements")
+@login_required
+@member_access
+def mouvements():
+    return "TODO: mouvements"
+
+@app.get("/deces")
+@login_required
+@member_access
+def deces():
+    return "TODO: deces"
+
+@app.get("/mentorapplication")
+@login_required
+@member_access
+def mentorapplication():
+    return "TODO: mentorapplication"
+
+
+# Zone 2 (mentor + admin)
+@app.get("/groupe")
+@login_required
+@mentor_access
+def groupe():
+    return "TODO: groupe"
+
+@app.route("/addmember", methods=["GET", "POST"])
+@login_required
+@mentor_access
+def addmember():
+    return "TODO: addmember"
+
+
+# Zone 3 (admin uniquement)
+@app.route("/import", methods=["GET", "POST"])
+@login_required
+@admin_access
+def import_mouvements():
+    return "TODO: import"
+
+@app.get("/checkmouvements")
+@login_required
+@admin_access
+def checkmouvements():
+    return "TODO: checkmouvements"
+
+@app.get("/datageneralfollowup")
+@login_required
+@admin_access
+def datageneralfollowup():
+    return "TODO: datageneralfollowup"
+
+#####< 1 Jan 2026
 
 # ----------------------------
 # Queries (ORDER des colonnes = contrat avec le HTML)
@@ -324,9 +475,6 @@ def validate_member_form(form, for_update=False):
     # password obligatoire en création, optionnel en update
     if not for_update and not password:
         raise ValueError("Mot de passe obligatoire pour créer un membre.")
-
-    #if mentor not in (session.get("user"), ADMIN_PHONE):
-    #    raise ValueError("Mentor doit etre celui qui est connecté en ce moment car il est le seul autorisé à modifier les données de son membre.")
     
     return {
         "phone": phone,
@@ -509,7 +657,48 @@ PAGE = """
     <div class="brand">
       <div class="logo">KM</div>
       <div>
-        <h1>KM-Project</h1>
+        <h1>KM-Kimya</h1>
+
+        #> Jan 30 
+        <!-- 2) Colle ce bloc dans PAGE (juste après le titre H1 par ex.) -->
+
+        <style>
+          .nav { display:flex; flex-wrap:wrap; gap:10px; margin:14px 0 18px; }
+          .nav .zone { border:1px solid #ddd; border-radius:12px; padding:10px; min-width:240px; flex:1; }
+          .nav h3 { margin:0 0 8px; font-size:1.02em; }
+          .nav a { display:block; padding:10px 12px; border-radius:10px; border:1px solid #eee; margin:6px 0; }
+          .nav a:hover { background:#f6f6f6; text-decoration:none; }
+          .nav small { color:#666; }
+        </style>
+
+        <div class="nav">
+          <div class="zone">
+            <h3>Zone 1 <small>(membres)</small></h3>
+            {% for label, endpoint in menu_zone1 %}
+              <a href="{{ url_for(endpoint) }}">{{ label }}</a>
+            {% endfor %}
+          </div>
+
+          {% if menu_zone2 %}
+          <div class="zone">
+            <h3>Zone 2 <small>(mentor)</small></h3>
+            {% for label, endpoint in menu_zone2 %}
+              <a href="{{ url_for(endpoint) }}">{{ label }}</a>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          {% if menu_zone3 %}
+          <div class="zone">
+            <h3>Zone 3 <small>(admin)</small></h3>
+            {% for label, endpoint in menu_zone3 %}
+              <a href="{{ url_for(endpoint) }}">{{ label }}</a>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        #> Jan 30 2026
+        
         <div class="userline">
           Utilisateur connecté <b>{{ session.get('user') }}</b>
           {% if user_fullname %} — <b>{{ user_fullname }}</b>{% endif %}
@@ -860,7 +1049,6 @@ def logout():
     return redirect(url_for("login"))
 
 
-##########
 def get_user_profile_by_phone(phone: str):
     with get_conn() as conn:
         with conn.cursor() as cur:
@@ -878,7 +1066,9 @@ def home():
     phone = session.get("user")
     prof = get_user_profile_by_phone(phone) if phone else None
     firstname, lastname, membertype = (prof or ("", "", "membre"))
-
+#    
+    menu_zone1, menu_zone2, menu_zone3 = get_menu_for_user()
+#
     return render_template_string(
         PAGE,
         rows=rows,
@@ -890,23 +1080,10 @@ def home():
         statutes=STATUTES,
         user_fullname=f"{firstname} {lastname}".strip(),
         user_membertype=membertype,
+        menu_zone1=menu_zone1, 
+        menu_zone2=menu_zone2, 
+        menu_zone3=menu_zone3
     )
-
-#@app.get("/")
-#@login_required
-#def home():
-#    rows = fetch_all_membres()
-#    return render_template_string(
-#        PAGE,
-#        rows=rows,
-#        edit_row=None,
-#        edit_birthdate="",
-#        message="",
-#        is_error=False,
-#        member_types=MEMBER_TYPES,
-#        statutes=STATUTES,
-#    )
-##########
 
 @app.post("/add")
 @login_required
