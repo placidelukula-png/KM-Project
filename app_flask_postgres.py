@@ -56,7 +56,7 @@ app.config.update(
 )
 
 # CSRF
-csrf = CSRFProtect(app)
+  = CSRFProtect(app)
 
 
 @app.context_processor
@@ -423,6 +423,174 @@ PAGE = """
 
 <body>
 <div class="wrap">
+  <style>
+  :root{
+    --bg:#ffffff; --text:#111; --muted:#666; --card:#fff;
+    --border:#e8e8e8; --shadow:0 6px 20px rgba(0,0,0,.06);
+    --brand:#111; --brand2:#0b57d0;
+  }
+  body{ margin:0; font-family:Arial, sans-serif; background:#fafafa; color:var(--text); }
+  .wrap{ max-width:1150px; margin:0 auto; padding:18px; }
+
+  /* Topbar */
+  .topbar{
+    position:sticky; top:0; z-index:50;
+    background:rgba(250,250,250,.9); backdrop-filter: blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  .topbar-inner{
+    max-width:1150px; margin:0 auto; padding:12px 18px;
+    display:flex; align-items:center; gap:12px; justify-content:space-between;
+  }
+  .brand{ display:flex; align-items:center; gap:10px; }
+  .logo{
+    width:36px; height:36px; border-radius:10px;
+    background:var(--brand); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700;
+  }
+  .brand h1{ margin:0; font-size:16px; letter-spacing:.2px; }
+  .userbox{ text-align:right; }
+  .userline{ font-size:13px; color:var(--muted); }
+  .userline b{ color:var(--text); }
+  .role-pill{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:12px; padding:4px 10px; border-radius:999px;
+    border:1px solid var(--border); background:#fff;
+  }
+  .logout{
+    display:inline-flex; align-items:center; justify-content:center;
+    padding:8px 12px; border-radius:10px;
+    border:1px solid var(--border);
+    background:#fff; color:var(--text); text-decoration:none;
+    font-size:13px;
+  }
+
+  /* Menu grid */
+  .menu{
+    margin-top:16px;
+    display:grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap:12px;
+  }
+  .menu-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:14px;
+    box-shadow: var(--shadow);
+    text-decoration:none;
+    color:var(--text);
+    transition: transform .08s ease, border-color .08s ease;
+    display:flex; gap:12px; align-items:flex-start;
+  }
+  .menu-card:hover{ transform: translateY(-1px); border-color:#d9d9d9; }
+  .icon{
+    width:38px; height:38px; border-radius:12px;
+    border:1px solid var(--border);
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; color:var(--brand);
+    background:#fff;
+    flex:0 0 auto;
+  }
+  .menu-title{ margin:0; font-size:14px; font-weight:700; }
+  .menu-desc{ margin:4px 0 0; font-size:12px; color:var(--muted); line-height:1.35; }
+
+  /* Responsive */
+  @media (max-width: 980px){ .menu{ grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 640px){
+    .menu{ grid-template-columns: 1fr; }
+    .topbar-inner{ flex-direction:column; align-items:flex-start; gap:8px; }
+    .userbox{ text-align:left; width:100%; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  }
+</style>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="logo">KM</div>
+      <div>
+        <h1>KM-Project</h1>
+        <div class="userline">
+          Utilisateur connecté <b>{{ session.get('user') }}</b>
+          {% if user_fullname %} — <b>{{ user_fullname }}</b>{% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="userbox">
+      <span class="role-pill">Rôle: <b>{{ user_membertype }}</b></span>
+      <a class="logout" href="{{ url_for('logout') }}">Logout</a>
+    </div>
+  </div>
+</div>
+
+<!-- MENU -->
+<div class="menu">
+  <!-- Zone 1: Tous -->
+  <a class="menu-card" href="{{ url_for('home') }}">
+    <div class="icon">📄</div>
+    <div>
+      <p class="menu-title">Mon compte</p>
+      <p class="menu-desc">Profil, informations et statut.</p>
+    </div>
+  </a>
+
+  <a class="menu-card" href="{{ url_for('home') }}#mouvements">
+    <div class="icon">💳</div>
+    <div>
+      <p class="menu-title">Mes mouvements</p>
+      <p class="menu-desc">Historique des cotisations et solde.</p>
+    </div>
+  </a>
+
+  <!-- Zone 2: mentor + admin -->
+  {% if user_membertype in ('mentor','admin') %}
+  <a class="menu-card" href="{{ url_for('home') }}#groupe">
+    <div class="icon">👥</div>
+    <div>
+      <p class="menu-title">Mon groupe</p>
+      <p class="menu-desc">Membres rattachés + soldes.</p>
+    </div>
+  </a>
+
+  <a class="menu-card" href="{{ url_for('home') }}#addmember">
+    <div class="icon">➕</div>
+    <div>
+      <p class="menu-title">Créer un membre</p>
+      <p class="menu-desc">Enregistrer un nouveau membre.</p>
+    </div>
+  </a>
+
+  <a class="menu-card" href="{{ url_for('home') }}#deces">
+    <div class="icon">🕊️</div>
+    <div>
+      <p class="menu-title">Déclarer un décès</p>
+      <p class="menu-desc">Enregistrer un cas de décès.</p>
+    </div>
+  </a>
+  {% endif %}
+
+  <!-- Zone 3: admin uniquement -->
+  {% if user_membertype == 'admin' %}
+  <a class="menu-card" href="{{ url_for('home') }}#import">
+    <div class="icon">⬇️</div>
+    <div>
+      <p class="menu-title">Importer cotisations</p>
+      <p class="menu-desc">Lancer import_mouvements.py (test).</p>
+    </div>
+  </a>
+
+  <a class="menu-card" href="{{ url_for('home') }}#admin">
+    <div class="icon">🛠️</div>
+    <div>
+      <p class="menu-title">Administration</p>
+      <p class="menu-desc">Suivi global & contrôle.</p>
+    </div>
+  </a>
+  {% endif %}
+</div>
+
   <h1>KM Membres</h1>
 
   <p class="muted">
@@ -693,10 +861,25 @@ def logout():
     return redirect(url_for("login"))
 
 
+##########
+def get_user_profile_by_phone(phone: str):
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT firstname, lastname, membertype
+                FROM membres
+                WHERE phone = %s
+            """, (phone,))
+            return cur.fetchone()
+
 @app.get("/")
 @login_required
 def home():
     rows = fetch_all_membres()
+    phone = session.get("user")
+    prof = get_user_profile_by_phone(phone) if phone else None
+    firstname, lastname, membertype = (prof or ("", "", "membre"))
+
     return render_template_string(
         PAGE,
         rows=rows,
@@ -706,8 +889,25 @@ def home():
         is_error=False,
         member_types=MEMBER_TYPES,
         statutes=STATUTES,
+        user_fullname=f"{firstname} {lastname}".strip(),
+        user_membertype=membertype,
     )
 
+#@app.get("/")
+#@login_required
+#def home():
+#    rows = fetch_all_membres()
+#    return render_template_string(
+#        PAGE,
+#        rows=rows,
+#        edit_row=None,
+#        edit_birthdate="",
+#        message="",
+#        is_error=False,
+#        member_types=MEMBER_TYPES,
+#        statutes=STATUTES,
+#    )
+##########
 
 @app.post("/add")
 @login_required
@@ -764,16 +964,26 @@ def add():
 def edit(member_id: int):
     row = fetch_one(member_id)
     rows = fetch_all_membres()
+    phone = session.get("user")
+    prof = get_user_profile_by_phone(phone) if phone else None
+    firstname, lastname, membertype = (prof or ("", "", "membre"))
     if not row:
         return render_template_string(
             PAGE,
             rows=rows,
             edit_row=None,
             edit_birthdate="",
-            message=f"Member ID {member_id} introuvable.",
-            is_error=True,
+            #message=f"Member ID {member_id} introuvable.",
+            #is_error=True,
+            message="",
+            is_error=False,
+            ##
             member_types=MEMBER_TYPES,
             statutes=STATUTES,
+            #
+            user_fullname=f"{firstname} {lastname}".strip(),
+            user_membertype=membertype,
+            #
         )
 
     edit_birthdate = row[6].strftime("%d/%m/%Y")
