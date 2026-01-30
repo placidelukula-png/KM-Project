@@ -55,9 +55,8 @@ app.config.update(
     PERMANENT_SESSION_LIFETIME=timedelta(minutes=30),
 )
 
-# CSRF
-  = CSRFProtect(app)
-
+# CSRF 
+csrf = CSRFProtect(app)
 
 @app.context_processor
 def inject_csrf_token():
