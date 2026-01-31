@@ -672,7 +672,7 @@ PAGE = """
       <div>
         <h1>KM-Kimya</h1>
         <div class="userline">
-          Utilisateur connecté <b>{{ session.get('user') }}</b>
+          membre connecté : <b>{{ session.get('user') }}</b>
           {% if user_fullname %} — <b>{{ user_fullname }}</b>{% endif %}
         </div>
         <div class="userbox">
@@ -680,8 +680,7 @@ PAGE = """
           <a class="logout" href="{{ url_for('logout') }}">Logout</a>
         </div>
 
-        /*ajout du Jan 30 2026 --- !-- 2) Colle ce bloc dans PAGE (juste après le titre H1 par ex.)*/
-
+<!-- ajout du Jan 30 2026 --- !-- 2) Colle ce bloc dans PAGE (juste après le titre H1 par ex.) -->
         <style>
           .nav { display:flex; flex-wrap:wrap; gap:10px; margin:14px 0 18px; }
           .nav .zone { border:1px solid #ddd; border-radius:12px; padding:10px; min-width:240px; flex:1; }
@@ -717,7 +716,7 @@ PAGE = """
           </div>
           {% endif %}
         </div>
-        /* fin de l'ajout du Jan 30 2026 --*/
+<!-- fin de l'ajout du Jan 30 2026 -->
 
       </div>
     </div>
@@ -790,6 +789,8 @@ PAGE = """
   </a>
   {% endif %}
 </div>
+
+<!-- FIN DES MENUS -->
 
   <h1>KM Membres</h1>
 
