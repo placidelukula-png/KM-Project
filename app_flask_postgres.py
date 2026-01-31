@@ -698,7 +698,7 @@ PAGE = """
           {% endif %}
         </div>
         #> Jan 30 2026
-        
+
         <div class="userline">
           Utilisateur connecté <b>{{ session.get('user') }}</b>
           {% if user_fullname %} — <b>{{ user_fullname }}</b>{% endif %}
@@ -1014,6 +1014,21 @@ PAGE = """
 </html>
 """
 
+#> Jan 30 2026
+from functools import wraps
+from flask import session, redirect, url_for, request
+
+
+def login_required(view):
+    @wraps(view)
+    def wrapped_view(*args, **kwargs):
+        if "user" not in session:
+            # mémorise la page demandée (optionnel mais propre)
+            return redirect(url_for("login", next=request.path))
+        return view(*args, **kwargs)
+    return wrapped_view
+
+#< Jan 30 2026
 
 # ----------------------------
 # Routes
