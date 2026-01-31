@@ -190,133 +190,19 @@ except Exception:
     log.exception("init_db() a échoué au démarrage")
     # on laisse continuer pour que les logs apparaissent, mais l'app sera probablement inutilisable
 
-#####> 1 Jan 2026
-# Ajoute ce helper (Python) et passe menu_zone1/2/3 au template PAGE
 
-def get_menu_for_user():
-    role = get_current_user_type()  # "membre"/"independant"/"mentor"/"admin"
-    zone1 = [
-        ("Profil", "profil"),
-        ("Mouvements", "mouvements"),
-        ("Décès", "deces"),
-        ("Mentor application", "mentorapplication"),
-    ]
-    zone2 = [
-        ("Groupe", "groupe"),
-        ("Ajouter membre", "addmember"),
-    ] if role in ("mentor", "admin") else []
-    zone3 = [
-        ("Import", "import_mouvements"),
-        ("Check mouvements", "checkmouvements"),
-        ("Data general follow-up", "datageneralfollowup"),
-    ] if role == "admin" else []
-    return zone1, zone2, zone3
-
-# Dans home():
-# menu_zone1, menu_zone2, menu_zone3 = get_menu_for_user()
-# ... render_template_string(PAGE, ..., menu_zone1=menu_zone1, menu_zone2=menu_zone2, menu_zone3=menu_zone3)
-
-
-# ----------------------------
-# RBAC (Access control)
-# ----------------------------
-def get_current_user_type() -> str | None:
-    """Retourne le membertype du user connecté (ou None)."""
-    phone = session.get("user")
-    if not phone:
-        return None
-    with get_conn() as conn:
-        with conn.cursor() as cur:
-            cur.execute("SELECT membertype FROM membres WHERE phone = %s", (phone,))
-            row = cur.fetchone()
-            return row[0] if row else None
-
-
-def role_required(*allowed_roles):
-    """Decorator d'accès selon membertype."""
-    def deco(view):
-        @wraps(view)
-        def wrapped(*args, **kwargs):
-            if not session.get("user"):
-                return redirect(url_for("login"))
-            role = get_current_user_type()
-            if role not in allowed_roles:
-                abort(403)
-            return view(*args, **kwargs)
-        return wrapped
-    return deco
-
-
-# Helpers de zones
-member_access = role_required("membre", "independant", "mentor", "admin")
-mentor_access = role_required("mentor", "admin")
-admin_access  = role_required("admin")
-
-
-# ----------------------------
-# Endpoints (9)
-# ----------------------------
-
-# Zone 1 (tous)
-@app.get("/profil")
-@login_required
-@member_access
-def profil():
-    return "TODO: profil"
-
-@app.get("/mouvements")
-@login_required
-@member_access
-def mouvements():
-    return "TODO: mouvements"
-
-@app.get("/deces")
-@login_required
-@member_access
-def deces():
-    return "TODO: deces"
-
-@app.get("/mentorapplication")
-@login_required
-@member_access
-def mentorapplication():
-    return "TODO: mentorapplication"
-
-
-# Zone 2 (mentor + admin)
-@app.get("/groupe")
-@login_required
-@mentor_access
-def groupe():
-    return "TODO: groupe"
-
-@app.route("/addmember", methods=["GET", "POST"])
-@login_required
-@mentor_access
-def addmember():
-    return "TODO: addmember"
-
-
-# Zone 3 (admin uniquement)
-@app.route("/import", methods=["GET", "POST"])
-@login_required
-@admin_access
-def import_mouvements():
-    return "TODO: import"
-
-@app.get("/checkmouvements")
-@login_required
-@admin_access
-def checkmouvements():
-    return "TODO: checkmouvements"
-
-@app.get("/datageneralfollowup")
-@login_required
-@admin_access
-def datageneralfollowup():
-    return "TODO: datageneralfollowup"
-
-#####< 1 Jan 2026
+#> Jan 30 2026
+#from functools import wraps
+#from flask import session, redirect, url_for, request
+#def login_required(view):
+#    @wraps(view)
+#    def wrapped_view(*args, **kwargs):
+#        if "user" not in session:
+#            # mémorise la page demandée (optionnel mais propre)
+#            return redirect(url_for("login", next=request.path))
+#        return view(*args, **kwargs)
+#    return wrapped_view
+#< Jan 30 2026
 
 # ----------------------------
 # Queries (ORDER des colonnes = contrat avec le HTML)
@@ -489,6 +375,133 @@ def validate_member_form(form, for_update=False):
         "password": password,
     }
 
+#####> 30 Jan 2026
+# Ajoute ce helper (Python) et passe menu_zone1/2/3 au template PAGE
+
+def get_menu_for_user():
+    role = get_current_user_type()  # "membre"/"independant"/"mentor"/"admin"
+    zone1 = [
+        ("Profil", "profil"),
+        ("Mouvements", "mouvements"),
+        ("Décès", "deces"),
+        ("Mentor application", "mentorapplication"),
+    ]
+    zone2 = [
+        ("Groupe", "groupe"),
+        ("Ajouter membre", "addmember"),
+    ] if role in ("mentor", "admin") else []
+    zone3 = [
+        ("Import", "import_mouvements"),
+        ("Check mouvements", "checkmouvements"),
+        ("Data general follow-up", "datageneralfollowup"),
+    ] if role == "admin" else []
+    return zone1, zone2, zone3
+
+# Dans home():
+# menu_zone1, menu_zone2, menu_zone3 = get_menu_for_user()
+# ... render_template_string(PAGE, ..., menu_zone1=menu_zone1, menu_zone2=menu_zone2, menu_zone3=menu_zone3)
+
+
+# ----------------------------
+# RBAC (Access control)
+# ----------------------------
+def get_current_user_type() -> str | None:
+    """Retourne le membertype du user connecté (ou None)."""
+    phone = session.get("user")
+    if not phone:
+        return None
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT membertype FROM membres WHERE phone = %s", (phone,))
+            row = cur.fetchone()
+            return row[0] if row else None
+
+
+def role_required(*allowed_roles):
+    """Decorator d'accès selon membertype."""
+    def deco(view):
+        @wraps(view)
+        def wrapped(*args, **kwargs):
+            if not session.get("user"):
+                return redirect(url_for("login"))
+            role = get_current_user_type()
+            if role not in allowed_roles:
+                abort(403)
+            return view(*args, **kwargs)
+        return wrapped
+    return deco
+
+
+# Helpers de zones
+member_access = role_required("membre", "independant", "mentor", "admin")
+mentor_access = role_required("mentor", "admin")
+admin_access  = role_required("admin")
+
+
+# ----------------------------
+# Endpoints (9)
+# ----------------------------
+
+# Zone 1 (tous)
+@app.get("/profil")
+@login_required
+@member_access
+def profil():
+    return "TODO: profil"
+
+@app.get("/mouvements")
+@login_required
+@member_access
+def mouvements():
+    return "TODO: mouvements"
+
+@app.get("/deces")
+@login_required
+@member_access
+def deces():
+    return "TODO: deces"
+
+@app.get("/mentorapplication")
+@login_required
+@member_access
+def mentorapplication():
+    return "TODO: mentorapplication"
+
+
+# Zone 2 (mentor + admin)
+@app.get("/groupe")
+@login_required
+@mentor_access
+def groupe():
+    return "TODO: groupe"
+
+@app.route("/addmember", methods=["GET", "POST"])
+@login_required
+@mentor_access
+def addmember():
+    return "TODO: addmember"
+
+
+# Zone 3 (admin uniquement)
+@app.route("/import", methods=["GET", "POST"])
+@login_required
+@admin_access
+def import_mouvements():
+    return "TODO: import"
+
+@app.get("/checkmouvements")
+@login_required
+@admin_access
+def checkmouvements():
+    return "TODO: checkmouvements"
+
+@app.get("/datageneralfollowup")
+@login_required
+@admin_access
+def datageneralfollowup():
+    return "TODO: datageneralfollowup"
+
+#####< 30 Jan 2026
 
 # ----------------------------
 # Templates
@@ -1014,21 +1027,6 @@ PAGE = """
 </html>
 """
 
-#> Jan 30 2026
-from functools import wraps
-from flask import session, redirect, url_for, request
-
-
-def login_required(view):
-    @wraps(view)
-    def wrapped_view(*args, **kwargs):
-        if "user" not in session:
-            # mémorise la page demandée (optionnel mais propre)
-            return redirect(url_for("login", next=request.path))
-        return view(*args, **kwargs)
-    return wrapped_view
-
-#< Jan 30 2026
 
 # ----------------------------
 # Routes
