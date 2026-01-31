@@ -671,9 +671,16 @@ PAGE = """
       <div class="logo">KM</div>
       <div>
         <h1>KM-Kimya</h1>
-
-        #> Jan 30 
-        <!-- 2) Colle ce bloc dans PAGE (juste après le titre H1 par ex.) -->
+        <div class="userline">
+          Utilisateur connecté <b>{{ session.get('user') }}</b>
+          {% if user_fullname %} — <b>{{ user_fullname }}</b>{% endif %}
+        </div>
+    <div class="userbox">
+      <span class="role-pill">Rôle: <b>{{ user_membertype }}</b></span>
+      <a class="logout" href="{{ url_for('logout') }}">Logout</a>
+    </div>
+    
+        <ajout du Jan 30 2026 --- !-- 2) Colle ce bloc dans PAGE (juste après le titre H1 par ex.) -->
 
         <style>
           .nav { display:flex; flex-wrap:wrap; gap:10px; margin:14px 0 18px; }
@@ -710,19 +717,11 @@ PAGE = """
           </div>
           {% endif %}
         </div>
-        #> Jan 30 2026
+        < fin de l'ajout du Jan 30 2026 -->
 
-        <div class="userline">
-          Utilisateur connecté <b>{{ session.get('user') }}</b>
-          {% if user_fullname %} — <b>{{ user_fullname }}</b>{% endif %}
-        </div>
       </div>
     </div>
 
-    <div class="userbox">
-      <span class="role-pill">Rôle: <b>{{ user_membertype }}</b></span>
-      <a class="logout" href="{{ url_for('logout') }}">Logout</a>
-    </div>
   </div>
 </div>
 
