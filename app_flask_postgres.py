@@ -852,7 +852,7 @@ def home():
     menu_zone1, menu_zone2, menu_zone3 = get_menu_for_user()
 #
     return render_template_string(
-        PAGE,
+        MENU_PAGE,
         rows=rows,
         edit_row=None,
         edit_birthdate="",
@@ -894,7 +894,7 @@ def add():
     except psycopg.errors.UniqueViolation:
         rows = fetch_all_membres()
         return render_template_string(
-            PAGE,
+            MENU_PAGE,
             rows=rows,
             edit_row=None,
             edit_birthdate="",
@@ -906,7 +906,7 @@ def add():
     except Exception as e:
         rows = fetch_all_membres()
         return render_template_string(
-            PAGE,
+            MENU_PAGE,
             rows=rows,
             edit_row=None,
             edit_birthdate="",
@@ -927,7 +927,7 @@ def edit(member_id: int):
     firstname, lastname, membertype = (prof or ("", "", "membre"))
     if not row:
         return render_template_string(
-            PAGE,
+            MENU_PAGE,
             rows=rows,
             edit_row=None,
             edit_birthdate="",
@@ -946,7 +946,7 @@ def edit(member_id: int):
 
     edit_birthdate = row[6].strftime("%d/%m/%Y")
     return render_template_string(
-        PAGE,
+        MENU_PAGE,
         rows=rows,
         edit_row=row,
         edit_birthdate=edit_birthdate,
@@ -986,7 +986,7 @@ def update(member_id: int):
         row = fetch_one(member_id)
         edit_birthdate = row[6].strftime("%d/%m/%Y") if row else ""
         return render_template_string(
-            PAGE,
+            MENU_PAGE,
             rows=rows,
             edit_row=row,
             edit_birthdate=edit_birthdate,
