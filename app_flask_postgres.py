@@ -1,3 +1,6 @@
+# ---------------------------------
+# External functions impotation
+# ---------------------------------
 from __future__ import annotations
 
 import os
@@ -499,7 +502,28 @@ def checkmouvements():
 @login_required
 @admin_access
 def datageneralfollowup():
-    return "TODO: datageneralfollowup"
+    rows = fetch_all_membres()
+    phone = session.get("user")
+    prof = get_user_profile_by_phone(phone) if phone else None
+    firstname, lastname, membertype = (prof or ("", "", "membre"))
+#    
+    menu_zone1, menu_zone2, menu_zone3 = get_menu_for_user()
+    return render_template_string(
+        DATAGENERALFOLLOWUP_PAGE,
+        rows=rows,
+        edit_row=None,
+        edit_birthdate="",
+        message="",
+        is_error=False,
+        member_types=MEMBER_TYPES,
+        statutes=STATUTES,
+        user_fullname=f"{firstname} {lastname}".strip(),
+        user_membertype=membertype,
+        menu_zone1=menu_zone1, 
+        menu_zone2=menu_zone2, 
+        menu_zone3=menu_zone3
+    )
+
 
 #####< 30 Jan 2026
 
@@ -795,7 +819,250 @@ MENU_PAGE = """
 </html>
 """
 # beaucoup de lignes de code ont été supprimées à ce niveau pour isoler les endpoints. objectif plus de clarté
+# puis recrées ci-dessous pour l'endpoint /data global 
 
+DATAGENERALFOLLOWUP_PAGE = """
+<!doctype html>
+<html>
+<head>
+
+  <h1>KM Membres</h1>
+
+  <p class="muted">
+    membre connecté <b>{{ logged_user_label }}</b> —
+    <a href="{{ url_for('logout') }}">Logout</a>
+
+    {% if message %}
+    <div class="msg {{ 'error' if is_error else 'ok' }}">{{ message }}</div>
+    {% endif %}
+
+  </p>
+</head>
+
+<body>
+
+
+  <div class="card">
+    <h2 style="margin-top:0;">Add new member</h2>
+    <form method="post" action="{{ url_for('add') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="grid">
+        <div>
+          <label>Phone (unique)</label>
+          <input name="phone" placeholder="Ex: 0700..." required>
+        </div>
+
+        <div>
+          <label>Member type</label>
+          <select name="membertype" required>
+            <option value="membre">membre</option>
+            <option value="independant">independant</option>
+            <option value="mentor">mentor</option>
+            <option value="admin">admin</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Mentor</label>
+          <input name="mentor" placeholder="rempli automatiquement par le nº d'utilisateur connecté" value="{{ session.get('user') }}" readonly>
+        </div>
+
+        <div>
+          <label>Last name</label>
+          <input name="lastname" required>
+        </div>
+
+        <div>
+          <label>First name</label>
+          <input name="firstname" required>
+        </div>
+
+        <div>
+          <label>Birth date (JJ/MM/AAAA)</label>
+          <input name="birthdate" placeholder="Ex: 25/01/2026" required>
+        </div>
+
+        <div>
+          <label>IdType (texte libre)</label>
+          <input name="idtype" placeholder="Ex: Passeport, Carte nationale..." required>
+        </div>
+
+        <div>
+          <label>IdPicture URL (optionnel)</label>
+          <input name="idpicture_url" placeholder="https://...">
+        </div>
+
+        <div>
+          <label>Statut</label>
+          <select name="currentstatute" required>
+            <option value="probatoire">probatoire</option>
+            <option value="inactif">inactif</option>
+            <option value="actif">actif</option>
+            <option value="suspendu">suspendu</option>
+            <option value="radié">radié</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Password (obligatoire)</label>
+          <input name="password" type="password" required>
+        </div>
+      </div>
+
+      <div class="row">
+        <button class="btn" type="submit">Create member</button>
+        <button class="btn secondary" type="reset">Reset</button>
+      </div>
+
+      <p class="small" style="margin-bottom:0;">
+        Notes: phone est unique. password sera stocké hashé. updatedate/updateuser/mentor sont auto.
+      </p>
+    </form>
+  </div>
+
+  {% if edit_row %}
+  <div class="card">
+    <h2 style="margin-top:0;">Edit member (ID {{ edit_row[0] }})</h2>
+    <form method="post" action="{{ url_for('update', member_id=edit_row[0]) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="grid">
+        <div>
+          <label>Phone (unique)</label>
+          <input name="phone" value="{{ edit_row[1] }}" required>
+        </div>
+
+        <div>
+          <label>Member type</label>
+          <select name="membertype" required>
+            {% for t in member_types %}
+              <option value="{{ t }}" {{ 'selected' if t==edit_row[2] else '' }}>{{ t }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div>
+          <label>Mentor</label>
+          <input name="mentor" value="{{ edit_row[3] }}" required>
+        </div>
+
+        <div>
+          <label>Last name</label>
+          <input name="lastname" value="{{ edit_row[4] }}" required>
+        </div>
+
+        <div>
+          <label>First name</label>
+          <input name="firstname" value="{{ edit_row[5] }}" required>
+        </div>
+
+        <div>
+          <label>Birth date (JJ/MM/AAAA)</label>
+          <input name="birthdate" value="{{ edit_birthdate }}" required>
+        </div>
+
+        <div>
+          <label>IdType (texte libre)</label>
+          <input name="idtype" value="{{ edit_row[7] }}" required>
+        </div>
+
+        <div>
+          <label>IdPicture URL (optionnel)</label>
+          <input name="idpicture_url" value="{{ edit_row[8] or '' }}" placeholder="https://...">
+          {% if edit_row[8] %}
+            <div class="small" style="margin-top:6px;">
+              <a href="{{ edit_row[8] }}" target="_blank" rel="noopener">Open ID picture</a>
+            </div>
+          {% endif %}
+        </div>
+
+        <div>
+          <label>Statut</label>
+          <select name="currentstatute" required>
+            {% for s in statutes %}
+              <option value="{{ s }}" {{ 'selected' if s==edit_row[9] else '' }}>{{ s }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div>
+          <label>New password (optionnel)</label>
+          <input name="password" type="password" placeholder="laisser vide pour ne pas changer">
+        </div>
+      </div>
+
+      <div class="row">
+        <button class="btn" type="submit">Save</button>
+        <a class="btn secondary" href="{{ url_for('home') }}" style="display:inline-flex;align-items:center;justify-content:center;">Cancel</a>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+
+  <div class="card">
+    <h2 style="margin-top:0;">Liste des membres</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:70px;">ID</th>
+          <th>Phone</th>
+          <th>Type</th>
+          <th>Mentor</th>
+          <th>Lastname</th>
+          <th>Firstname</th>
+          <th>Birthdate</th>
+          <th>IdType</th>
+          <th>IdPicture</th>
+          <th>Statut</th>
+          <th>Update date</th>
+          <th>Update user</th>
+          <th style="width:160px;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in rows %}
+        <tr>
+          <td>{{ r[0] }}</td>
+          <td>{{ r[1] }}</td>
+          <td>{{ r[2] }}</td>
+          <td>{{ r[3] }}</td>
+          <td>{{ r[4] }}</td>
+          <td>{{ r[5] }}</td>
+          <td>{{ r[6].strftime('%d/%m/%Y') }}</td>
+          <td>{{ r[7] }}</td>
+          <td>
+            {% if r[8] %}
+              <a href="{{ r[8] }}" target="_blank" rel="noopener">link</a>
+            {% else %}
+              <span class="small">—</span>
+            {% endif %}
+          </td>
+          <td>{{ r[9] }}</td>
+          <td>{{ r[10].strftime('%d/%m/%Y') }}</td>
+          <td>{{ r[11] }}</td>
+          <td>
+            <a href="{{ url_for('edit', member_id=r[0]) }}">Edit</a>
+            <form method="post"
+                  action="{{ url_for('delete', member_id=r[0]) }}"
+                  style="display:inline;"
+                  onsubmit="return confirm('Supprimer ce membre (ID {{ r[0] }}) ?');">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit" class="btn secondary" style="padding:6px 10px; margin-left:8px;">
+                Delete
+              </button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+        {% if not rows %}
+        <tr><td colspan="13" class="small">Aucune donnée pour le moment.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>
+"""
 
 # ----------------------------
 # Routes
