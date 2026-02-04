@@ -356,6 +356,11 @@ def create_deces(phone: str, date_deces, declared_by: str, reference: str):
             """, (phone, date_deces, declared_by, reference))
         conn.commit()
 
+# ----------------------------
+# Validation
+# ----------------------------
+def _strip(x): return (x or "").strip()
+
 def validate_member_form(form, for_update=False):
     phone = _strip(form.get("phone"))
     membertype = _strip(form.get("membertype"))
@@ -394,6 +399,7 @@ def validate_member_form(form, for_update=False):
         "currentstatute": currentstatute,
         "password": password,
     }
+
 
 #proposition STUDIO EDITOR
 #def fetch_password_hash_and_statute_by_phone(phone: str) -> tuple[str, str] | None:
