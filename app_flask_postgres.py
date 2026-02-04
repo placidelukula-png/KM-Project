@@ -1082,32 +1082,76 @@ def import_mouvements():
 #-----------------------------------------------------------------------------
 # Endpoint #8 — Check mouvements (admin) : afficher toute la table 'mouvements'
 #-----------------------------------------------------------------------------
-IMPORT_PAGE = """
+CHECK_MVT_PAGE = """
 <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Importer cotisations</title></head><body style="font-family:Arial;margin:20px">
-<h2>Importer cotisations</h2>
+<title>Check mouvements</title>
+<style>
+ body{font-family:Arial;margin:20px} .wrap{max-width:1200px;margin:0 auto}
+ table{width:100%;border-collapse:collapse}
+ th,td{padding:10px;border-bottom:1px solid #eee;text-align:left}
+ th{background:#f6f6f6}
+ input,select{padding:8px;border:1px solid #ddd;border-radius:10px}
+ .btn{padding:7px 10px;border:1px solid #111;border-radius:10px;background:#111;color:#fff;cursor:pointer}
+ .btn2{padding:7px 10px;border:1px solid #111;border-radius:10px;background:#fff;color:#111;cursor:pointer}
+</style></head><body><div class="wrap">
+<h2>Check mouvements (admin)</h2>
 <p><a href="{{ url_for('home') }}">← Retour</a></p>
-<form method="post">
+<table>
+<thead><tr><th>ID</th><th>Phone</th><th>Firstname</th><th>Date</th><th>Amount</th><th>D/C</th><th>Reference</th><th>Action</th></tr></thead>
+<tbody>
+{% for r in rows %}
+<tr>
+<form method="post" action="{{ url_for('check_mouvements_update', mvt_id=r[0]) }}">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <button type="submit" style="padding:10px 14px;border-radius:12px;border:1px solid #111;background:#111;color:#fff;cursor:pointer;">
-    Lancer import_mouvements.py
-  </button>
+  <td>{{ r[0] }}</td>
+  <td>{{ r[1] }}</td>
+  <td>{{ r[2] }}</td>
+  <td><input name="mvt_date" value="{{ r[3].strftime('%d/%m/%Y') }}" size="10"></td>
+  <td><input name="amount" value="{{ r[4] }}" size="8"></td>
+  <td>
+    <select name="debitcredit">
+      <option value="D" {{ 'selected' if r[5]=='D' else '' }}>D</option>
+      <option value="C" {{ 'selected' if r[5]=='C' else '' }}>C</option>
+    </select>
+  </td>
+  <td><input name="reference" value="{{ r[6] }}" size="16"></td>
+  <td>
+    <button class="btn" type="submit">Save</button>
 </form>
-{% if message %}<p style="margin-top:12px;">{{ message }}</p>{% endif %}
-</body></html>
+<form method="post" action="{{ url_for('check_mouvements_delete', mvt_id=r[0]) }}" style="display:inline">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <button class="btn2" type="submit" onclick="return confirm('Supprimer?')">Delete</button>
+</form>
+  </td>
+</tr>
+{% endfor %}
+{% if not rows %}<tr><td colspan="8">Aucun mouvement.</td></tr>{% endif %}
+</tbody>
+</table>
+</div></body></html>
 """
-# Endpoint8 Check mouvements (menu card)
-@app.route("/import", methods=["GET","POST"])
-@admin_required
-def import_mouvements():
-    if request.method == "POST":
-        # ⚠️ Ici on appelle une fonction python (à créer dans import_mouvements.py)
-        # from import_mouvements import run_import
-        # n, msg = run_import(DATABASE_URL)
-        # return render_template_string(IMPORT_PAGE, message=f"Import OK: {n} lignes. {msg}")
 
-        return render_template_string(IMPORT_PAGE, message="Import déclenché (stub). Branche run_import() ensuite.")
-    return render_template_string(IMPORT_PAGE, message="")
+@app.get("/checkmouvements")
+@admin_required
+def check_mouvements():
+    rows = list_all_mouvements()
+    return render_template_string(CHECK_MVT_PAGE, rows=rows)
+
+@app.post("/checkmouvements/update/<int:mvt_id>")
+@admin_required
+def check_mouvements_update(mvt_id: int):
+    d = datetime.strptime((request.form.get("mvt_date") or "").strip(), "%d/%m/%Y").date()
+    amount = float((request.form.get("amount") or "0").strip())
+    dc = (request.form.get("debitcredit") or "D").strip()
+    ref = (request.form.get("reference") or "").strip()
+    update_mouvement(mvt_id, d, amount, dc, ref)
+    return redirect(url_for("check_mouvements"))
+
+@app.post("/checkmouvements/delete/<int:mvt_id>")
+@admin_required
+def check_mouvements_delete(mvt_id: int):
+    delete_mouvement(mvt_id)
+    return redirect(url_for("check_mouvements"))
 
 #----------------------------------------------------------------------------------------------
 # Endpoint #9 — Data general follow-up (admin) : CRUD sur membres (sauf updatedate/updateuser)
