@@ -447,18 +447,14 @@ def login_required(view):
 
 
 def verify_user(phone: str, password: str) -> bool:
+    """Retourne True si (phone, password) est valide et statut autorisé."""
     row = fetch_password_hash_and_statute_by_phone(phone)
     log.info("Login attempt; data in : row=%s", row)
     if not row:
-        # après verify_user OK
-        member = fetch_member_by_phone(phone)
-        session["user"] = phone
-        session["membertype"] = member[2]
-        #
         return False
 
     pwd_hash, statut = row
-    log.info("Login attempt: phone=%s statut=%s pwd_hash=%s password=%s", phone, statut, pwd_hash, password) 
+    log.info("Login attempt: phone=%s statut=%s", phone, statut)
 
     # bloque login pour suspendu & radié
     if statut in ("radié", "suspendu"):
@@ -536,7 +532,9 @@ def login_post():
             return render_template_string(LOGIN_PAGE, message="Compte introuvable.")
 
         session["user"] = phone
-        session["membertype"] = member[3]  # ✅ index 3 = membertype (selon SELECT)
+        session["membertype"] = member[2]  # index 2 = membertype
+        session["firstname"] = member[5]
+        session["lastname"] = member[4]
         session.permanent = True
 
         return redirect(url_for("home"))
@@ -679,15 +677,6 @@ DASHBOARD_PAGE = """
   </div>
 </body></html>
 """
-#(0) Home dashboard (menu cards)
-@app.get("/")
-@login_required
-#def home():
-#    phone = session["user"]
-#    role = session.get("membertype", "")
-#    m = fetch_member_by_phone(phone)
-#    fullname = f"{m[5]} {m[4]}" if m else ""
-#    return render_template_string(DASHBOARD_PAGE, phone=phone, fullname=fullname, role=role)
 @app.get("/")
 @login_required
 def home():
@@ -696,9 +685,11 @@ def home():
     phone = session.get("user")  # ✅ ici on a phone
     member = fetch_member_by_phone(phone) if phone else None
 
-    # member = (phone, firstname, lastname, membertype) selon la requête ci-dessus
     if member:
-        connected_phone, connected_firstname, connected_lastname, connected_role = member
+        connected_phone = member[1]
+        connected_firstname = member[5]
+        connected_lastname = member[4]
+        connected_role = member[2]
         connected_label = f"{connected_phone} — {connected_firstname} {connected_lastname}"
     else:
         connected_label = phone or ""
