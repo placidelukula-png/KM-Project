@@ -166,6 +166,19 @@ def init_db():
 
         conn.commit()
 
+#
+
+def fetch_first_last_by_phone(phone: str):
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT firstname, lastname
+                FROM membres
+                WHERE phone = %s
+                LIMIT 1
+            """, (phone,))
+            return cur.fetchone()   # tuple: (firstname, lastname) ou None
+
 #< 20260203
 
 # ✅ IMPORTANT : exécuté aussi sous gunicorn (Render)
