@@ -534,27 +534,27 @@ LOGIN_PAGE = """
 </html>
 """
 # Login endpoint cards
-@app.post("/login",methods=["GET","POST"])
-@limiter.limit("5 per minute")
-def login():
-    if request.method=="POST":
-      phone = (request.form.get("phone") or "").strip()
-      password = request.form.get("password") or ""
+#@app.post("/login",methods=["GET","POST"])
+#@limiter.limit("5 per minute")
+#def login():
+#    if request.method=="POST":
+#      phone = (request.form.get("phone") or "").strip()
+#      password = request.form.get("password") or ""
 
-      if verify_user(phone, password):
-          member = fetch_member_by_phone(phone)  # ✅ ici phone existe
-          if not member:
-              return render_template_string(LOGIN_PAGE, message="Compte introuvable.")
+#      if verify_user(phone, password):
+#          member = fetch_member_by_phone(phone)  # ✅ ici phone existe
+#          if not member:
+#              return render_template_string(LOGIN_PAGE, message="Compte introuvable.")
+#
+#          session["user"] = phone
+#          session["membertype"] = member[2]  # index 2 = membertype
+#          session["firstname"] = member[5]
+#          session["lastname"] = member[4]
+#          session.permanent = True
 
-          session["user"] = phone
-          session["membertype"] = member[2]  # index 2 = membertype
-          session["firstname"] = member[5]
-          session["lastname"] = member[4]
-          session.permanent = True
+#          return redirect(url_for("home"))
 
-          return redirect(url_for("home"))
-
-    return render_template_string(LOGIN_PAGE, message="Identifiants invalides ou membre suspendu/radié.")
+#    return render_template_string(LOGIN_PAGE, message="Identifiants invalides ou membre suspendu/radié.")
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
