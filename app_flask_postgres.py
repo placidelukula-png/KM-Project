@@ -520,6 +520,7 @@ LOGIN_PAGE = """
       <button class="btn" type="submit">Sign in</button>
     </form>
 
+
     {% if message %}
       <div class="msg error">{{ message }}</div>
     {% endif %}
@@ -533,24 +534,25 @@ LOGIN_PAGE = """
 </html>
 """
 # Login endpoint cards
-@app.post("/login")
+@app.post("/login",methods=["GET","POST"])
 @limiter.limit("5 per minute")
 def login():
-    phone = (request.form.get("phone") or "").strip()
-    password = request.form.get("password") or ""
+    if request.method=="POST":
+      phone = (request.form.get("phone") or "").strip()
+      password = request.form.get("password") or ""
 
-    if verify_user(phone, password):
-        member = fetch_member_by_phone(phone)  # ✅ ici phone existe
-        if not member:
-            return render_template_string(LOGIN_PAGE, message="Compte introuvable.")
+      if verify_user(phone, password):
+          member = fetch_member_by_phone(phone)  # ✅ ici phone existe
+          if not member:
+              return render_template_string(LOGIN_PAGE, message="Compte introuvable.")
 
-        session["user"] = phone
-        session["membertype"] = member[2]  # index 2 = membertype
-        session["firstname"] = member[5]
-        session["lastname"] = member[4]
-        session.permanent = True
+          session["user"] = phone
+          session["membertype"] = member[2]  # index 2 = membertype
+          session["firstname"] = member[5]
+          session["lastname"] = member[4]
+          session.permanent = True
 
-        return redirect(url_for("home"))
+          return redirect(url_for("home"))
 
     return render_template_string(LOGIN_PAGE, message="Identifiants invalides ou membre suspendu/radié.")
 
