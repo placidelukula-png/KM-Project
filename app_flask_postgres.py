@@ -535,7 +535,7 @@ LOGIN_PAGE = """
 # Login endpoint cards
 @app.post("/login")
 @limiter.limit("5 per minute")
-def login_post():
+def login():
     phone = (request.form.get("phone") or "").strip()
     password = request.form.get("password") or ""
 
