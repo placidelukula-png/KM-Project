@@ -555,7 +555,25 @@ def login():
           return redirect(url_for("home"))
 
     return render_template_string(LOGIN_PAGE, message="Identifiants invalides ou membre suspendu/radié.")
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        phone = request.form.get("phone")
+        password = request.form.get("password")
 
+        if verify_user(phone, password):
+            session["user"] = phone
+            session["membertype"] = member[2]  # index 2 = membertype
+            session["firstname"] = member[5]
+            session["lastname"] = member[4]
+            session.permanent = True
+            return redirect(url_for("home"))
+        else:
+            error = "Identifiants incorrects"
+            return render_template_string(LOGIN_PAGE, message=error)
+
+    return render_template_string(LOGIN_PAGE)
+  
 
 
 # --------------------------------------
