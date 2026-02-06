@@ -588,7 +588,7 @@ DASHBOARD_PAGE = """
       <h2 style="margin:0;">Kimya</h2>
       <div class="muted">membre connecté : <b>{{ connected_label }}</b></div>
       <div class="pill">Rôle: <b>{{ connected_role }}</b></div>
-      <style>.maxlenght="15"</style>
+      <style>.maxwidth{max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}</style>
       <a class="btn" href="{{ url_for('logout') }}">Logout</a>
     </div>
     <style>div{white-space:nowrap;}</style>
