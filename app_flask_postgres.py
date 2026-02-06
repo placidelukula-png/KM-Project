@@ -582,7 +582,8 @@ DASHBOARD_PAGE = """
 </style>
 </head>
 <body>
-  <span class="top">
+  <div class="top">
+  <p style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
     <div class="brand">KM</div>
     <div class="hdr">
       <h2 style="margin:0;">KM-Kimya</h2>
@@ -591,8 +592,9 @@ DASHBOARD_PAGE = """
       <span class="pill">Rôle: <b>{{ connected_role }}</b></span>
       <a class="btn" href="{{ url_for('logout') }}">Logout</a>
     </div>
-  </span>
-</div>
+  </p>  
+  </div>
+
 
   <div class="grid">
     <div class="card">
