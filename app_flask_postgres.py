@@ -287,10 +287,7 @@ def delete_member(member_id: int):
         with conn.cursor() as cur:
             cur.execute("DELETE FROM membres WHERE id = %s", (member_id,))
         conn.commit()
-
 #
-
-
 #> 20260203
 def fetch_member_by_phone(phone: str):
     with get_conn() as conn:
@@ -562,6 +559,7 @@ def login():
         password = request.form.get("password")
 
         if verify_user(phone, password):
+            member = fetch_member_by_phone(phone)  # ✅ ici phone existe
             session["user"] = phone
             session["membertype"] = member[2]  # index 2 = membertype
             session["firstname"] = member[5]
