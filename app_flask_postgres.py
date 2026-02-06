@@ -709,6 +709,7 @@ def home():
         DASHBOARD_PAGE,
         rows=rows,
         connected_label=connected_label,   # ✅ variable pour l'affichage
+        connected_role=connected_role if member else "",  
         edit_row=None,
         edit_birthdate="",
         message="",
