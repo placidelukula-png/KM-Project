@@ -737,6 +737,11 @@ def home():
         statutes=STATUTES,
     )
 
+@app.route("/logout", methods=["GET"])
+def logout():
+    session.clear()              # supprime user, membertype, etc.
+    return redirect(url_for("login"))
+
 
 
 # ---------------------------------------------------------------
