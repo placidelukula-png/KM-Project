@@ -530,28 +530,7 @@ LOGIN_PAGE = """
 </body>
 </html>
 """
-# Login endpoint cards
-#@app.post("/login",methods=["GET","POST"])
-#@limiter.limit("5 per minute")
-#def login():
-#    if request.method=="POST":
-#      phone = (request.form.get("phone") or "").strip()
-#      password = request.form.get("password") or ""
 
-#      if verify_user(phone, password):
-#          member = fetch_member_by_phone(phone)  # ✅ ici phone existe
-#          if not member:
-#              return render_template_string(LOGIN_PAGE, message="Compte introuvable.")
-#
-#          session["user"] = phone
-#          session["membertype"] = member[2]  # index 2 = membertype
-#          session["firstname"] = member[5]
-#          session["lastname"] = member[4]
-#          session.permanent = True
-
-#          return redirect(url_for("home"))
-
-#    return render_template_string(LOGIN_PAGE, message="Identifiants invalides ou membre suspendu/radié.")
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -604,10 +583,10 @@ DASHBOARD_PAGE = """
 </head>
 <body>
   <div class="top">
-    <div class="brand">KM</div>
+    <span class="brand">KM</span>
     <div class="hdr">
       <h2 style="margin:0;">KM-Kimya</h2>
-      <div class="muted">membre connecté : <b>{{ connected_label }}</b></div>
+      <span class="muted">membre connecté : <b>{{ connected_label }}</b></span>
     <div class="actions">
       <span class="pill">Rôle: <b>{{ connected_role }}</b></span>
       <a class="btn" href="{{ url_for('logout') }}">Logout</a>
