@@ -583,16 +583,14 @@ DASHBOARD_PAGE = """
 </head>
 <body>
   <div class="top">
-  <p style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
     <div class="brand">KM</div>
     <div class="hdr">
-      <h2 style="margin:0;">KM-Kimya</h2>
+      <h2 style="margin:0;">Kimya</h2>
       <div class="muted">membre connecté : <b>{{ connected_label }}</b></div>
     <div class="actions">
       <span class="pill">Rôle: <b>{{ connected_role }}</b></span>
       <a class="btn" href="{{ url_for('logout') }}">Logout</a>
     </div>
-  </p>  
   </div>
 
 
