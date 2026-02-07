@@ -1,10 +1,5 @@
-# ---------------------------------
-# External functions impotation
-# ---------------------------------
 from __future__ import annotations
 
-from enum import member
-from enum import member
 import os
 import logging
 from datetime import datetime, timedelta
@@ -104,15 +99,15 @@ def get_conn():
     # tuple_row => on garde des tuples (r[0], r[1]...) cohérents avec ton HTML
     return psycopg.connect(DATABASE_URL, row_factory=tuple_row)
 
-#>20260203
+
 def init_db():
+    """Crée la table membres + admin par défaut si absent."""
     with get_conn() as conn:
         with conn.cursor() as cur:
-            # membres (avec balance)
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS membres (
                   id             BIGSERIAL PRIMARY KEY,
-                  phone          TEXT NOT NULL UNIQUE,
+                  phone          TEXT NOT NULL,
                   membertype     TEXT NOT NULL,
                   mentor         TEXT NOT NULL,
                   lastname       TEXT NOT NULL,
@@ -121,52 +116,60 @@ def init_db():
                   idtype         TEXT NOT NULL,
                   idpicture_url  TEXT,
                   currentstatute TEXT NOT NULL,
-                  balance        DECIMAL(18,2) NOT NULL DEFAULT 0,
                   updatedate     DATE NOT NULL DEFAULT CURRENT_DATE,
                   updateuser     TEXT NOT NULL,
                   password_hash  TEXT NOT NULL,
-                  membershipdate DATE NOT NULL DEFAULT CURRENT_DATE,
+                  balance        DECIMAL(14,2) NOT NULL DEFAULT 0,      
+                  membershipdate DATE NOT NULL DEFAULT CURRENT_DATE,                        
                   CONSTRAINT membres_membertype_chk
                     CHECK (membertype IN ('membre','independant','mentor','admin')),
                   CONSTRAINT membres_currentstatute_chk
                     CHECK (currentstatute IN ('probatoire','actif','inactif','suspendu','radié'))
                 );
-            """)
+            """)  
+            cur.execute("CREATE UNIQUE INDEX IF NOT EXISTS membres_phone_uq ON membres(phone);")
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_membres_phone ON membres(phone);")
 
-            # mouvements
-            cur.execute("""
-                CREATE TABLE IF NOT EXISTS mouvements (
-                  id           BIGSERIAL PRIMARY KEY,
-                  phone        TEXT NOT NULL,
-                  firstname    TEXT NOT NULL,
-                  mvt_date     DATE NOT NULL,
-                  amount       DECIMAL(18,2) NOT NULL DEFAULT 0,
-                  debitcredit  VARCHAR(1) NOT NULL CHECK (debitcredit IN ('D','C')),
-                  reference    TEXT NOT NULL UNIQUE,
-                  created_at   TIMESTAMP NOT NULL DEFAULT NOW(),
-                  CONSTRAINT fk_mvt_phone FOREIGN KEY (phone) REFERENCES membres(phone)
-                );
-            """)
-            cur.execute("CREATE INDEX IF NOT EXISTS idx_mouvements_phone ON mouvements(phone);")
-            cur.execute("CREATE INDEX IF NOT EXISTS idx_mouvements_date ON mouvements(mvt_date);")
-
-            # décès
+            # Admin par défaut si absent
+            cur.execute("SELECT 1 FROM membres WHERE phone = %s", (ADMIN_PHONE,))
+            if cur.fetchone() is None:
+                log.info("Admin absent -> création du compte admin par défaut")
+                cur.execute("""
+                    INSERT INTO membres
+                    (phone, membertype, mentor, lastname, firstname, birthdate, idtype, idpicture_url,
+                     currentstatute, updatedate, updateuser, password_hash)
+                    VALUES
+                    (%s, 'admin', 'Admin', 'Admin', 'KM', %s, 'N/A', NULL, 'actif', CURRENT_DATE, %s, %s)
+                """, (
+                    ADMIN_PHONE,
+                    datetime.strptime("01/01/2000", "%d/%m/%Y").date(),
+                    ADMIN_PHONE,
+                    generate_password_hash(ADMIN_PASSWORD),
+                ))
+###
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS deces (
-                  id            BIGSERIAL PRIMARY KEY,
-                  phone         TEXT NOT NULL,
-                  date_deces    DATE NOT NULL,
-                  declared_by   TEXT NOT NULL,
-                  created_at    TIMESTAMP NOT NULL DEFAULT NOW(),
-                  reference     TEXT NOT NULL UNIQUE,
-                  CONSTRAINT fk_deces_phone FOREIGN KEY (phone) REFERENCES membres(phone)
-                );
-            """)
-            cur.execute("CREATE INDEX IF NOT EXISTS idx_deces_phone ON deces(phone);")
-
+                  id             BIGSERIAL PRIMARY KEY,
+                  defunt         TEXT NOT NULL,
+                  annonceur      TEXT NOT NULL,
+                  date_deces     TEXT NOT NULL,
+		              date_annonce	 DATE NOT NULL DEFAULT CURRENT_DATE,
+                  lastname       TEXT NOT NULL,
+                  firstname      TEXT NOT NULL,
+                  birthdate      DATE NOT NULL,
+                  document_url   TEXT,
+		              commentaire    TEXT NOT NULL, 
+		              confirmation   TEXT NOT NULL,
+                  montant		     DECIMAL(14,2) NOT NULL DEFAULT 0,
+                  membershipdate DATE NOT NULL DEFAULT CURRENT_DATE,                        
+                  updatedate     DATE NOT NULL DEFAULT CURRENT_DATE,
+                  updateuser     TEXT NOT NULL,
+                  CONSTRAINT deces_confirmation_check
+                    CHECK (confirmation IN ('attente','refusé','confirmé'))			
+                );        
+            """)  
+### 
         conn.commit()
-
-#
 
 def fetch_first_last_by_phone(phone: str):
     with get_conn() as conn:
@@ -179,7 +182,6 @@ def fetch_first_last_by_phone(phone: str):
             """, (phone,))
             return cur.fetchone()   # tuple: (firstname, lastname) ou None
 
-#< 20260203
 
 # ✅ IMPORTANT : exécuté aussi sous gunicorn (Render)
 try:
@@ -188,6 +190,19 @@ except Exception:
     log.exception("init_db() a échoué au démarrage")
     # on laisse continuer pour que les logs apparaissent, mais l'app sera probablement inutilisable
 
+
+#> Jan 30 2026
+#from functools import wraps
+#from flask import session, redirect, url_for, request
+#def login_required(view):
+#    @wraps(view)
+#    def wrapped_view(*args, **kwargs):
+#        if "user" not in session:
+#            # mémorise la page demandée (optionnel mais propre)
+#            return redirect(url_for("login", next=request.path))
+#        return view(*args, **kwargs)
+#    return wrapped_view
+#< Jan 30 2026
 
 # ----------------------------
 # Queries (ORDER des colonnes = contrat avec le HTML)
@@ -202,19 +217,17 @@ except Exception:
 # 6 birthdate
 # 7 idtype
 # 8 idpicture_url
-# 9 currentstatute 
-# 10 balance
-# 11 updatedate
-# 12 updateuser
-# 13 password_hash
-# 14 membershipdate
+# 9 currentstatute
+# 10 updatedate
+# 11 updateuser
 
 SELECT_membres = """
     SELECT id, phone, membertype, mentor, lastname, firstname, birthdate,
-           idtype, idpicture_url, currentstatute, balance, updatedate, updateuser, password_hash, membershipdate
+           idtype, idpicture_url, currentstatute, updatedate, updateuser
     FROM membres
 """
-#
+
+
 def fetch_all_membres():
     with get_conn() as conn:
         with conn.cursor() as cur:
@@ -287,91 +300,41 @@ def delete_member(member_id: int):
         with conn.cursor() as cur:
             cur.execute("DELETE FROM membres WHERE id = %s", (member_id,))
         conn.commit()
-#
-#> 20260203
-def fetch_member_by_phone(phone: str):
-    with get_conn() as conn:
-        with conn.cursor() as cur:
-            cur.execute("""
-                SELECT id, phone, membertype, mentor, lastname, firstname, birthdate,
-                       idtype, idpicture_url, currentstatute, balance, updatedate, updateuser
-                FROM membres
-                WHERE phone=%s
-            """, (phone,))
-            return cur.fetchone()
 
-def update_member_password(phone: str, new_password_plain: str, updateuser: str):
-    pwd_hash = generate_password_hash(new_password_plain)
-    with get_conn() as conn:
-        with conn.cursor() as cur:
-            cur.execute("""
-                UPDATE membres
-                SET password_hash=%s, updatedate=CURRENT_DATE, updateuser=%s
-                WHERE phone=%s
-            """, (pwd_hash, updateuser, phone))
-        conn.commit()
 
-def list_mouvements_by_phone(phone: str):
-    with get_conn() as conn:
-        with conn.cursor() as cur:
-            cur.execute("""
-                SELECT id, phone, firstname, mvt_date, amount, debitcredit, reference, created_at
-                FROM mouvements
-                WHERE phone=%s
-                ORDER BY mvt_date DESC, id DESC
-            """, (phone,))
-            return cur.fetchall()
+# ----------------------------
+# Auth helpers
+# ----------------------------
+def login_required(view):
+    @wraps(view)
+    def wrapped(*args, **kwargs):
+        if not session.get("user"):
+            return redirect(url_for("login"))
+        return view(*args, **kwargs)
+    return wrapped
 
-def list_all_mouvements():
-    with get_conn() as conn:
-        with conn.cursor() as cur:
-            cur.execute("""
-                SELECT id, phone, firstname, mvt_date, amount, debitcredit, reference, created_at
-                FROM mouvements
-                ORDER BY mvt_date DESC, id DESC
-            """)
-            return cur.fetchall()
 
-def update_mouvement(mvt_id: int, mvt_date, amount, debitcredit, reference):
-    with get_conn() as conn:
-        with conn.cursor() as cur:
-            cur.execute("""
-                UPDATE mouvements
-                SET mvt_date=%s, amount=%s, debitcredit=%s, reference=%s
-                WHERE id=%s
-            """, (mvt_date, amount, debitcredit, reference, mvt_id))
-        conn.commit()
+def verify_user(phone: str, password: str) -> bool:
+    row = fetch_password_hash_and_statute_by_phone(phone)
+    log.info("Login attempt; data in : row=%s", row)
+    if not row:
+        return False
 
-def delete_mouvement(mvt_id: int):
-    with get_conn() as conn:
-        with conn.cursor() as cur:
-            cur.execute("DELETE FROM mouvements WHERE id=%s", (mvt_id,))
-        conn.commit()
+    pwd_hash, statut = row
+    log.info("Login attempt: phone=%s statut=%s pwd_hash=%s password=%s", phone, statut, pwd_hash, password) 
 
-def list_groupe_for_mentor(mentor_phone: str):
-    with get_conn() as conn:
-        with conn.cursor() as cur:
-            cur.execute("""
-                SELECT phone, firstname, lastname, membertype, currentstatute, balance
-                FROM membres
-                WHERE mentor=%s
-                ORDER BY lastname, firstname
-            """, (mentor_phone,))
-            return cur.fetchall()
+    # bloque login pour suspendu & radié
+    if statut in ("radié", "suspendu"):
+        return False
 
-def create_deces(phone: str, date_deces, declared_by: str, reference: str):
-    with get_conn() as conn:
-        with conn.cursor() as cur:
-            cur.execute("""
-                INSERT INTO deces (phone, date_deces, declared_by, reference)
-                VALUES (%s,%s,%s,%s)
-            """, (phone, date_deces, declared_by, reference))
-        conn.commit()
+    return check_password_hash(pwd_hash, password)
+
 
 # ----------------------------
 # Validation
 # ----------------------------
 def _strip(x): return (x or "").strip()
+
 
 def validate_member_form(form, for_update=False):
     phone = _strip(form.get("phone"))
@@ -412,79 +375,136 @@ def validate_member_form(form, for_update=False):
         "password": password,
     }
 
+#####> 30 Jan 2026
+# Ajoute ce helper (Python) et passe menu_zone1/2/3 au template PAGE
 
-#proposition STUDIO EDITOR
-#def fetch_password_hash_and_statute_by_phone(phone: str) -> tuple[str, str] | None:
-#    with get_conn() as conn:
-#        with conn.cursor() as cur:
-#            cur.execute("SELECT password_hash, currentstatute FROM membres WHERE phone = %s", (phone,))
-#            row = cur.fetchone()
-#            return (row[0], row[1]) if row else None
+def get_menu_for_user():
+    role = get_current_user_type()  # "membre"/"independant"/"mentor"/"admin"
+    zone1 = [
+        ("Profil", "profil"),
+        ("Mouvements", "mouvements"),
+        ("Décès", "deces"),
+        ("Mentor application", "mentorapplication"),
+    ]
+    zone2 = [
+        ("Groupe", "groupe"),
+        ("Ajouter membre", "addmember"),
+    ] if role in ("mentor", "admin") else []
+    zone3 = [
+        ("Import", "import_mouvements"),
+        ("Check mouvements", "checkmouvements"),
+        ("Data general follow-up", "datageneralfollowup"),
+    ] if role == "admin" else []
+    return zone1, zone2, zone3
+
+# Dans home():
+# menu_zone1, menu_zone2, menu_zone3 = get_menu_for_user()
+# ... render_template_string(PAGE, ..., menu_zone1=menu_zone1, menu_zone2=menu_zone2, menu_zone3=menu_zone3)
 
 
-# ------------------------------------
-# Décorateurs d'accès (login + rôles)
-# ------------------------------------
-def role_required(*roles):
+# ----------------------------
+# RBAC (Access control)
+# ----------------------------
+def get_current_user_type() -> str | None:
+    """Retourne le membertype du user connecté (ou None)."""
+    phone = session.get("user")
+    if not phone:
+        return None
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT membertype FROM membres WHERE phone = %s", (phone,))
+            row = cur.fetchone()
+            return row[0] if row else None
+
+
+def role_required(*allowed_roles):
+    """Decorator d'accès selon membertype."""
     def deco(view):
         @wraps(view)
         def wrapped(*args, **kwargs):
-            if "user" not in session:
-                return redirect(url_for("login", next=request.path))
-            if session.get("membertype") not in roles:
+            if not session.get("user"):
+                return redirect(url_for("login"))
+            role = get_current_user_type()
+            if role not in allowed_roles:
                 abort(403)
             return view(*args, **kwargs)
         return wrapped
     return deco
 
-admin_required = role_required("admin")
-mentor_required = role_required("mentor", "admin")   # admin voit tout
 
+# Helpers de zones
+member_access = role_required("membre", "independant", "mentor", "admin")
+mentor_access = role_required("mentor", "admin")
+admin_access  = role_required("admin")
 
-
-#< 20260203
 
 # ----------------------------
-# Auth helpers
+# Endpoints (9)
 # ----------------------------
-def login_required(view):
-    @wraps(view)
-    def wrapped(*args, **kwargs):
-        if not session.get("user"):
-            return redirect(url_for("login"))
-        return view(*args, **kwargs)
-    return wrapped
+
+# Zone 1 (tous)
+@app.get("/profil")
+@login_required
+@member_access
+def profil():
+    return "TODO: profil"
+
+@app.get("/mouvements")
+@login_required
+@member_access
+def mouvements():
+    return "TODO: mouvements"
+
+@app.get("/deces")
+@login_required
+@member_access
+def deces():
+    return "TODO: deces"
+
+@app.get("/mentorapplication")
+@login_required
+@member_access
+def mentorapplication():
+    return "TODO: mentorapplication"
 
 
-def verify_user(phone: str, password: str) -> bool:
-    """Retourne True si (phone, password) est valide et statut autorisé."""
-    row = fetch_password_hash_and_statute_by_phone(phone)
-    log.info("Login attempt; data in : row=%s", row)
-    if not row:
-        return False
+# Zone 2 (mentor + admin)
+@app.get("/groupe")
+@login_required
+@mentor_access
+def groupe():
+    return "TODO: groupe"
 
-    pwd_hash, statut = row
-    log.info("Login attempt: phone=%s statut=%s", phone, statut)
+@app.route("/addmember", methods=["GET", "POST"])
+@login_required
+@mentor_access
+def addmember():
+    return "TODO: addmember"
 
-    # bloque login pour suspendu & radié
-    if statut in ("radié", "suspendu"):
-        return False
 
-    return check_password_hash(pwd_hash, password)
+# Zone 3 (admin uniquement)
+@app.route("/import", methods=["GET", "POST"])
+@login_required
+@admin_access
+def import_mouvements():
+    return "TODO: import"
 
-def get_user_profile_by_phone(phone: str):
-    with get_conn() as conn:
-        with conn.cursor() as cur:
-            cur.execute("""
-                SELECT firstname, lastname, membertype
-                FROM membres
-                WHERE phone = %s
-            """, (phone,))
-            return cur.fetchone()
+@app.get("/checkmouvements")
+@login_required
+@admin_access
+def checkmouvements():
+    return "TODO: checkmouvements"
 
-#
+@app.get("/datageneralfollowup")
+@login_required
+@admin_access
+def datageneralfollowup():
+    return "TODO: datageneralfollowup"
+
+#####< 30 Jan 2026
+
 # ----------------------------
-# Lancement de l'application
+# Templates
 # ----------------------------
 LOGIN_PAGE = """
 <!doctype html>
@@ -517,7 +537,6 @@ LOGIN_PAGE = """
       <button class="btn" type="submit">Sign in</button>
     </form>
 
-
     {% if message %}
       <div class="msg error">{{ message }}</div>
     {% endif %}
@@ -531,649 +550,7 @@ LOGIN_PAGE = """
 </html>
 """
 
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        phone = request.form.get("phone")
-        password = request.form.get("password")
-
-        if verify_user(phone, password):
-            member = fetch_member_by_phone(phone)  # ✅ ici phone existe
-            session["user"] = phone
-            session["membertype"] = member[2]  # index 2 = membertype
-            session["firstname"] = member[5]
-            session["lastname"] = member[4]
-            session.permanent = True
-            return redirect(url_for("home"))
-        else:
-            error = "Identifiants incorrects"
-            return render_template_string(LOGIN_PAGE, message=error)
-
-    return render_template_string(LOGIN_PAGE)
-  
-
-
-# --------------------------------------
-# ENDPOINT #0 HOME PAGE ( ménu général)
-# --------------------------------------
-DASHBOARD_PAGE = """
-<!doctype html>
-<html><head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>KM-Kimya</title>
-<style>
-  body{font-family:Arial;margin:24px;background:#fff;}
-  .top{display:flex;align-items:flex-start;gap:14px;}
-  .brand{width:54px;height:54px;border-radius:16px;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;}
-  .hdr{flex:1}
-  .muted{color:#666;margin:2px 0 0}
-  .actions{display:flex;gap:10px;align-items:center;}
-  .pill{padding:6px 10px;border:1px solid #ddd;border-radius:999px;font-size:13px;background:#fafafa;}
-  .btn{padding:7px 12px;border:1px solid #111;border-radius:999px;background:#fff;cursor:pointer;}
-  .grid{margin-top:22px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
-  .card{border:1px solid #e7e7e7;border-radius:16px;padding:14px;display:flex;gap:12px;align-items:flex-start;}
-  .icon{width:42px;height:42px;border-radius:12px;border:1px solid #eee;display:flex;align-items:center;justify-content:center;background:#fafafa;}
-  .t{font-weight:700;margin:0}
-  .d{color:#666;margin:4px 0 0;font-size:13px}
-  .link{color:#0b57d0;text-decoration:none;font-weight:600;}
-  .link:hover{text-decoration:underline;}
-  @media (max-width: 900px){ .grid{grid-template-columns:1fr;} body{margin:14px;} }
-</style>
-</head>
-<body>
-  <div class="top">
-    <div class="brand">KM</div>
-    <div class="hdr">
-      <h2 style="margin:0;">Kimya</h2>
-      <div class="muted">membre connecté : <b>{{ connected_label }}</b></div>
-      <div class="pill">Rôle: <b>{{ connected_role }}</b>
-      <a class="btn" href="{{ url_for('logout') }}">Logout</a>
-      <style>max-width:48px;<style/></div>
-    </div>
-    <style>div{white-space:nowrap;}</style>
-  </div>
-
-
-  <div class="grid">
-    <div class="card">
-      <div class="icon">📄</div>
-      <div>
-        <p class="t">Mon compte</p>
-        <p class="d">Profil, informations et statut.</p>
-        <a class="link" href="{{ url_for('account') }}">Ouvrir</a>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="icon">💳</div>
-      <div>
-        <p class="t">Mes mouvements</p>
-        <p class="d">Historique des cotisations et solde.</p>
-        <a class="link" href="{{ url_for('my_mouvements') }}">Ouvrir</a>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="icon">🔁</div>
-      <div>
-        <p class="t">Transfert cotisations</p>
-        <p class="d">Transférer un montant vers un autre membre.</p>
-        <a class="link" href="{{ url_for('transfer') }}">Ouvrir</a>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="icon">🕊️</div>
-      <div>
-        <p class="t">Déclarer un décès</p>
-        <p class="d">Enregistrer un cas de décès.</p>
-        <a class="link" href="{{ url_for('deces') }}">Ouvrir</a>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="icon">🎓</div>
-      <div>
-        <p class="t">Mentor application</p>
-        <p class="d">Demande de statut Mentor.</p>
-        <a class="link" href="{{ url_for('mentor_application') }}">Ouvrir</a>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="icon">👥</div>
-      <div>
-        <p class="t">Mon groupe</p>
-        <p class="d">Membres rattachés + soldes.</p>
-        <a class="link" href="{{ url_for('groupe') }}">Ouvrir</a>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="icon">➕</div>
-      <div>
-        <p class="t">Créer un membre</p>
-        <p class="d">Enregistrer un nouveau membre.</p>
-        <a class="link" href="{{ url_for('add_member') }}">Ouvrir</a>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="icon">⬇️</div>
-      <div>
-        <p class="t">Importer cotisations</p>
-        <p class="d">Lancer import_mouvements.py (test).</p>
-        <a class="link" href="{{ url_for('import_mouvements') }}">Ouvrir</a>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="icon">🧾</div>
-      <div>
-        <p class="t">Check mouvements</p>
-        <p class="d">Voir/modifier toute la table mouvements.</p>
-        <a class="link" href="{{ url_for('check_mouvements') }}">Ouvrir</a>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="icon">🛠️</div>
-      <div>
-        <p class="t">Administration</p>
-        <p class="d">Suivi global & contrôle.</p>
-        <a class="link" href="{{ url_for('datageneralfollowup') }}">Ouvrir</a>
-      </div>
-    </div>
-  </div>
-</body></html>
-"""
-@app.get("/")
-@login_required
-def home():
-    rows = fetch_all_membres()
-
-    phone = session.get("user")  # ✅ ici on a phone
-    member = fetch_member_by_phone(phone) if phone else None
-
-    if member:
-        connected_phone = member[1]
-        connected_firstname = member[5]
-        connected_lastname = member[4]
-        connected_role = member[2]
-        connected_label = f"{connected_phone} — {connected_firstname} {connected_lastname}"
-    else:
-        connected_label = phone or ""
-
-    return render_template_string(
-        DASHBOARD_PAGE,
-        rows=rows,
-        connected_label=connected_label,   # ✅ variable pour l'affichage
-        connected_role=connected_role if member else "",  
-        edit_row=None,
-        edit_birthdate="",
-        message="",
-        is_error=False,
-        member_types=MEMBER_TYPES,
-        statutes=STATUTES,
-    )
-
-@app.route("/logout", methods=["GET"])
-def logout():
-    session.clear()              # supprime user, membertype, etc.
-    return redirect(url_for("login"))
-
-
-
-# ---------------------------------------------------------------
-#   Endpoint #1 — Mon compte (lecture + mot de passe modifiable)
-# ---------------------------------------------------------------
-ACCOUNT_PAGE = """
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Mon compte</title>
-<style>
- body{font-family:Arial;margin:20px} .wrap{max-width:900px;margin:0 auto}
- .card{border:1px solid #e7e7e7;border-radius:16px;padding:16px}
- label{display:block;margin:10px 0 4px;font-weight:700}
- input{width:100%;padding:10px;border:1px solid #ddd;border-radius:10px}
- input[readonly]{background:#f6f6f6}
- .row{display:flex;gap:10px;margin-top:12px}
- .btn{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#111;color:#fff;cursor:pointer}
- .btn2{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#fff;color:#111;cursor:pointer}
- .msg{margin-top:12px;padding:10px;border-radius:12px}
- .ok{background:#eaffea;border:1px solid #b8ffb8}
- .err{background:#ffe9ea;border:1px solid #ffb3b8}
-</style></head><body>
-<div class="wrap">
-  <h2>Mon compte</h2>
-  <p><a href="{{ url_for('home') }}">← Retour</a></p>
-  <div class="card">
-    <form method="post">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <label>Phone</label><input value="{{ m[1] }}" readonly>
-      <label>Nom</label><input value="{{ m[4] }}" readonly>
-      <label>Prénom</label><input value="{{ m[5] }}" readonly>
-      <label>Type</label><input value="{{ m[2] }}" readonly>
-      <label>Statut</label><input value="{{ m[9] }}" readonly>
-      <label>Solde</label><input value="{{ m[10] }}" readonly>
-
-      <label>Nouveau mot de passe</label>
-      <input name="new_password" type="password" placeholder="laisser vide pour ne pas changer">
-      <div class="row">
-        <button class="btn" type="submit">Enregistrer</button>
-        <a class="btn2" href="{{ url_for('home') }}">Annuler</a>
-      </div>
-      {% if message %}
-        <div class="msg {{ 'err' if is_error else 'ok' }}">{{ message }}</div>
-      {% endif %}
-    </form>
-  </div>
-</div></body></html>
-"""
-# Endpoint1 Mon Compte (menu card)
-@app.route("/account", methods=["GET","POST"])
-@login_required
-def account():
-    phone = session["user"]
-    m = fetch_member_by_phone(phone)
-    if request.method == "POST":
-        pwd = (request.form.get("new_password") or "").strip()
-        if pwd:
-            update_member_password(phone, pwd, updateuser=phone)
-            return render_template_string(ACCOUNT_PAGE, m=m, message="Mot de passe modifié.", is_error=False)
-        return render_template_string(ACCOUNT_PAGE, m=m, message="Aucun changement.", is_error=False)
-    return render_template_string(ACCOUNT_PAGE, m=m, message="", is_error=False)
-
-
-# ---------------------------------------------------------------
-#   Endpoint #2 — Mes mouvements (lecture seule + balance)
-# ---------------------------------------------------------------
-MY_MVT_PAGE = """
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Mes mouvements</title>
-<style>
- body{font-family:Arial;margin:20px} .wrap{max-width:1100px;margin:0 auto}
- .pill{display:inline-block;padding:6px 10px;border:1px solid #ddd;border-radius:999px;background:#fafafa;margin-bottom:10px}
- table{width:100%;border-collapse:collapse}
- th,td{padding:10px;border-bottom:1px solid #eee;text-align:left}
- th{background:#f6f6f6}
-</style></head><body><div class="wrap">
-  <h2>Mes mouvements</h2>
-  <p><a href="{{ url_for('home') }}">← Retour</a></p>
-  <div class="pill">Solde actuel: <b>{{ balance }}</b></div>
-  <table>
-    <thead><tr>
-      <th>Date</th><th>Montant</th><th>D/C</th><th>Référence</th>
-    </tr></thead>
-    <tbody>
-    {% for r in rows %}
-      <tr>
-        <td>{{ r[3].strftime('%d/%m/%Y') }}</td>
-        <td>{{ r[4] }}</td>
-        <td>{{ r[5] }}</td>
-        <td>{{ r[6] }}</td>
-      </tr>
-    {% endfor %}
-    {% if not rows %}<tr><td colspan="4">Aucun mouvement.</td></tr>{% endif %}
-    </tbody>
-  </table>
-</div></body></html>
-"""
-# Endpoint2 Mes mouvements (menu card)
-@app.get("/mouvements")
-@login_required
-def my_mouvements():
-    phone = session["user"]
-    m = fetch_member_by_phone(phone)
-    rows = list_mouvements_by_phone(phone)
-    return render_template_string(MY_MVT_PAGE, rows=rows, balance=(m[10] if m else 0))
-
-
-# ----------------------------------------------------------------------------
-# Endpoint #3 — Déclarer un décès (saisie phone + date, affichage nom/prénom)
-# ----------------------------------------------------------------------------
-DECES_PAGE = """
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Déclarer un décès</title>
-<style>
- body{font-family:Arial;margin:20px} .wrap{max-width:800px;margin:0 auto}
- .card{border:1px solid #e7e7e7;border-radius:16px;padding:16px}
- label{display:block;margin:10px 0 4px;font-weight:700}
- input{width:100%;padding:10px;border:1px solid #ddd;border-radius:10px}
- .row{display:flex;gap:10px;margin-top:12px}
- .btn{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#111;color:#fff;cursor:pointer}
- .btn2{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#fff;color:#111;cursor:pointer}
- .msg{margin-top:12px;padding:10px;border-radius:12px}
- .ok{background:#eaffea;border:1px solid #b8ffb8}
- .err{background:#ffe9ea;border:1px solid #ffb3b8}
-</style></head><body><div class="wrap">
-<h2>Déclarer un décès</h2>
-<p><a href="{{ url_for('home') }}">← Retour</a></p>
-<div class="card">
-<form method="post">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <label>Phone du membre</label>
-  <input name="phone" value="{{ phone_in or '' }}" required>
-  <label>Date de décès (JJ/MM/AAAA)</label>
-  <input name="date_deces" value="{{ date_in or '' }}" required>
-
-  {% if found_name %}
-    <div class="msg ok">Membre trouvé: <b>{{ found_name }}</b></div>
-  {% elif phone_in %}
-    <div class="msg err">Phone inconnu (membre non trouvé).</div>
-  {% endif %}
-
-  <div class="row">
-    <button class="btn" name="action" value="check" type="submit">Vérifier</button>
-    <button class="btn2" name="action" value="confirm" type="submit">Confirmer</button>
-  </div>
-
-  {% if message %}
-    <div class="msg {{ 'err' if is_error else 'ok' }}">{{ message }}</div>
-  {% endif %}
-</form>
-</div>
-</div></body></html>
-"""
-# Endpoint3 Déclaration décès (menu card)
-import uuid
-
-@app.route("/deces", methods=["GET","POST"])
-@login_required
-def deces():
-    message, is_error = "", False
-    phone_in = (request.form.get("phone") or "").strip() if request.method == "POST" else ""
-    date_in  = (request.form.get("date_deces") or "").strip() if request.method == "POST" else ""
-    found_name = ""
-
-    if request.method == "POST":
-        m = fetch_member_by_phone(phone_in) if phone_in else None
-        if m:
-            found_name = f"{m[5]} {m[4]}"
-        action = request.form.get("action")
-
-        if action == "confirm":
-            if not m:
-                return render_template_string(DECES_PAGE, phone_in=phone_in, date_in=date_in,
-                                              found_name="", message="Phone inconnu.", is_error=True)
-            try:
-                d = datetime.strptime(date_in, "%d/%m/%Y").date()
-                ref = f"DC-{uuid.uuid4().hex[:10]}"
-                create_deces(phone_in, d, declared_by=session["user"], reference=ref)
-                message, is_error = "Décès enregistré.", False
-                phone_in, date_in, found_name = "", "", ""
-            except Exception as e:
-                message, is_error = f"Erreur: {e}", True
-
-    return render_template_string(DECES_PAGE, phone_in=phone_in, date_in=date_in,
-                                  found_name=found_name, message=message, is_error=is_error)
-
-#----------------------------------------------------------------------
-# Endpoint #4 — Mentor application (membertype => uniquement 'mentor')
-#----------------------------------------------------------------------
-MENTOR_APP_PAGE = """
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Mentor application</title>
-<style>
- body{font-family:Arial;margin:20px} .wrap{max-width:800px;margin:0 auto}
- .card{border:1px solid #e7e7e7;border-radius:16px;padding:16px}
- label{display:block;margin:10px 0 4px;font-weight:700}
- input,select{width:100%;padding:10px;border:1px solid #ddd;border-radius:10px}
- input[readonly]{background:#f6f6f6}
- .row{display:flex;gap:10px;margin-top:12px}
- .btn{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#111;color:#fff;cursor:pointer}
- .btn2{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#fff;color:#111;cursor:pointer}
- .msg{margin-top:12px;padding:10px;border-radius:12px}
- .ok{background:#eaffea;border:1px solid #b8ffb8}
- .err{background:#ffe9ea;border:1px solid #ffb3b8}
-</style></head><body><div class="wrap">
-<h2>Mentor application</h2>
-<p><a href="{{ url_for('home') }}">← Retour</a></p>
-<div class="card">
-<form method="post">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <label>Phone</label><input value="{{ m[1] }}" readonly>
-  <label>Nom</label><input value="{{ m[4] }}" readonly>
-  <label>Prénom</label><input value="{{ m[5] }}" readonly>
-  <label>Membertype (demande)</label>
-  <select name="membertype" required>
-    <option value="mentor">mentor</option>
-  </select>
-  <div class="row">
-    <button class="btn" type="submit">Envoyer la demande</button>
-    <a class="btn2" href="{{ url_for('home') }}">Annuler</a>
-  </div>
-  {% if message %}<div class="msg {{ 'err' if is_error else 'ok' }}">{{ message }}</div>{% endif %}
-</form>
-</div>
-</div></body></html>
-"""
-# Endpoint4 Mentor application (menu card)
-@app.route("/mentor-application", methods=["GET","POST"])
-@login_required
-def mentor_application():
-    phone = session["user"]
-    m = fetch_member_by_phone(phone)
-    if request.method == "POST":
-        # ici: on applique directement le changement (ou tu peux mettre "probatoire")
-        with get_conn() as conn:
-            with conn.cursor() as cur:
-                cur.execute("""
-                    UPDATE membres
-                    SET membertype='mentor', updatedate=CURRENT_DATE, updateuser=%s
-                    WHERE phone=%s
-                """, (phone, phone))
-            conn.commit()
-        session["membertype"] = "mentor"
-        return render_template_string(MENTOR_APP_PAGE, m=m, message="Votre compte est maintenant 'mentor'.", is_error=False)
-    return render_template_string(MENTOR_APP_PAGE, m=m, message="", is_error=False)
-
-#------------------------------------------------------------------
-# Endpoint #5 — Mon groupe (mentor/admin uniquement, lecture seule)
-#------------------------------------------------------------------
-GROUPE_PAGE = """
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Mon groupe</title>
-<style>
- body{font-family:Arial;margin:20px} .wrap{max-width:1100px;margin:0 auto}
- table{width:100%;border-collapse:collapse}
- th,td{padding:10px;border-bottom:1px solid #eee;text-align:left}
- th{background:#f6f6f6}
-</style></head><body><div class="wrap">
-<h2>Mon groupe</h2>
-<p><a href="{{ url_for('home') }}">← Retour</a></p>
-<table>
-  <thead><tr><th>Phone</th><th>Prénom</th><th>Nom</th><th>Type</th><th>Statut</th><th>Solde</th></tr></thead>
-  <tbody>
-  {% for r in rows %}
-    <tr><td>{{r[0]}}</td><td>{{r[1]}}</td><td>{{r[2]}}</td><td>{{r[3]}}</td><td>{{r[4]}}</td><td>{{r[5]}}</td></tr>
-  {% endfor %}
-  {% if not rows %}<tr><td colspan="6">Aucun membre rattaché.</td></tr>{% endif %}
-  </tbody>
-</table>
-</div></body></html>
-"""
-# Endpoint5 Mon groupe (menu card)
-@app.get("/groupe")
-@mentor_required
-def groupe():
-    rows = list_groupe_for_mentor(session["user"])
-    return render_template_string(GROUPE_PAGE, rows=rows)
-
-
-# ------------------------------------------------------------------------------------
-# Endpoint #6 — Créer un membre (mentor/statut/membertype/updatedate/updateuser auto)
-# ------------------------------------------------------------------------------------
-ADD_MEMBER_PAGE = """
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Créer un membre</title>
-<style>
- body{font-family:Arial;margin:20px} .wrap{max-width:900px;margin:0 auto}
- .card{border:1px solid #e7e7e7;border-radius:16px;padding:16px}
- label{display:block;margin:10px 0 4px;font-weight:700}
- input{width:100%;padding:10px;border:1px solid #ddd;border-radius:10px}
- .row{display:flex;gap:10px;margin-top:12px}
- .btn{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#111;color:#fff;cursor:pointer}
- .btn2{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#fff;color:#111;cursor:pointer}
- .msg{margin-top:12px;padding:10px;border-radius:12px}
- .ok{background:#eaffea;border:1px solid #b8ffb8}
- .err{background:#ffe9ea;border:1px solid #ffb3b8}
-</style></head><body><div class="wrap">
-<h2>Créer un membre</h2>
-<p><a href="{{ url_for('home') }}">← Retour</a></p>
-<div class="card">
-<form method="post">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <label>Phone</label><input name="phone" required>
-  <label>Nom</label><input name="lastname" required>
-  <label>Prénom</label><input name="firstname" required>
-  <label>Date naissance (JJ/MM/AAAA)</label><input name="birthdate" required>
-  <label>IdType</label><input name="idtype" required>
-  <label>Mot de passe</label><input name="password" type="password" required>
-
-  <div class="row">
-    <button class="btn" type="submit">Créer</button>
-    <a class="btn2" href="{{ url_for('home') }}">Annuler</a>
-  </div>
-  {% if message %}<div class="msg {{ 'err' if is_error else 'ok' }}">{{ message }}</div>{% endif %}
-</form>
-</div></div></body></html>
-"""
-# Endpoint6 Créer un membre (menu card)
-@app.route("/addmember", methods=["GET","POST"])
-@mentor_required
-def add_member():
-    if request.method == "POST":
-        try:
-            phone = (request.form.get("phone") or "").strip()
-            lastname = (request.form.get("lastname") or "").strip()
-            firstname = (request.form.get("firstname") or "").strip()
-            birthdate = datetime.strptime((request.form.get("birthdate") or "").strip(), "%d/%m/%Y").date()
-            idtype = (request.form.get("idtype") or "").strip()
-            password = (request.form.get("password") or "").strip()
-
-            mentor = session["user"]
-            membertype = "membre"
-            statut = "probatoire"
-            updateuser = session["user"]
-
-            insert_member(phone, membertype, mentor, lastname, firstname, birthdate, idtype, None, statut, updateuser, password)
-            return render_template_string(ADD_MEMBER_PAGE, message="Membre créé.", is_error=False)
-        except psycopg.errors.UniqueViolation:
-            return render_template_string(ADD_MEMBER_PAGE, message="Ce phone existe déjà.", is_error=True)
-        except Exception as e:
-            return render_template_string(ADD_MEMBER_PAGE, message=f"Erreur: {e}", is_error=True)
-
-    return render_template_string(ADD_MEMBER_PAGE, message="", is_error=False)
-
-#----------------------------------------------------------------------------
-# Endpoint #7 — Importer cotisations (admin) : exécuter import_mouvements.py
-#----------------------------------------------------------------------------
-IMPORT_PAGE = """
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Importer cotisations</title></head><body style="font-family:Arial;margin:20px">
-<h2>Importer cotisations</h2>
-<p><a href="{{ url_for('home') }}">← Retour</a></p>
-<form method="post">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <button type="submit" style="padding:10px 14px;border-radius:12px;border:1px solid #111;background:#111;color:#fff;cursor:pointer;">
-    Lancer import_mouvements.py
-  </button>
-</form>
-{% if message %}<p style="margin-top:12px;">{{ message }}</p>{% endif %}
-</body></html>
-"""
-# Endpoint7 Importer cotisations (menu card)
-@app.route("/import", methods=["GET","POST"])
-@admin_required
-def import_mouvements():
-    if request.method == "POST":
-        # ⚠️ Ici on appelle une fonction python (à créer dans import_mouvements.py)
-        # from import_mouvements import run_import
-        # n, msg = run_import(DATABASE_URL)
-        # return render_template_string(IMPORT_PAGE, message=f"Import OK: {n} lignes. {msg}")
-
-        return render_template_string(IMPORT_PAGE, message="Import déclenché (stub). Branche run_import() ensuite.")
-    return render_template_string(IMPORT_PAGE, message="")
-
-#-----------------------------------------------------------------------------
-# Endpoint #8 — Check mouvements (admin) : afficher toute la table 'mouvements'
-#-----------------------------------------------------------------------------
-CHECK_MVT_PAGE = """
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Check mouvements</title>
-<style>
- body{font-family:Arial;margin:20px} .wrap{max-width:1200px;margin:0 auto}
- table{width:100%;border-collapse:collapse}
- th,td{padding:10px;border-bottom:1px solid #eee;text-align:left}
- th{background:#f6f6f6}
- input,select{padding:8px;border:1px solid #ddd;border-radius:10px}
- .btn{padding:7px 10px;border:1px solid #111;border-radius:10px;background:#111;color:#fff;cursor:pointer}
- .btn2{padding:7px 10px;border:1px solid #111;border-radius:10px;background:#fff;color:#111;cursor:pointer}
-</style></head><body><div class="wrap">
-<h2>Check mouvements (admin)</h2>
-<p><a href="{{ url_for('home') }}">← Retour</a></p>
-<table>
-<thead><tr><th>ID</th><th>Phone</th><th>Firstname</th><th>Date</th><th>Amount</th><th>D/C</th><th>Reference</th><th>Action</th></tr></thead>
-<tbody>
-{% for r in rows %}
-<tr>
-<form method="post" action="{{ url_for('check_mouvements_update', mvt_id=r[0]) }}">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <td>{{ r[0] }}</td>
-  <td>{{ r[1] }}</td>
-  <td>{{ r[2] }}</td>
-  <td><input name="mvt_date" value="{{ r[3].strftime('%d/%m/%Y') }}" size="10"></td>
-  <td><input name="amount" value="{{ r[4] }}" size="8"></td>
-  <td>
-    <select name="debitcredit">
-      <option value="D" {{ 'selected' if r[5]=='D' else '' }}>D</option>
-      <option value="C" {{ 'selected' if r[5]=='C' else '' }}>C</option>
-    </select>
-  </td>
-  <td><input name="reference" value="{{ r[6] }}" size="16"></td>
-  <td>
-    <button class="btn" type="submit">Save</button>
-</form>
-<form method="post" action="{{ url_for('check_mouvements_delete', mvt_id=r[0]) }}" style="display:inline">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <button class="btn2" type="submit" onclick="return confirm('Supprimer?')">Delete</button>
-</form>
-  </td>
-</tr>
-{% endfor %}
-{% if not rows %}<tr><td colspan="8">Aucun mouvement.</td></tr>{% endif %}
-</tbody>
-</table>
-</div></body></html>
-"""
-
-@app.get("/checkmouvements")
-@admin_required
-def check_mouvements():
-    rows = list_all_mouvements()
-    return render_template_string(CHECK_MVT_PAGE, rows=rows)
-
-@app.post("/checkmouvements/update/<int:mvt_id>")
-@admin_required
-def check_mouvements_update(mvt_id: int):
-    d = datetime.strptime((request.form.get("mvt_date") or "").strip(), "%d/%m/%Y").date()
-    amount = float((request.form.get("amount") or "0").strip())
-    dc = (request.form.get("debitcredit") or "D").strip()
-    ref = (request.form.get("reference") or "").strip()
-    update_mouvement(mvt_id, d, amount, dc, ref)
-    return redirect(url_for("check_mouvements"))
-
-@app.post("/checkmouvements/delete/<int:mvt_id>")
-@admin_required
-def check_mouvements_delete(mvt_id: int):
-    delete_mouvement(mvt_id)
-    return redirect(url_for("check_mouvements"))
-
-#----------------------------------------------------------------------------------------------
-# Endpoint #9 — Data general follow-up (admin) : CRUD sur membres (sauf updatedate/updateuser)
-#----------------------------------------------------------------------------------------------
-DATAGENERALFOLLOWUP_PAGE = """
+PAGE = """
 <!doctype html>
 <html>
 <head>
@@ -1295,16 +672,55 @@ DATAGENERALFOLLOWUP_PAGE = """
       <div>
         <h1>KM-Kimya</h1>
         <div class="userline">
-          Utilisateur connecté <b>{{ session.get('user') }}</b>
+          membre connecté : <b>{{ session.get('user') }}</b>
           {% if user_fullname %} — <b>{{ user_fullname }}</b>{% endif %}
         </div>
+        <div class="userbox">
+          <span class="role-pill">Rôle: <b>{{ user_membertype }}</b></span>
+          <a class="logout" href="{{ url_for('logout') }}">Logout</a>
+        </div>
+
+<!-- ajout du Jan 30 2026 --- !-- 2) Colle ce bloc dans PAGE (juste après le titre H1 par ex.) -->
+        <style>
+          .nav { display:flex; flex-wrap:wrap; gap:10px; margin:14px 0 18px; }
+          .nav .zone { border:1px solid #ddd; border-radius:12px; padding:10px; min-width:240px; flex:1; }
+          .nav h3 { margin:0 0 8px; font-size:1.02em; }
+          .nav a { display:block; padding:10px 12px; border-radius:10px; border:1px solid #eee; margin:6px 0; }
+          .nav a:hover { background:#f6f6f6; text-decoration:none; }
+          .nav small { color:#666; }
+        </style>
+
+        <div class="nav">
+          <div class="zone">
+            <h3>Zone 1 <small>(membres)</small></h3>
+            {% for label, endpoint in menu_zone1 %}
+              <a href="{{ url_for(endpoint) }}">{{ label }}</a>
+            {% endfor %}
+          </div>
+
+          {% if menu_zone2 %}
+          <div class="zone">
+            <h3>Zone 2 <small>(mentor)</small></h3>
+            {% for label, endpoint in menu_zone2 %}
+              <a href="{{ url_for(endpoint) }}">{{ label }}</a>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          {% if menu_zone3 %}
+          <div class="zone">
+            <h3>Zone 3 <small>(admin)</small></h3>
+            {% for label, endpoint in menu_zone3 %}
+              <a href="{{ url_for(endpoint) }}">{{ label }}</a>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+<!-- fin de l'ajout du Jan 30 2026 -->
+
       </div>
     </div>
 
-    <div class="userbox">
-      <span class="role-pill">Rôle: <b>{{ user_membertype }}</b></span>
-      <a class="logout" href="{{ url_for('logout') }}">Logout</a>
-    </div>
   </div>
 </div>
 
@@ -1373,6 +789,8 @@ DATAGENERALFOLLOWUP_PAGE = """
   </a>
   {% endif %}
 </div>
+
+<!-- FIN DES MENUS -->
 
   <h1>KM Membres</h1>
 
@@ -1610,17 +1028,75 @@ DATAGENERALFOLLOWUP_PAGE = """
 """
 
 
+# ----------------------------
+# Routes
+# ----------------------------
+@app.get("/login")
+def login():
+    return render_template_string(LOGIN_PAGE, message="")
 
 
-# Endpoint9 Data general follow-up (menu card)
-@app.get("/datageneralfollowup")
-@admin_required
-def datageneralfollowup():
-#   ## Réutilise ton écran existant "Liste des membres + Edit/Delete"
-#   ## (le code que tu as déjà, c’est ici que ça vit)
+@app.post("/login")
+@limiter.limit("5 per minute")
+def login_post():
+    phone = (request.form.get("phone") or "").strip()
+    password = request.form.get("password") or ""
+###
+    phone_save = phone
+    password_save = password
+    log.info("Login attempt; data from HTMLscreen : phone_save=%s password_save=%s", phone_save, password_save)
+### 
+
+    if verify_user(phone, password):
+        log.info("Login attempt: LA SESSION DEMARRE OK")
+        session["user"] = phone
+        session.permanent = True
+        return redirect(url_for("home"))
+
+    return render_template_string(LOGIN_PAGE, message="Identifiants invalides ou membre suspendu/radié.")
+
+
+@app.get("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("login"))
+
+
+def get_user_profile_by_phone(phone: str):
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT firstname, lastname, membertype
+                FROM membres
+                WHERE phone = %s
+            """, (phone,))
+            return cur.fetchone()
+
+@app.get("/")
+@login_required
+def home():
     rows = fetch_all_membres()
-    return render_template_string(DATAGENERALFOLLOWUP_PAGE, rows=rows, edit_row=None, edit_birthdate="",
-                                  message="", is_error=False, member_types=MEMBER_TYPES, statutes=STATUTES)
+    phone = session.get("user")
+    prof = get_user_profile_by_phone(phone) if phone else None
+    firstname, lastname, membertype = (prof or ("", "", "membre"))
+#    
+    menu_zone1, menu_zone2, menu_zone3 = get_menu_for_user()
+#
+    return render_template_string(
+        PAGE,
+        rows=rows,
+        edit_row=None,
+        edit_birthdate="",
+        message="",
+        is_error=False,
+        member_types=MEMBER_TYPES,
+        statutes=STATUTES,
+        user_fullname=f"{firstname} {lastname}".strip(),
+        user_membertype=membertype,
+        menu_zone1=menu_zone1, 
+        menu_zone2=menu_zone2, 
+        menu_zone3=menu_zone3
+    )
 
 @app.post("/add")
 @login_required
@@ -1649,7 +1125,7 @@ def add():
     except psycopg.errors.UniqueViolation:
         rows = fetch_all_membres()
         return render_template_string(
-            DATAGENERALFOLLOWUP_PAGE,
+            PAGE,
             rows=rows,
             edit_row=None,
             edit_birthdate="",
@@ -1661,7 +1137,7 @@ def add():
     except Exception as e:
         rows = fetch_all_membres()
         return render_template_string(
-            DATAGENERALFOLLOWUP_PAGE,
+            PAGE,
             rows=rows,
             edit_row=None,
             edit_birthdate="",
@@ -1682,7 +1158,7 @@ def edit(member_id: int):
     firstname, lastname, membertype = (prof or ("", "", "membre"))
     if not row:
         return render_template_string(
-            DATAGENERALFOLLOWUP_PAGE,
+            PAGE,
             rows=rows,
             edit_row=None,
             edit_birthdate="",
@@ -1701,7 +1177,7 @@ def edit(member_id: int):
 
     edit_birthdate = row[6].strftime("%d/%m/%Y")
     return render_template_string(
-        DATAGENERALFOLLOWUP_PAGE,
+        PAGE,
         rows=rows,
         edit_row=row,
         edit_birthdate=edit_birthdate,
@@ -1741,7 +1217,7 @@ def update(member_id: int):
         row = fetch_one(member_id)
         edit_birthdate = row[6].strftime("%d/%m/%Y") if row else ""
         return render_template_string(
-            DATAGENERALFOLLOWUP_PAGE,
+            PAGE,
             rows=rows,
             edit_row=row,
             edit_birthdate=edit_birthdate,
@@ -1771,106 +1247,6 @@ def add_security_headers(resp):
     resp.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
     resp.headers["Content-Security-Policy"] = "default-src 'self' 'unsafe-inline';"
     return resp
-
-
-# --------------------------------------------------------------------------------------
-# Endpoint #10 — Transfert de cotisations (débit/crédit + blocage si solde insuffisant)
-#---------------------------------------------------------------------------------------
-TRANSFER_PAGE = """
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Transfert cotisations</title>
-<style>
- body{font-family:Arial;margin:20px} .wrap{max-width:800px;margin:0 auto}
- .card{border:1px solid #e7e7e7;border-radius:16px;padding:16px}
- label{display:block;margin:10px 0 4px;font-weight:700}
- input{width:100%;padding:10px;border:1px solid #ddd;border-radius:10px}
- .row{display:flex;gap:10px;margin-top:12px}
- .btn{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#111;color:#fff;cursor:pointer}
- .btn2{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#fff;color:#111;cursor:pointer}
- .msg{margin-top:12px;padding:10px;border-radius:12px}
- .ok{background:#eaffea;border:1px solid #b8ffb8}
- .err{background:#ffe9ea;border:1px solid #ffb3b8}
-</style></head><body><div class="wrap">
-<h2>Transfert de cotisations</h2>
-<p><a href="{{ url_for('home') }}">← Retour</a></p>
-
-<div class="card">
-  <p>Solde actuel: <b>{{ balance }}</b></p>
-  <form method="post">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <label>Phone du bénéficiaire</label>
-    <input name="to_phone" required>
-    <label>Montant à transférer</label>
-    <input name="amount" required>
-    <div class="row">
-      <button class="btn" type="submit">Transférer</button>
-      <a class="btn2" href="{{ url_for('home') }}">Annuler</a>
-    </div>
-    {% if message %}<div class="msg {{ 'err' if is_error else 'ok' }}">{{ message }}</div>{% endif %}
-  </form>
-</div>
-</div></body></html>
-"""
-#(10) Endpoint10 Transfert de cotisations (menu card)
-@app.route("/transfer", methods=["GET","POST"])
-@login_required
-def transfer():
-    from_phone = session["user"]
-    me = fetch_member_by_phone(from_phone)
-    my_balance = me[10] if me else 0
-
-    if request.method == "POST":
-        to_phone = (request.form.get("to_phone") or "").strip()
-        amount = float((request.form.get("amount") or "0").strip())
-
-        if amount <= 0:
-            return render_template_string(TRANSFER_PAGE, balance=my_balance, message="Montant invalide.", is_error=True)
-
-        to_member = fetch_member_by_phone(to_phone)
-        if not to_member:
-            return render_template_string(TRANSFER_PAGE, balance=my_balance, message="Bénéficiaire introuvable.", is_error=True)
-
-        if my_balance < amount:
-            return render_template_string(TRANSFER_PAGE, balance=my_balance, message="Solde insuffisant: transfert bloqué.", is_error=True)
-
-        # transaction atomique
-        try:
-            ref_base = f"TR-{uuid.uuid4().hex[:10]}"
-            today = datetime.utcnow().date()
-
-            with get_conn() as conn:
-                with conn.cursor() as cur:
-                    # 1) insert mouvement DEBIT (from)
-                    cur.execute("""
-                        INSERT INTO mouvements (phone, firstname, mvt_date, amount, debitcredit, reference)
-                        VALUES (%s,%s,%s,%s,'D',%s)
-                    """, (from_phone, me[5], today, amount, ref_base + "-D"))
-
-                    # 2) insert mouvement CREDIT (to)
-                    cur.execute("""
-                        INSERT INTO mouvements (phone, firstname, mvt_date, amount, debitcredit, reference)
-                        VALUES (%s,%s,%s,%s,'C',%s)
-                    """, (to_phone, to_member[5], today, amount, ref_base + "-C"))
-
-                    # 3) update balances
-                    cur.execute("UPDATE membres SET balance = balance - %s, updatedate=CURRENT_DATE, updateuser=%s WHERE phone=%s",
-                                (amount, from_phone, from_phone))
-                    cur.execute("UPDATE membres SET balance = balance + %s, updatedate=CURRENT_DATE, updateuser=%s WHERE phone=%s",
-                                (amount, from_phone, to_phone))
-
-                conn.commit()
-
-            # refresh
-            me2 = fetch_member_by_phone(from_phone)
-            return render_template_string(TRANSFER_PAGE, balance=(me2[10] if me2 else 0),
-                                          message="Transfert effectué avec succès.", is_error=False)
-        except Exception as e:
-            log.exception("Erreur transfert")
-            return render_template_string(TRANSFER_PAGE, balance=my_balance, message=f"Erreur: {e}", is_error=True)
-
-    return render_template_string(TRANSFER_PAGE, balance=my_balance, message="", is_error=False)
-
-
 
 
 if __name__ == "__main__":
