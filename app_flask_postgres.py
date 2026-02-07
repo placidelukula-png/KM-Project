@@ -493,7 +493,7 @@ LOGIN_PAGE = """
 <html>
 <head>
   <meta charset="utf-8">
-  <title><b>Login</b></title>
+  <title><b>Connection à KM-Kimya</b></title>
   <style>
     body { font-family: Arial, sans-serif; margin: 30px; }
     .wrap { max-width: 420px; margin: 0 auto; }
@@ -589,7 +589,7 @@ DASHBOARD_PAGE = """
     <span class="hdr">
       <h2 style="margin:0;">Kimya</h2>
       <div class="muted">membre connecté : <b>{{ connected_label }}</b></div>
-      <div><small>Rôle: <b>{{ connected_role }}</b></small> <p style="text-align:right"><a class="btn" href="{{ url_for('logout') }}">Logout</a></p>
+      <div><small>Rôle: <b>{{ connected_role }}</b> <p style="text-align:right"><a class="btn" href="{{ url_for('logout') }}">Se déconnecter</a></p></small>
       </div>
     </span>
     <style>div{white-space:nowrap;}</style>
