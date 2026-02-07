@@ -512,9 +512,9 @@ LOGIN_PAGE = """
     <h2 style="margin-top:0;">Login</h2>
     <form method="post" action="{{ url_for('login') }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <label>IDENTIFIANT (Nº téléphone sans prefixe)</label>
+      <label>Idnetifiant <small>(nº téléphone sans prefixe)</small> :</label>
       <input name="phone" value="admin" required>
-      <label>MOT DE PASSE</label>
+      <label>Mot de passe : </label>
       <input name="password" type="password" required>
       <button class="btn" type="submit">Sign in</button>
     </form>
@@ -525,7 +525,7 @@ LOGIN_PAGE = """
     {% endif %}
 
     <div class="small">
-      Accès refusé si statut = 'suspendu' ou 'radié', ou membre inexistant.
+      <small>Accès refusé si statut = 'suspendu' ou 'radié', ou membre inexistant.</small>
     </div>
   </div>
 </div>
@@ -590,7 +590,7 @@ DASHBOARD_PAGE = """
       <h2 style="margin:0;">Kimya</h2>
       <div class="muted">membre connecté : <b>{{ connected_label }}</b></div>
       <div class="pill">Rôle: <b>{{ connected_role }}</b> ============
-      <a class="btn" href="{{ url_for('logout') }}">Logout</a>
+      <p style="text-align:right"><a class="btn" href="{{ url_for('logout') }}">Logout</a></p>
       <style>max-width:48px;<style/></div>
     </span>
     <style>div{white-space:nowrap;}</style>
