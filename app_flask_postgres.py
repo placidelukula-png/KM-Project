@@ -512,9 +512,9 @@ LOGIN_PAGE = """
     <h2 style="margin-top:0;">Login</h2>
     <form method="post" action="{{ url_for('login') }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <label>Phone (username)</label>
+      <label>Identifiant(Nº téléphone sans prefixe)</label>
       <input name="phone" value="admin" required>
-      <label>Password</label>
+      <label>Mot de passe</label>
       <input name="password" type="password" required>
       <button class="btn" type="submit">Sign in</button>
     </form>
@@ -586,13 +586,13 @@ DASHBOARD_PAGE = """
 <body>
   <div class="top">
     <div class="brand">KM</div>
-    <div class="hdr">
+    <span class="hdr">
       <h2 style="margin:0;">Kimya</h2>
       <div class="muted">membre connecté : <b>{{ connected_label }}</b></div>
-      <div class="pill">Rôle: <b>{{ connected_role }}</b> ============================</div>
+      <div class="pill">Rôle: <b>{{ connected_role }}</b> ======
       <a class="btn" href="{{ url_for('logout') }}">Logout</a>
       <style>max-width:48px;<style/></div>
-    </div>
+    </span>
     <style>div{white-space:nowrap;}</style>
   </div>
 
