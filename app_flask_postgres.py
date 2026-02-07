@@ -493,7 +493,7 @@ LOGIN_PAGE = """
 <html>
 <head>
   <meta charset="utf-8">
-  <title><style=font-size:36px;font-weight:bold;>Login</style></title>
+  <title><b>Login</b></title>
   <style>
     body { font-family: Arial, sans-serif; margin: 30px; }
     .wrap { max-width: 420px; margin: 0 auto; }
@@ -512,11 +512,11 @@ LOGIN_PAGE = """
     <h2 style="margin-top:0;font-size:20px">Login</h2>
     <form method="post" action="{{ url_for('login') }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <label>Identifiant<small>(nº téléphone sans prefixe)</small> :</label>
+      <label>Identifiant <small>(nº téléphone sans prefixe)</small> :</label>
       <input name="phone" value="admin" required>
       <label>Mot de passe : </label>
       <input name="password" type="password" required>
-      <button class="btn" type="submit">Sign in</button>
+      <button class="btn" type="submit">Se connecter</button>
     </form>
 
 
@@ -525,7 +525,7 @@ LOGIN_PAGE = """
     {% endif %}
 
     <div class="small">
-      <style=font-size:6px;text-align:center;>Accès refusé si statut = 'suspendu' ou 'radié', ou membre inexistant.</style>
+      <small style="text-align:center;">Accès refusé si statut = 'suspendu' ou 'radié', ou membre inexistant.</small>
     </div>
   </div>
 </div>
