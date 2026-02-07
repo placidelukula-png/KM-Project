@@ -493,7 +493,7 @@ LOGIN_PAGE = """
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Login</title>
+  <title><b>Login</b></title>
   <style>
     body { font-family: Arial, sans-serif; margin: 30px; }
     .wrap { max-width: 420px; margin: 0 auto; }
@@ -512,9 +512,9 @@ LOGIN_PAGE = """
     <h2 style="margin-top:0;">Login</h2>
     <form method="post" action="{{ url_for('login') }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <label>Identifiant(Nº téléphone sans prefixe)</label>
+      <label>IDENTIFIANT (Nº téléphone sans prefixe)</label>
       <input name="phone" value="admin" required>
-      <label>Mot de passe</label>
+      <label>MOT DE PASSE</label>
       <input name="password" type="password" required>
       <button class="btn" type="submit">Sign in</button>
     </form>
@@ -589,7 +589,7 @@ DASHBOARD_PAGE = """
     <span class="hdr">
       <h2 style="margin:0;">Kimya</h2>
       <div class="muted">membre connecté : <b>{{ connected_label }}</b></div>
-      <div class="pill">Rôle: <b>{{ connected_role }}</b> ======
+      <div class="pill">Rôle: <b>{{ connected_role }}</b> ============
       <a class="btn" href="{{ url_for('logout') }}">Logout</a>
       <style>max-width:48px;<style/></div>
     </span>
