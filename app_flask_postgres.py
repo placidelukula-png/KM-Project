@@ -509,10 +509,10 @@ LOGIN_PAGE = """
 <body>
 <div class="wrap">
   <div class="card">
-    <h2 style="margin-top:0;">Login</h2>
+    <h2 style="margin-top:0;font-size:20px">Login</h2>
     <form method="post" action="{{ url_for('login') }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <label>Idnetifiant <small>(nº téléphone sans prefixe)</small> :</label>
+      <label><b>Identifiant</b> <small>(nº téléphone sans prefixe)</small> :</label>
       <input name="phone" value="admin" required>
       <label>Mot de passe : </label>
       <input name="password" type="password" required>
@@ -525,7 +525,7 @@ LOGIN_PAGE = """
     {% endif %}
 
     <div class="small">
-      <small>Accès refusé si statut = 'suspendu' ou 'radié', ou membre inexistant.</small>
+      <style=font-size:12px;text-align:center;>Accès refusé si statut = 'suspendu' ou 'radié', ou membre inexistant.</style>
     </div>
   </div>
 </div>
