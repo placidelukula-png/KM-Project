@@ -1221,11 +1221,8 @@ DATAGENERALFOLLOWUP_PAGE = """
 
 <body>
 <div class="wrap">
-  <h1>KM Members</h1>
-  <p class="muted">
-    Logged in as <b>{{ session.get('user') }}</b> —
-    <a href="{{ url_for('logout') }}">Logout</a>
-  </p>
+  <h2>KM Members</h2>
+  <p><a href="{{ url_for('home') }}">← Retour</a></p>
 
   {% if message %}
     <div class="msg {{ 'error' if is_error else 'ok' }}">{{ message }}</div>
