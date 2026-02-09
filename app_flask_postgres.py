@@ -1508,8 +1508,7 @@ DATAGENERALFOLLOWUP_PAGE = """
             <a href="{{ url_for('edit', member_id=r[0]) }}">Edit</a>
             <form method="post"
                   action="{{ url_for('delete', member_id=r[0]) }}"
-                  style="display:inline;"
-                  onsubmit="return confirm('Supprimer ce membre (ID {{ r[0] }}) ?');">
+<!                  onsubmit="return confirm('Supprimer ce membre (ID {{ r[0] }}) ?');">    ..>
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <button type="submit" class="btn secondary" style="padding:6px 10px; margin-left:8px;">
                 Delete
