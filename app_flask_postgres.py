@@ -317,49 +317,6 @@ def validate_member_form(form, for_update=False):
 # ----------------------------
 # Templates
 # ----------------------------
-LOGIN_PAGE = """
-<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Login</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 30px; }
-    .wrap { max-width: 420px; margin: 0 auto; }
-    .card { border:1px solid #ddd; border-radius: 10px; padding: 16px; margin-top: 40px; }
-    label { display:block; margin: 8px 0 4px; font-weight:600; }
-    input { padding: 10px; width: 100%; box-sizing: border-box; border:1px solid #ccc; border-radius: 8px; }
-    .btn { margin-top: 12px; padding: 10px 14px; border-radius: 10px; border: 1px solid #111; background:#111; color:#fff; cursor:pointer; width:100%; }
-    .msg { padding: 10px 12px; border-radius: 10px; margin-top: 12px; }
-    .error { background:#ffe9ea; border:1px solid #ffb3b8; color:#7a0010; }
-    .small { font-size: 0.92em; color:#444; margin-top: 10px; }
-  </style>
-</head>
-<body>
-<div class="wrap">
-  <div class="card">
-    <h2 style="margin-top:0;">Login</h2>
-    <form method="post" action="{{ url_for('login') }}">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <label>Phone (username)</label>
-      <input name="phone" value="admin" required>
-      <label>Password</label>
-      <input name="password" type="password" required>
-      <button class="btn" type="submit">Sign in</button>
-    </form>
-
-    {% if message %}
-      <div class="msg error">{{ message }}</div>
-    {% endif %}
-
-    <div class="small">
-      Accès refusé si statut = 'suspendu' ou 'radié', ou membre inexistant.
-    </div>
-  </div>
-</div>
-</body>
-</html>
-"""
 
 PAGE = """
 <!doctype html>
@@ -663,7 +620,7 @@ def logout():
 
 
 @app.get("/")
-@login_required
+#@login_required
 def home():
     rows = fetch_all_members()
     return render_template_string(
@@ -679,7 +636,7 @@ def home():
 
 
 @app.post("/add")
-@login_required
+#@login_required
 def add():
     try:
         data = validate_member_form(request.form, for_update=False)
@@ -729,7 +686,7 @@ def add():
 
 
 @app.get("/edit/<int:member_id>")
-@login_required
+#@login_required
 def edit(member_id: int):
     row = fetch_one(member_id)
     rows = fetch_all_members()
@@ -759,7 +716,7 @@ def edit(member_id: int):
 
 
 @app.post("/update/<int:member_id>")
-@login_required
+#@login_required
 def update(member_id: int):
     try:
         data = validate_member_form(request.form, for_update=True)
@@ -799,7 +756,7 @@ def update(member_id: int):
 
 
 @app.post("/delete/<int:member_id>")
-@login_required
+#@login_required
 def delete(member_id: int):
     # empêcher suppression de l'admin par défaut
     row = fetch_one(member_id)
