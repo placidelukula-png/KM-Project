@@ -491,7 +491,7 @@ LOGIN_PAGE = """
 <html>
 <head>
   <meta charset="utf-8">
-  <title><b>Connexion KM-Kimya</b></title>
+  <title>Login</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 30px; }
     .wrap { max-width: 420px; margin: 0 auto; }
@@ -507,14 +507,14 @@ LOGIN_PAGE = """
 <body>
 <div class="wrap">
   <div class="card">
-    <h2 style="margin-top:0;">Connexion KM-Kimya</h2>
+    <h2 style="margin-top:0;">Login</h2>
     <form method="post" action="{{ url_for('login') }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <label>Identifiant <small>(nº téléphone sans prefixe)</small></label>
+      <label>Phone (username)</label>
       <input name="phone" value="admin" required>
       <label>Password</label>
-      <input name="mot de passe" type="password" required>
-      <button class="btn" type="submit">Se connecter</button>
+      <input name="password" type="password" required>
+      <button class="btn" type="submit">Sign in</button>
     </form>
 
 
@@ -523,7 +523,7 @@ LOGIN_PAGE = """
     {% endif %}
 
     <div class="small">
-     <small>Accès refusé si statut = 'suspendu' ou 'radié', ou membre inexistant.</small>
+      Accès refusé si statut = 'suspendu' ou 'radié', ou membre inexistant.
     </div>
   </div>
 </div>
@@ -583,7 +583,6 @@ DASHBOARD_PAGE = """
 </head>
 <body>
   <div class="top">
-    
     <div class="brand">KM</div>
     <div class="hdr">
       <h2 style="margin:0;">Kimya</h2>
@@ -593,8 +592,6 @@ DASHBOARD_PAGE = """
       <style>max-width:48px;<style/></div>
     </div>
     <style>div{white-space:nowrap;}</style>
-
-
   </div>
 
   <!-- Zone 1: Tous -->
@@ -1195,27 +1192,210 @@ DATAGENERALFOLLOWUP_PAGE = """
 <!doctype html>
 <html>
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>KM Members</title>
-<style>
- body{font-family:Arial;margin:20px} .wrap{max-width:900px;margin:0 auto}
- .card{border:1px solid #e7e7e7;border-radius:16px;padding:16px;margin-bottom:20px}
- label{display:block;margin:10px 0 4px;font-weight:700}
- input,select{width:100%;padding:10px;border:1px solid #ddd;border-radius:10px}
- .row{display:flex;gap:10px;margin-top:12px}
- .btn{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#111;color:#fff;cursor:pointer}
- .btn.secondary{background:#fff;color:#111;border:1px solid #111}
- .msg{margin-top:12px;padding:10px;border-radius:12px}
- .ok{background:#eaffea;border:1px solid #b8ffb8}
- .err{background:#ffe9ea;border:1px solid #ffb3b8}
- .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-</style>
+  <meta charset="utf-8">
+  <title>membres (Flask + PostgreSQL)</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 30px; }
+    .wrap { max-width: 1150px; margin: 0 auto; }
+    h1 { margin-bottom: 6px; }
+    .muted { color:#555; margin-top:0; }
+    .card { border:1px solid #ddd; border-radius: 10px; padding: 16px; margin: 18px 0; }
+    label { display:block; margin: 8px 0 4px; font-weight:600; }
+    input, select { padding: 10px; width: 100%; box-sizing: border-box; border:1px solid #ccc; border-radius: 8px; }
+    .grid { display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .btn { padding: 10px 14px; border-radius: 10px; border: 1px solid #111; background:#111; color:#fff; cursor:pointer; }
+    .btn.secondary { background:#fff; color:#111; }
+    .row { display:flex; gap: 10px; margin-top: 12px; }
+    .msg { padding: 10px 12px; border-radius: 10px; margin: 12px 0; }
+    .error { background:#ffe9ea; border:1px solid #ffb3b8; color:#7a0010; }
+    .ok { background:#eaffea; border:1px solid #b8ffb8; color:#0a5a0a; }
+    table { width:100%; border-collapse: collapse; margin-top: 10px; font-size: 0.95em; }
+    th, td { padding: 10px; border-bottom: 1px solid #eee; text-align:left; vertical-align: top; }
+    th { background:#f6f6f6; }
+    .small { font-size: 0.92em; color:#444; }
+    a { color:#0b57d0; text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+  </style>
 </head>
+
 <body>
 <div class="wrap">
-  <h2>Data general follow-up (admin)</h2>
-  <p><a href="{{ url_for('home') }}">← Retour</a></p>
+  <style>
+  :root{
+    --bg:#ffffff; --text:#111; --muted:#666; --card:#fff;
+    --border:#e8e8e8; --shadow:0 6px 20px rgba(0,0,0,.06);
+    --brand:#111; --brand2:#0b57d0;
+  }
+  body{ margin:0; font-family:Arial, sans-serif; background:#fafafa; color:var(--text); }
+  .wrap{ max-width:1150px; margin:0 auto; padding:18px; }
+
+  /* Topbar */
+  .topbar{
+    position:sticky; top:0; z-index:50;
+    background:rgba(250,250,250,.9); backdrop-filter: blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  .topbar-inner{
+    max-width:1150px; margin:0 auto; padding:12px 18px;
+    display:flex; align-items:center; gap:12px; justify-content:space-between;
+  }
+  .brand{ display:flex; align-items:center; gap:10px; }
+  .logo{
+    width:36px; height:36px; border-radius:10px;
+    background:var(--brand); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700;
+  }
+  .brand h1{ margin:0; font-size:16px; letter-spacing:.2px; }
+  .userbox{ text-align:right; }
+  .userline{ font-size:13px; color:var(--muted); }
+  .userline b{ color:var(--text); }
+  .role-pill{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:12px; padding:4px 10px; border-radius:999px;
+    border:1px solid var(--border); background:#fff;
+  }
+  .logout{
+    display:inline-flex; align-items:center; justify-content:center;
+    padding:8px 12px; border-radius:10px;
+    border:1px solid var(--border);
+    background:#fff; color:var(--text); text-decoration:none;
+    font-size:13px;
+  }
+
+  /* Menu grid */
+  .menu{
+    margin-top:16px;
+    display:grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap:12px;
+  }
+  .menu-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:14px;
+    box-shadow: var(--shadow);
+    text-decoration:none;
+    color:var(--text);
+    transition: transform .08s ease, border-color .08s ease;
+    display:flex; gap:12px; align-items:flex-start;
+  }
+  .menu-card:hover{ transform: translateY(-1px); border-color:#d9d9d9; }
+  .icon{
+    width:38px; height:38px; border-radius:12px;
+    border:1px solid var(--border);
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; color:var(--brand);
+    background:#fff;
+    flex:0 0 auto;
+  }
+  .menu-title{ margin:0; font-size:14px; font-weight:700; }
+  .menu-desc{ margin:4px 0 0; font-size:12px; color:var(--muted); line-height:1.35; }
+
+  /* Responsive */
+  @media (max-width: 980px){ .menu{ grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 640px){
+    .menu{ grid-template-columns: 1fr; }
+    .topbar-inner{ flex-direction:column; align-items:flex-start; gap:8px; }
+    .userbox{ text-align:left; width:100%; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  }
+</style>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="logo">KM</div>
+      <div>
+        <h1>KM-Kimya</h1>
+        <div class="userline">
+          Utilisateur connecté <b>{{ session.get('user') }}</b>
+          {% if user_fullname %} — <b>{{ user_fullname }}</b>{% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="userbox">
+      <span class="role-pill">Rôle: <b>{{ user_membertype }}</b></span>
+      <a class="logout" href="{{ url_for('logout') }}">Logout</a>
+    </div>
+  </div>
+</div>
+
+<!-- MENU -->
+<div class="menu">
+  <!-- Zone 1: Tous -->
+  <a class="menu-card" href="{{ url_for('home') }}">
+    <div class="icon">📄</div>
+    <div>
+      <p class="menu-title">Mon compte</p>
+      <p class="menu-desc">Profil, informations et statut.</p>
+    </div>
+  </a>
+
+  <a class="menu-card" href="{{ url_for('home') }}#mouvements">
+    <div class="icon">💳</div>
+    <div>
+      <p class="menu-title">Mes mouvements</p>
+      <p class="menu-desc">Historique des cotisations et solde.</p>
+    </div>
+  </a>
+
+  <!-- Zone 2: mentor + admin -->
+  {% if user_membertype in ('mentor','admin') %}
+  <a class="menu-card" href="{{ url_for('home') }}#groupe">
+    <div class="icon">👥</div>
+    <div>
+      <p class="menu-title">Mon groupe</p>
+      <p class="menu-desc">Membres rattachés + soldes.</p>
+    </div>
+  </a>
+
+  <a class="menu-card" href="{{ url_for('home') }}#addmember">
+    <div class="icon">➕</div>
+    <div>
+      <p class="menu-title">Créer un membre</p>
+      <p class="menu-desc">Enregistrer un nouveau membre.</p>
+    </div>
+  </a>
+
+  <a class="menu-card" href="{{ url_for('home') }}#deces">
+    <div class="icon">🕊️</div>
+    <div>
+      <p class="menu-title">Déclarer un décès</p>
+      <p class="menu-desc">Enregistrer un cas de décès.</p>
+    </div>
+  </a>
+  {% endif %}
+
+  <!-- Zone 3: admin uniquement -->
+  {% if user_membertype == 'admin' %}
+  <a class="menu-card" href="{{ url_for('home') }}#import">
+    <div class="icon">⬇️</div>
+    <div>
+      <p class="menu-title">Importer cotisations</p>
+      <p class="menu-desc">Lancer import_mouvements.py (test).</p>
+    </div>
+  </a>
+
+  <a class="menu-card" href="{{ url_for('home') }}#admin">
+    <div class="icon">🛠️</div>
+    <div>
+      <p class="menu-title">Administration</p>
+      <p class="menu-desc">Suivi global & contrôle.</p>
+    </div>
+  </a>
+  {% endif %}
+</div>
+
+  <h1>KM Membres</h1>
+
+  <p class="muted">
+    Utilisateur connecté <b>{{ logged_user_label }}</b> —
+    <a href="{{ url_for('logout') }}">Logout</a>
+  </p>
+
 
   {% if message %}
     <div class="msg {{ 'error' if is_error else 'ok' }}">{{ message }}</div>
@@ -1243,7 +1423,7 @@ DATAGENERALFOLLOWUP_PAGE = """
 
         <div>
           <label>Mentor</label>
-          <input name="mentor" placeholder="Ex: Admin / Nom mentor..." required>
+          <input name="mentor" placeholder="rempli automatiquement par le nº d'utilisateur connecté" value="{{ session.get('user') }}" readonly>
         </div>
 
         <div>
@@ -1277,8 +1457,8 @@ DATAGENERALFOLLOWUP_PAGE = """
             <option value="probatoire">probatoire</option>
             <option value="inactif">inactif</option>
             <option value="actif">actif</option>
-            <option value="décédé payé">dp</option>
-            <option value="décédé non payé">dn</option>
+            <option value="suspendu">suspendu</option>
+            <option value="radié">radié</option>
           </select>
         </div>
 
@@ -1294,7 +1474,7 @@ DATAGENERALFOLLOWUP_PAGE = """
       </div>
 
       <p class="small" style="margin-bottom:0;">
-        Notes: phone est unique. password sera stocké hashé. updatedate/updateuser sont auto.
+        Notes: phone est unique. password sera stocké hashé. updatedate/updateuser/mentor sont auto.
       </p>
     </form>
   </div>
@@ -1378,7 +1558,7 @@ DATAGENERALFOLLOWUP_PAGE = """
   {% endif %}
 
   <div class="card">
-    <h2 style="margin-top:0;">Members list</h2>
+    <h2 style="margin-top:0;">Liste des membres</h2>
     <table>
       <thead>
         <tr>
@@ -1443,6 +1623,9 @@ DATAGENERALFOLLOWUP_PAGE = """
 </body>
 </html>
 """
+
+
+
 
 # Endpoint9 Data general follow-up (menu card)
 @app.get("/datageneralfollowup")
