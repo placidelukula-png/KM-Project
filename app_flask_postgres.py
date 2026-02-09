@@ -587,8 +587,8 @@ DASHBOARD_PAGE = """
     <div class="hdr">
       <h2 style="margin:0;">Kimya</h2>
       <div class="muted">membre connecté : <b>{{ connected_label }}</b></div>
-      <div> Rôle: <b>{{ connected_role }}</b>
-      <a class="btn" href="{{ url_for('logout') }}">Logout</a>
+      <div><small>Rôle: <b>{{ connected_role }}</b></small>
+      <p style="text-align:right"><a class="btn" href="{{ url_for('logout') }}">Logout</a></p>
       <style>max-width:48px;<style/></div>
     </div>
     <style>div{white-space:nowrap;}</style>
