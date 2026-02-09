@@ -491,7 +491,7 @@ LOGIN_PAGE = """
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Login</title>
+  <title><b>Connexion KM-Kimya</b></title>
   <style>
     body { font-family: Arial, sans-serif; margin: 30px; }
     .wrap { max-width: 420px; margin: 0 auto; }
@@ -510,11 +510,11 @@ LOGIN_PAGE = """
     <h2 style="margin-top:0;">Login</h2>
     <form method="post" action="{{ url_for('login') }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <label>Phone (username)</label>
+      <label>Identifiant <small>(nº téléphone sans prefixe)</small></label>
       <input name="phone" value="admin" required>
       <label>Password</label>
-      <input name="password" type="password" required>
-      <button class="btn" type="submit">Sign in</button>
+      <input name="mot de passe" type="password" required>
+      <button class="btn" type="submit">Se connecter</button>
     </form>
 
 
@@ -523,7 +523,7 @@ LOGIN_PAGE = """
     {% endif %}
 
     <div class="small">
-      Accès refusé si statut = 'suspendu' ou 'radié', ou membre inexistant.
+     <small>Accès refusé si statut = 'suspendu' ou 'radié', ou membre inexistant.</small>
     </div>
   </div>
 </div>
@@ -587,7 +587,7 @@ DASHBOARD_PAGE = """
     <div class="hdr">
       <h2 style="margin:0;">Kimya</h2>
       <div class="muted">membre connecté : <b>{{ connected_label }}</b></div>
-      <div class="pill">Rôle: <b>{{ connected_role }}</b>
+      <div> Rôle: <b>{{ connected_role }}</b>
       <a class="btn" href="{{ url_for('logout') }}">Logout</a>
       <style>max-width:48px;<style/></div>
     </div>
@@ -1191,22 +1191,27 @@ def check_mouvements_delete(mvt_id: int):
 DATAGENERALFOLLOWUP_PAGE = """
 <!doctype html>
 <html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Check mouvements</title>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KM Members</title>
 <style>
- body{font-family:Arial;margin:20px} .wrap{max-width:1200px;margin:0 auto}
- table{width:100%;border-collapse:collapse}
- th,td{padding:10px;border-bottom:1px solid #eee;text-align:left}
- th{background:#f6f6f6}
- input,select{padding:8px;border:1px solid #ddd;border-radius:10px}
- .btn{padding:7px 10px;border:1px solid #111;border-radius:10px;background:#111;color:#fff;cursor:pointer}
- .btn2{padding:7px 10px;border:1px solid #111;border-radius:10px;background:#fff;color:#111;cursor:pointer}
+ body{font-family:Arial;margin:20px} .wrap{max-width:900px;margin:0 auto}
+ .card{border:1px solid #e7e7e7;border-radius:16px;padding:16px;margin-bottom:20px}
+ label{display:block;margin:10px 0 4px;font-weight:700}
+ input,select{width:100%;padding:10px;border:1px solid #ddd;border-radius:10px}
+ .row{display:flex;gap:10px;margin-top:12px}
+ .btn{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#111;color:#fff;cursor:pointer}
+ .btn.secondary{background:#fff;color:#111;border:1px solid #111}
+ .msg{margin-top:12px;padding:10px;border-radius:12px}
+ .ok{background:#eaffea;border:1px solid #b8ffb8}
+ .err{background:#ffe9ea;border:1px solid #ffb3b8}
+ .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 </style>
 </head>
-<body><div class="wrap">
-
+<body>
 <div class="wrap">
-  <h2>KM Members</h2>
+  <h2>Data general follow-up (admin)</h2>
   <p><a href="{{ url_for('home') }}">← Retour</a></p>
 
   {% if message %}
