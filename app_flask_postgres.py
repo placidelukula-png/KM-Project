@@ -507,7 +507,7 @@ LOGIN_PAGE = """
 <body>
 <div class="wrap">
   <div class="card">
-    <h2 style="margin-top:0;">Login</h2>
+    <h2 style="margin-top:0;">Connexion KM-Kimya</h2>
     <form method="post" action="{{ url_for('login') }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <label>Identifiant <small>(nº téléphone sans prefixe)</small></label>
@@ -583,14 +583,18 @@ DASHBOARD_PAGE = """
 </head>
 <body>
   <div class="top">
+    
     <div class="brand">KM</div>
     <div class="hdr">
       <h2 style="margin:0;">Kimya</h2>
       <div class="muted">membre connecté : <b>{{ connected_label }}</b></div>
-      <div><small>Rôle: <b>{{ connected_role }}</b></small>
-      <p style="text-align:right"><a class="btn" href="{{ url_for('logout') }}">Logout</a></p></div>
+      <div class="pill">Rôle: <b>{{ connected_role }}</b>
+      <a class="btn" href="{{ url_for('logout') }}">Logout</a>
+      <style>max-width:48px;<style/></div>
     </div>
-  
+    <style>div{white-space:nowrap;}</style>
+
+
   </div>
 
   <!-- Zone 1: Tous -->
