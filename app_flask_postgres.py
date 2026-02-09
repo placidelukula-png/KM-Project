@@ -1,6 +1,4 @@
 # ---------------------------------
-
-
 # External functions impotation
 # ---------------------------------
 from __future__ import annotations
@@ -1194,7 +1192,7 @@ DATAGENERALFOLLOWUP_PAGE = """
 <html>
 <head>
   <meta charset="utf-8">
-  <title>membres (Flask + PostgreSQL)</title>
+  <title>Members (Flask + PostgreSQL)</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 30px; }
     .wrap { max-width: 1150px; margin: 0 auto; }
@@ -1222,86 +1220,11 @@ DATAGENERALFOLLOWUP_PAGE = """
 
 <body>
 <div class="wrap">
-  <style>
-  :root{
-    --bg:#ffffff; --text:#111; --muted:#666; --card:#fff;
-    --border:#e8e8e8; --shadow:0 6px 20px rgba(0,0,0,.06);
-    --brand:#111; --brand2:#0b57d0;
-  }
-  body{ margin:0; font-family:Arial, sans-serif; background:#fafafa; color:var(--text); }
-  .wrap{ max-width:1150px; margin:0 auto; padding:18px; }
-
-  /* Topbar */
-  .topbar{
-    position:sticky; top:0; z-index:50;
-    background:rgba(250,250,250,.9); backdrop-filter: blur(10px);
-    border-bottom:1px solid var(--border);
-  }
-  .topbar-inner{
-    max-width:1150px; margin:0 auto; padding:12px 18px;
-    display:flex; align-items:center; gap:12px; justify-content:space-between;
-  }
-  .brand{ display:flex; align-items:center; gap:10px; }
-  .logo{
-    width:36px; height:36px; border-radius:10px;
-    background:var(--brand); color:#fff;
-    display:flex; align-items:center; justify-content:center;
-    font-weight:700;
-  }
-  .brand h1{ margin:0; font-size:16px; letter-spacing:.2px; }
-  .userbox{ text-align:right; }
-  .userline{ font-size:13px; color:var(--muted); }
-  .userline b{ color:var(--text); }
-  .role-pill{
-    display:inline-flex; align-items:center; gap:6px;
-    font-size:12px; padding:4px 10px; border-radius:999px;
-    border:1px solid var(--border); background:#fff;
-  }
-  .logout{
-    display:inline-flex; align-items:center; justify-content:center;
-    padding:8px 12px; border-radius:10px;
-    border:1px solid var(--border);
-    background:#fff; color:var(--text); text-decoration:none;
-    font-size:13px;
-  }
-
-  /* Responsive */
-  @media (max-width: 980px){ .menu{ grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (max-width: 640px){
-    .menu{ grid-template-columns: 1fr; }
-    .topbar-inner{ flex-direction:column; align-items:flex-start; gap:8px; }
-    .userbox{ text-align:left; width:100%; display:flex; align-items:center; justify-content:space-between; gap:10px; }
-  }
-</style>
-
-<div class="topbar">
-  <div class="topbar-inner">
-    <div class="brand">
-      <div class="logo">KM</div>
-      <div>
-        <h1>KM-Kimya</h1>
-        <div class="userline">
-          Utilisateur connecté <b>{{ session.get('user') }}</b>
-          {% if user_fullname %} — <b>{{ user_fullname }}</b>{% endif %}
-        </div>
-      </div>
-    </div>
-
-    <div class="userbox">
-      <span class="role-pill">Rôle: <b>{{ user_membertype }}</b></span>
-      <a class="logout" href="{{ url_for('logout') }}">Logout</a>
-    </div>
-  </div>
-</div>
-
-
-  <h1>KM Membres</h1>
-
+  <h1>KM Members</h1>
   <p class="muted">
-    Utilisateur connecté <b>{{ logged_user_label }}</b> —
+    Logged in as <b>{{ session.get('user') }}</b> —
     <a href="{{ url_for('logout') }}">Logout</a>
   </p>
-
 
   {% if message %}
     <div class="msg {{ 'error' if is_error else 'ok' }}">{{ message }}</div>
@@ -1329,7 +1252,7 @@ DATAGENERALFOLLOWUP_PAGE = """
 
         <div>
           <label>Mentor</label>
-          <input name="mentor" placeholder="rempli automatiquement par le nº d'utilisateur connecté" value="{{ session.get('user') }}" readonly>
+          <input name="mentor" placeholder="Ex: Admin / Nom mentor..." required>
         </div>
 
         <div>
@@ -1380,7 +1303,7 @@ DATAGENERALFOLLOWUP_PAGE = """
       </div>
 
       <p class="small" style="margin-bottom:0;">
-        Notes: phone est unique. password sera stocké hashé. updatedate/updateuser/mentor sont auto.
+        Notes: phone est unique. password sera stocké hashé. updatedate/updateuser sont auto.
       </p>
     </form>
   </div>
@@ -1464,7 +1387,7 @@ DATAGENERALFOLLOWUP_PAGE = """
   {% endif %}
 
   <div class="card">
-    <h2 style="margin-top:0;">Liste des membres</h2>
+    <h2 style="margin-top:0;">Members list</h2>
     <table>
       <thead>
         <tr>
@@ -1508,7 +1431,8 @@ DATAGENERALFOLLOWUP_PAGE = """
             <a href="{{ url_for('edit', member_id=r[0]) }}">Edit</a>
             <form method="post"
                   action="{{ url_for('delete', member_id=r[0]) }}"
-<!                  onsubmit="return confirm('Supprimer ce membre (ID {{ r[0] }}) ?');">    ..>
+                  style="display:inline;"
+                  onsubmit="return confirm('Supprimer ce membre (ID {{ r[0] }}) ?');">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <button type="submit" class="btn secondary" style="padding:6px 10px; margin-left:8px;">
                 Delete
@@ -1528,8 +1452,6 @@ DATAGENERALFOLLOWUP_PAGE = """
 </body>
 </html>
 """
-
-
 
 
 # Endpoint9 Data general follow-up (menu card)
