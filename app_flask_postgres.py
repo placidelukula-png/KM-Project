@@ -1265,36 +1265,6 @@ DATAGENERALFOLLOWUP_PAGE = """
     font-size:13px;
   }
 
-  /* Menu grid */
-  .menu{
-    margin-top:16px;
-    display:grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap:12px;
-  }
-  .menu-card{
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:14px;
-    padding:14px;
-    box-shadow: var(--shadow);
-    text-decoration:none;
-    color:var(--text);
-    transition: transform .08s ease, border-color .08s ease;
-    display:flex; gap:12px; align-items:flex-start;
-  }
-  .menu-card:hover{ transform: translateY(-1px); border-color:#d9d9d9; }
-  .icon{
-    width:38px; height:38px; border-radius:12px;
-    border:1px solid var(--border);
-    display:flex; align-items:center; justify-content:center;
-    font-weight:700; color:var(--brand);
-    background:#fff;
-    flex:0 0 auto;
-  }
-  .menu-title{ margin:0; font-size:14px; font-weight:700; }
-  .menu-desc{ margin:4px 0 0; font-size:12px; color:var(--muted); line-height:1.35; }
-
   /* Responsive */
   @media (max-width: 980px){ .menu{ grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 640px){
@@ -1324,71 +1294,6 @@ DATAGENERALFOLLOWUP_PAGE = """
   </div>
 </div>
 
-<!-- MENU -->
-<div class="menu">
-  <!-- Zone 1: Tous -->
-  <a class="menu-card" href="{{ url_for('home') }}">
-    <div class="icon">📄</div>
-    <div>
-      <p class="menu-title">Mon compte</p>
-      <p class="menu-desc">Profil, informations et statut.</p>
-    </div>
-  </a>
-
-  <a class="menu-card" href="{{ url_for('home') }}#mouvements">
-    <div class="icon">💳</div>
-    <div>
-      <p class="menu-title">Mes mouvements</p>
-      <p class="menu-desc">Historique des cotisations et solde.</p>
-    </div>
-  </a>
-
-  <!-- Zone 2: mentor + admin -->
-  {% if user_membertype in ('mentor','admin') %}
-  <a class="menu-card" href="{{ url_for('home') }}#groupe">
-    <div class="icon">👥</div>
-    <div>
-      <p class="menu-title">Mon groupe</p>
-      <p class="menu-desc">Membres rattachés + soldes.</p>
-    </div>
-  </a>
-
-  <a class="menu-card" href="{{ url_for('home') }}#addmember">
-    <div class="icon">➕</div>
-    <div>
-      <p class="menu-title">Créer un membre</p>
-      <p class="menu-desc">Enregistrer un nouveau membre.</p>
-    </div>
-  </a>
-
-  <a class="menu-card" href="{{ url_for('home') }}#deces">
-    <div class="icon">🕊️</div>
-    <div>
-      <p class="menu-title">Déclarer un décès</p>
-      <p class="menu-desc">Enregistrer un cas de décès.</p>
-    </div>
-  </a>
-  {% endif %}
-
-  <!-- Zone 3: admin uniquement -->
-  {% if user_membertype == 'admin' %}
-  <a class="menu-card" href="{{ url_for('home') }}#import">
-    <div class="icon">⬇️</div>
-    <div>
-      <p class="menu-title">Importer cotisations</p>
-      <p class="menu-desc">Lancer import_mouvements.py (test).</p>
-    </div>
-  </a>
-
-  <a class="menu-card" href="{{ url_for('home') }}#admin">
-    <div class="icon">🛠️</div>
-    <div>
-      <p class="menu-title">Administration</p>
-      <p class="menu-desc">Suivi global & contrôle.</p>
-    </div>
-  </a>
-  {% endif %}
-</div>
 
   <h1>KM Membres</h1>
 
