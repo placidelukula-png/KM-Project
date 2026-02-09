@@ -1191,35 +1191,20 @@ def check_mouvements_delete(mvt_id: int):
 DATAGENERALFOLLOWUP_PAGE = """
 <!doctype html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <title>Members (Flask + PostgreSQL)</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 30px; }
-    .wrap { max-width: 1150px; margin: 0 auto; }
-    h1 { margin-bottom: 6px; }
-    .muted { color:#555; margin-top:0; }
-    .card { border:1px solid #ddd; border-radius: 10px; padding: 16px; margin: 18px 0; }
-    label { display:block; margin: 8px 0 4px; font-weight:600; }
-    input, select { padding: 10px; width: 100%; box-sizing: border-box; border:1px solid #ccc; border-radius: 8px; }
-    .grid { display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .btn { padding: 10px 14px; border-radius: 10px; border: 1px solid #111; background:#111; color:#fff; cursor:pointer; }
-    .btn.secondary { background:#fff; color:#111; }
-    .row { display:flex; gap: 10px; margin-top: 12px; }
-    .msg { padding: 10px 12px; border-radius: 10px; margin: 12px 0; }
-    .error { background:#ffe9ea; border:1px solid #ffb3b8; color:#7a0010; }
-    .ok { background:#eaffea; border:1px solid #b8ffb8; color:#0a5a0a; }
-    table { width:100%; border-collapse: collapse; margin-top: 10px; font-size: 0.95em; }
-    th, td { padding: 10px; border-bottom: 1px solid #eee; text-align:left; vertical-align: top; }
-    th { background:#f6f6f6; }
-    .small { font-size: 0.92em; color:#444; }
-    a { color:#0b57d0; text-decoration:none; }
-    a:hover { text-decoration:underline; }
-    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
-  </style>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Check mouvements</title>
+<style>
+ body{font-family:Arial;margin:20px} .wrap{max-width:1200px;margin:0 auto}
+ table{width:100%;border-collapse:collapse}
+ th,td{padding:10px;border-bottom:1px solid #eee;text-align:left}
+ th{background:#f6f6f6}
+ input,select{padding:8px;border:1px solid #ddd;border-radius:10px}
+ .btn{padding:7px 10px;border:1px solid #111;border-radius:10px;background:#111;color:#fff;cursor:pointer}
+ .btn2{padding:7px 10px;border:1px solid #111;border-radius:10px;background:#fff;color:#111;cursor:pointer}
+</style>
 </head>
+<body><div class="wrap">
 
-<body>
 <div class="wrap">
   <h2>KM Members</h2>
   <p><a href="{{ url_for('home') }}">← Retour</a></p>
