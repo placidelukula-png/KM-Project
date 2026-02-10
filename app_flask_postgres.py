@@ -510,7 +510,7 @@ LOGIN_PAGE = """
     <h2 style="margin-top:0;">Connexion KM-Kimya</h2>
     <form method="post" action="{{ url_for('login') }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <label>Identifiant (nº téléphone sans prefixes) :</label>
+      <label>Identifiant <small>(nº téléphone sans prefixes)</small> :</label>
       <input name="phone" value="admin" required>
       <label>Mot de passe :</label>
       <input name="password" type="password" required>
