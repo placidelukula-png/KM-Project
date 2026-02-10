@@ -1395,8 +1395,10 @@ DATAGENERALFOLLOWUP_PAGE = """
           <th>IdType</th>
           <th>IdPicture</th>
           <th>Statut</th>
+          <th>Balance</th>
           <th>Update date</th>
           <th>Update user</th>
+          <th>Membership date</th>
           <th style="width:160px;">Action</th>
         </tr>
       </thead>
@@ -1419,8 +1421,8 @@ DATAGENERALFOLLOWUP_PAGE = """
             {% endif %}
           </td>
           <td>{{ r[9] }}</td>
-          <td>{{ r[10].strftime('%d/%m/%Y') }}</td>
-          <td>{{ r[11] }}</td>
+          <td>{{ r[11].strftime('%d/%m/%Y') }}</td>
+          <td>{{ r[12] }}</td>
           <td>
             <a href="{{ url_for('edit', member_id=r[0]) }}">Edit</a>
             <form method="post"
@@ -1479,6 +1481,7 @@ def add():
             idtype=data["idtype"],
             idpicture_url=data["idpicture_url"],
             currentstatute=data["currentstatute"],
+            balance=0.0,  # nouveau membre commence avec solde 0
             updateuser=updateuser,
             password_plain=data["password"],
         )
@@ -1569,8 +1572,10 @@ def update(member_id: int):
             idtype=data["idtype"],
             idpicture_url=data["idpicture_url"],
             currentstatute=data["currentstatute"],
+            balance=None,  # balance n'est pas modifiable ici
             updateuser=updateuser,
             new_password_plain=new_pwd,
+            membershipdate=None,  # ne pas modifier la date d'adhésion
         )
         return redirect(url_for("home"))
 
