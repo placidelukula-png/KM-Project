@@ -1220,7 +1220,7 @@ DATAGENERALFOLLOWUP_PAGE = """
 
 <body>
 <div class="wrap">
-  <h1>KM Membres</h1>
+  <h1>KM-Kimya  Les Membres</h1>
   <p class="muted">Interface d'administration des membres. Mentor et admin peuvent créer des membres, mais seuls les admins peuvent voir cette page.</p>
   <p><a href="{{ url_for('home') }}">← Retour</a></p>
   
@@ -1296,8 +1296,8 @@ DATAGENERALFOLLOWUP_PAGE = """
       </div>
 
       <div class="row">
-        <button class="btn" type="submit">Save</button>
-        <a class="btn secondary" href="{{ url_for('home') }}" style="display:inline-flex;align-items:center;justify-content:center;">Cancel</a>
+        <button class="btn" type="submit">Enregistrer</button>
+        <a class="btn secondary" href="{{ url_for('home') }}" style="display:inline-flex;align-items:center;justify-content:center;">Annuler</a>
       </div>
     </form>
   </div>
@@ -1404,7 +1404,7 @@ def add():
             idtype=data["idtype"],
             idpicture_url=data["idpicture_url"],
             currentstatute=data["currentstatute"],
-            balance=0.0,  # nouveau membre commence avec solde 0
+            #balance=0.0,  # nouveau membre commence avec solde 0
             updateuser=updateuser,
             password_plain=data["password"],
         )
@@ -1495,10 +1495,10 @@ def update(member_id: int):
             idtype=data["idtype"],
             idpicture_url=data["idpicture_url"],
             currentstatute=data["currentstatute"],
-            balance=None,  # balance n'est pas modifiable ici
+            #balance=None,  # balance n'est pas modifiable ici
             updateuser=updateuser,
             new_password_plain=new_pwd,
-            membershipdate=None,  # ne pas modifier la date d'adhésion
+            #membershipdate=None,  # ne pas modifier la date d'adhésion
         )
         return redirect(url_for("home"))
 
