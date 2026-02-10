@@ -1266,21 +1266,6 @@ DATAGENERALFOLLOWUP_PAGE = """
         </div>
 
         <div>
-          <label>IdType (texte libre)</label>
-          <input name="idtype" value="{{ edit_row[7] }}" required>
-        </div>
-
-        <div>
-          <label>IdPicture URL (optionnel)</label>
-          <input name="idpicture_url" value="{{ edit_row[8] or '' }}" placeholder="https://...">
-          {% if edit_row[8] %}
-            <div class="small" style="margin-top:6px;">
-              <a href="{{ edit_row[8] }}" target="_blank" rel="noopener">Open ID picture</a>
-            </div>
-          {% endif %}
-        </div>
-
-        <div>
           <label>Statut</label>
           <select name="currentstatute" required>
             {% for s in statutes %}
@@ -1315,13 +1300,9 @@ DATAGENERALFOLLOWUP_PAGE = """
           <th>Lastname</th>
           <th>Firstname</th>
           <th>Birthdate</th>
-          <th>IdType</th>
-          <th>IdPicture</th>
           <th>Statut</th>
-          <th>Balance</th>
           <th>Update date</th>
           <th>Update user</th>
-          <th>Membership date</th>
           <th style="width:160px;">Action</th>
         </tr>
       </thead>
@@ -1335,14 +1316,6 @@ DATAGENERALFOLLOWUP_PAGE = """
           <td>{{ r[4] }}</td>
           <td>{{ r[5] }}</td>
           <td>{{ r[6].strftime('%d/%m/%Y') }}</td>
-          <td>{{ r[7] }}</td>
-          <td>
-            {% if r[8] %}
-              <a href="{{ r[8] }}" target="_blank" rel="noopener">link</a>
-            {% else %}
-              <span class="small">—</span>
-            {% endif %}
-          </td>
           <td>{{ r[9] }}</td>
           <td>{{ r[11].strftime('%d/%m/%Y') }}</td>
           <td>{{ r[12] }}</td>
@@ -1385,55 +1358,51 @@ def datageneralfollowup():
     return render_template_string(DATAGENERALFOLLOWUP_PAGE, rows=rows, edit_row=None, edit_birthdate="",
                                   message="", is_error=False, member_types=MEMBER_TYPES, statutes=STATUTES)
 
-@app.post("/add")
-@login_required
-def add():
-    try:
-        data = validate_member_form(request.form, for_update=False)
-        updateuser = session.get("user") or ADMIN_PHONE
-        mentor = session.get("user") or ADMIN_PHONE
+#@app.post("/add")
+#       data = validate_member_form(request.form, for_update=False)
+#        updateuser = session.get("user") or ADMIN_PHONE
+#        mentor = session.get("user") or ADMIN_PHONE
 
-        insert_member(
-            phone=data["phone"],
-            membertype=data["membertype"],
-            mentor=mentor,
-            #mentor=data["mentor"],
-            lastname=data["lastname"],
-            firstname=data["firstname"],
-            birthdate_date=data["birthdate_date"],
-            idtype=data["idtype"],
-            idpicture_url=data["idpicture_url"],
-            currentstatute=data["currentstatute"],
-            #balance=0.0,  # nouveau membre commence avec solde 0
-            updateuser=updateuser,
-            password_plain=data["password"],
-        )
-        return redirect(url_for("home"))
+#            phone=data["phone"],
+#            membertype=data["membertype"],
+#            mentor=mentor,
+#            #mentor=data["mentor"],
+#            lastname=data["lastname"],
+#            firstname=data["firstname"],
+#            birthdate_date=data["birthdate_date"],
+#            idtype=data["idtype"],
+#            idpicture_url=data["idpicture_url"],
+#            currentstatute=data["currentstatute"],
+#            #balance=0.0,  # nouveau membre commence avec solde 0
+#            updateuser=updateuser,
+#            password_plain=data["password"],
+#        )
+#        return redirect(url_for("home"))
 
-    except psycopg.errors.UniqueViolation:
-        rows = fetch_all_membres()
-        return render_template_string(
-            DATAGENERALFOLLOWUP_PAGE,
-            rows=rows,
-            edit_row=None,
-            edit_birthdate="",
-            message="Erreur: ce phone existe déjà (unique).",
-            is_error=True,
-            member_types=MEMBER_TYPES,
-            statutes=STATUTES,
-        )
-    except Exception as e:
-        rows = fetch_all_membres()
-        return render_template_string(
-            DATAGENERALFOLLOWUP_PAGE,
-            rows=rows,
-            edit_row=None,
-            edit_birthdate="",
-            message=f"Erreur: {str(e)}",
-            is_error=True,
-            member_types=MEMBER_TYPES,
-            statutes=STATUTES,
-        )
+#    except psycopg.errors.UniqueViolation:
+#        rows = fetch_all_membres()
+#        return render_template_string(
+#            DATAGENERALFOLLOWUP_PAGE,
+#            rows=rows,
+#            edit_row=None,
+#            edit_birthdate="",
+#            message="Erreur: ce phone existe déjà (unique).",
+#            is_error=True,
+#            member_types=MEMBER_TYPES,
+#            statutes=STATUTES,
+#        )
+#    except Exception as e:
+#        rows = fetch_all_membres()
+#        return render_template_string(
+#            DATAGENERALFOLLOWUP_PAGE,
+#            rows=rows,
+#            edit_row=None,
+#            edit_birthdate="",
+#            message=f"Erreur: {str(e)}",
+#            is_error=True,
+#            member_types=MEMBER_TYPES,
+#            statutes=STATUTES,
+#        )
 
 
 @app.get("/edit/<int:member_id>")
@@ -1492,8 +1461,8 @@ def update(member_id: int):
             lastname=data["lastname"],
             firstname=data["firstname"],
             birthdate_date=data["birthdate_date"],
-            idtype=data["idtype"],
-            idpicture_url=data["idpicture_url"],
+            #idtype=data["idtype"],
+            #idpicture_url=data["idpicture_url"],
             currentstatute=data["currentstatute"],
             #balance=None,  # balance n'est pas modifiable ici
             updateuser=updateuser,
