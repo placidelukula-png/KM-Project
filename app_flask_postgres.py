@@ -257,7 +257,7 @@ def insert_member(phone, membertype, mentor, lastname, firstname, birthdate_date
 
 
 def update_member(member_id, phone, membertype, mentor, lastname, firstname, birthdate_date, idtype, idpicture_url,
-                  currentstatute, updateuser, new_password_plain: str | None):
+                  currentstatute, balance, updateuser, new_password_plain: str | None,membeshipdate):
     with get_conn() as conn:
         with conn.cursor() as cur:
             if new_password_plain:
@@ -265,20 +265,20 @@ def update_member(member_id, phone, membertype, mentor, lastname, firstname, bir
                 cur.execute("""
                     UPDATE membres
                     SET phone=%s, membertype=%s, mentor=%s, lastname=%s, firstname=%s, birthdate=%s,
-                        idtype=%s, idpicture_url=%s, currentstatute=%s,
-                        updatedate=CURRENT_DATE, updateuser=%s, password_hash=%s
+                        idtype=%s, idpicture_url=%s, currentstatute=%s,balance=%s,
+                        updatedate=CURRENT_DATE, updateuser=%s, password_hash=%s,membershipdate=%s
                     WHERE id=%s
                 """, (phone, membertype, mentor, lastname, firstname, birthdate_date, idtype, idpicture_url,
-                      currentstatute, updateuser, pwd_hash, member_id))
+                      currentstatute, balance, updateuser, pwd_hash,membeshipdate, member_id))
             else:
                 cur.execute("""
                     UPDATE membres
                     SET phone=%s, membertype=%s, mentor=%s, lastname=%s, firstname=%s, birthdate=%s,
-                        idtype=%s, idpicture_url=%s, currentstatute=%s,
-                        updatedate=CURRENT_DATE, updateuser=%s
+                        idtype=%s, idpicture_url=%s, currentstatute=%s,balance=%s,
+                        updatedate=CURRENT_DATE, updateuser=%s,membershipdate=%s
                     WHERE id=%s
                 """, (phone, membertype, mentor, lastname, firstname, birthdate_date, idtype, idpicture_url,
-                      currentstatute, updateuser, member_id))
+                      currentstatute,balance, updateuser,membeshipdate, member_id))
         conn.commit()
 
 
@@ -1282,7 +1282,8 @@ DATAGENERALFOLLOWUP_PAGE = """
 
       <div class="row">
         <button class="btn" type="submit">Enregistrer</button>
-        <a class="btn secondary" href="{{ url_for('home') }}" style="display:inline-flex;align-items:center;justify-content:center;">Annuler</a>
+        update
+        <a class="btn secondary" href="{{ url_for('datageneralfollowup') }}" style="display:inline-flex;align-items:center;justify-content:center;">Annuler</a>
       </div>
     </form>
   </div>
@@ -1465,15 +1466,15 @@ def update(member_id: int):
             lastname=data["lastname"],
             firstname=data["firstname"],
             birthdate_date=data["birthdate_date"],
-            #idtype=data["idtype"],
-            #idpicture_url=data["idpicture_url"],
+            idtype=data["idtype"],
+            idpicture_url=data["idpicture_url"],
             currentstatute=data["currentstatute"],
-            #balance=None,  # balance n'est pas modifiable ici
+            balance=None,  # balance n'est pas modifiable ici
             updateuser=updateuser,
             new_password_plain=new_pwd,
-            #membershipdate=None,  # ne pas modifier la date d'adhésion
+            membershipdate=None,  # ne pas modifier la date d'adhésion
         )
-        return redirect(url_for("home"))
+        return redirect(url_for("DATAGENERALFOLLOWUP_PAGE"))
 
     except Exception as e:
         rows = fetch_all_membres()
