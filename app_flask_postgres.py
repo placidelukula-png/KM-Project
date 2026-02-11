@@ -1266,6 +1266,31 @@ DATAGENERALFOLLOWUP_PAGE = """
         </div>
 
         <div>
+          <label>Type de pièce</label>
+          <input name="idtype" value="{{ edit_row[7] }}" required>
+        </div>
+
+        <div>
+          <label>Id picture</label>
+          <input name="idpicture" value="{{ edit_row[8] }}" required>
+        </div>
+
+        <div>
+          <label>Solde actuel</label>
+          <input name="balance" value="{{ edit_row[10] }}" required>
+        </div>
+
+        <div>
+          <label>Update date</label>
+          <input name="updatedate" value="{{ edit_row[11].strftime('%d/%m/%Y') }}" required>
+        </div>
+
+        <div>
+          <label>Update user</label>
+          <input name="updateuser" value="{{ edit_row[12] }}" required>
+        </div>
+
+        <div>
           <label>Statut</label>
           <select name="currentstatute" required>
             {% for s in statutes %}
@@ -1281,8 +1306,13 @@ DATAGENERALFOLLOWUP_PAGE = """
       </div>
 
       <div class="row">
-        <button class="btn" type="submit">Enregistrer</button>
-        update
+        <form method="post"
+          action="{{ url_for('update', member_id=edit_row[0]) }}"
+          style="display:inline;"
+          onsubmit="return confirm('Mettre à jour ce membre (ID {{ edit_row[0] }}) ?');">
+          <button class="btn" type="submit">Enregistrer</button>
+        </form>  
+
         <a class="btn secondary" href="{{ url_for('datageneralfollowup') }}" style="display:inline-flex;align-items:center;justify-content:center;">Annuler</a>
       </div>
     </form>
