@@ -269,7 +269,7 @@ def update_member(member_id, phone, membertype, mentor, lastname, firstname, bir
                         updatedate=CURRENT_DATE, updateuser=%s, password_hash=%s,membershipdate=%s
                     WHERE id=%s
                 """, (phone, membertype, mentor, lastname, firstname, birthdate_date, idtype, idpicture_url,
-                      currentstatute, balance, updateuser, pwd_hash,membeshipdate, member_id))
+                      currentstatute, balance, updateuser, pwd_hash,membershipdate, member_id))
             else:
                 cur.execute("""
                     UPDATE membres
