@@ -257,7 +257,7 @@ def insert_member(phone, membertype, mentor, lastname, firstname, birthdate_date
 
 
 def update_member(member_id, phone, membertype, mentor, lastname, firstname, birthdate_date, idtype, idpicture_url,
-                  currentstatute, balance, updateuser, new_password_plain: str | None,membeshipdate):
+                  currentstatute, balance, updateuser, new_password_plain: str | None,membershipdate):
     with get_conn() as conn:
         with conn.cursor() as cur:
             if new_password_plain:
@@ -510,7 +510,7 @@ LOGIN_PAGE = """
     <h2 style="margin-top:0;">Connexion KM-Kimya</h2>
     <form method="post" action="{{ url_for('login') }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <label>Identifiant <small>(nº téléphone sans prefixes)</small> :</label>
+      <label>Identifiant du membre <small>(nº téléphone sans prefixes)</small> :</label>
       <input name="phone" value="admin" required>
       <label>Mot de passe :</label>
       <input name="password" type="password" required>
@@ -1228,7 +1228,7 @@ DATAGENERALFOLLOWUP_PAGE = """
   {% if edit_row %}
   <div class="card">
     <h2 style="margin-top:0;">Edit member (ID {{ edit_row[0] }})</h2>
-    <form method="get" action="{{ url_for('update', member_id=edit_row[0]) }}">
+    <form method="post" action="{{ url_for('update', member_id=edit_row[0]) }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <div class="grid">
         <div>
