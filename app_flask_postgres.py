@@ -1382,7 +1382,7 @@ DATAGENERALFOLLOWUP_PAGE = """
 """
 
 # Endpoint9 Data general follow-up (menu card)
-@app.get("/datageneralfollowup")
+@app.post("/datageneralfollowup")
 @admin_required
 def datageneralfollowup():
 #   ## Réutilise ton écran existant "Liste des membres + Edit/Delete"
