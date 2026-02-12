@@ -413,15 +413,6 @@ def validate_member_form(form, for_update=False):
     }
 
 
-#proposition STUDIO EDITOR
-#def fetch_password_hash_and_statute_by_phone(phone: str) -> tuple[str, str] | None:
-#    with get_conn() as conn:
-#        with conn.cursor() as cur:
-#            cur.execute("SELECT password_hash, currentstatute FROM membres WHERE phone = %s", (phone,))
-#            row = cur.fetchone()
-#            return (row[0], row[1]) if row else None
-
-
 # ------------------------------------
 # Décorateurs d'accès (login + rôles)
 # ------------------------------------
@@ -439,10 +430,6 @@ def role_required(*roles):
 
 admin_required = role_required("admin")
 mentor_required = role_required("mentor", "admin")   # admin voit tout
-
-
-
-#< 20260203
 
 # ----------------------------
 # Auth helpers
@@ -1382,7 +1369,7 @@ DATAGENERALFOLLOWUP_PAGE = """
 """
 
 # Endpoint9 Data general follow-up (menu card)
-@app.post("/datageneralfollowup")
+@app.get("/datageneralfollowup")
 @admin_required
 def datageneralfollowup():
 #   ## Réutilise ton écran existant "Liste des membres + Edit/Delete"
