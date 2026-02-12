@@ -1286,6 +1286,10 @@ DATAGENERALFOLLOWUP_PAGE = """
         </div>
 
         <div>
+          <label>Date d'adhésion</label>
+          <input name="membershipdate" value="{{ edit_row[14].strftime('%d/%m/%Y') }}" required>
+        </div>
+        <div>
           <label>Update user</label>
           <input name="updateuser" value="{{ edit_row[12] }}" required>
         </div>
@@ -1499,11 +1503,10 @@ def update(member_id: int):
             idtype=data["idtype"],
             idpicture_url=data["idpicture_url"],
             currentstatute=data["currentstatute"],
-            balance=None,  # balance n'est pas modifiable ici
+            balance=data["balance"],  
             updateuser=updateuser,
             new_password_plain=new_pwd,
-            membershipdate=None,  # ne pas modifier la date d'adhésion
-        )
+            membershipdate=data["membershipdate"],        )
         return redirect(url_for("DATAGENERALFOLLOWUP_PAGE"))
 
     except Exception as e:
