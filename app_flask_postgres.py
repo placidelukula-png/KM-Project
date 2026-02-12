@@ -1392,7 +1392,7 @@ def datageneralfollowup():
                                   message="", is_error=False, member_types=MEMBER_TYPES, statutes=STATUTES)
 
 
-@app.get("/edit/<int:member_id>")
+@app.post("/edit/<int:member_id>")
 @login_required
 def edit(member_id: int):
     row = fetch_one(member_id)
