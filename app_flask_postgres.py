@@ -1192,7 +1192,7 @@ DATAGENERALFOLLOWUP_PAGE = """
 <html>
 <head>
   <meta charset="utf-8">
-  <title>membres (Flask + PostgreSQL)</title>
+  <title>les membres</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 30px; }
     .wrap { max-width: 1150px; margin: 0 auto; }
@@ -1315,6 +1315,7 @@ DATAGENERALFOLLOWUP_PAGE = """
           style="display:inline;"
           onsubmit="return confirm('Mettre à jour ce membre (ID {{ edit_row[0] }}) ?');">
           <button class="btn" type="submit">Enregistrer</button>
+          update
         </form>  
 
         <a class="btn secondary" href="{{ url_for('datageneralfollowup') }}" style="display:inline-flex;align-items:center;justify-content:center;">Annuler</a>
@@ -1380,9 +1381,6 @@ DATAGENERALFOLLOWUP_PAGE = """
 </html>
 """
 
-
-
-
 # Endpoint9 Data general follow-up (menu card)
 @app.get("/datageneralfollowup")
 @admin_required
@@ -1392,56 +1390,6 @@ def datageneralfollowup():
     rows = fetch_all_membres()
     return render_template_string(DATAGENERALFOLLOWUP_PAGE, rows=rows, edit_row=None, edit_birthdate="",
                                   message="", is_error=False, member_types=MEMBER_TYPES, statutes=STATUTES)
-
-@app.post("/add")
-@login_required
-def add():
-    try:
-        data = validate_member_form(request.form, for_update=False)
-        updateuser = session.get("user") or ADMIN_PHONE
-        mentor = session.get("user") or ADMIN_PHONE
-
-        insert_member(
-            phone=data["phone"],
-            membertype=data["membertype"],
-            mentor=mentor,
-            #mentor=data["mentor"],
-            lastname=data["lastname"],
-            firstname=data["firstname"],
-            birthdate_date=data["birthdate_date"],
-            idtype=data["idtype"],
-            idpicture_url=data["idpicture_url"],
-            currentstatute=data["currentstatute"],
-            #balance=0.0,  # nouveau membre commence avec solde 0
-            updateuser=updateuser,
-            password_plain=data["password"],
-        )
-        return redirect(url_for("home"))
-
-    except psycopg.errors.UniqueViolation:
-        rows = fetch_all_membres()
-        return render_template_string(
-            DATAGENERALFOLLOWUP_PAGE,
-            rows=rows,
-            edit_row=None,
-            edit_birthdate="",
-            message="Erreur: ce phone existe déjà (unique).",
-            is_error=True,
-            member_types=MEMBER_TYPES,
-            statutes=STATUTES,
-        )
-    except Exception as e:
-        rows = fetch_all_membres()
-        return render_template_string(
-            DATAGENERALFOLLOWUP_PAGE,
-            rows=rows,
-            edit_row=None,
-            edit_birthdate="",
-            message=f"Erreur: {str(e)}",
-            is_error=True,
-            member_types=MEMBER_TYPES,
-            statutes=STATUTES,
-        )
 
 
 @app.get("/edit/<int:member_id>")
@@ -1506,7 +1454,7 @@ def update(member_id: int):
             balance=data["balance"],  
             updateuser=updateuser,
             new_password_plain=new_pwd,
-            membershipdate=data["membershipdate"],        )
+            membershipdate=data["membershipdate"],)
         return redirect(url_for("DATAGENERALFOLLOWUP_PAGE"))
 
     except Exception as e:
