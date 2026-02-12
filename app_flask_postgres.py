@@ -1228,7 +1228,7 @@ DATAGENERALFOLLOWUP_PAGE = """
   {% if edit_row %}
   <div class="card">
     <h2 style="margin-top:0;">Edit member (ID {{ edit_row[0] }})</h2>
-    <form method="post" action="{{ url_for('update', member_id=edit_row[0]) }}">
+    <form method="get" action="{{ url_for('update', member_id=edit_row[0]) }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <div class="grid">
         <div>
