@@ -1302,7 +1302,7 @@ DATAGENERALFOLLOWUP_PAGE = """
           style="display:inline;"
           onsubmit="return confirm('Mettre à jour ce membre (ID {{ edit_row[0] }}) ?');">
           <button class="btn" type="submit">Enregistrer</button>
-          update
+          et pourtant
         </form>  
 
         <a class="btn secondary" href="{{ url_for('datageneralfollowup') }}" style="display:inline-flex;align-items:center;justify-content:center;">Annuler</a>
