@@ -278,7 +278,7 @@ def update_member(member_id, phone, membertype, mentor, lastname, firstname, bir
                         updatedate=CURRENT_DATE, updateuser=%s,membershipdate=%s
                     WHERE id=%s
                 """, (phone, membertype, mentor, lastname, firstname, birthdate_date, idtype, idpicture_url,
-                      currentstatute,balance, updateuser,membeshipdate, member_id))
+                      currentstatute,balance, updateuser,membershipdate, member_id))
         conn.commit()
 
 
@@ -1379,7 +1379,7 @@ def datageneralfollowup():
                                   message="", is_error=False, member_types=MEMBER_TYPES, statutes=STATUTES)
 
 
-@app.post("/edit/<int:member_id>")
+@app.get("/edit/<int:member_id>")
 @login_required
 def edit(member_id: int):
     row = fetch_one(member_id)
@@ -1419,7 +1419,7 @@ def edit(member_id: int):
     )
 
 
-@app.post("/update/<int:member_id>")
+@app.get("/update/<int:member_id>")
 @login_required
 def update(member_id: int):
     try:
