@@ -257,7 +257,7 @@ def insert_member(phone, membertype, mentor, lastname, firstname, birthdate_date
 
 
 def update_member(member_id, phone, membertype, mentor, lastname, firstname, birthdate_date, idtype, idpicture_url,
-                  currentstatute, balance, updateuser, new_password_plain: str | None,membershipdate):
+                  currentstatute, updateuser, new_password_plain: str | None):
     with get_conn() as conn:
         with conn.cursor() as cur:
             if new_password_plain:
@@ -265,20 +265,20 @@ def update_member(member_id, phone, membertype, mentor, lastname, firstname, bir
                 cur.execute("""
                     UPDATE membres
                     SET phone=%s, membertype=%s, mentor=%s, lastname=%s, firstname=%s, birthdate=%s,
-                        idtype=%s, idpicture_url=%s, currentstatute=%s,balance=%s,
-                        updatedate=CURRENT_DATE, updateuser=%s, password_hash=%s,membershipdate=%s
+                        idtype=%s, idpicture_url=%s, currentstatute=%s,
+                        updatedate=CURRENT_DATE, updateuser=%s, password_hash=%s
                     WHERE id=%s
                 """, (phone, membertype, mentor, lastname, firstname, birthdate_date, idtype, idpicture_url,
-                      currentstatute, balance, updateuser, pwd_hash,membershipdate, member_id))
+                      currentstatute, updateuser, pwd_hash, member_id))
             else:
                 cur.execute("""
                     UPDATE membres
                     SET phone=%s, membertype=%s, mentor=%s, lastname=%s, firstname=%s, birthdate=%s,
-                        idtype=%s, idpicture_url=%s, currentstatute=%s,balance=%s,
-                        updatedate=CURRENT_DATE, updateuser=%s,membershipdate=%s
+                        idtype=%s, idpicture_url=%s, currentstatute=%s,
+                        updatedate=CURRENT_DATE, updateuser=%s
                     WHERE id=%s
                 """, (phone, membertype, mentor, lastname, firstname, birthdate_date, idtype, idpicture_url,
-                      currentstatute,balance, updateuser,membershipdate, member_id))
+                      currentstatute, updateuser, member_id))
         conn.commit()
 
 
@@ -413,6 +413,15 @@ def validate_member_form(form, for_update=False):
     }
 
 
+#proposition STUDIO EDITOR
+#def fetch_password_hash_and_statute_by_phone(phone: str) -> tuple[str, str] | None:
+#    with get_conn() as conn:
+#        with conn.cursor() as cur:
+#            cur.execute("SELECT password_hash, currentstatute FROM membres WHERE phone = %s", (phone,))
+#            row = cur.fetchone()
+#            return (row[0], row[1]) if row else None
+
+
 # ------------------------------------
 # Décorateurs d'accès (login + rôles)
 # ------------------------------------
@@ -430,6 +439,10 @@ def role_required(*roles):
 
 admin_required = role_required("admin")
 mentor_required = role_required("mentor", "admin")   # admin voit tout
+
+
+
+#< 20260203
 
 # ----------------------------
 # Auth helpers
@@ -497,7 +510,7 @@ LOGIN_PAGE = """
     <h2 style="margin-top:0;">Connexion KM-Kimya</h2>
     <form method="post" action="{{ url_for('login') }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <label>Identifiant du membre <small>(nº téléphone sans prefixes)</small> :</label>
+      <label>Identifiant <small>(nº téléphone sans prefixes)</small> :</label>
       <input name="phone" value="admin" required>
       <label>Mot de passe :</label>
       <input name="password" type="password" required>
@@ -1179,7 +1192,7 @@ DATAGENERALFOLLOWUP_PAGE = """
 <html>
 <head>
   <meta charset="utf-8">
-  <title>les membres</title>
+  <title>membres (Flask + PostgreSQL)</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 30px; }
     .wrap { max-width: 1150px; margin: 0 auto; }
@@ -1253,32 +1266,18 @@ DATAGENERALFOLLOWUP_PAGE = """
         </div>
 
         <div>
-          <label>Type de pièce</label>
+          <label>IdType (texte libre)</label>
           <input name="idtype" value="{{ edit_row[7] }}" required>
         </div>
 
         <div>
-          <label>Id picture</label>
-          <input name="idpicture" value="{{ edit_row[8] }}" required>
-        </div>
-
-        <div>
-          <label>Solde actuel</label>
-          <input name="balance" value="{{ edit_row[10] }}" required>
-        </div>
-
-        <div>
-          <label>Update date</label>
-          <input name="updatedate" value="{{ edit_row[11].strftime('%d/%m/%Y') }}" required>
-        </div>
-
-        <div>
-          <label>Date d'adhésion</label>
-          <input name="membershipdate" value="{{ edit_row[14].strftime('%d/%m/%Y') }}" required>
-        </div>
-        <div>
-          <label>Update user</label>
-          <input name="updateuser" value="{{ edit_row[12] }}" required>
+          <label>IdPicture URL (optionnel)</label>
+          <input name="idpicture_url" value="{{ edit_row[8] or '' }}" placeholder="https://...">
+          {% if edit_row[8] %}
+            <div class="small" style="margin-top:6px;">
+              <a href="{{ edit_row[8] }}" target="_blank" rel="noopener">Open ID picture</a>
+            </div>
+          {% endif %}
         </div>
 
         <div>
@@ -1297,15 +1296,8 @@ DATAGENERALFOLLOWUP_PAGE = """
       </div>
 
       <div class="row">
-        <form method="post"
-          action="{{ url_for('update', member_id=edit_row[0]) }}"
-          style="display:inline;"
-          onsubmit="return confirm('Mettre à jour ce membre (ID {{ edit_row[0] }}) ?');">
-          <button class="btn" type="submit">Enregistrer</button>
-          et pourtant
-        </form>  
-
-        <a class="btn secondary" href="{{ url_for('datageneralfollowup') }}" style="display:inline-flex;align-items:center;justify-content:center;">Annuler</a>
+        <button class="btn" type="submit">Enregistrer</button>
+        <a class="btn secondary" href="{{ url_for('home') }}" style="display:inline-flex;align-items:center;justify-content:center;">Annuler</a>
       </div>
     </form>
   </div>
@@ -1323,9 +1315,13 @@ DATAGENERALFOLLOWUP_PAGE = """
           <th>Lastname</th>
           <th>Firstname</th>
           <th>Birthdate</th>
+          <th>IdType</th>
+          <th>IdPicture</th>
           <th>Statut</th>
+          <th>Balance</th>
           <th>Update date</th>
           <th>Update user</th>
+          <th>Membership date</th>
           <th style="width:160px;">Action</th>
         </tr>
       </thead>
@@ -1339,6 +1335,14 @@ DATAGENERALFOLLOWUP_PAGE = """
           <td>{{ r[4] }}</td>
           <td>{{ r[5] }}</td>
           <td>{{ r[6].strftime('%d/%m/%Y') }}</td>
+          <td>{{ r[7] }}</td>
+          <td>
+            {% if r[8] %}
+              <a href="{{ r[8] }}" target="_blank" rel="noopener">link</a>
+            {% else %}
+              <span class="small">—</span>
+            {% endif %}
+          </td>
           <td>{{ r[9] }}</td>
           <td>{{ r[11].strftime('%d/%m/%Y') }}</td>
           <td>{{ r[12] }}</td>
@@ -1368,6 +1372,9 @@ DATAGENERALFOLLOWUP_PAGE = """
 </html>
 """
 
+
+
+
 # Endpoint9 Data general follow-up (menu card)
 @app.get("/datageneralfollowup")
 @admin_required
@@ -1377,6 +1384,56 @@ def datageneralfollowup():
     rows = fetch_all_membres()
     return render_template_string(DATAGENERALFOLLOWUP_PAGE, rows=rows, edit_row=None, edit_birthdate="",
                                   message="", is_error=False, member_types=MEMBER_TYPES, statutes=STATUTES)
+
+@app.post("/add")
+@login_required
+def add():
+    try:
+        data = validate_member_form(request.form, for_update=False)
+        updateuser = session.get("user") or ADMIN_PHONE
+        mentor = session.get("user") or ADMIN_PHONE
+
+        insert_member(
+            phone=data["phone"],
+            membertype=data["membertype"],
+            mentor=mentor,
+            #mentor=data["mentor"],
+            lastname=data["lastname"],
+            firstname=data["firstname"],
+            birthdate_date=data["birthdate_date"],
+            idtype=data["idtype"],
+            idpicture_url=data["idpicture_url"],
+            currentstatute=data["currentstatute"],
+            #balance=0.0,  # nouveau membre commence avec solde 0
+            updateuser=updateuser,
+            password_plain=data["password"],
+        )
+        return redirect(url_for("home"))
+
+    except psycopg.errors.UniqueViolation:
+        rows = fetch_all_membres()
+        return render_template_string(
+            DATAGENERALFOLLOWUP_PAGE,
+            rows=rows,
+            edit_row=None,
+            edit_birthdate="",
+            message="Erreur: ce phone existe déjà (unique).",
+            is_error=True,
+            member_types=MEMBER_TYPES,
+            statutes=STATUTES,
+        )
+    except Exception as e:
+        rows = fetch_all_membres()
+        return render_template_string(
+            DATAGENERALFOLLOWUP_PAGE,
+            rows=rows,
+            edit_row=None,
+            edit_birthdate="",
+            message=f"Erreur: {str(e)}",
+            is_error=True,
+            member_types=MEMBER_TYPES,
+            statutes=STATUTES,
+        )
 
 
 @app.get("/edit/<int:member_id>")
@@ -1419,7 +1476,7 @@ def edit(member_id: int):
     )
 
 
-@app.get("/update/<int:member_id>")
+@app.post("/update/<int:member_id>")
 @login_required
 def update(member_id: int):
     try:
@@ -1438,11 +1495,12 @@ def update(member_id: int):
             idtype=data["idtype"],
             idpicture_url=data["idpicture_url"],
             currentstatute=data["currentstatute"],
-            balance=data["balance"],  
+            #balance=None,  # balance n'est pas modifiable ici
             updateuser=updateuser,
             new_password_plain=new_pwd,
-            membershipdate=data["membershipdate"],)
-        return redirect(url_for("DATAGENERALFOLLOWUP_PAGE"))
+            #membershipdate=None,  # ne pas modifier la date d'adhésion
+        )
+        return redirect(url_for("home"))
 
     except Exception as e:
         rows = fetch_all_membres()
