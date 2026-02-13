@@ -1302,10 +1302,9 @@ DATAGENERALFOLLOWUP_PAGE = """
           <th>Mentor</th>
           <th>Lastname</th>
           <th>Firstname</th>
-          <th>Birthdate</th>
           <th>Statut</th>
-          <th>Update date</th>
-          <th>Update user</th>
+          <th>Update</th>
+          <th>Update by</th>
           <th style="width:160px;">Action</th>
         </tr>
       </thead>
@@ -1318,8 +1317,6 @@ DATAGENERALFOLLOWUP_PAGE = """
           <td>{{ r[3] }}</td>
           <td>{{ r[4] }}</td>
           <td>{{ r[5] }}</td>
-          <td>{{ r[6].strftime('%d/%m/%Y') }}</td>
-
           <td>{{ r[9] }}</td>
           <td>{{ r[11].strftime('%d/%m/%Y') }}</td>
           <td>{{ r[12] }}</td>
