@@ -1209,7 +1209,7 @@ DATAGENERALFOLLOWUP_PAGE = """
 <body>
 <div class="wrap">
   <h1>KM-Kimya  Les Membres</h1>
-  <p class="muted">Interface d'administration des membres. Mentor et admin peuvent créer des membres, mais seuls les admins peuvent voir cette page.</p>
+  <p class="muted"><small>Interface d'administration des membres. Mentor et admin peuvent créer des membres, mais seuls les admins peuvent voir cette page.</small></p>
   <p><a href="{{ url_for('home') }}">← Retour</a></p>
   
 
@@ -1303,8 +1303,7 @@ DATAGENERALFOLLOWUP_PAGE = """
           <th>Lastname</th>
           <th>Firstname</th>
           <th>Birthdate</th>
-          <th>IdType</th>
-          <th>IdPicture</th>
+
           <th>Statut</th>
           <th>Balance</th>
           <th>Update date</th>
@@ -1323,14 +1322,7 @@ DATAGENERALFOLLOWUP_PAGE = """
           <td>{{ r[4] }}</td>
           <td>{{ r[5] }}</td>
           <td>{{ r[6].strftime('%d/%m/%Y') }}</td>
-          <td>{{ r[7] }}</td>
-          <td>
-            {% if r[8] %}
-              <a href="{{ r[8] }}" target="_blank" rel="noopener">link</a>
-            {% else %}
-              <span class="small">—</span>
-            {% endif %}
-          </td>
+
           <td>{{ r[9] }}</td>
           <td>{{ r[11].strftime('%d/%m/%Y') }}</td>
           <td>{{ r[12] }}</td>
