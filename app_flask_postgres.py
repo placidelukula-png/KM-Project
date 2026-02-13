@@ -1208,7 +1208,7 @@ DATAGENERALFOLLOWUP_PAGE = """
 
 <body>
 <div class="wrap">
-  <h1>KM-Kimya  Les Membres</h1>
+  <h2>KM-Kimya  Les Membres</h2>
   <p class="muted"><small>Interface d'administration des membres. Mentor et admin peuvent créer des membres, mais seuls les admins peuvent voir cette page.</small></p>
   <p><a href="{{ url_for('home') }}">← Retour</a></p>
   
@@ -1303,12 +1303,9 @@ DATAGENERALFOLLOWUP_PAGE = """
           <th>Lastname</th>
           <th>Firstname</th>
           <th>Birthdate</th>
-
           <th>Statut</th>
-          <th>Balance</th>
           <th>Update date</th>
           <th>Update user</th>
-          <th>Membership date</th>
           <th style="width:160px;">Action</th>
         </tr>
       </thead>
