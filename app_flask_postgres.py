@@ -413,15 +413,6 @@ def validate_member_form(form, for_update=False):
     }
 
 
-#proposition STUDIO EDITOR
-#def fetch_password_hash_and_statute_by_phone(phone: str) -> tuple[str, str] | None:
-#    with get_conn() as conn:
-#        with conn.cursor() as cur:
-#            cur.execute("SELECT password_hash, currentstatute FROM membres WHERE phone = %s", (phone,))
-#            row = cur.fetchone()
-#            return (row[0], row[1]) if row else None
-
-
 # ------------------------------------
 # Décorateurs d'accès (login + rôles)
 # ------------------------------------
@@ -440,9 +431,6 @@ def role_required(*roles):
 admin_required = role_required("admin")
 mentor_required = role_required("mentor", "admin")   # admin voit tout
 
-
-
-#< 20260203
 
 # ----------------------------
 # Auth helpers
@@ -1192,7 +1180,7 @@ DATAGENERALFOLLOWUP_PAGE = """
 <html>
 <head>
   <meta charset="utf-8">
-  <title>membres (Flask + PostgreSQL)</title>
+  <title>les membres</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 30px; }
     .wrap { max-width: 1150px; margin: 0 auto; }
@@ -1385,55 +1373,6 @@ def datageneralfollowup():
     return render_template_string(DATAGENERALFOLLOWUP_PAGE, rows=rows, edit_row=None, edit_birthdate="",
                                   message="", is_error=False, member_types=MEMBER_TYPES, statutes=STATUTES)
 
-@app.post("/add")
-@login_required
-def add():
-    try:
-        data = validate_member_form(request.form, for_update=False)
-        updateuser = session.get("user") or ADMIN_PHONE
-        mentor = session.get("user") or ADMIN_PHONE
-
-        insert_member(
-            phone=data["phone"],
-            membertype=data["membertype"],
-            mentor=mentor,
-            #mentor=data["mentor"],
-            lastname=data["lastname"],
-            firstname=data["firstname"],
-            birthdate_date=data["birthdate_date"],
-            idtype=data["idtype"],
-            idpicture_url=data["idpicture_url"],
-            currentstatute=data["currentstatute"],
-            #balance=0.0,  # nouveau membre commence avec solde 0
-            updateuser=updateuser,
-            password_plain=data["password"],
-        )
-        return redirect(url_for("home"))
-
-    except psycopg.errors.UniqueViolation:
-        rows = fetch_all_membres()
-        return render_template_string(
-            DATAGENERALFOLLOWUP_PAGE,
-            rows=rows,
-            edit_row=None,
-            edit_birthdate="",
-            message="Erreur: ce phone existe déjà (unique).",
-            is_error=True,
-            member_types=MEMBER_TYPES,
-            statutes=STATUTES,
-        )
-    except Exception as e:
-        rows = fetch_all_membres()
-        return render_template_string(
-            DATAGENERALFOLLOWUP_PAGE,
-            rows=rows,
-            edit_row=None,
-            edit_birthdate="",
-            message=f"Erreur: {str(e)}",
-            is_error=True,
-            member_types=MEMBER_TYPES,
-            statutes=STATUTES,
-        )
 
 
 @app.get("/edit/<int:member_id>")
