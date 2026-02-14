@@ -1562,8 +1562,6 @@ def transfer():
     return render_template_string(TRANSFER_PAGE, balance=my_balance, message="", is_error=False)
 
 
-
-
 if __name__ == "__main__":
     # Local uniquement. En prod Render, gunicorn gère le port.
     app.run(host="0.0.0.0", port=5000, debug=True)

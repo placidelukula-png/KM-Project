@@ -28,8 +28,8 @@ log = logging.getLogger("km_import")
 # Config (ENV)
 # ----------------------------
 DATABASE_URL = os.getenv("DATABASE_URL")  # Render Internal Database URL
-DEFAULT_MEMBER_TYPE = os.getenv("DEFAULT_MEMBER_TYPE", "membre")
-DEFAULT_STATUTE = os.getenv("DEFAULT_STATUTE", "actif")
+DEFAULT_MEMBER_TYPE = os.getenv("DEFAULT_MEMBER_TYPE", "independant")
+DEFAULT_STATUTE = os.getenv("DEFAULT_STATUTE", "probatoire")
 DEFAULT_MENTOR = os.getenv("DEFAULT_MENTOR", "admin")  # ou le mentor “système”
 DEFAULT_UPDATEUSER = os.getenv("DEFAULT_UPDATEUSER", "system_import")
 DEFAULT_IDTYPE = os.getenv("DEFAULT_IDTYPE", "N/A")
@@ -201,18 +201,51 @@ def insert_mouvement(cur, payment_id: str, phone: str, firstname: str, lastname:
         (payment_id, phone, firstname, lastname, mouvement_date, amount, debitcredit, reference)
         VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
     """, (payment_id, phone, firstname, lastname, mvt_date, amount, dc, reference))
-
-
+#
 def apply_balance(cur, phone: str, amount: Decimal, dc: str):
     """
     C => crédit => +amount
     D => débit  => -amount
+    Puis: si balance < 0 => currentstatute='inactif'
+          sinon => ne rien faire (on laisse le statut tel quel)
     """
     if dc == "C":
-        cur.execute("UPDATE membres SET balance = balance + %s WHERE phone = %s", (amount, phone))
+        cur.execute(
+            "UPDATE membres SET balance = balance + %s WHERE phone = %s",
+            (amount, phone),
+        )
     else:
-        cur.execute("UPDATE membres SET balance = balance - %s WHERE phone = %s", (amount, phone))
+        cur.execute(
+            "UPDATE membres SET balance = balance - %s WHERE phone = %s",
+            (amount, phone),
+        )
 
+    # MAJ statut seulement si POUR UN MEMBRE ACTIF ON A balance négative (sinon on ne touche pas au statut)
+    if current_statute := cur.execute("SELECT currentstatute FROM membres WHERE phone = %s", (phone,)).fetchone():
+        if current_statute[0] == "actif":
+            cur.execute(
+                """
+                UPDATE membres
+                SET currentstatute = CASE
+                    WHEN balance < 0 THEN 'inactif'
+                    ELSE currentstatute
+                END
+                WHERE phone = %s
+                """,
+                (phone,),
+            )
+
+#
+#def apply_balance(cur, phone: str, amount: Decimal, dc: str):
+#    """
+#    C => crédit => +amount
+#    D => débit  => -amount
+#    """
+#    if dc == "C":
+#        cur.execute("UPDATE membres SET balance = balance + %s WHERE phone = %s", (amount, phone))
+#    else:
+#        cur.execute("UPDATE membres SET balance = balance - %s WHERE phone = %s", (amount, phone))
+#
 
 def read_input_file(path: str) -> pd.DataFrame:
     """
@@ -308,11 +341,21 @@ def process_file(path: str) -> ImportStats:
 
 
 def main():
-    if len(sys.argv) < 2:
-        print("Usage: python import_mouvements.py <fichier.csv|fichier.xlsx>")
-        sys.exit(1)
 
-    path = sys.argv[1]
+#    if len(sys.argv) < 2:
+#        print("Usage: python import_mouvements.py <fichier.csv|fichier.xlsx>")
+#        sys.exit(1)
+
+#    path = sys.argv[1]
+
+    # fichier externe attendu
+    mobilemoneyfile = os.getenv("MOBILEMONEYFILE", "mobilemoneyfile")
+
+    if len(sys.argv) >= 2:
+        path = sys.argv[1]
+    else:
+        path = mobilemoneyfile
+
     log.info("Import démarré: %s", path)
 
     stats = process_file(path)
