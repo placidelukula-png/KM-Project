@@ -1131,6 +1131,7 @@ def import_mouvements():
         with get_conn() as conn:
             with conn.cursor() as cur:
                 for row in reader:
+                    log.exception("contenu de 'row' dans le reader=%s", row)                   
                     try:
                         phone = (row.get("phone") or "").strip()
                         firstname = (row.get("firstname") or "").strip()
@@ -1154,7 +1155,7 @@ def import_mouvements():
                         inserted += 1
 
                         # 2) update balance membre
-                        delta = -amount if debitcredit == "D" else amount
+                        delta = -amount if debitcredit == "C" else amount
                         cur.execute("""
                           UPDATE membres
                           SET balance = balance + %s,
@@ -1172,7 +1173,7 @@ def import_mouvements():
                           SET currentstatute = 'inactif',
                               updatedate = CURRENT_DATE,
                               updateuser = %s
-                          WHERE phone = %s AND balance < 0
+                          WHERE phone = %s AND balance <  0 AND currentstatute != 'actif'
                         """, (session.get("user"), phone))
                         if cur.rowcount:
                             flagged_inactif += 1
