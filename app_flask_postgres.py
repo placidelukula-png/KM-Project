@@ -1103,8 +1103,8 @@ def import_mouvements():
 def run_import(database_url):
     # Exemple de fonction d'importation (à adapter selon ton format de fichier)
     import csv
-    import psycopg2
-    conn = psycopg2.connect(database_url)
+    #import psycopg2
+    conn = psycopg.connect(database_url)
     cur = conn.cursor()
     with open("mobilemoneyfile.csv", newline="") as csvfile:
         reader = csv.DictReader(csvfile)
