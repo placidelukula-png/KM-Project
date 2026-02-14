@@ -1110,7 +1110,7 @@ import csv
 
 @app.route("/import-mouvements", methods=["GET", "POST"])
 @admin_required
-def import_mouvements_endpoint():
+def import_mouvements():
     if request.method == "GET":
         return render_template_string(IMPORT_PAGE, message="", is_error=False, stats="")
 
