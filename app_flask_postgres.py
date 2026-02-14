@@ -663,7 +663,7 @@ DASHBOARD_PAGE = """
       <div class="icon">⬇️</div>
       <div>
         <p class="t">Importer cotisations</p>
-        <p class="d">Lancer import_mouvements.py (test).</p>
+        <p class="d">Lancer l'importation des mouvements</p>
         <a class="link" href="{{ url_for('import_mouvements') }}">Ouvrir</a>
       </div>
     </div>
@@ -1073,58 +1073,126 @@ def add_member():
 # Endpoint #7 — Importer cotisations (admin) : exécuter import_mouvements.py
 #----------------------------------------------------------------------------
 IMPORT_PAGE = """
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Importer cotisations</title></head><body style="font-family:Arial;margin:20px">
-<h2>Importer cotisations</h2>
+<!doctype html><html><head><meta charset="utf-8">
+<title>Import Mouvements</title>
+<style>
+ body{font-family:Arial;margin:20px} .wrap{max-width:900px;margin:0 auto}
+ .card{border:1px solid #e7e7e7;border-radius:16px;padding:16px}
+ .btn{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#111;color:#fff;cursor:pointer}
+ .msg{margin-top:12px;padding:10px;border-radius:12px}
+ .ok{background:#eaffea;border:1px solid #b8ffb8}
+ .err{background:#ffe9ea;border:1px solid #ffb3b8}
+</style></head><body><div class="wrap">
+<h2>Import mouvements (CSV)</h2>
 <p><a href="{{ url_for('home') }}">← Retour</a></p>
-<form method="post">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <button type="submit" style="padding:10px 14px;border-radius:12px;border:1px solid #111;background:#111;color:#fff;cursor:pointer;">
-    Lancer import_mouvements.py
-  </button>
-</form>
-{% if message %}<p style="margin-top:12px;">{{ message }}</p>{% endif %}
-</body></html>
+
+<div class="card">
+  <form method="post" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Fichier CSV (champ: <b>mobilemoneyfile</b>)</label><br>
+    <input type="file" name="mobilemoneyfile" accept=".csv" required><br><br>
+    <button class="btn" type="submit">Importer</button>
+  </form>
+
+  {% if message %}
+    <div class="msg {{ 'err' if is_error else 'ok' }}">{{ message }}</div>
+  {% endif %}
+
+  {% if stats %}
+    <pre style="white-space:pre-wrap; margin-top:10px;">{{ stats }}</pre>
+  {% endif %}
+</div>
+</div></body></html>
 """
 # Endpoint7 Importer cotisations (menu card)
-@app.route("/import", methods=["GET","POST"])
+from io import StringIO
+import csv
+
+@app.route("/import-mouvements", methods=["GET", "POST"])
 @admin_required
-def import_mouvements():
-    if request.method == "POST":
-        # ⚠️ Ici on appelle une fonction python (à créer dans import_mouvements.py)
-        # from import_mouvements import run_import
-        # n, msg = run_import(DATABASE_URL)
-        # return render_template_string(IMPORT_PAGE, message=f"Import OK: {n} lignes. {msg}")
+def import_mouvements_endpoint():
+    if request.method == "GET":
+        return render_template_string(IMPORT_PAGE, message="", is_error=False, stats="")
 
-        run_import(DATABASE_URL)  # fonction à créer qui lit un fichier exterieur et insère les données dans la table mouvements de la la base de données
-        return render_template_string(IMPORT_PAGE, message="Import déclenché. Vérifiez la table mouvements pour les résultats.")
-    return render_template_string(IMPORT_PAGE, message="")
+    # POST
+    f = request.files.get("mobilemoneyfile")
+    if not f or not f.filename:
+        return render_template_string(IMPORT_PAGE, message="Aucun fichier reçu.", is_error=True, stats="")
 
-def run_import(database_url):
-    # Exemple de fonction d'importation (à adapter selon ton format de fichier)
-    import csv
-    #import psycopg2
-    conn = psycopg.connect(database_url)
-    cur = conn.cursor()
-    with open("mobilemoneyfile.csv", newline="") as csvfile:
-        reader = csv.DictReader(csvfile)
-        count = 0
-        for row in reader:
-            reference = row["payment_id"].strip()
-            phone = row["phone"].strip()
-            date_mvt = datetime.strptime(row["date"], "%d/%m/%Y").date()
-            amount = float(row["amount"])
-            debitcredit = row["debitcredit"].strip().upper()
-            libelle = row["Reference"].strip() if "Reference" in row else ""
-            cur.execute("""
-                INSERT INTO mouvements (phone, date, amount, debitcredit, reference, libelle, created_by)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
-            """, (phone, date_mvt, amount, debitcredit, reference, libelle, "import_script"))
-            count += 1
-        conn.commit()
-    cur.close()
-    conn.close()
-    return count, "Import terminé."
+    try:
+        content = f.read().decode("utf-8", errors="replace")
+        reader = csv.DictReader(StringIO(content))
+
+        inserted = 0
+        updated_balances = 0
+        flagged_inactif = 0
+        skipped = 0
+
+        with get_conn() as conn:
+            with conn.cursor() as cur:
+                for row in reader:
+                    try:
+                        phone = (row.get("phone") or "").strip()
+                        firstname = (row.get("firstname") or "").strip()
+                        debitcredit = (row.get("debitcredit") or "").strip().upper()  # 'D' / 'C'
+                        reference = (row.get("reference") or "").strip()
+                        amount = float((row.get("amount") or "0").strip())
+
+                        # TODO: parse date selon votre format (mvt_date)
+                        mvt_date = row.get("mvt_date")  # à parser si nécessaire
+
+                        if not phone or amount <= 0 or debitcredit not in ("D", "C"):
+                            skipped += 1
+                            continue
+
+                        # 1) insert mouvement
+                        cur.execute("""
+                          INSERT INTO mouvements (phone, firstname, mvt_date, amount, debitcredit, reference)
+                          VALUES (%s,%s,%s,%s,%s,%s)
+                        """, (phone, firstname, mvt_date, amount, debitcredit, reference))
+                        inserted += 1
+
+                        # 2) update balance membre
+                        delta = -amount if debitcredit == "D" else amount
+                        cur.execute("""
+                          UPDATE membres
+                          SET balance = balance + %s,
+                              updatedate = CURRENT_DATE,
+                              updateuser = %s
+                          WHERE phone = %s
+                        """, (delta, session.get("user"), phone))
+
+                        if cur.rowcount:
+                            updated_balances += 1
+
+                        # 3) règle demandée: si balance < 0 alors currentstatute="inactif"
+                        cur.execute("""
+                          UPDATE membres
+                          SET currentstatute = 'inactif',
+                              updatedate = CURRENT_DATE,
+                              updateuser = %s
+                          WHERE phone = %s AND balance < 0
+                        """, (session.get("user"), phone))
+                        if cur.rowcount:
+                            flagged_inactif += 1
+
+                    except Exception:
+                        skipped += 1
+
+            conn.commit()
+
+        stats = (
+            f"Import terminé.\n"
+            f"- Mouvements insérés: {inserted}\n"
+            f"- Balances mises à jour: {updated_balances}\n"
+            f"- Membres passés inactif (balance<0): {flagged_inactif}\n"
+            f"- Lignes ignorées: {skipped}\n"
+        )
+
+        return render_template_string(IMPORT_PAGE, message="Import OK.", is_error=False, stats=stats)
+
+    except Exception as e:
+        return render_template_string(IMPORT_PAGE, message=f"Erreur import: {e}", is_error=True, stats="")
 
 #------------------------------------------------------------------------------
 # Endpoint #8 — Check mouvements (admin) : afficher toute la table 'mouvements'
@@ -1373,9 +1441,6 @@ DATAGENERALFOLLOWUP_PAGE = """
 </body>
 </html>
 """
-
-
-
 
 # Endpoint9 Data general follow-up (menu card)
 @app.get("/datageneralfollowup")
