@@ -1141,7 +1141,8 @@ def import_mouvements():
                         # TODO: parse date selon votre format (mvt_date)
                         mvt_date = row.get("mvt_date")  # à parser si nécessaire
 
-                        if not phone or amount <= 0 or debitcredit not in ("D", "C"):
+                        #if not phone or amount <= 0 or debitcredit not in ("D", "C"):
+                        if not phone : 
                             skipped += 1
                             continue
 
