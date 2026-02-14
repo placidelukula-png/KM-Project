@@ -144,6 +144,7 @@ def init_db():
                   debitcredit  VARCHAR(1) NOT NULL CHECK (debitcredit IN ('D','C')),
                   reference    TEXT NOT NULL UNIQUE,
                   created_at   TIMESTAMP NOT NULL DEFAULT NOW(),
+                  libelle      TEXT,
                   CONSTRAINT fk_mvt_phone FOREIGN KEY (phone) REFERENCES membres(phone)
                 );
             """)
@@ -315,7 +316,7 @@ def list_mouvements_by_phone(phone: str):
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                SELECT id, phone, firstname, mvt_date, amount, debitcredit, reference, created_at
+                SELECT id, phone, firstname, mvt_date, amount, debitcredit, reference, libelle, created_at
                 FROM mouvements
                 WHERE phone=%s
                 ORDER BY mvt_date DESC, id DESC
@@ -326,20 +327,20 @@ def list_all_mouvements():
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                SELECT id, phone, firstname, mvt_date, amount, debitcredit, reference, created_at
+                SELECT id, phone, firstname, mvt_date, amount, debitcredit, reference, libelle, created_at
                 FROM mouvements
                 ORDER BY mvt_date DESC, id DESC
             """)
             return cur.fetchall()
 
-def update_mouvement(mvt_id: int, mvt_date, amount, debitcredit, reference):
+def update_mouvement(mvt_id: int, mvt_date, amount, debitcredit, reference, libelle):
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
                 UPDATE mouvements
-                SET mvt_date=%s, amount=%s, debitcredit=%s, reference=%s
+                SET mvt_date=%s, amount=%s, debitcredit=%s, reference=%s, libelle=%s
                 WHERE id=%s
-            """, (mvt_date, amount, debitcredit, reference, mvt_id))
+            """, (mvt_date, amount, debitcredit, reference, libelle, mvt_id))
         conn.commit()
 
 def delete_mouvement(mvt_id: int):
@@ -1095,12 +1096,39 @@ def import_mouvements():
         # n, msg = run_import(DATABASE_URL)
         # return render_template_string(IMPORT_PAGE, message=f"Import OK: {n} lignes. {msg}")
 
-        return render_template_string(IMPORT_PAGE, message="Import déclenché (stub). Branche run_import() ensuite.")
+        run_import(DATABASE_URL)  # fonction à créer qui lit un fichier exterieur et insère les données dans la table mouvements de la la base de données
+        return render_template_string(IMPORT_PAGE, message="Import déclenché. Vérifiez la table mouvements pour les résultats.")
     return render_template_string(IMPORT_PAGE, message="")
 
-#-----------------------------------------------------------------------------
+def run_import(database_url):
+    # Exemple de fonction d'importation (à adapter selon ton format de fichier)
+    import csv
+    import psycopg2
+    conn = psycopg2.connect(database_url)
+    cur = conn.cursor()
+    with open("mobilemoneyfile.csv", newline="") as csvfile:
+        reader = csv.DictReader(csvfile)
+        count = 0
+        for row in reader:
+            reference = row["payment_id"].strip()
+            phone = row["phone"].strip()
+            date_mvt = datetime.strptime(row["date"], "%d/%m/%Y").date()
+            amount = float(row["amount"])
+            debitcredit = row["debitcredit"].strip().upper()
+            libelle = row["Reference"].strip() if "Reference" in row else ""
+            cur.execute("""
+                INSERT INTO mouvements (phone, date, amount, debitcredit, reference, libelle, created_by)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """, (phone, date_mvt, amount, debitcredit, reference, libelle, "import_script"))
+            count += 1
+        conn.commit()
+    cur.close()
+    conn.close()
+    return count, "Import terminé."
+
+#------------------------------------------------------------------------------
 # Endpoint #8 — Check mouvements (admin) : afficher toute la table 'mouvements'
-#-----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 CHECK_MVT_PAGE = """
 <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Check mouvements</title>
