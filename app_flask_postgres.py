@@ -139,6 +139,7 @@ def init_db():
                   id           BIGSERIAL PRIMARY KEY,
                   phone        TEXT NOT NULL,
                   firstname    TEXT NOT NULL,
+                  lastname     TEXT NOT NULL,
                   mvt_date     DATE NOT NULL,
                   amount       DECIMAL(18,2) NOT NULL DEFAULT 0,
                   debitcredit  VARCHAR(1) NOT NULL CHECK (debitcredit IN ('D','C')),
@@ -289,7 +290,6 @@ def delete_member(member_id: int):
             cur.execute("DELETE FROM membres WHERE id = %s", (member_id,))
         conn.commit()
 #
-#> 20260203
 def fetch_member_by_phone(phone: str):
     with get_conn() as conn:
         with conn.cursor() as cur:
@@ -1133,8 +1133,10 @@ def import_mouvements():
                 for row in reader:
                     log.exception("contenu de 'row' dans le reader=%s", row)                   
                     try:
+                        extenal_id = row.get("external_id")  # optionnel, pour éviter les doublons d'import
                         phone = (row.get("phone") or "").strip()
                         firstname = (row.get("firstname") or "").strip()
+                        lastname = (row.get("lastname") or "").strip()
                         debitcredit = (row.get("debitcredit") or "").strip().upper()  # 'D' / 'C'
                         reference = (row.get("reference") or "").strip()
                         amount = float((row.get("amount") or "0").strip())
@@ -1149,9 +1151,9 @@ def import_mouvements():
 
                         # 1) insert mouvement
                         cur.execute("""
-                          INSERT INTO mouvements (phone, firstname, mvt_date, amount, debitcredit, reference)
-                          VALUES (%s,%s,%s,%s,%s,%s)
-                        """, (phone, firstname, mvt_date, amount, debitcredit, reference))
+                          INSERT INTO mouvements (phone, firstname, lastname, mvt_date, amount, debitcredit, reference)
+                          VALUES (%s,%s,%s,%s,%s,%s,%s)
+                        """, (phone, firstname, lastname, mvt_date, amount, debitcredit, reference))
                         inserted += 1
 
                         # 2) update balance membre
@@ -1167,7 +1169,7 @@ def import_mouvements():
                         if cur.rowcount:
                             updated_balances += 1
 
-                        # 3) règle demandée: si balance < 0 alors currentstatute="inactif"
+                        # 3) règle demandée: si balance < 0 alors currentstatute="inactif", s'il etait 'actif' (=> s'il etait 'actif' on le passe à 'inactif', pas pour 'suspendu' et 'radié')
                         cur.execute("""
                           UPDATE membres
                           SET currentstatute = 'inactif',
