@@ -1156,7 +1156,7 @@ def import_mouvements():
         return render_template_string(IMPORT_PAGE, message="Aucun fichier reçu.", is_error=True, stats="")
 
     try:
-        content = f.read().decode("utf-8", errors="replace")
+        content = f.read().decode("utf-8-sig", errors="replace")
         reader = csv.DictReader(StringIO(content))
 
         inserted = 0
