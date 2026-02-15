@@ -1174,18 +1174,19 @@ def import_mouvements():
                         lastname = (row.get("lastname") or "").strip()
                         debitcredit = (row.get("debitcredit") or "").strip().upper()  # 'D' / 'C'
                         reference = (row.get("reference") or "").strip()
+
                         #amount = float((row.get("amount") or "0").strip())
                         amount_raw = (row.get("amount") or "0").strip().replace(",", ".")
                         amount = float(amount_raw)
+
                         # TODO: parse date selon votre format (mvt_date)
                         #mvt_date = row.get("mvt_date")  # à parser si nécessaire
                         mvt_date = parse_date_fr(row.get("date") or "")
-  
                         mouvem_date = datetime.strptime(mvt_date, "%d/%m/%Y").date()
                         mvt_date=mouvem_date
 
-                        log.info("contenu de 'amount' dans le reader=%s", amount)  
-                        log.info("contenu de 'mvt_date' dans le reader=%s", mvt_date)  
+                        log.info("contenu de 'amount' formaté=%s", amount)  
+                        log.info("contenu de 'mvt_date' formaté=%s", mvt_date)  
 
                         if not phone or debitcredit not in ("D", "C"):
                             skipped += 1
