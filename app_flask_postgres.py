@@ -1246,6 +1246,9 @@ def import_mouvements():
         return render_template_string(IMPORT_PAGE, message="Import OK.", is_error=False, stats=stats)
 
     except Exception as e:
+        log.exception("Erreur import: %s", e)
+        log.info("Ligne concernée : %s", row if 'row' in locals() else "Aucune ligne")
+        conn.rollback()
         return render_template_string(IMPORT_PAGE, message=f"Erreur import: {e}", is_error=True, stats="")
 
 #------------------------------------------------------------------------------
