@@ -1684,15 +1684,15 @@ def transfer():
                 with conn.cursor() as cur:
                     # 1) insert mouvement DEBIT (from)
                     cur.execute("""
-                        INSERT INTO mouvements (phone, firstname, mvt_date, amount, debitcredit, reference)
-                        VALUES (%s,%s,%s,%s,'D',%s)
-                    """, (from_phone, me[5], today, amount, ref_base + "-D"))
+                        INSERT INTO mouvements (phone, firstname,lastname, mvt_date, amount, debitcredit, reference)
+                        VALUES (%s,%s,%s,%s,%s,'D',%s)
+                    """, (from_phone, me[5], me[6], today, amount, ref_base + "-D"))
 
                     # 2) insert mouvement CREDIT (to)
                     cur.execute("""
-                        INSERT INTO mouvements (phone, firstname, mvt_date, amount, debitcredit, reference)
-                        VALUES (%s,%s,%s,%s,'C',%s)
-                    """, (to_phone, to_member[5], today, amount, ref_base + "-C"))
+                        INSERT INTO mouvements (phone, firstname,lastname, mvt_date, amount, debitcredit, reference)
+                        VALUES (%s,%s,%s,%s,%s,'C',%s)
+                    """, (to_phone, to_member[5], to_member[6], today, amount, ref_base + "-C"))
 
                     # 3) update balances
                     cur.execute("UPDATE membres SET balance = balance - %s, updatedate=CURRENT_DATE, updateuser=%s WHERE phone=%s",
