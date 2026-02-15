@@ -333,20 +333,21 @@ def list_all_mouvements():
             """)
             return cur.fetchall()
 
-def update_mouvement(mvt_id: int, mvt_date, amount, debitcredit, reference, libelle):
+def update_mouvement(id: int, mvt_date, amount, debitcredit, reference, libelle):
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
                 UPDATE mouvements
-                SET mvt_date=%s, amount=%s, debitcredit=%s, reference=%s, libelle=%s
+                SET mvt_date=%s, amount=%s, debitcredit=%s, reference=%s, libelle=%s, created_at=CURRENT_TIMESTAMP, updated_by=%s
+
                 WHERE id=%s
-            """, (mvt_date, amount, debitcredit, reference, libelle, mvt_id))
+            """, (id,mvt_date, amount, debitcredit, reference, libelle,date.today(), session.get("user")))
         conn.commit()
 
-def delete_mouvement(mvt_id: int):
+def delete_mouvement(id: int):
     with get_conn() as conn:
         with conn.cursor() as cur:
-            cur.execute("DELETE FROM mouvements WHERE id=%s", (mvt_id,))
+            cur.execute("DELETE FROM mouvements WHERE id=%s", (id,))
         conn.commit()
 
 def list_groupe_for_mentor(mentor_phone: str):
@@ -1182,8 +1183,10 @@ def import_mouvements():
                         # TODO: parse date selon votre format (mvt_date)
                         #mvt_date = row.get("mvt_date")  # à parser si nécessaire
                         mvt_date = parse_date_fr(row.get("date") or "")
-#                        mouvem_date = datetime.strptime(mvt_date, "%d/%m/%Y").date()
-#                        mvt_date=mouvem_date
+                        #mouvem_date = datetime.strptime(mvt_date, "%d/%m/%Y").date()
+                        #mvt_date=mouvem_date
+                        libelle = (row.get("reference") or "").strip()
+                        created_at=date.today()
 
                         log.info("contenu de 'amount' formaté=%s", amount)  
                         log.info("contenu de 'mvt_date' formaté=%s", mvt_date)  
@@ -1195,9 +1198,9 @@ def import_mouvements():
 
                         # 1) insert mouvement
                         cur.execute("""
-                          INSERT INTO mouvements (phone, firstname, lastname, mvt_date, amount, debitcredit, reference,libelle)
-                          VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
-                        """, (phone, firstname, lastname, mvt_date, amount, debitcredit, reference,row.get("libelle") or ""))
+                          INSERT INTO mouvements (phone, firstname, lastname, mvt_date, amount, debitcredit,reference,created_at,libelle,updated_by)
+                          VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                        """, (phone, firstname, lastname, mvt_date, amount, debitcredit, reference,created_at,libelle,session.get("user")))
                         inserted += 1
 
                         # 2) update balance membre
@@ -1307,7 +1310,8 @@ def check_mouvements_update(mvt_id: int):
     amount = float((request.form.get("amount") or "0").strip())
     dc = (request.form.get("debitcredit") or "D").strip()
     ref = (request.form.get("reference") or "").strip()
-    update_mouvement(mvt_id, d, amount, dc, ref)
+    libelle = (request.form.get("libelle") or ref).strip()  # ou tu peux ajouter un champ libellé dans le form si tu veux
+    update_mouvement(mvt_id, d, amount, dc, ref,libelle)
     return redirect(url_for("check_mouvements"))
 
 @app.post("/checkmouvements/delete/<int:mvt_id>")
