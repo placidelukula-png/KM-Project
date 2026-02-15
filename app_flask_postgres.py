@@ -1202,6 +1202,7 @@ def import_mouvements():
                           INSERT INTO mouvements (phone, firstname, lastname, mvt_date, amount, debitcredit,reference,created_at,libelle,updated_by)
                           VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
                         """, (phone, firstname, lastname, mvt_date, amount, debitcredit, reference,created_at,libelle,session.get("user")))
+                        log.info("Mouvement inséré pour phone=%s, amount=%s, debitcredit=%s, reference=%s", phone, amount, debitcredit, reference)
                         inserted += 1
 
                         # 2) update balance membre
@@ -1230,6 +1231,7 @@ def import_mouvements():
 
                     except Exception:
                         skipped += 1
+                        log.exception("Ligne ignorée - Erreur traitement ligne: %s", row)
 
             conn.commit()
 
