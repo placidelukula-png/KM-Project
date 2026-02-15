@@ -1183,7 +1183,7 @@ def import_mouvements():
 
                         if not phone or debitcredit not in ("D", "C"):
                             skipped += 1
-                            log.warning("Ligne ignorée (phone ou debitcredit invalide): %s", row)
+                            log.warning("Ligne ignorée (phone ou debitcredit invalide): %s", phone)
                             continue
 
                         # 1) insert mouvement
