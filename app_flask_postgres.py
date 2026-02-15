@@ -1105,6 +1105,42 @@ IMPORT_PAGE = """
 </div></body></html>
 """
 # Endpoint7 Importer cotisations (menu card)
+import re
+from datetime import date
+
+FR_MONTHS = {
+    "janv": 1, "jan": 1,
+    "fevr": 2, "févr": 2, "fev": 2, "fév": 2,
+    "mars": 3,
+    "avr": 4, "avril": 4,
+    "mai": 5,
+    "juin": 6,
+    "juil": 7, "juillet": 7,
+    "aout": 8, "août": 8,
+    "sept": 9,
+    "oct": 10,
+    "nov": 11,
+    "dec": 12, "déc": 12,
+}
+
+def parse_date_fr(s: str) -> date:
+    # ex: "2-oct.-25" / "27-janv.-25"
+    s = (s or "").strip().lower()
+    s = s.replace(".", "")  # "oct." -> "oct", "janv." -> "janv"
+    m = re.match(r"^(\d{1,2})-([a-zéûôîàç]+)-(\d{2,4})$", s)
+    if not m:
+        raise ValueError(f"Date invalide: {s!r}")
+    d = int(m.group(1))
+    mon_txt = m.group(2)
+    y = int(m.group(3))
+    if y < 100:
+        y += 2000
+    if mon_txt not in FR_MONTHS:
+        raise ValueError(f"Mois FR inconnu: {mon_txt!r}")
+    return date(y, FR_MONTHS[mon_txt], d)
+
+
+
 from io import StringIO
 import csv
 
@@ -1131,29 +1167,30 @@ def import_mouvements():
         with get_conn() as conn:
             with conn.cursor() as cur:
                 for row in reader:
-                    log.exception("contenu de 'row' dans le reader=%s", row)                   
+                    log.info("contenu de 'row' dans le reader=%s", row)                   
                     try:
-                        extenal_id = row.get("external_id")  # optionnel, pour éviter les doublons d'import
                         phone = (row.get("phone") or "").strip()
                         firstname = (row.get("firstname") or "").strip()
                         lastname = (row.get("lastname") or "").strip()
                         debitcredit = (row.get("debitcredit") or "").strip().upper()  # 'D' / 'C'
                         reference = (row.get("reference") or "").strip()
-                        amount = float((row.get("amount") or "0").strip())
-
+                        #amount = float((row.get("amount") or "0").strip())
+                        amount_raw = (row.get("amount") or "0").strip().replace(",", ".")
+                        amount = float(amount_raw)
                         # TODO: parse date selon votre format (mvt_date)
-                        mvt_date = row.get("mvt_date")  # à parser si nécessaire
+                        #mvt_date = row.get("mvt_date")  # à parser si nécessaire
+                        mvt_date = parse_date_fr(row.get("date") or "")
 
-                        #if not phone or amount <= 0 or debitcredit not in ("D", "C"):
-                        if not phone : 
+                        if not phone or debitcredit not in ("D", "C"):
                             skipped += 1
+                            log.warning("Ligne ignorée (phone ou debitcredit invalide): %s", row)
                             continue
 
                         # 1) insert mouvement
                         cur.execute("""
-                          INSERT INTO mouvements (phone, firstname, lastname, mvt_date, amount, debitcredit, reference)
-                          VALUES (%s,%s,%s,%s,%s,%s,%s)
-                        """, (phone, firstname, lastname, mvt_date, amount, debitcredit, reference))
+                          INSERT INTO mouvements (phone, firstname, lastname, mvt_date, amount, debitcredit, reference,libelle)
+                          VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
+                        """, (phone, firstname, lastname, mvt_date, amount, debitcredit, reference,row.get("libelle") or ""))
                         inserted += 1
 
                         # 2) update balance membre
