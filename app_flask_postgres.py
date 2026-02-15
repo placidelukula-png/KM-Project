@@ -1181,6 +1181,9 @@ def import_mouvements():
                         #mvt_date = row.get("mvt_date")  # à parser si nécessaire
                         mvt_date = parse_date_fr(row.get("date") or "")
 
+                        log.info("contenu de 'amount' dans le reader=%s", amount)  
+                        log.info("contenu de 'mvt_date' dans le reader=%s", mvt_date)  
+
                         if not phone or debitcredit not in ("D", "C"):
                             skipped += 1
                             log.warning("Ligne ignorée (phone ou debitcredit invalide): %s", phone)
