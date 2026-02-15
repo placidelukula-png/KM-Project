@@ -1182,8 +1182,8 @@ def import_mouvements():
                         # TODO: parse date selon votre format (mvt_date)
                         #mvt_date = row.get("mvt_date")  # à parser si nécessaire
                         mvt_date = parse_date_fr(row.get("date") or "")
-                        mouvem_date = datetime.strptime(mvt_date, "%d/%m/%Y").date()
-                        mvt_date=mouvem_date
+#                        mouvem_date = datetime.strptime(mvt_date, "%d/%m/%Y").date()
+#                        mvt_date=mouvem_date
 
                         log.info("contenu de 'amount' formaté=%s", amount)  
                         log.info("contenu de 'mvt_date' formaté=%s", mvt_date)  
