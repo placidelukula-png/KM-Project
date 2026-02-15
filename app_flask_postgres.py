@@ -1183,9 +1183,9 @@ def import_mouvements():
 
                         # TODO: parse date selon votre format (mvt_date)
                         #mvt_date = row.get("mvt_date")  # à parser si nécessaire
-                        mvt_date = parse_date_fr(row.get("date") or "")
-                        #mouvem_date = datetime.strptime(mvt_date, "%d/%m/%Y").date()
-                        #mvt_date=mouvem_date
+                        #mvt_date = parse_date_fr(row.get("date") or "")
+                        mouvem_date = datetime.strptime(mvt_date, "%d/%m/%Y").date()
+                        mvt_date=mouvem_date
                         libelle = (row.get("reference") or "").strip()
                         created_at=date.today()
 
@@ -1206,7 +1206,7 @@ def import_mouvements():
                         inserted += 1
 
                         # 2) update balance membre
-                        delta = -amount if debitcredit == "C" else amount
+                        delta = -amount if debitcredit == "D" else amount
                         cur.execute("""
                           UPDATE membres
                           SET balance = balance + %s,
@@ -1677,7 +1677,8 @@ def transfer():
 
         # transaction atomique
         try:
-            ref_base = f"TR-{uuid.uuid4().hex[:10]}"
+            #ref_base = f"TR-{uuid.uuid4().hex[:10]}"
+            ref_base = f"TR-{session['user']}"
             today = datetime.utcnow().date()
 
             with get_conn() as conn:
@@ -1686,7 +1687,7 @@ def transfer():
                     cur.execute("""
                         INSERT INTO mouvements (phone, firstname,lastname, mvt_date, amount, debitcredit, reference)
                         VALUES (%s,%s,%s,%s,%s,'D',%s)
-                    """, (from_phone, me[5], me[6], today, amount, ref_base + "-D"))
+                    """, (from_phone, me[5], me[4], today, amount, ref_base + "-D"))
 
                     # 2) insert mouvement CREDIT (to)
                     cur.execute("""
