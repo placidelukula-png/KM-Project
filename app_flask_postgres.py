@@ -146,6 +146,7 @@ def init_db():
                   reference    TEXT NOT NULL UNIQUE,
                   created_at   TIMESTAMP NOT NULL DEFAULT NOW(),
                   libelle      TEXT,
+                  updated_by   TEXT NOT NULL,
                   CONSTRAINT fk_mvt_phone FOREIGN KEY (phone) REFERENCES membres(phone)
                 );
             """)
