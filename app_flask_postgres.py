@@ -1506,10 +1506,8 @@ def datageneralfollowup():
 #   ## Réutilise ton écran existant "Liste des membres + Edit/Delete"
 #   ## (le code que tu as déjà, c’est ici que ça vit)
     rows = fetch_all_membres()
-    return render_template_string(DATAGENERALFOLLOWUP_PAGE, rows=rows, edit_row=None, edit_birthdate="",
+    return render_template_string(DATAGENERALFOLLOWUP_PAGE, rows=rows, edit_row=None, edit_birthdate="",edit_membershipdate="", edit_balance=0.0,
                                   message="", is_error=False, member_types=MEMBER_TYPES, statutes=STATUTES)
-
-
 
 @app.get("/edit/<int:member_id>")
 @login_required
