@@ -147,8 +147,7 @@ def init_db():
                   updatedate   DATE NOT NULL DEFAULT CURRENT_DATE,
                   libelle      TEXT,
                   updated_by   TEXT,
-                  CONSTRAINT fk_mvt_phone FOREIGN KEY (phone) REFERENCES membres(phone)
-                );
+                  CONSTRAINT fk_mouvements_phone FOREIGN KEY (phone) REFERENCES membres(phone);
             """)
             cur.execute("CREATE INDEX IF NOT EXISTS idx_mouvements_phone ON mouvements(phone);")
             cur.execute("CREATE INDEX IF NOT EXISTS idx_mouvements_date ON mouvements(mvt_date);")
@@ -1227,7 +1226,7 @@ def import_mouvements():
                           SET currentstatute = 'inactif',
                               updatedate = CURRENT_DATE,
                               updateuser = %s
-                          WHERE phone = %s AND balance <  0 AND currentstatute == 'actif'
+                          WHERE phone = %s AND balance <  0 
                         """, (session.get("user"), phone))
                         if cur.rowcount:
                             flagged_inactif += 1
