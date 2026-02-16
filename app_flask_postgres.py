@@ -317,7 +317,7 @@ def list_mouvements_by_phone(phone: str):
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                SELECT id, phone, firstname, mvt_date, amount, debitcredit, reference, libelle, created_at
+                SELECT id, phone, firstname, mvt_date, amount, debitcredit, reference, libelle, updatedate, updated_by
                 FROM mouvements
                 WHERE phone=%s
                 ORDER BY mvt_date DESC, id DESC
@@ -328,7 +328,7 @@ def list_all_mouvements():
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                SELECT id, phone, firstname, mvt_date, amount, debitcredit, reference, libelle, created_at
+                SELECT id, phone, firstname, mvt_date, amount, debitcredit, reference, libelle, updatedate, updated_by
                 FROM mouvements
                 ORDER BY mvt_date DESC, id DESC
             """)
@@ -339,8 +339,7 @@ def update_mouvement(id: int, mvt_date, amount, debitcredit, reference, libelle)
         with conn.cursor() as cur:
             cur.execute("""
                 UPDATE mouvements
-                SET mvt_date=%s, amount=%s, debitcredit=%s, reference=%s, libelle=%s, created_at=CURRENT_TIMESTAMP, updated_by=%s
-
+                SET mvt_date=%s, amount=%s, debitcredit=%s, reference=%s, libelle=%s, updatedate=CURRENT_DATE, updated_by=%s
                 WHERE id=%s
             """, (id,mvt_date, amount, debitcredit, reference, libelle,date.today(), session.get("user")))
         conn.commit()
@@ -1187,7 +1186,7 @@ def import_mouvements():
                         #mouvem_date = datetime.strptime(mvt_date, "%d/%m/%Y").date()
                         #mvt_date=mouvem_date
                         libelle = (row.get("reference") or "").strip()
-                        created_at=date.today()
+                        updatedate=date.today()
 
                         log.info("contenu de 'amount' formaté=%s", amount)  
                         log.info("contenu de 'mvt_date' formaté=%s", mvt_date)  
@@ -1199,9 +1198,9 @@ def import_mouvements():
 
                         # 1) insert mouvement
                         cur.execute("""
-                          INSERT INTO mouvements (phone, firstname, lastname, mvt_date, amount, debitcredit,reference,created_at,libelle,updated_by)
+                          INSERT INTO mouvements (phone, firstname, lastname, mvt_date, amount, debitcredit,reference,updatedate,libelle,updated_by)
                           VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
-                        """, (phone, firstname, lastname, mvt_date, amount, debitcredit, reference,created_at,libelle,session.get("user")))
+                        """, (phone, firstname, lastname, mvt_date, amount, debitcredit, reference,updatedate,libelle,session.get("user")))
                         log.info("Mouvement inséré pour phone=%s, amount=%s, debitcredit=%s, reference=%s", phone, amount, debitcredit, reference)
                         inserted += 1
 
