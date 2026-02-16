@@ -1190,6 +1190,7 @@ def import_mouvements():
 
                         log.info("contenu de 'amount' formaté=%s", amount)  
                         log.info("contenu de 'mvt_date' formaté=%s", mvt_date)  
+                        log.info("contenu de 'updatedate' formaté=%s", updatedate)  
 
                         if not phone or debitcredit not in ("D", "C"):
                             skipped += 1
@@ -1200,7 +1201,7 @@ def import_mouvements():
                         cur.execute("""
                           INSERT INTO mouvements (phone, firstname, lastname, mvt_date, amount, debitcredit,reference,updatedate,libelle,updated_by)
                           VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
-                        """, (phone, firstname, lastname, mvt_date, amount, debitcredit, reference,updatedate,libelle,session.get("user")))
+                        """, (phone, firstname, lastname, mvt_date, amount, debitcredit, reference,date.today(),"libelle","system"))
                         log.info("Mouvement inséré pour phone=%s, amount=%s, debitcredit=%s, reference=%s", phone, amount, debitcredit, reference)
                         inserted += 1
 
