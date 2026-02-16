@@ -1408,17 +1408,14 @@ DATAGENERALFOLLOWUP_PAGE = """
         </div>
 
         <div>
-          <label>IdType (texte libre)</label>
-          <input name="idtype" value="{{ edit_row[7] }}" required>
+          <label>Solde (texte libre)</label>
+          <input name="balance" value="{{ edit_row[10] }}" required>
         </div>
 
         <div>
-          <label>IdPicture URL (optionnel)</label>
-          <input name="idpicture_url" value="{{ edit_row[8] or '' }}" placeholder="https://...">
-          {% if edit_row[8] %}
-            <div class="small" style="margin-top:6px;">
-              <a href="{{ edit_row[8] }}" target="_blank" rel="noopener">Open ID picture</a>
-            </div>
+          <label>Date adhésion (JJ/MM/AAAA)</label>
+          <input name="membershipdate" value="{{ edit_row[14] }}" required>
+        </div>
           {% endif %}
         </div>
 
@@ -1569,12 +1566,12 @@ def update(member_id: int):
             firstname=data["firstname"],
             birthdate_date=data["birthdate_date"],
             idtype=data["idtype"],
-            idpicture_url=data["idpicture_url"],
+            #idpicture_url=data["idpicture_url"],
+            balance=data["balance"],
+            membershipdate=data["membershipdate"],
             currentstatute=data["currentstatute"],
-            #balance=None,  # balance n'est pas modifiable ici
             updateuser=updateuser,
-            new_password_plain=new_pwd,
-            #membershipdate=None,  # ne pas modifier la date d'adhésion
+            new_password_plain=new_pwd,            
         )
         return redirect(url_for("home"))
 
