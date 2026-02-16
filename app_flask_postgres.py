@@ -1199,9 +1199,9 @@ def import_mouvements():
 
                         # 1) insert mouvement
                         cur.execute("""
-                          INSERT INTO mouvements (phone, firstname, lastname, mvt_date, amount, debitcredit,reference,updatedate,libelle,updated_by)
-                          VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
-                        """, (phone, firstname, lastname, mvt_date, amount, debitcredit, reference,date.today(),"libelle","system"))
+                          INSERT INTO mouvements (id,phone, firstname, lastname, mvt_date, amount, debitcredit,reference,updatedate,libelle,updated_by)
+                          VALUES (%%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                        """, (id,phone, firstname, lastname, mvt_date, amount, debitcredit, reference,date.today(),"libelle","system"))
                         log.info("Mouvement inséré pour phone=%s, amount=%s, debitcredit=%s, reference=%s", phone, amount, debitcredit, reference)
                         inserted += 1
 
@@ -1224,7 +1224,7 @@ def import_mouvements():
                           SET currentstatute = 'inactif',
                               updatedate = CURRENT_DATE,
                               updateuser = %s
-                          WHERE phone = %s AND balance <  0 AND currentstatute != 'actif'
+                          WHERE phone = %s AND balance <  0 AND currentstatute == 'actif'
                         """, (session.get("user"), phone))
                         if cur.rowcount:
                             flagged_inactif += 1
