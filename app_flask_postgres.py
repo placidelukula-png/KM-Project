@@ -1414,7 +1414,7 @@ DATAGENERALFOLLOWUP_PAGE = """
 
         <div>
           <label>Date adhésion (JJ/MM/AAAA)</label>
-          <input name="membershipdate" value="{{ edit_row[14] }}" required>
+          <input name="membershipdate" value="{{ edit_membershipdate }}" required>
         </div>
           {% endif %}
         </div>
@@ -1523,6 +1523,7 @@ def edit(member_id: int):
             rows=rows,
             edit_row=None,
             edit_birthdate="",
+            edit_membershipdate="",
             #message=f"Member ID {member_id} introuvable.",
             #is_error=True,
             message="",
@@ -1535,13 +1536,14 @@ def edit(member_id: int):
             user_membertype=membertype,
             #
         )
-
+    edit_membershipdate = row[14].strftime("%d/%m/%Y")
     edit_birthdate = row[6].strftime("%d/%m/%Y")
     return render_template_string(
         DATAGENERALFOLLOWUP_PAGE,
         rows=rows,
         edit_row=row,
         edit_birthdate=edit_birthdate,
+        edit_membershipdate=edit_membershipdate,
         message="",
         is_error=False,
         member_types=MEMBER_TYPES,
