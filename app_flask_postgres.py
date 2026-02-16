@@ -144,9 +144,9 @@ def init_db():
                   amount       DECIMAL(18,2) NOT NULL DEFAULT 0,
                   debitcredit  VARCHAR(1) NOT NULL CHECK (debitcredit IN ('D','C')),
                   reference    TEXT NOT NULL UNIQUE,
-                  created_at   TIMESTAMP NOT NULL DEFAULT NOW(),
+                  updatedate   DATE NOT NULL DEFAULT CURRENT_DATE,
                   libelle      TEXT,
-                  updated_by   TEXT NOT NULL,
+                  updated_by   TEXT,
                   CONSTRAINT fk_mvt_phone FOREIGN KEY (phone) REFERENCES membres(phone)
                 );
             """)
@@ -161,7 +161,7 @@ def init_db():
                   date_deces    DATE NOT NULL,
                   declared_by   TEXT NOT NULL,
                   created_at    TIMESTAMP NOT NULL DEFAULT NOW(),
-                  reference     TEXT NOT NULL UNIQUE,
+                  reference     TEXT
                   CONSTRAINT fk_deces_phone FOREIGN KEY (phone) REFERENCES membres(phone)
                 );
             """)
