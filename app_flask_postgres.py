@@ -382,12 +382,13 @@ def validate_member_form(form, for_update=False):
     lastname = _strip(form.get("lastname"))
     firstname = _strip(form.get("firstname"))
     birthdate_str = _strip(form.get("birthdate"))
-    idtype = _strip(form.get("idtype"))
-    idpicture_url = _strip(form.get("idpicture_url")) or None
+    membershipdate_str = _strip(form.get("membershipdate"))
+  
+    balance_str = _strip(form.get("balance")) or None
     currentstatute = _strip(form.get("currentstatute"))
     password = form.get("password") or ""
 
-    if not phone or not membertype or not mentor or not lastname or not firstname or not birthdate_str or not idtype or not currentstatute:
+    if not phone or not membertype or not mentor or not lastname or not firstname or not birthdate_str or not membershipdate_str or not balance_str or not currentstatute:
         raise ValueError("Veuillez remplir tous les champs obligatoires.")
 
     if membertype not in MEMBER_TYPES:
@@ -396,6 +397,8 @@ def validate_member_form(form, for_update=False):
         raise ValueError("currentstatute invalide.")
 
     birthdate_date = datetime.strptime(birthdate_str, "%d/%m/%Y").date()
+    membershipdate_date = datetime.strptime(membershipdate_str, "%d/%m/%Y").date()
+    balance_decimal = float(balance_str)
 
     # password obligatoire en création, optionnel en update
     if not for_update and not password:
@@ -408,8 +411,8 @@ def validate_member_form(form, for_update=False):
         "lastname": lastname,
         "firstname": firstname,
         "birthdate_date": birthdate_date,
-        "idtype": idtype,
-        "idpicture_url": idpicture_url,
+        "membershipdate_date": membershipdate_date,
+        "balance_decimal": balance_decimal,
         "currentstatute": currentstatute,
         "password": password,
     }
@@ -1409,7 +1412,7 @@ DATAGENERALFOLLOWUP_PAGE = """
 
         <div>
           <label>Solde (texte libre)</label>
-          <input name="balance" value="{{ edit_row[10] }}" required>
+          <input name="balance" value="{{ edit_balance }}" required>
         </div>
 
         <div>
@@ -1538,12 +1541,16 @@ def edit(member_id: int):
         )
     edit_membershipdate = row[14].strftime("%d/%m/%Y")
     edit_birthdate = row[6].strftime("%d/%m/%Y")
+    edit_balance = float(row[10]) if row[10] is not None else 0.0
+
+    
     return render_template_string(
         DATAGENERALFOLLOWUP_PAGE,
         rows=rows,
         edit_row=row,
         edit_birthdate=edit_birthdate,
         edit_membershipdate=edit_membershipdate,
+        edit_balance=edit_balance,
         message="",
         is_error=False,
         member_types=MEMBER_TYPES,
@@ -1567,10 +1574,8 @@ def update(member_id: int):
             lastname=data["lastname"],
             firstname=data["firstname"],
             birthdate_date=data["birthdate_date"],
-            idtype=data["idtype"],
-            #idpicture_url=data["idpicture_url"],
-            balance=data["balance"],
-            membershipdate=data["membershipdate"],
+            membershipdate_date=data["membershipdate_date"],
+            balance_decimal=data["balance_decimal"],
             currentstatute=data["currentstatute"],
             updateuser=updateuser,
             new_password_plain=new_pwd,            
