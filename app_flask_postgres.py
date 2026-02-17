@@ -147,7 +147,8 @@ def init_db():
                   updatedate   DATE NOT NULL DEFAULT CURRENT_DATE,
                   libelle      TEXT,
                   updated_by   TEXT,
-                  CONSTRAINT fk_mouvements_phone FOREIGN KEY (phone) REFERENCES membres(phone);
+                  CONSTRAINT fk_mouvements_phone FOREIGN KEY (phone) REFERENCES membres(phone)
+                  );
             """)
             cur.execute("CREATE INDEX IF NOT EXISTS idx_mouvements_phone ON mouvements(phone);")
             cur.execute("CREATE INDEX IF NOT EXISTS idx_mouvements_date ON mouvements(mvt_date);")
