@@ -409,9 +409,9 @@ def validate_member_form(form, for_update=False):
         "mentor": mentor,
         "lastname": lastname,
         "firstname": firstname,
-        "birthdate_date": birthdate_date,
-        "membershipdate_date": membershipdate_date,
-        "balance_decimal": balance_decimal,
+        "birthdate": birthdate_date,
+        "membershipdate": membershipdate_date,
+        "balance": balance_decimal,
         "currentstatute": currentstatute,
         "password": password,
     }
@@ -1226,7 +1226,7 @@ def import_mouvements():
                           SET currentstatute = 'inactif',
                               updatedate = CURRENT_DATE,
                               updateuser = %s
-                          WHERE phone = %s AND balance <  0 
+                          WHERE phone = %s AND balance <  0 AND currentstatute = 'actif'
                         """, (session.get("user"), phone))
                         if cur.rowcount:
                             flagged_inactif += 1
@@ -1410,15 +1410,13 @@ DATAGENERALFOLLOWUP_PAGE = """
         </div>
 
         <div>
-          <label>Solde (texte libre)</label>
+          <label>Solde </label>
           <input name="balance" value="{{ edit_balance }}" required>
         </div>
 
         <div>
           <label>Date adhésion (JJ/MM/AAAA)</label>
           <input name="membershipdate" value="{{ edit_membershipdate }}" required>
-        </div>
-        
         </div>
 
         <div>
@@ -1572,14 +1570,17 @@ def update(member_id: int):
             mentor=data["mentor"],
             lastname=data["lastname"],
             firstname=data["firstname"],
-            birthdate_date=data["birthdate_date"],
-            membershipdate_date=data["membershipdate_date"],
-            balance_decimal=data["balance_decimal"],
+            birthdate=data["birthdate"],
+            membershipdate=data["membershipdate"],
+            balance=data["balance"],
             currentstatute=data["currentstatute"],
             updateuser=updateuser,
             new_password_plain=new_pwd,            
         )
-        return redirect(url_for("home"))
+
+        log.info("FORM=%s", request.form.to_dict())
+
+        return redirect(url_for("datageneralfollowup"))
 
     except Exception as e:
         rows = fetch_all_membres()
@@ -1590,6 +1591,10 @@ def update(member_id: int):
             rows=rows,
             edit_row=row,
             edit_birthdate=edit_birthdate,
+            #edit_membershipdate=row[14].strftime("%d/%m/%Y") if row else "",
+            edit_balance=float(row[10]) if row and row[10] is not None else 0.0,
+            #edit_balance = str(row[10]) if row else ""
+            edit_membershipdate = row[14].strftime("%d/%m/%Y") if row and row[14] else ""
             message=f"Erreur: {str(e)}",
             is_error=True,
             member_types=MEMBER_TYPES,
