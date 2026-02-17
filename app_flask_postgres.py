@@ -1418,7 +1418,7 @@ DATAGENERALFOLLOWUP_PAGE = """
           <label>Date adhésion (JJ/MM/AAAA)</label>
           <input name="membershipdate" value="{{ edit_membershipdate }}" required>
         </div>
-          {% endif %}
+        
         </div>
 
         <div>
