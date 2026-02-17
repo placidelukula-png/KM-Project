@@ -1593,8 +1593,8 @@ def update(member_id: int):
             edit_birthdate=edit_birthdate,
             #edit_membershipdate=row[14].strftime("%d/%m/%Y") if row else "",
             edit_balance=float(row[10]) if row and row[10] is not None else 0.0,
-            #edit_balance = str(row[10]) if row else ""
-            edit_membershipdate = row[14].strftime("%d/%m/%Y") if row and row[14] else ""
+            #edit_balance = str(row[10]) if row else "",
+            edit_membershipdate = row[14].strftime("%d/%m/%Y") if row and row[14] else "",
             message=f"Erreur: {str(e)}",
             is_error=True,
             member_types=MEMBER_TYPES,
