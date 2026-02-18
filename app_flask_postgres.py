@@ -167,7 +167,6 @@ def init_db():
 
         conn.commit()
 
-#
 
 def fetch_first_last_by_phone(phone: str):
     with get_conn() as conn:
@@ -1434,7 +1433,7 @@ DATAGENERALFOLLOWUP_PAGE = """
 
       <div class="row">
         <button class="btn" type="submit">Enregistrer</button>
-        <a class="btn secondary" href="{{ url_for('home') }}" style="display:inline-flex;align-items:center;justify-content:center;">Annuler</a>
+        <a class="btn secondary" href="{{ url_for('datageneralfollowup') }}" style="display:inline-flex;align-items:center;justify-content:center;">Annuler</a>
       </div>
     </form>
   </div>
@@ -1560,6 +1559,8 @@ def update(member_id: int):
         data = validate_member_form(request.form, for_update=True)
         updateuser = session.get("user") or ADMIN_PHONE
         new_pwd = (data["password"] or "").strip() or None
+
+        log.info("FORM=%s", request.form.to_dict())
 
         update_member(
             member_id=member_id,
