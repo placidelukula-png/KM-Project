@@ -118,7 +118,7 @@ def init_db():
                   lastname       TEXT NOT NULL,
                   firstname      TEXT NOT NULL,
                   birthdate      DATE NOT NULL,
-                  idtype         TEXT NOT NULL,
+                  idtype         TEXT,
                   idpicture_url  TEXT,
                   currentstatute TEXT NOT NULL,
                   balance        DECIMAL(18,2) NOT NULL DEFAULT 0,
@@ -180,7 +180,6 @@ def fetch_first_last_by_phone(phone: str):
             """, (phone,))
             return cur.fetchone()   # tuple: (firstname, lastname) ou None
 
-#< 20260203
 
 # ✅ IMPORTANT : exécuté aussi sous gunicorn (Render)
 try:
@@ -1569,12 +1568,15 @@ def update(member_id: int):
             mentor=data["mentor"],
             lastname=data["lastname"],
             firstname=data["firstname"],
-            birthdate=data["birthdate"],
-            membershipdate=data["membershipdate"],
-            balance=data["balance"],
+            birthdate_date=data["birthdate"],
+            idtype=data["idtype"],
+            idpicture_url=data["idpicture_url"],
             currentstatute=data["currentstatute"],
+            balance=data["balance"],
+            updatedate=date.today(),
             updateuser=updateuser,
-            new_password_plain=new_pwd,            
+            new_password_plain=new_pwd,
+            membershipdate=data["membershipdate"],            
         )
 
         log.info("FORM=%s", request.form.to_dict())
