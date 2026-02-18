@@ -255,7 +255,7 @@ def insert_member(phone, membertype, mentor, lastname, firstname, birthdate_date
         conn.commit()
 
 
-def update_member(member_id, phone, membertype, mentor, lastname, firstname, birthdate_date, idtype, idpicture_url,
+def update_member(member_id, phone, membertype, mentor, lastname, firstname, birthdate_date, 
                   currentstatute, updateuser, new_password_plain: str | None):
     with get_conn() as conn:
         with conn.cursor() as cur:
@@ -264,20 +264,18 @@ def update_member(member_id, phone, membertype, mentor, lastname, firstname, bir
                 cur.execute("""
                     UPDATE membres
                     SET phone=%s, membertype=%s, mentor=%s, lastname=%s, firstname=%s, birthdate=%s,
-                        idtype=%s, idpicture_url=%s, currentstatute=%s,
-                        updatedate=CURRENT_DATE, updateuser=%s, password_hash=%s
+                        currentstatute=%s,updatedate=CURRENT_DATE, updateuser=%s, password_hash=%s
                     WHERE id=%s
-                """, (phone, membertype, mentor, lastname, firstname, birthdate_date, idtype, idpicture_url,
-                      currentstatute, updateuser, pwd_hash, member_id))
+                """, (phone, membertype, mentor, lastname, firstname, birthdate_date, currentstatute,
+                      date.today(),updateuser, pwd_hash, member_id))
             else:
                 cur.execute("""
                     UPDATE membres
                     SET phone=%s, membertype=%s, mentor=%s, lastname=%s, firstname=%s, birthdate=%s,
-                        idtype=%s, idpicture_url=%s, currentstatute=%s,
-                        updatedate=CURRENT_DATE, updateuser=%s
+                        currentstatute=%s, updatedate=CURRENT_DATE, updateuser=%s, password_hash=%s
                     WHERE id=%s
-                """, (phone, membertype, mentor, lastname, firstname, birthdate_date, idtype, idpicture_url,
-                      currentstatute, updateuser, member_id))
+                """, (phone, membertype, mentor, lastname, firstname, birthdate_date, currentstatute,
+                      date.today(), updateuser, pwd_hash, member_id))
         conn.commit()
 
 
@@ -394,7 +392,7 @@ def validate_member_form(form, for_update=False):
 
     birthdate_date = datetime.strptime(birthdate_str, "%d/%m/%Y").date()
     membershipdate_date = datetime.strptime(membershipdate_str, "%d/%m/%Y").date()
-    balance_decimal = float(balance_str)
+    balance_decimal = float(balance_str) if balance_str else 0.0
 
     # password obligatoire en création, optionnel en update
     if not for_update and not password:
@@ -1569,13 +1567,9 @@ def update(member_id: int):
             mentor=data["mentor"],
             lastname=data["lastname"],
             firstname=data["firstname"],
-            birthdate_date=data["birthdate"],
-            idtype=data["idtype"],
-            idpicture_url=data["idpicture_url"],
+            birthdate=data["birthdate"],
             currentstatute=data["currentstatute"],
             balance=data["balance"],
-            updatedate=date.today(),
-            updateuser=updateuser,
             new_password_plain=new_pwd,
             membershipdate=data["membershipdate"],            
         )
