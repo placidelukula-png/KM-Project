@@ -261,6 +261,7 @@ def update_member(member_id, phone, membertype, mentor, lastname, firstname, bir
         with conn.cursor() as cur:
             if new_password_plain:
                 pwd_hash = generate_password_hash(new_password_plain)
+                log.info("Updating member id=%s with new password=%s", member_id , pwd_hash)
                 cur.execute("""
                     UPDATE membres
                     SET phone=%s, membertype=%s, mentor=%s, lastname=%s, firstname=%s, birthdate=%s,membershipdate=%s,balance=%s,
