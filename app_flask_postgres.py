@@ -146,7 +146,7 @@ def init_db():
                   reference    TEXT NOT NULL UNIQUE,
                   updatedate   DATE NOT NULL DEFAULT CURRENT_DATE,
                   libelle      TEXT,
-                  updated_by   TEXT,
+                  updated_by   TEXT
                   );
             """)
             cur.execute("CREATE INDEX IF NOT EXISTS idx_mouvements_phone ON mouvements(phone);")
