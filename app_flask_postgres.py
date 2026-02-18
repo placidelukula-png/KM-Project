@@ -1559,7 +1559,7 @@ def update(member_id: int):
         updateuser = session.get("user") or ADMIN_PHONE
         new_pwd = (data["password"] or "123456789").strip() or None
 
-        log.info("FORM=%s", request.form.to_dict())
+        log.info("New_pwd=%s FORM=%s", new_pwd, request.form.to_dict())
 
         update_member(
             member_id=member_id,
@@ -1568,7 +1568,7 @@ def update(member_id: int):
             mentor=data["mentor"],
             lastname=data["lastname"],
             firstname=data["firstname"],
-            birthdate=data["birthdate"],
+            birthdate_date=data["birthdate"],
             currentstatute=data["currentstatute"],
             balance=data["balance"],
             new_password_plain=new_pwd,
