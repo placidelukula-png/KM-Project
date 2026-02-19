@@ -104,7 +104,6 @@ def get_conn():
     # tuple_row => on garde des tuples (r[0], r[1]...) cohérents avec ton HTML
     return psycopg.connect(DATABASE_URL, row_factory=tuple_row)
 
-#>20260203
 def init_db():
     with get_conn() as conn:
         with conn.cursor() as cur:
@@ -217,6 +216,37 @@ SELECT_membres = """
 def member_exists(cur, phone: str) -> bool:
     cur.execute("SELECT 1 FROM membres WHERE phone = %s", (phone,))
     return cur.fetchone() is not None
+
+def create_member_minimal(cur, phone: str, firstname: str, lastname: str):
+    """
+    Crée un membre minimal si absent.
+    Important: ta table membres a des champs NOT NULL: mentor, birthdate, idtype, password_hash...
+    On met des valeurs par défaut cohérentes.
+    """
+    # Birthdate: valeur technique si inconnue (à ajuster si tu veux)
+    default_birthdate = datetime.today().date()
+
+    # Password_hash : si tu ne veux pas créer de compte login automatique,
+    # tu peux mettre un hash “impossible” et forcer un reset plus tard.
+    # Ici: on autorise DEFAULT_PASSWORD_HASH vide => on met une chaîne fixe non vide.
+    pwd_hash = "123456789"
+
+    cur.execute("""
+        INSERT INTO membres
+        (phone, membertype, mentor, lastname, firstname, birthdate, idtype, idpicture_url,
+         currentstatute, updatedate, updateuser, password_hash, balance)
+        VALUES
+        (%s, "independant", "admin", %s, %s, %s, "CE", NULL, "probatoire", CURRENT_DATE, "System", %s, 0)
+        ON CONFLICT (phone) DO NOTHING;
+    """, (
+        phone,
+        lastname,
+        firstname,
+        default_birthdate,
+        pwd_hash,
+    ))
+    log.info("Nouveau membre créé automatiquement: %s (%s %s)", phone, firstname, lastname)
+
 
 def fetch_all_membres():
     with get_conn() as conn:
@@ -1211,40 +1241,11 @@ def import_mouvements():
 
                         # 0) Vérifier que le membre existe
                         cur.execute("SELECT phone FROM membres WHERE phone = %s", (phone,))
-                        #if not cur.fetchone():
-                        if not member_exists(cur, phone):    
-                            skipped += 1
-                            log.warning("Ligne ignorée (membre non trouvé pour phone=%s): %s", phone, row)
-                            continue
-                        if member_exists(cur, phone):
-                            try:
-                              phone = phone                            
-                              lastname = lastname or "n/a"
-                              firstname = firstname or "n/a"
-                              #birthdate = datetime.strptime("01/01/2099", "%d/%m/%Y").date()
-                              birthdate_date=date.today()
-                              idtype = "CE"  # valeur par défaut
-                              if len(phone) >= 3:
-                                password_plain = phone[-3:]
-                              else:
-                                password_plain = phone
-                              mentor = session["user"]
-                              membertype = "independant"
-                              statut = "probatoire"
-                              updateuser = session["user"]
-                              insert_member(password_plain=password_plain, phone=phone, membertype=membertype, mentor=mentor, lastname=lastname, firstname=firstname, birthdate_date=birthdate_date, idtype=idtype, statut=statut, updateuser=updateuser)
-                              #return render_template_string(ADD_MEMBER_PAGE, message="Membre créé.", is_error=False)
-                              created += 1
-                            except psycopg.errors.UniqueViolation:
-                              log.info("CATASTROPHE ! Membre déjà existant pour phone=%s, pas de création !POURTANT DECLARE INEXISTANT AU DEPART!", phone)
-                              skipped += 1
-                              continue                            
-                            except Exception as e:
-                              log.exception("CATASTROPHE ! Erreur création membre pour phone=%s Motif: %s Birthdate", phone, e)
-                              skipped += 1
-                              continue    
-
-                            
+                        if not cur.fetchone(): 
+                            create_member_minimal(cur, phone, firstname, lastname)
+                            created += 1
+                            log.info("Membre créé automatiquement pour phone=%s", phone)
+                           
                         # 1) insert mouvement
                         cur.execute("""
                           INSERT INTO mouvements (phone, firstname, lastname, mvt_date, amount, debitcredit,reference,updatedate,libelle,updated_by)
