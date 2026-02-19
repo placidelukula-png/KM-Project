@@ -214,6 +214,10 @@ SELECT_membres = """
     FROM membres
 """
 #
+def member_exists(cur, phone: str) -> bool:
+    cur.execute("SELECT 1 FROM membres WHERE phone = %s", (phone,))
+    return cur.fetchone() is not None
+
 def fetch_all_membres():
     with get_conn() as conn:
         with conn.cursor() as cur:
@@ -1207,7 +1211,8 @@ def import_mouvements():
 
                         # 0) Vérifier que le membre existe
                         cur.execute("SELECT phone FROM membres WHERE phone = %s", (phone,))
-                        if not cur.fetchone():
+                        #if not cur.fetchone():
+                        if member_exists(cur, phone):    
                             skipped += 1
                             log.warning("Ligne ignorée (membre non trouvé pour phone=%s): %s", phone, row)
                             continue
@@ -1215,7 +1220,8 @@ def import_mouvements():
                           phone = phone                            
                           lastname = lastname or "n/a"
                           firstname = firstname or "n/a"
-                          birthdate = datetime.strptime("01/01/2099", "%d/%m/%Y").date()
+                          #birthdate = datetime.strptime("01/01/2099", "%d/%m/%Y").date()
+                          birthdate=date.today()
                           idtype = "CE"  # valeur par défaut
                           if len(phone) >= 3:
                             password_plain = phone[-3:]
