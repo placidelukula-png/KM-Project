@@ -1171,6 +1171,7 @@ def import_mouvements():
         updated_balances = 0
         flagged_inactif = 0
         skipped = 0
+        created = 0
 
         with get_conn() as conn:
             with conn.cursor() as cur:
@@ -1204,6 +1205,39 @@ def import_mouvements():
                             log.warning("Ligne ignorée (phone ou debitcredit invalide): %s", phone)
                             continue
 
+                        # 0) Vérifier que le membre existe
+                        cur.execute("SELECT phone FROM membres WHERE phone = %s", (phone,))
+                        if not cur.fetchone():
+                            skipped += 1
+                            log.warning("Ligne ignorée (membre non trouvé pour phone=%s): %s", phone, row)
+                            continue
+                        try:
+                          phone = phone                            
+                          lastname = lastname or "n/a"
+                          firstname = firstname or "n/a"
+                          birthdate = datetime.strptime("01/01/2099", "%d/%m/%Y").date()
+                          idtype = "CE"  # valeur par défaut
+                          if len(phone) >= 3:
+                            password_plain = phone[-3:]
+                          else:
+                            password_plain = phone
+                          mentor = session["user"]
+                          membertype = "independant"
+                          statut = "probatoire"
+                          updateuser = session["user"]
+                          insert_member(password_plain=password_plain, phone=phone, membertype=membertype, mentor=mentor, lastname=lastname, firstname=firstname, birthdate=birthdate, idtype=idtype, statut=statut, updateuser=updateuser)
+                          #return render_template_string(ADD_MEMBER_PAGE, message="Membre créé.", is_error=False)
+                          created += 1
+                        except psycopg.errors.UniqueViolation:
+                          log.info("Membre déjà existant pour phone=%s, pas de création !POURTANT DECLARE INEXISTANT AU DEPART!", phone)
+                          skipped += 1
+                          continue                            
+                        except Exception as e:
+                          log.exception("Erreur création membre pour phone=%s: %s", phone, e)
+                          skipped += 1
+                          continue    
+
+                            
                         # 1) insert mouvement
                         cur.execute("""
                           INSERT INTO mouvements (phone, firstname, lastname, mvt_date, amount, debitcredit,reference,updatedate,libelle,updated_by)
@@ -1248,6 +1282,8 @@ def import_mouvements():
             f"- Balances mises à jour: {updated_balances}\n"
             f"- Membres passés inactif (balance<0): {flagged_inactif}\n"
             f"- Lignes ignorées: {skipped}\n"
+            f"- Nouveaux membres detectés: {created}\n"
+            f"- Total lignes traitées: {inserted + skipped}\n"
         )
 
         return render_template_string(IMPORT_PAGE, message="Import OK.", is_error=False, stats=stats)
