@@ -1216,32 +1216,33 @@ def import_mouvements():
                             skipped += 1
                             log.warning("Ligne ignorée (membre non trouvé pour phone=%s): %s", phone, row)
                             continue
-                        try:
-                          phone = phone                            
-                          lastname = lastname or "n/a"
-                          firstname = firstname or "n/a"
-                          #birthdate = datetime.strptime("01/01/2099", "%d/%m/%Y").date()
-                          birthdate=date.today()
-                          idtype = "CE"  # valeur par défaut
-                          if len(phone) >= 3:
-                            password_plain = phone[-3:]
-                          else:
-                            password_plain = phone
-                          mentor = session["user"]
-                          membertype = "independant"
-                          statut = "probatoire"
-                          updateuser = session["user"]
-                          insert_member(password_plain=password_plain, phone=phone, membertype=membertype, mentor=mentor, lastname=lastname, firstname=firstname, birthdate=birthdate, idtype=idtype, statut=statut, updateuser=updateuser)
-                          #return render_template_string(ADD_MEMBER_PAGE, message="Membre créé.", is_error=False)
-                          created += 1
-                        except psycopg.errors.UniqueViolation:
-                          log.info("Membre déjà existant pour phone=%s, pas de création !POURTANT DECLARE INEXISTANT AU DEPART!", phone)
-                          skipped += 1
-                          continue                            
-                        except Exception as e:
-                          log.exception("Erreur création membre pour phone=%s: %s", phone, e)
-                          skipped += 1
-                          continue    
+                        if member_exists(cur, phone):
+                            try:
+                              phone = phone                            
+                              lastname = lastname or "n/a"
+                              firstname = firstname or "n/a"
+                              #birthdate = datetime.strptime("01/01/2099", "%d/%m/%Y").date()
+                              birthdate_date=date.today()
+                              idtype = "CE"  # valeur par défaut
+                              if len(phone) >= 3:
+                                password_plain = phone[-3:]
+                              else:
+                                password_plain = phone
+                              mentor = session["user"]
+                              membertype = "independant"
+                              statut = "probatoire"
+                              updateuser = session["user"]
+                              insert_member(password_plain=password_plain, phone=phone, membertype=membertype, mentor=mentor, lastname=lastname, firstname=firstname, birthdate_date=birthdate_date, idtype=idtype, statut=statut, updateuser=updateuser)
+                              #return render_template_string(ADD_MEMBER_PAGE, message="Membre créé.", is_error=False)
+                              created += 1
+                            except psycopg.errors.UniqueViolation:
+                              log.info("CATASTROPHE ! Membre déjà existant pour phone=%s, pas de création !POURTANT DECLARE INEXISTANT AU DEPART!", phone)
+                              skipped += 1
+                              continue                            
+                            except Exception as e:
+                              log.exception("CATASTROPHE ! Erreur création membre pour phone=%s Motif: %s Birthdate", phone, e)
+                              skipped += 1
+                              continue    
 
                             
                         # 1) insert mouvement
