@@ -254,29 +254,38 @@ def insert_member(phone, membertype, mentor, lastname, firstname, birthdate_date
                   currentstatute, updateuser, pwd_hash))
         conn.commit()
 
-
-def update_member(member_id, phone, membertype, mentor, lastname, firstname, birthdate_date,membershipdate,balance, 
-                  currentstatute, updateuser, new_password_plain: str | None):
+def update_member(
+    member_id, phone, membertype, mentor, lastname, firstname,
+    birthdate_date, membershipdate, balance,
+    currentstatute, updateuser, new_password_plain: str | None
+):
     with get_conn() as conn:
         with conn.cursor() as cur:
             if new_password_plain:
                 pwd_hash = generate_password_hash(new_password_plain)
-                log.info("Updating member id=%s with new password=%s", member_id , pwd_hash)
                 cur.execute("""
                     UPDATE membres
-                    SET phone=%s, membertype=%s, mentor=%s, lastname=%s, firstname=%s, birthdate=%s,membershipdate=%s,balance=%s,
-                        currentstatute=%s,updatedate=CURRENT_DATE, updateuser=%s, password_hash=%s
+                    SET phone=%s, membertype=%s, mentor=%s, lastname=%s, firstname=%s,
+                        birthdate=%s, membershipdate=%s, balance=%s, currentstatute=%s,
+                        updatedate=CURRENT_DATE, updateuser=%s, password_hash=%s
                     WHERE id=%s
-                """, (phone, membertype, mentor, lastname, firstname, birthdate_date, membershipdate,balance,
-                      currentstatute, date.today(), updateuser, pwd_hash, member_id))
+                """, (
+                    phone, membertype, mentor, lastname, firstname,
+                    birthdate_date, membershipdate, balance, currentstatute,
+                    updateuser, pwd_hash, member_id
+                ))
             else:
                 cur.execute("""
                     UPDATE membres
-                    SET phone=%s, membertype=%s, mentor=%s, lastname=%s, firstname=%s, birthdate=%s,membershipdate=%s,balance=%s,
-                        currentstatute=%s,updatedate=CURRENT_DATE, updateuser=%s, password_hash=%s
+                    SET phone=%s, membertype=%s, mentor=%s, lastname=%s, firstname=%s,
+                        birthdate=%s, membershipdate=%s, balance=%s, currentstatute=%s,
+                        updatedate=CURRENT_DATE, updateuser=%s
                     WHERE id=%s
-                """, (phone, membertype, mentor, lastname, firstname, birthdate_date,membershipdate,balance,
-                      currentstatute, date.today(), updateuser, pwd_hash, member_id))
+                """, (
+                    phone, membertype, mentor, lastname, firstname,
+                    birthdate_date, membershipdate, balance, currentstatute,
+                    updateuser, member_id
+                ))
         conn.commit()
 
 
