@@ -1212,7 +1212,7 @@ def import_mouvements():
                         # 0) Vérifier que le membre existe
                         cur.execute("SELECT phone FROM membres WHERE phone = %s", (phone,))
                         #if not cur.fetchone():
-                        if member_exists(cur, phone):    
+                        if not member_exists(cur, phone):    
                             skipped += 1
                             log.warning("Ligne ignorée (membre non trouvé pour phone=%s): %s", phone, row)
                             continue
