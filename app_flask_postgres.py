@@ -36,7 +36,9 @@ DATABASE_URL = os.getenv("DATABASE_URL")  # fourni par Render
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-only-change-me")
 ADMIN_PHONE = os.getenv("ADMIN_PHONE", "admin")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "Melissa@1991")
-
+# valeur par défaut pour les membres créés via create_member_minimal() (ex: import depuis Excel)
+DEFAULT_PASSWORD_HASH = os.getenv("DEFAULT_PASSWORD_HASH", "123456789")  # à utiliser si tu ne veux pas créer de comptes login automatiques pour les membres créés via create_member_minimal() (ex: import depuis Excel)
+# pour create_member_minimal(), si tu ne veux pas créer de comptes login automatiques, tu peux laisser DEFAULT_PASSWORD_HASH vide et la fonction mettra une chaîne fixe "NO_LOGIN_CREATED" (ou tu peux aussi définir DEFAULT_PASSWORD_HASH à une chaîne spécifique de ton choix).
 MEMBER_TYPES = ("membre", "independant", "mentor", "admin")
 STATUTES = ("probatoire","actif", "inactif", "suspendu", "radié")
 
@@ -229,20 +231,30 @@ def create_member_minimal(cur, phone: str, firstname: str, lastname: str):
     # Password_hash : si tu ne veux pas créer de compte login automatique,
     # tu peux mettre un hash “impossible” et forcer un reset plus tard.
     # Ici: on autorise DEFAULT_PASSWORD_HASH vide => on met une chaîne fixe non vide.
-    pwd_hash = "123456789"
+    pwd_hash = DEFAULT_PASSWORD_HASH.strip() or "NO_LOGIN_CREATED"
+    DEFAULT_MEMBER_TYPE = "independant"
+    DEFAULT_MENTOR="admin"
+    DEFAULT_IDTYPE = "CE"
+    DEFAULT_STATUTE = "probatoire"
+    DEFAULT_UPDATEUSER = "System"
 
     cur.execute("""
         INSERT INTO membres
         (phone, membertype, mentor, lastname, firstname, birthdate, idtype, idpicture_url,
          currentstatute, updatedate, updateuser, password_hash, balance)
         VALUES
-        (%s, "independant", "admin", %s, %s, %s, "CE", NULL, "probatoire", CURRENT_DATE, "System", %s, 0)
+        (%s, %s, %s, %s, %s, %s, %s, NULL, %s, CURRENT_DATE, %s, %s, 0)
         ON CONFLICT (phone) DO NOTHING;
     """, (
         phone,
+        DEFAULT_MEMBER_TYPE,
+        DEFAULT_MENTOR,
         lastname,
         firstname,
         default_birthdate,
+        DEFAULT_IDTYPE,
+        DEFAULT_STATUTE,
+        DEFAULT_UPDATEUSER,
         pwd_hash,
     ))
     log.info("Nouveau membre créé automatiquement: %s (%s %s)", phone, firstname, lastname)
@@ -1151,14 +1163,14 @@ import re
 from datetime import date
 
 FR_MONTHS = {
-    "janv": 1, "jan": 1,
-    "fevr": 2, "févr": 2, "fev": 2, "fév": 2,
-    "mars": 3,
-    "avr": 4, "avril": 4,
-    "mai": 5,
-    "juin": 6,
-    "juil": 7, "juillet": 7,
-    "aout": 8, "août": 8,
+    "janv": 1, "jan": 1, "janvier": 1,
+    "fevr": 2, "févr": 2, "fev": 2, "fév": 2,"feb": 2,
+    "mars": 3, "mar": 3, "març": 3,
+    "avr": 4, "avril": 4, "apr": 4,
+    "mai": 5, "may": 5, 
+    "juin": 6, "jun": 6,
+    "juil": 7, "juillet": 7,"jul": 7, "juil": 7, "july"
+    "aout": 8, "août": 8, "aug": 8,
     "sept": 9,
     "oct": 10,
     "nov": 11,
