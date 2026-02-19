@@ -1557,9 +1557,7 @@ def update(member_id: int):
     try:
         data = validate_member_form(request.form, for_update=True)
         updateuser = session.get("user") or ADMIN_PHONE
-        new_pwd = (data["password"] or "123456789").strip() or None
-
-        log.info("New_pwd=%s FORM=%s", new_pwd, request.form.to_dict())
+        new_pwd = (data["password"] or "").strip() or None
 
         update_member(
             member_id=member_id,
@@ -1568,31 +1566,30 @@ def update(member_id: int):
             mentor=data["mentor"],
             lastname=data["lastname"],
             firstname=data["firstname"],
-            birthdate_date=data["birthdate"],
+            birthdate_date=data["birthdate"],           # <= important (clé = "birthdate")
+            membershipdate=data["membershipdate"],      # <= important
+            balance=data["balance"],                    # <= important
             currentstatute=data["currentstatute"],
-            balance=data["balance"],
+            updateuser=updateuser,
             new_password_plain=new_pwd,
-            membershipdate=data["membershipdate"],
-            updateuser=updateuser,            
         )
-
-        log.info("FORM=%s", request.form.to_dict())
 
         return redirect(url_for("datageneralfollowup"))
 
     except Exception as e:
         rows = fetch_all_membres()
         row = fetch_one(member_id)
-        edit_birthdate = row[6].strftime("%d/%m/%Y") if row else ""
+        edit_birthdate = row[6].strftime("%d/%m/%Y") if row and row[6] else ""
+        edit_membershipdate = row[14].strftime("%d/%m/%Y") if row and row[14] else ""
+        edit_balance = float(row[10]) if row and row[10] is not None else 0.0
+
         return render_template_string(
             DATAGENERALFOLLOWUP_PAGE,
             rows=rows,
             edit_row=row,
             edit_birthdate=edit_birthdate,
-            #edit_membershipdate=row[14].strftime("%d/%m/%Y") if row else "",
-            edit_balance=float(row[10]) if row and row[10] is not None else 0.0,
-            #edit_balance = str(row[10]) if row else "",
-            edit_membershipdate = row[14].strftime("%d/%m/%Y") if row and row[14] else "",
+            edit_membershipdate=edit_membershipdate,
+            edit_balance=edit_balance,
             message=f"Erreur: {str(e)}",
             is_error=True,
             member_types=MEMBER_TYPES,
