@@ -1751,7 +1751,7 @@ def transfer():
             #ref_base = f"TR-{session['user']}"
             today = datetime.utcnow().date()
             lib=f"Transfert de {amount} de {from_phone} vers {to_phone}"
-            nom_complet_to = f"{to_member[5]} {to_member[4]}".strip()
+            nom_complet_to = f"{to_member[5]} {to_member[4]}"     
             log.info("Initiating transfer: from=%s to=%s amount=%s ref_base=%s date=%s", from_phone, to_phone, amount, ref_base, today)
 
             with get_conn() as conn:
