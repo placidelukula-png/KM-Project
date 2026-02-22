@@ -1780,9 +1780,9 @@ def transfer():
                                           message="Transfert effectué avec succès.", is_error=False)
         except Exception as e:
             log.exception("Erreur transfert")
-            return render_template_string(TRANSFER_PAGE, balance=my_balance,to_phone=to_phone, message=f"Erreur: {e}", is_error=True)
+            return render_template_string(TRANSFER_PAGE, balance=my_balance, message=f"Erreur: {e}", is_error=True)
 
-    return render_template_string(TRANSFER_PAGE, balance=my_balance,to_phone=to_phone,message="", is_error=False)
+    return render_template_string(TRANSFER_PAGE, balance=my_balance,message="", is_error=False)
 
 
 if __name__ == "__main__":
