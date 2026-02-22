@@ -1710,7 +1710,7 @@ TRANSFER_PAGE = """
   <form method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label>Phone du bénéficiaire</label>
-    <input name="to_phone" required value="{{ to_phone }}">
+    <input name="to_phone" required">
     <label>Montant à transférer</label>
     <input name="amount" required>
     <div class="row">
