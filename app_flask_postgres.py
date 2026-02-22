@@ -860,7 +860,7 @@ MY_MVT_PAGE = """
   <div class="pill">Solde actuel: <b>{{ balance }}</b></div>
   <table>
     <thead><tr>
-      <th>Date</th><th>Montant</th><th>D/C</th><th>Référence</th>
+      <th>Date</th><th>Montant</th><th>D/C</th><th>Référence</th><th>Libellé</th>
     </tr></thead>
     <tbody>
     {% for r in rows %}
