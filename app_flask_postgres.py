@@ -869,6 +869,7 @@ MY_MVT_PAGE = """
         <td>{{ r[4] }}</td>
         <td>{{ r[5] }}</td>
         <td>{{ r[6] }}</td>
+        <td>{{ r[7] }}</td>
       </tr>
     {% endfor %}
     {% if not rows %}<tr><td colspan="4">Aucun mouvement.</td></tr>{% endif %}
