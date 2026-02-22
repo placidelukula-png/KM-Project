@@ -1782,9 +1782,9 @@ def transfer():
                                           message="Transfert effectué avec succès.", is_error=False)
         except Exception as e:
             log.exception("Erreur transfert")
-            return render_template_string(TRANSFER_PAGE, balance=my_balance, nom_complet_to=nom_complet_to, message=f"Erreur: {e}", is_error=True)
+            return render_template_string(TRANSFER_PAGE, balance=my_balance, nom_complet_to=f"{to_member[5]} {to_member[4]}", message=f"Erreur: {e}", is_error=True)
 
-    return render_template_string(TRANSFER_PAGE, balance=my_balance,nom_complet_to=nom_complet_to, message="", is_error=False)
+    return render_template_string(TRANSFER_PAGE, balance=my_balance,nom_complet_to=f"{to_member[5]} {to_member[4]}", message="", is_error=False)
 
 
 if __name__ == "__main__":
