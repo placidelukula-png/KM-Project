@@ -1748,6 +1748,7 @@ def transfer():
             ref_base = f"TR-{uuid.uuid4().hex[:10]}"
             #ref_base = f"TR-{session['user']}"
             today = datetime.utcnow().date()
+            log.info("Initiating transfer: from=%s to=%s amount=%s ref_base=%s date=%s", from_phone, to_phone, amount, ref_base, today)
 
             with get_conn() as conn:
                 with conn.cursor() as cur:
