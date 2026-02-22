@@ -1702,7 +1702,7 @@ TRANSFER_PAGE = """
  .err{background:#ffe9ea;border:1px solid #ffb3b8}
 </style></head><body><div class="wrap">
 <h2>Transfert de cotisations</h2>
-<p><a href="{{ url_for('home') }}">← Retour</a></p>
+<p><a href="{{ url_for('DASHBOARD_PAGE') }}">← Retour</a></p>
 
 <div class="card">
   <p>Solde actuel: <b>{{ balance }}</b></p>
@@ -1714,7 +1714,7 @@ TRANSFER_PAGE = """
     <input name="amount" required>
     <div class="row">
       <button class="btn" type="submit">Transférer</button>
-      <a class="btn2" href="{{ url_for('home') }}">Annuler</a>
+      <a class="btn2" href="{{ url_for('DASHBOARD_PAGE') }}">Annuler</a>
     </div>
     {% if message %}<div class="msg {{ 'err' if is_error else 'ok' }}">{{ message }}</div>{% endif %}
   </form>
@@ -1745,23 +1745,23 @@ def transfer():
 
         # transaction atomique
         try:
-            #ref_base = f"TR-{uuid.uuid4().hex[:10]}"
-            ref_base = f"TR-{session['user']}"
+            ref_base = f"TR-{uuid.uuid4().hex[:10]}"
+            #ref_base = f"TR-{session['user']}"
             today = datetime.utcnow().date()
 
             with get_conn() as conn:
                 with conn.cursor() as cur:
                     # 1) insert mouvement DEBIT (from)
                     cur.execute("""
-                        INSERT INTO mouvements (phone, firstname,lastname, mvt_date, amount, debitcredit, reference)
-                        VALUES (%s,%s,%s,%s,%s,'D',%s)
-                    """, (from_phone, me[5], me[4], today, amount, ref_base + "-D"))
+                        INSERT INTO mouvements (phone, firstname,lastname, mvt_date, amount, debitcredit, reference,libelle)
+                        VALUES (%s,%s,%s,%s,%s,'D',%s,'Transfert vers %s')
+                    """, (from_phone, me[5], me[4], today, amount, ref_base + "-D", to_phone))
 
                     # 2) insert mouvement CREDIT (to)
                     cur.execute("""
-                        INSERT INTO mouvements (phone, firstname,lastname, mvt_date, amount, debitcredit, reference)
-                        VALUES (%s,%s,%s,%s,%s,'C',%s)
-                    """, (to_phone, to_member[5], to_member[6], today, amount, ref_base + "-C"))
+                        INSERT INTO mouvements (phone, firstname,lastname, mvt_date, amount, debitcredit, reference,libelle)
+                        VALUES (%s,%s,%s,%s,%s,'C',%s,'Transfert de %s')
+                    """, (to_phone, to_member[5], to_member[6], today, amount, ref_base + "-C", from_phone))
 
                     # 3) update balances
                     cur.execute("UPDATE membres SET balance = balance - %s, updatedate=CURRENT_DATE, updateuser=%s WHERE phone=%s",
