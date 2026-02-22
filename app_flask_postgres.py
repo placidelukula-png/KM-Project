@@ -1711,6 +1711,8 @@ TRANSFER_PAGE = """
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label>Phone du bénéficiaire</label>
     <input name="to_phone" required>
+    <label>Nom du bénéficiaire</label>
+    <div {{ to_member }}" style="margin-bottom:12px;color:#555;"></div>
     <label>Montant à transférer</label>
     <input name="amount" required>
     <div class="row">
