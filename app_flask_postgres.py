@@ -1702,7 +1702,7 @@ TRANSFER_PAGE = """
  .err{background:#ffe9ea;border:1px solid #ffb3b8}
 </style></head><body><div class="wrap">
 <h2>Transfert de cotisations</h2>
-<p><a href="{{ url_for('DASHBOARD_PAGE') }}">← Retour</a></p>
+<p><a href="{{ url_for('home') }}">← Retour</a></p>
 
 <div class="card">
   <p>Solde actuel: <b>{{ balance }}</b></p>
@@ -1714,7 +1714,7 @@ TRANSFER_PAGE = """
     <input name="amount" required>
     <div class="row">
       <button class="btn" type="submit">Transférer</button>
-      <a class="btn2" href="{{ url_for('DASHBOARD_PAGE') }}">Annuler</a>
+      <a class="btn2" href="{{ url_for('home') }}">Annuler</a>
     </div>
     {% if message %}<div class="msg {{ 'err' if is_error else 'ok' }}">{{ message }}</div>{% endif %}
   </form>
