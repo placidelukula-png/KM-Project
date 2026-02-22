@@ -1748,6 +1748,7 @@ def transfer():
             ref_base = f"TR-{uuid.uuid4().hex[:10]}"
             #ref_base = f"TR-{session['user']}"
             today = datetime.utcnow().date()
+            lib=f"Transfert de {amount} de {from_phone} vers {to_phone}"
             log.info("Initiating transfer: from=%s to=%s amount=%s ref_base=%s date=%s", from_phone, to_phone, amount, ref_base, today)
 
             with get_conn() as conn:
@@ -1755,14 +1756,14 @@ def transfer():
                     # 1) insert mouvement DEBIT (from)
                     cur.execute("""
                         INSERT INTO mouvements (phone, firstname,lastname, mvt_date, amount, debitcredit, reference,libelle)
-                        VALUES (%s,%s,%s,%s,%s,'D',%s,'Transfert vers %s')
-                    """, (from_phone, me[5], me[4], today, amount, ref_base + "-D", to_phone))
+                        VALUES (%s,%s,%s,%s,%s,'D',%s,%s)
+                    """, (from_phone, me[5], me[4], today, amount, ref_base + "-D", lib))
 
                     # 2) insert mouvement CREDIT (to)
                     cur.execute("""
                         INSERT INTO mouvements (phone, firstname,lastname, mvt_date, amount, debitcredit, reference,libelle)
-                        VALUES (%s,%s,%s,%s,%s,'C',%s,'Transfert de %s')
-                    """, (to_phone, to_member[5], to_member[6], today, amount, ref_base + "-C", from_phone))
+                        VALUES (%s,%s,%s,%s,%s,'C',%s, %s)
+                    """, (to_phone, to_member[5], to_member[4], today, amount, ref_base + "-C", lib))
 
                     # 3) update balances
                     cur.execute("UPDATE membres SET balance = balance - %s, updatedate=CURRENT_DATE, updateuser=%s WHERE phone=%s",
