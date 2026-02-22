@@ -1711,8 +1711,7 @@ TRANSFER_PAGE = """
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label>Phone du bénéficiaire</label>
     <input name="to_phone" required>
-    <label>Nom du bénéficiaire</label>
-    <div {{ to_member }}" style="margin-bottom:12px;color:#555;"></div>
+    <p>Nom du bénéficiaire: {{ nom_complet_to }}</p>
     <label>Montant à transférer</label>
     <input name="amount" required>
     <div class="row">
@@ -1752,6 +1751,7 @@ def transfer():
             #ref_base = f"TR-{session['user']}"
             today = datetime.utcnow().date()
             lib=f"Transfert de {amount} de {from_phone} vers {to_phone}"
+            nom_complet_to = f"{to_member[5]} {to_member[4]}".strip()
             log.info("Initiating transfer: from=%s to=%s amount=%s ref_base=%s date=%s", from_phone, to_phone, amount, ref_base, today)
 
             with get_conn() as conn:
@@ -1782,9 +1782,9 @@ def transfer():
                                           message="Transfert effectué avec succès.", is_error=False)
         except Exception as e:
             log.exception("Erreur transfert")
-            return render_template_string(TRANSFER_PAGE, balance=my_balance, message=f"Erreur: {e}", is_error=True)
+            return render_template_string(TRANSFER_PAGE, balance=my_balance, nom_complet_to=nom_complet_to, message=f"Erreur: {e}", is_error=True)
 
-    return render_template_string(TRANSFER_PAGE, balance=my_balance, message="", is_error=False)
+    return render_template_string(TRANSFER_PAGE, balance=my_balance,nom_complet_to=nom_complet_to, message="", is_error=False)
 
 
 if __name__ == "__main__":
