@@ -1240,7 +1240,8 @@ def import_mouvements():
                         mvt_date = parse_date_fr(row.get("date") or "")
                         #mouvem_date = datetime.strptime(mvt_date, "%d/%m/%Y").date()
                         #mvt_date=mouvem_date
-                        libelle = (row.get("reference") or "").strip()
+                        #libelle = (row.get("reference") or "").strip()
+                        libelle="Transfert mobile money du %s - %s" % (mvt_date, reference)
                         updatedate=date.today()
 
                         log.info("contenu de 'amount' formaté=%s", amount)  
@@ -1263,7 +1264,7 @@ def import_mouvements():
                         cur.execute("""
                           INSERT INTO mouvements (phone, firstname, lastname, mvt_date, amount, debitcredit,reference,updatedate,libelle,updated_by)
                           VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
-                        """, (phone, firstname, lastname, mvt_date, amount, debitcredit, reference,date.today(),libelle,"system"))
+                        """, (phone, firstname, lastname, mvt_date, amount, debitcredit, reference,date.today(),libelle,session.get("user")))
                         log.info("Mouvement inséré pour phone=%s, amount=%s, debitcredit=%s, reference=%s", phone, amount, debitcredit, reference)
                         inserted += 1
 
