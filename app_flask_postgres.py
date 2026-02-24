@@ -1775,7 +1775,7 @@ def transfer():
         if m:
             my_balance = m[10] if m else 0
             found_name = f"{m[5]} {m[4]}"
-            log.info("Membre bénéficiaire trouvé: %s (balance=%s)", found_name, my_balance)
+            #log.info("Membre bénéficiaire trouvé: %s (balance=%s)", found_name, my_balance)
 
         action = request.form.get("action")
 
@@ -1790,7 +1790,7 @@ def transfer():
                 return render_template_string(TRANSFER_PAGE, balance=my_balance, message="Solde insuffisant: transfert bloqué.", is_error=True)
 
             try:
-                d = datetime.strptime(date_in, "%d/%m/%Y").date()
+                d = datetime.strptime(date.today().strftime("%d/%m/%Y"), "%d/%m/%Y")
                 ref = f"DC-{uuid.uuid4().hex[:10]}"
                 #create_transfer(session["user"], to_phone, amount, d, ref)
                 create_transfert(from_phone, to_phone, amount, d, ref)
