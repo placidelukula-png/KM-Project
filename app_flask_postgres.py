@@ -420,6 +420,34 @@ def create_deces(phone: str, date_deces, declared_by: str, reference: str):
             """, (phone, date_deces, declared_by, reference))
         conn.commit()
 
+def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: str):
+    me = fetch_member_by_phone(from_phone)
+    to_member = fetch_member_by_phone(to_phone)
+    today = datetime.utcnow().date()
+    lib=f"Transfert de {amount} de {from_phone} vers {to_phone}"
+    
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            # 1) insert mouvement DEBIT (from)
+            cur.execute("""
+                INSERT INTO mouvements (phone, firstname,lastname, mvt_date, amount, debitcredit, reference,libelle)
+                VALUES (%s,%s,%s,%s,%s,'D',%s,%s)
+            """, (from_phone, me[5], me[4], today, amount, ref_base + "-D", lib))
+
+            # 2) insert mouvement CREDIT (to)
+            cur.execute("""
+                INSERT INTO mouvements (phone, firstname,lastname, mvt_date, amount, debitcredit, reference,libelle)
+                VALUES (%s,%s,%s,%s,%s,'C',%s, %s)
+            """, (to_phone, to_member[5], to_member[4], today, amount, ref_base + "-C", lib))
+
+            # 3) update balances
+            cur.execute("UPDATE membres SET balance = balance - %s, updatedate=CURRENT_DATE, updateuser=%s WHERE phone=%s",
+                        (amount, from_phone, from_phone))
+            cur.execute("UPDATE membres SET balance = balance + %s, updatedate=CURRENT_DATE, updateuser=%s WHERE phone=%s",
+                        (amount, from_phone, to_phone))
+
+        conn.commit()
+
 # ----------------------------
 # Validation
 # ----------------------------
@@ -807,7 +835,7 @@ ACCOUNT_PAGE = """
   <div class="card">
     <form method="post">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <label>Phone</label><input value="{{ m[1] }}" readonly>
+      <label>Identifiant</label><input value="{{ m[1] }}" readonly>
       <label>Nom</label><input value="{{ m[4] }}" readonly>
       <label>Prénom</label><input value="{{ m[5] }}" readonly>
       <label>Type</label><input value="{{ m[2] }}" readonly>
@@ -1690,7 +1718,7 @@ def add_security_headers(resp):
 #---------------------------------------------------------------------------------------
 TRANSFER_PAGE = """
 <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Transfert cotisations</title>
+<title>Transfert de cotisations</title>
 <style>
  body{font-family:Arial;margin:20px} .wrap{max-width:800px;margin:0 auto}
  .card{border:1px solid #e7e7e7;border-radius:16px;padding:16px}
@@ -1705,21 +1733,29 @@ TRANSFER_PAGE = """
 </style></head><body><div class="wrap">
 <h2>Transfert de cotisations</h2>
 <p><a href="{{ url_for('home') }}">← Retour</a></p>
-
 <div class="card">
-  <p>Solde actuel: <b>{{ balance }}</b></p>
-  <form method="post">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <label>Phone du bénéficiaire</label>
-    <input name="to_phone" required">
-    <label>Montant à transférer</label>
-    <input name="amount" required>
-    <div class="row">
-      <button class="btn" type="submit">Transférer</button>
-      <a class="btn2" href="{{ url_for('home') }}">Annuler</a>
-    </div>
-    {% if message %}<div class="msg {{ 'err' if is_error else 'ok' }}">{{ message }}</div>{% endif %}
-  </form>
+<form method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label>Identifiant du bénéficiaire</label>
+  <input name="phone" value="{{ to_phone or '' }}" required>
+  <label>Montant à transférer (en $)</label>
+  <input name="amount" type="number" value="{{ amount or 0 }}" required>
+
+  {% if found_name %}
+    <div class="msg ok">Membre trouvé: <b>{{ found_name }}</b></div>
+  {% elif to_phone %}
+    <div class="msg err">Phone inconnu (membre non trouvé).</div>
+  {% endif %}
+
+  <div class="row">
+    <button class="btn" name="action" value="check" type="submit">Vérifier</button>
+    <button class="btn2" name="action" value="confirm" type="submit">Confirmer</button>
+  </div>
+
+  {% if message %}
+    <div class="msg {{ 'err' if is_error else 'ok' }}">{{ message }}</div>
+  {% endif %}
+</form>
 </div>
 </div></body></html>
 """
@@ -1727,63 +1763,45 @@ TRANSFER_PAGE = """
 @app.route("/transfer", methods=["GET","POST"])
 @login_required
 def transfer():
+    message, is_error = "", 
     from_phone = session["user"]
-    me = fetch_member_by_phone(from_phone)
-    my_balance = me[10] if me else 0
+    to_phone = (request.form.get("to_phone") or "").strip() if request.method == "POST" else ""
+    amount = float((request.form.get("amount") or "0").strip()) if request.method == "POST" else 0.0
+    my_balance = 0
+    found_name = ""
 
     if request.method == "POST":
-        to_phone = (request.form.get("to_phone") or "").strip()
-        amount = float((request.form.get("amount") or "0").strip())
+        m = fetch_member_by_phone(to_phone) if to_phone else None
+        if m:
+            my_balance = m[10] if m else 0
+            found_name = f"{m[5]} {m[4]}"
 
-        if amount <= 0:
-            return render_template_string(TRANSFER_PAGE, balance=my_balance, message="Montant invalide.", is_error=True)
+        action = request.form.get("action")
 
-        to_member = fetch_member_by_phone(to_phone)
-        if not to_member:
-            return render_template_string(TRANSFER_PAGE, balance=my_balance, message="Bénéficiaire introuvable.", is_error=True)
+        if action == "confirm":
+            if not m:
+                return render_template_string(TRANSFER_PAGE, balance=my_balance, message="Bénéficiaire introuvable.", is_error=True)
 
-        if my_balance < amount:
-            return render_template_string(TRANSFER_PAGE, balance=my_balance, message="Solde insuffisant: transfert bloqué.", is_error=True)
+            if amount <= 0:
+                return render_template_string(TRANSFER_PAGE, balance=my_balance, message="Montant invalide.", is_error=True)
 
-        # transaction atomique
-        try:
-            ref_base = f"TR-{uuid.uuid4().hex[:10]}"
-            #ref_base = f"TR-{session['user']}"
-            today = datetime.utcnow().date()
-            lib=f"Transfert de {amount} de {from_phone} vers {to_phone}"
-            #log.info("Initiating transfer: from=%s to=%s amount=%s ref_base=%s date=%s", from_phone, to_phone, amount, ref_base, today)
+            if my_balance < amount:
+                return render_template_string(TRANSFER_PAGE, balance=my_balance, message="Solde insuffisant: transfert bloqué.", is_error=True)
 
-            with get_conn() as conn:
-                with conn.cursor() as cur:
-                    # 1) insert mouvement DEBIT (from)
-                    cur.execute("""
-                        INSERT INTO mouvements (phone, firstname,lastname, mvt_date, amount, debitcredit, reference,libelle)
-                        VALUES (%s,%s,%s,%s,%s,'D',%s,%s)
-                    """, (from_phone, me[5], me[4], today, amount, ref_base + "-D", lib))
+            try:
+                d = datetime.strptime(date_in, "%d/%m/%Y").date()
+                ref = f"DC-{uuid.uuid4().hex[:10]}"
+                #create_transfer(session["user"], to_phone, amount, d, ref)
+                create_transfert(from_phone, to_phone, amount, d, ref)
+                message, is_error = "contribution transférée.", False
+                to_phone, amount, found_name = "", 0.0, ""
+            except Exception as e:
+                message, is_error = f"Erreur: {e}", True
+                log.exception("Erreur lors de l'enregistrement du mouvement de transfert: %s", e)
 
-                    # 2) insert mouvement CREDIT (to)
-                    cur.execute("""
-                        INSERT INTO mouvements (phone, firstname,lastname, mvt_date, amount, debitcredit, reference,libelle)
-                        VALUES (%s,%s,%s,%s,%s,'C',%s, %s)
-                    """, (to_phone, to_member[5], to_member[4], today, amount, ref_base + "-C", lib))
-
-                    # 3) update balances
-                    cur.execute("UPDATE membres SET balance = balance - %s, updatedate=CURRENT_DATE, updateuser=%s WHERE phone=%s",
-                                (amount, from_phone, from_phone))
-                    cur.execute("UPDATE membres SET balance = balance + %s, updatedate=CURRENT_DATE, updateuser=%s WHERE phone=%s",
-                                (amount, from_phone, to_phone))
-
-                conn.commit()
-
-            # refresh
             me2 = fetch_member_by_phone(from_phone)
-            return render_template_string(TRANSFER_PAGE, balance=(me2[10] if me2 else 0),
-                                          message="Transfert effectué avec succès.", is_error=False)
-        except Exception as e:
-            log.exception("Erreur transfert")
-            return render_template_string(TRANSFER_PAGE, balance=my_balance, message=f"Erreur: {e}", is_error=True)
-
-    return render_template_string(TRANSFER_PAGE, balance=my_balance,message="", is_error=False)
+    return render_template_string(TRANSFER_PAGE, balance=(me2[10] if me2 else 0),found_name=found_name, to_phone=to_phone, amount=amount,
+                                          message=message, is_error=is_error)
 
 
 if __name__ == "__main__":
