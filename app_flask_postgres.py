@@ -1737,7 +1737,7 @@ TRANSFER_PAGE = """
 <form method="post">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <label>Identifiant du bénéficiaire</label>
-  <input name="phone" value="{{ to_phone or '' }}" required>
+  <input name="to_phone" value="{{ to_phone or '' }}" required>
   <label>Montant à transférer (en $)</label>
   <input name="amount" type="number" value="{{ amount or 0 }}" required>
 
