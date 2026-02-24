@@ -420,7 +420,7 @@ def create_deces(phone: str, date_deces, declared_by: str, reference: str):
             """, (phone, date_deces, declared_by, reference))
         conn.commit()
 
-def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: str):
+def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: str,today):
     me = fetch_member_by_phone(from_phone)
     to_member = fetch_member_by_phone(to_phone)
     today = datetime.utcnow().date()
@@ -1792,8 +1792,7 @@ def transfer():
             try:
                 d = datetime.strptime(date.today().strftime("%d/%m/%Y"), "%d/%m/%Y")
                 ref = f"DC-{uuid.uuid4().hex[:10]}"
-                #create_transfer(session["user"], to_phone, amount, d, ref)
-                create_transfert(from_phone, to_phone, amount, d, ref)
+                create_transfert(from_phone, to_phone, amount, ref,d)
                 message, is_error = "contribution transférée.", False
                 to_phone, amount, found_name = "", 0.0, ""
             except Exception as e:
