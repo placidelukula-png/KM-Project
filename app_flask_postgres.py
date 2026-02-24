@@ -1765,8 +1765,8 @@ TRANSFER_PAGE = """
 def transfer():
     message, is_error = "","" 
     from_phone = session["user"]
-    to_phone = (request.form.get("to_phone") or "").strip() if request.method == "POST" else ""
-    amount = float((request.form.get("amount") or "0").strip()) if request.method == "POST" else 0.0
+    to_phone = (request.form.get("to_phone") or "").strip() 
+    amount = float((request.form.get("amount") or "0").strip()) 
     my_balance = 0
     found_name = ""
 
@@ -1775,6 +1775,7 @@ def transfer():
         if m:
             my_balance = m[10] if m else 0
             found_name = f"{m[5]} {m[4]}"
+            log.info("Membre bénéficiaire trouvé: %s (balance=%s)", found_name, my_balance)
 
         action = request.form.get("action")
 
