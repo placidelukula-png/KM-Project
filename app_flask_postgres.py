@@ -1763,7 +1763,7 @@ TRANSFER_PAGE = """
 @app.route("/transfer", methods=["GET","POST"])
 @login_required
 def transfer():
-    message, is_error = "", 
+    message, is_error = "","" 
     from_phone = session["user"]
     to_phone = (request.form.get("to_phone") or "").strip() if request.method == "POST" else ""
     amount = float((request.form.get("amount") or "0").strip()) if request.method == "POST" else 0.0
