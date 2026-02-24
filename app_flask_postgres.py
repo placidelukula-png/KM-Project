@@ -1799,9 +1799,9 @@ def transfer():
                 message, is_error = f"Erreur: {e}", True
                 log.exception("Erreur lors de l'enregistrement du mouvement de transfert: %s", e)
 
-            me2 = fetch_member_by_phone(from_phone)
-    return render_template_string(TRANSFER_PAGE, balance=(me2[10] if me2 else 0),found_name=found_name, to_phone=to_phone, amount=amount,
-                                          message=message, is_error=is_error)
+    return render_template_string(TRANSFER_PAGE, found_name=found_name, to_phone=to_phone, amount=amount,message=message, is_error=is_error)
+            #me2 = fetch_member_by_phone(from_phone)
+    #return render_template_string(TRANSFER_PAGE, balance=(me2[10] if me2 else 0),found_name=found_name, to_phone=to_phone, amount=amount,message=message, is_error=is_error)
 
 
 if __name__ == "__main__":
