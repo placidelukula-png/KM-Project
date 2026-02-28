@@ -166,6 +166,19 @@ def init_db():
             """)
             cur.execute("CREATE INDEX IF NOT EXISTS idx_deces_phone ON deces(phone);")
 
+            # fichier signalétique
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS id_data (
+                  id            BIGSERIAL PRIMARY KEY,
+                  keydata       TEXT NOT NULL,
+                  decript       TEXT,
+                  quantity      DECIMAL(18,2),
+                  note          TEXT,
+                  created_by    TEXT NOT NULL,
+                  created_at    TIMESTAMP NOT NULL DEFAULT NOW()
+                );
+            """)
+
         conn.commit()
 
 
@@ -187,6 +200,56 @@ try:
 except Exception:
     log.exception("init_db() a échoué au démarrage")
     # on laisse continuer pour que les logs apparaissent, mais l'app sera probablement inutilisable
+
+from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
+
+def fetch_dashboard_stats():
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            # P = prestation ciblée
+            cur.execute("""
+                SELECT COALESCE(quantity, 0)
+                FROM id_data
+                WHERE keydata = 'id-data'
+                ORDER BY id DESC
+                LIMIT 1
+            """)
+            P = cur.fetchone()
+            P = P[0] if P else Decimal("0")
+
+            # N = actifs
+            cur.execute("SELECT COUNT(*) FROM membres WHERE currentstatute = 'actif'")
+            N = cur.fetchone()[0] or 0
+
+            # B = brut (non radié et non suspendu)
+            cur.execute("""
+                SELECT COUNT(*)
+                FROM membres
+                WHERE currentstatute NOT IN ('radié', 'suspendu')
+            """)
+            B = cur.fetchone()[0] or 0
+
+    # C = 1.2 * P / N (si N=0 => 0)
+    try:
+        if N > 0:
+            C = (Decimal("1.2") * Decimal(P)) / Decimal(N)
+            C = C.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        else:
+            C = Decimal("0.00")
+    except (InvalidOperation, ZeroDivisionError):
+        C = Decimal("0.00")
+
+    # Optionnel: format affichage (USD)
+    def fmt_money(x: Decimal) -> str:
+        # 1 234.56
+        return f"{x:,.2f}".replace(",", " ")
+
+    return {
+        "P": fmt_money(Decimal(P)),
+        "N": N,
+        "B": B,
+        "C": fmt_money(C),
+    }
 
 
 # ----------------------------
@@ -649,20 +712,50 @@ DASHBOARD_PAGE = """
   .link{color:#0b57d0;text-decoration:none;font-weight:600;}
   .link:hover{text-decoration:underline;}
   @media (max-width: 900px){ .grid{grid-template-columns:1fr;} body{margin:14px;} }
+
+  /* ✅ Cadran statistiques */
+  .top{display:flex;align-items:flex-start;gap:14px;}
+  .hdr{flex:1}
+
+  .statsbox{
+    min-width:260px;
+    border:1px solid #e7e7e7;
+    border-radius:14px;
+    padding:10px 12px;
+    background:#fafafa;
+    font-size:12px;
+    line-height:1.25;
+    white-space:nowrap;
+  }
+  .stats-title{font-weight:700;margin-bottom:6px;font-size:12px;}
+  .stats-row{display:flex;justify-content:space-between;gap:12px;padding:2px 0;}
+  .stats-row span{color:#555;}
+  .stats-row b{color:#111;}
 </style>
 </head>
 <body>
-  <span class="top">
+  <div class="top">
     <div class="brand">KM</div>
+
     <div class="hdr">
       <h2 style="margin:0;">Kimya</h2>
       <div class="muted">membre connecté : <b>{{ connected_label }}</b></div>
       <div><small>Rôle: <b>{{ connected_role }}</b></small></div>
-      <p style="text-align:right;"><a class="btn" href="{{ url_for('logout') }}">Logout</a></p>
-      <style>max-width:48px;<style/></div>
     </div>
-    <style>div{white-space:nowrap;}</style>
-  </span>
+
+    <!-- ✅ Cadran statistiques (coin supérieur droit) -->
+    <div class="statsbox">
+      <div class="stats-title">Indicateurs clés</div>
+      <div class="stats-row"><span>Prestation ciblée (P)</span><b>{{ P }}</b></div>
+      <div class="stats-row"><span>Adhérents actifs (N)</span><b>{{ N }}</b></div>
+      <div class="stats-row"><span>Adhérents (brut) (B)</span><b>{{ B }}</b></div>
+      <div class="stats-row"><span>Contribution attendue (C)</span><b>{{ C }}</b></div>
+    </div>
+
+    <div class="actions">
+      <a class="btn" href="{{ url_for('logout') }}">Logout</a>
+    </div>
+  </div>
 
   <!-- Zone 1: Tous -->
 
@@ -778,9 +871,10 @@ DASHBOARD_PAGE = """
 def home():
     rows = fetch_all_membres()
 
-    phone = session.get("user")  # ✅ ici on a phone
+    phone = session.get("user")
     member = fetch_member_by_phone(phone) if phone else None
 
+    connected_role = ""
     if member:
         connected_phone = member[1]
         connected_firstname = member[5]
@@ -790,11 +884,19 @@ def home():
     else:
         connected_label = phone or ""
 
+    stats = fetch_dashboard_stats()  # ✅ P, N, B, C
+
     return render_template_string(
         DASHBOARD_PAGE,
         rows=rows,
-        connected_label=connected_label,   # ✅ variable pour l'affichage
-        connected_role=connected_role if member else "",  
+        connected_label=connected_label,
+        connected_role=connected_role,
+        # ✅ nouvelles variables template
+        P=stats["P"],
+        N=stats["N"],
+        B=stats["B"],
+        C=stats["C"],
+        # vos autres variables si nécessaires
         edit_row=None,
         edit_birthdate="",
         message="",
