@@ -210,7 +210,7 @@ def fetch_dashboard_stats():
             cur.execute("""
                 SELECT COALESCE(quantity, 0)
                 FROM id_data
-                WHERE keydata = 'id-data'
+                WHERE keydata = 'id-data01'  -- clé fixe pour la prestation ciblée
                 ORDER BY id DESC
                 LIMIT 1
             """)
@@ -731,6 +731,8 @@ DASHBOARD_PAGE = """
   .stats-row{display:flex;justify-content:space-between;gap:12px;padding:2px 0;}
   .stats-row span{color:#555;}
   .stats-row b{color:#111;}
+   /* ✅ FIN du Cadran statistiques */
+ 
 </style>
 </head>
 <body>
@@ -751,6 +753,7 @@ DASHBOARD_PAGE = """
       <div class="stats-row"><span>Adhérents (brut) (B)</span><b>{{ B }}</b></div>
       <div class="stats-row"><span>Contribution attendue (C)</span><b>{{ C }}</b></div>
     </div>
+    <!-- ✅ FIN Cadran statistiques (coin supérieur droit) -->
 
     <div class="actions">
       <a class="btn" href="{{ url_for('logout') }}">Logout</a>
