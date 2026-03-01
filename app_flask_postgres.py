@@ -216,6 +216,17 @@ def fetch_dashboard_stats():
             """)
             P = cur.fetchone()
             P = P[0] if P else Decimal("0")
+            
+            # S = Marge de securité fixée pour couvrir les frais et imprevues
+            cur.execute("""
+                SELECT COALESCE(quantity, 0)
+                FROM id_data
+                WHERE keydata = 'id-data02'  -- clé fixe pour la marge de sécurité
+                ORDER BY id DESC
+                LIMIT 1
+            """)
+            S = cur.fetchone()
+            S = S[0] if S else Decimal("0")
 
             # N = actifs
             cur.execute("SELECT COUNT(*) FROM membres WHERE currentstatute = 'actif'")
@@ -232,7 +243,7 @@ def fetch_dashboard_stats():
     # C = 1.2 * P / N (si N=0 => 0)
     try:
         if N > 0:
-            C = (Decimal("1.2") * Decimal(P)) / Decimal(N)
+            C = (Decimal(1+S) * Decimal(P)) / Decimal(N)        # S = marge de sécurité (en %) modifiable pour couvrir les frais et les imprévus.  
             C = C.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
         else:
             C = Decimal("0.00")
