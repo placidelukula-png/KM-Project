@@ -771,7 +771,7 @@ DASHBOARD_PAGE = """
       <div class="stats-row"><span>Prestation ciblée . . . . . . . . . . . . . . . .</span><b>{{ P }}</b></div>
       <div class="stats-row"><span>Adhérents actifs. . . . . . . . . . . . . . . . .</span><b>{{ N }}</b></div>
       <div class="stats-row"><span>Adhérents (brut). . . . . . . . . . . . . . . . .</span><b>{{ B }}</b></div>
-      <div class="stats-row"><span>Contribution individuelle attendue. . . </span><b>{{ C }}</b></div>
+      <div class="stats-row"><span>Contribution individuelle attendue. . . .</span><b>{{ C }}</b></div>
     </div>
     <!-- ✅ FIN Cadran statistiques (coin supérieur droit) -->
 
@@ -963,7 +963,7 @@ ACCOUNT_PAGE = """
       <label>Identifiant</label><input value="{{ m[1] }}" readonly>
       <label>Nom</label><input value="{{ m[4] }}" readonly>
       <label>Prénom</label><input value="{{ m[5] }}" readonly>
-      <label>Type</label><input value="{{ m[2] }}" readonly>
+      <label>Mentor</label><input value="{{ m[3] }}">       
       <label>Statut</label><input value="{{ m[9] }}" readonly>
       <label>Solde</label><input value="{{ m[10] }}" readonly>
 
@@ -1598,7 +1598,6 @@ DATAGENERALFOLLOWUP_PAGE = """
     </form>
   </div>
 
-  <p class="muted"><small>Interface d'administration des membres. Mentor et admin peuvent créer des membres, mais seuls les admins peuvent voir cette page.</small></p>
   <p><a href="{{ url_for('home') }}">← Retour</a></p>  
 
   {% if edit_row %}
