@@ -759,10 +759,10 @@ DASHBOARD_PAGE = """
     <!-- ✅ Cadran statistiques (coin supérieur droit) -->
     <div class="statsbox">
       <div class="stats-title">Indicateurs clés : </div>
-      <div class="stats-row"><span>Prestation ciblée </span><b>{{ P }}</b></div>
-      <div class="stats-row"><span>Adhérents actifs </span><b>{{ N }}</b></div>
-      <div class="stats-row"><span>Adhérents (brut) </span><b>{{ B }}</b></div>
-      <div class="stats-row"><span>Contribution individuelle attendue </span><b>{{ C }}</b></div>
+      <div class="stats-row"><span>Prestation ciblée . . . . . . . . . . . </span><b>{{ P }}</b></div>
+      <div class="stats-row"><span>Adhérents actifs. . . . . . . . . . . . </span><b>{{ N }}</b></div>
+      <div class="stats-row"><span>Adhérents (brut). . . . . . . . . . . . </span><b>{{ B }}</b></div>
+      <div class="stats-row"><span>Contribution individuelle attendue. . . </span><b>{{ C }}</b></div>
     </div>
     <!-- ✅ FIN Cadran statistiques (coin supérieur droit) -->
 
@@ -1572,9 +1572,25 @@ DATAGENERALFOLLOWUP_PAGE = """
 <body>
 <div class="wrap">
   <h2>KM-Kimya  Les Membres</h2>
+
+  <!-- Recherche rapide par phone -->
+  <div class="card" style="margin-top:10px; padding:12px;">
+    <form method="get" action="{{ url_for('search_member') }}">
+      <div class="grid" style="grid-template-columns: 2fr 1fr; align-items:end;">
+        <div>
+          <label>Rechercher un membre par phone</label>
+          <input name="q_phone" placeholder="Ex: 815550066" value="{{ q_phone or '' }}">
+        </div>
+        <div class="row" style="margin-top:0;">
+          <button class="btn" type="submit">Vérifier</button>
+          <a class="btn secondary" href="{{ url_for('datageneralfollowup') }}">Réinitialiser</a>
+        </div>
+      </div>
+    </form>
+  </div>
+
   <p class="muted"><small>Interface d'administration des membres. Mentor et admin peuvent créer des membres, mais seuls les admins peuvent voir cette page.</small></p>
-  <p><a href="{{ url_for('home') }}">← Retour</a></p>
-  
+  <p><a href="{{ url_for('home') }}">← Retour</a></p>  
 
   {% if edit_row %}
   <div class="card">
@@ -1583,12 +1599,12 @@ DATAGENERALFOLLOWUP_PAGE = """
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <div class="grid">
         <div>
-          <label>Phone (unique)</label>
+          <label>Identifiant (unique)</label>
           <input name="phone" value="{{ edit_row[1] }}" required>
         </div>
 
         <div>
-          <label>Member type</label>
+          <label>Type d'adhérent</label>
           <select name="membertype" required>
             {% for t in member_types %}
               <option value="{{ t }}" {{ 'selected' if t==edit_row[2] else '' }}>{{ t }}</option>
@@ -1602,17 +1618,17 @@ DATAGENERALFOLLOWUP_PAGE = """
         </div>
 
         <div>
-          <label>Last name</label>
+          <label>Nom de famille</label>
           <input name="lastname" value="{{ edit_row[4] }}" required>
         </div>
 
         <div>
-          <label>First name</label>
+          <label>Prénom</label>
           <input name="firstname" value="{{ edit_row[5] }}" required>
         </div>
 
         <div>
-          <label>Birth date (JJ/MM/AAAA)</label>
+          <label>Date de naissance (JJ/MM/AAAA)</label>
           <input name="birthdate" value="{{ edit_birthdate }}" required>
         </div>
 
@@ -1636,7 +1652,7 @@ DATAGENERALFOLLOWUP_PAGE = """
         </div>
 
         <div>
-          <label>New password (optionnel)</label>
+          <label>Nouveau mot de passe (optionnel)</label>
           <input name="password" type="password" placeholder="laisser vide pour ne pas changer">
         </div>
       </div>
@@ -1708,8 +1724,6 @@ DATAGENERALFOLLOWUP_PAGE = """
 @app.get("/datageneralfollowup")
 @admin_required
 def datageneralfollowup():
-#   ## Réutilise ton écran existant "Liste des membres + Edit/Delete"
-#   ## (le code que tu as déjà, c’est ici que ça vit)
     rows = fetch_all_membres()
     return render_template_string(DATAGENERALFOLLOWUP_PAGE, rows=rows, edit_row=None, edit_birthdate="",edit_membershipdate="", edit_balance=0.0,
                                   message="", is_error=False, member_types=MEMBER_TYPES, statutes=STATUTES)
@@ -1828,6 +1842,65 @@ def add_security_headers(resp):
     resp.headers["Content-Security-Policy"] = "default-src 'self' 'unsafe-inline';"
     return resp
 
+@app.get("/datageneralfollowup/search")
+@admin_required
+def search_member():
+    q_phone = (request.args.get("q_phone") or "").strip()
+
+    # si champ vide -> retour page normale
+    if not q_phone:
+        rows = fetch_all_membres()
+        return render_template_string(
+            DATAGENERALFOLLOWUP_PAGE,
+            rows=rows,
+            edit_row=None,
+            edit_birthdate="",
+            edit_membershipdate="",
+            edit_balance=0.0,
+            message="Veuillez saisir un phone.",
+            is_error=True,
+            member_types=MEMBER_TYPES,
+            statutes=STATUTES,
+            q_phone=q_phone,
+        )
+
+    rows = fetch_member_by_phone_like(q_phone)
+
+    # 0 résultat
+    if not rows:
+        all_rows = fetch_all_membres()
+        return render_template_string(
+            DATAGENERALFOLLOWUP_PAGE,
+            rows=all_rows,
+            edit_row=None,
+            edit_birthdate="",
+            edit_membershipdate="",
+            edit_balance=0.0,
+            message=f"Aucun membre trouvé pour: {q_phone}",
+            is_error=True,
+            member_types=MEMBER_TYPES,
+            statutes=STATUTES,
+            q_phone=q_phone,
+        )
+
+    # 1 seul résultat -> ouvrir directement l'écran Edit (optionnel mais pratique)
+    if len(rows) == 1:
+        return redirect(url_for("edit", member_id=rows[0][0]))
+
+    # plusieurs résultats -> afficher table filtrée
+    return render_template_string(
+        DATAGENERALFOLLOWUP_PAGE,
+        rows=rows,
+        edit_row=None,
+        edit_birthdate="",
+        edit_membershipdate="",
+        edit_balance=0.0,
+        message=f"{len(rows)} résultat(s) pour: {q_phone}",
+        is_error=False,
+        member_types=MEMBER_TYPES,
+        statutes=STATUTES,
+        q_phone=q_phone,
+    )
 
 # --------------------------------------------------------------------------------------
 # Endpoint #10 — Transfert de cotisations (débit/crédit + blocage si solde insuffisant)
