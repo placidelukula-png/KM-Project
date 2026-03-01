@@ -531,6 +531,18 @@ def fetch_member_by_phone_like(q_phone: str):
             cur.execute(SELECT_membres + " WHERE phone ILIKE %s ORDER BY id DESC", (f"%{q}%",))
             return cur.fetchall()
 
+def update_member_mentor(phone: str, mentor: str, updateuser: str):
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                UPDATE membres
+                SET mentor=%s,
+                    updatedate=CURRENT_DATE,
+                    updateuser=%s
+                WHERE phone=%s
+            """, (mentor, updateuser, phone))
+        conn.commit()
+
 # ----------------------------
 # Validation
 # ----------------------------
@@ -963,7 +975,7 @@ ACCOUNT_PAGE = """
       <label>Identifiant</label><input value="{{ m[1] }}" readonly>
       <label>Nom</label><input value="{{ m[4] }}" readonly>
       <label>Prénom</label><input value="{{ m[5] }}" readonly>
-      <label>Mentor</label><input value="{{ m[3] }}" name="mentor">     
+      <label>Mentor</label><input name="mentor" value="{{ m[3] }}">     
       <label>Statut</label><input value="{{ m[9] }}" readonly>
       <label>Solde</label><input value="{{ m[10] }}" readonly>
 
@@ -986,14 +998,41 @@ ACCOUNT_PAGE = """
 def account():
     phone = session["user"]
     m = fetch_member_by_phone(phone)
-    if request.method == "POST":
-        pwd = (request.form.get("new_password") or "").strip()
-        if pwd:
-            update_member_password(phone, pwd, updateuser=phone)
-            return render_template_string(ACCOUNT_PAGE, m=m, message="Mot de passe modifié.", is_error=False)
-        return render_template_string(ACCOUNT_PAGE, m=m, message="Aucun changement.", is_error=False)
-    return render_template_string(ACCOUNT_PAGE, m=m, message="", is_error=False)
 
+    if request.method == "POST":
+        try:
+            mentor_new = (request.form.get("mentor") or "").strip()
+            pwd = (request.form.get("new_password") or "").strip()
+
+            changed = []
+
+            # 1) mentor (si modifié)
+            if mentor_new and mentor_new != (m[3] or ""):
+                update_member_mentor(phone, mentor_new, updateuser=phone)
+                changed.append("Mentor")
+
+            # 2) mot de passe (si fourni)
+            if pwd:
+                update_member_password(phone, pwd, updateuser=phone)
+                changed.append("Mot de passe")
+
+            # refresh
+            m = fetch_member_by_phone(phone)
+
+            if changed:
+                return render_template_string(
+                    ACCOUNT_PAGE, m=m,
+                    message="Changement(s) enregistré(s) : " + ", ".join(changed) + ".",
+                    is_error=False
+                )
+            return render_template_string(ACCOUNT_PAGE, m=m, message="Aucun changement.", is_error=False)
+
+        except Exception as e:
+            # log.exception("Erreur update compte")  # si tu veux tracer
+            m = fetch_member_by_phone(phone)
+            return render_template_string(ACCOUNT_PAGE, m=m, message=f"Erreur: {e}", is_error=True)
+
+    return render_template_string(ACCOUNT_PAGE, m=m, message="", is_error=False)
 
 # ---------------------------------------------------------------
 #   Endpoint #2 — Mes mouvements (lecture seule + balance)
