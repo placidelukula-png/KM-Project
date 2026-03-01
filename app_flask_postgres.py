@@ -522,6 +522,15 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
 
         conn.commit()
 
+def fetch_member_by_phone_like(q_phone: str):
+    q = (q_phone or "").strip()
+    if not q:
+        return []
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute(SELECT_membres + " WHERE phone ILIKE %s ORDER BY id DESC", (f"%{q}%",))
+            return cur.fetchall()
+
 # ----------------------------
 # Validation
 # ----------------------------
@@ -759,9 +768,9 @@ DASHBOARD_PAGE = """
     <!-- ✅ Cadran statistiques (coin supérieur droit) -->
     <div class="statsbox">
       <div class="stats-title">Indicateurs clés : </div>
-      <div class="stats-row"><span>Prestation ciblée . . . . . . . . . . . </span><b>{{ P }}</b></div>
-      <div class="stats-row"><span>Adhérents actifs. . . . . . . . . . . . </span><b>{{ N }}</b></div>
-      <div class="stats-row"><span>Adhérents (brut). . . . . . . . . . . . </span><b>{{ B }}</b></div>
+      <div class="stats-row"><span>Prestation ciblée . . . . . . . . . . . . . . . .</span><b>{{ P }}</b></div>
+      <div class="stats-row"><span>Adhérents actifs. . . . . . . . . . . . . . . . .</span><b>{{ N }}</b></div>
+      <div class="stats-row"><span>Adhérents (brut). . . . . . . . . . . . . . . . .</span><b>{{ B }}</b></div>
       <div class="stats-row"><span>Contribution individuelle attendue. . . </span><b>{{ C }}</b></div>
     </div>
     <!-- ✅ FIN Cadran statistiques (coin supérieur droit) -->
