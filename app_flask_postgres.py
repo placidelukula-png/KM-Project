@@ -963,7 +963,7 @@ ACCOUNT_PAGE = """
       <label>Identifiant</label><input value="{{ m[1] }}" readonly>
       <label>Nom</label><input value="{{ m[4] }}" readonly>
       <label>Prénom</label><input value="{{ m[5] }}" readonly>
-      <label>Mentor</label><input value="{{ m[3] }}">       
+      <label>Mentor</label><input value="{{ m[3] }}" name="mentor">     
       <label>Statut</label><input value="{{ m[9] }}" readonly>
       <label>Solde</label><input value="{{ m[10] }}" readonly>
 
