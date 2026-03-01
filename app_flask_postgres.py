@@ -758,11 +758,11 @@ DASHBOARD_PAGE = """
 
     <!-- ✅ Cadran statistiques (coin supérieur droit) -->
     <div class="statsbox">
-      <div class="stats-title">Indicateurs clés</div>
-      <div class="stats-row"><span>Prestation ciblée (P)</span><b>{{ P }}</b></div>
-      <div class="stats-row"><span>Adhérents actifs (N)</span><b>{{ N }}</b></div>
-      <div class="stats-row"><span>Adhérents (brut) (B)</span><b>{{ B }}</b></div>
-      <div class="stats-row"><span>Contribution attendue (C)</span><b>{{ C }}</b></div>
+      <div class="stats-title">Indicateurs clés : </div>
+      <div class="stats-row"><span>Prestation ciblée </span><b>{{ P }}</b></div>
+      <div class="stats-row"><span>Adhérents actifs </span><b>{{ N }}</b></div>
+      <div class="stats-row"><span>Adhérents (brut) </span><b>{{ B }}</b></div>
+      <div class="stats-row"><span>Contribution individuelle attendue </span><b>{{ C }}</b></div>
     </div>
     <!-- ✅ FIN Cadran statistiques (coin supérieur droit) -->
 
