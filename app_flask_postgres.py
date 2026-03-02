@@ -2007,17 +2007,23 @@ def transfer():
     found_name = ""
 
     if request.method == "POST":
+        m = fetch_member_by_phone(to_phone) if to_phone else None
+        if not m:
+            return render_template_string(TRANSFER_PAGE, balance=my_balance, message="Bénéficiaire introuvable", is_error=True)
+        else:
+            found_name = f"{m[5]} {m[4]}"
+            #log.info("Membre bénéficiaire trouvé: %s (balance=%s)", found_name, my_balance)
+
+
         m = fetch_member_by_phone(from_phone) if from_phone else None
         if m:
             my_balance = m[10] if m else 0
-            found_name = f"{m[5]} {m[4]}"
-            #log.info("Membre bénéficiaire trouvé: %s (balance=%s)", found_name, my_balance)
 
         action = request.form.get("action")
 
         if action == "confirm":
             if not m:
-                return render_template_string(TRANSFER_PAGE, balance=my_balance, message="Bénéficiaire introuvable.", is_error=True)
+                return render_template_string(TRANSFER_PAGE, balance=my_balance, message="Données introuvables", is_error=True)
 
             if amount <= 0:
                 return render_template_string(TRANSFER_PAGE, balance=my_balance, message="Montant invalide.", is_error=True)
