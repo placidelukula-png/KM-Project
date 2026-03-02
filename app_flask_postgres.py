@@ -2007,7 +2007,7 @@ def transfer():
     found_name = ""
 
     if request.method == "POST":
-        m = fetch_member_by_phone(to_phone) if to_phone else None
+        m = fetch_member_by_phone(from_phone) if from_phone else None
         if m:
             my_balance = m[10] if m else 0
             found_name = f"{m[5]} {m[4]}"
