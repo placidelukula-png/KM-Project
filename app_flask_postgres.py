@@ -2023,7 +2023,7 @@ def transfer():
                 return render_template_string(TRANSFER_PAGE, balance=my_balance, message="Montant invalide.", is_error=True)
 
             if my_balance < amount:
-                return render_template_string(TRANSFER_PAGE, balance=my_balance, message="Solde insuffisant: transfert bloqué.", is_error=True)
+                return render_template_string(TRANSFER_PAGE, balance=my_balance, message=f"Solde insuffisant: transfert bloqué. Solde actuel: {my_balance}", is_error=True)
 
             try:
                 d = datetime.strptime(date.today().strftime("%d/%m/%Y"), "%d/%m/%Y")
