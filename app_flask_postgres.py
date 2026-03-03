@@ -590,6 +590,26 @@ def validate_member_form(form, for_update=False):
         "password": password,
     }
 
+def validate_mentor_phone_or_raise(mentor_phone: str, *, current_user_phone: str) -> str:
+    mentor_phone = (mentor_phone or "").strip()
+
+    if not mentor_phone:
+        raise ValueError("Veuillez saisir le phone du mentor.")
+
+    # Optionnel mais recommandé : empêcher auto-mentor
+    if mentor_phone == current_user_phone:
+        raise ValueError("Mentor invalide : vous ne pouvez pas être votre propre mentor.")
+
+    mentor_row = fetch_member_by_phone(mentor_phone)
+    if not mentor_row:
+        raise ValueError("Mentor introuvable : ce phone n'existe pas dans la table 'membres'.")
+
+    # Index d’après votre modèle : membertype = row[2]
+    if mentor_row[2] != "mentor":
+        raise ValueError("Mentor invalide : ce membre existe mais n'est pas de type 'mentor'.")
+
+    # (Optionnel) on pourrait aussi vérifier statut mentor_row[9] == 'actif'
+    return mentor_phone
 
 # ------------------------------------
 # Décorateurs d'accès (login + rôles)
@@ -975,7 +995,8 @@ ACCOUNT_PAGE = """
       <label>Identifiant</label><input value="{{ m[1] }}" readonly>
       <label>Nom</label><input value="{{ m[4] }}" readonly>
       <label>Prénom</label><input value="{{ m[5] }}" readonly>
-      <label>Mentor</label><input name="mentor" value="{{ m[3] }}">     
+      <label>Mentor</label>
+      <input name="mentor" value="{{ m[3] }}" placeholder="Phone d’un mentor (ex: 998889560)">     
       <label>Statut</label><input value="{{ m[9] }}" readonly>
       <label>Solde</label><input value="{{ m[10] }}" readonly>
 
@@ -1008,7 +1029,8 @@ def account():
 
             # 1) mentor (si modifié)
             if mentor_new and mentor_new != (m[3] or ""):
-                update_member_mentor(phone, mentor_new, updateuser=phone)
+                mentor_ok = validate_mentor_phone_or_raise(mentor_new, current_user_phone=phone)
+                update_member_mentor(phone, mentor_ok, updateuser=phone)
                 changed.append("Mentor")
 
             # 2) mot de passe (si fourni)
