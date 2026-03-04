@@ -1046,7 +1046,7 @@ def account():
                 nom_prenom=0
 
             # 1) mentor (si modifié)
-            if mentor_new and mentor_new != (m[3] or ""):
+            if (mentor_new and mentor_new != (m[3] or "")) or nom_prenom:
                 mentor_ok = validate_mentor_phone_or_raise(mentor_new, current_user_phone=phone)
                 update_member_mentor(phone, mentor_ok, updateuser=phone, lastname=ln, firstname=fn)
                 changed.append("Mentor")
