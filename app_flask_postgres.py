@@ -989,12 +989,15 @@ ACCOUNT_PAGE = """
  .err{background:#ffe9ea;border:1px solid #ffb3b8}
 </style></head><body>
 <div class="wrap">
-  <span class="top">
-    <div class="brand">KM</div>
-    <div class="hdr">
-      <h2>Mon compte</h2>
-      <a href="{{ url_for('home') }}">← Retour</a>
-  </span>
+  <div style="display:flex;justify-content:space-between;">
+      <span>  class="top">
+        <div class="brand">KM</div>
+        <div class="hdr">
+        <h2>Mon compte</h2></span>
+      <span><a href="{{ url_for('home') }}">← Retour</a></span>
+  </div>
+</div>
+<div class="wrap">
   <div class="card">
     <form method="post">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
