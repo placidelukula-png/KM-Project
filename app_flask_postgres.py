@@ -531,16 +531,18 @@ def fetch_member_by_phone_like(q_phone: str):
             cur.execute(SELECT_membres + " WHERE phone ILIKE %s ORDER BY id DESC", (f"%{q}%",))
             return cur.fetchall()
 
-def update_member_mentor(phone: str, mentor: str, updateuser: str):
+def update_member_mentor(phone: str, mentor: str, updateuser: str, lastname: str, firstname: str):
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
                 UPDATE membres
                 SET mentor=%s,
                     updatedate=CURRENT_DATE,
-                    updateuser=%s
+                    updateuser=%s,
+                    lastname=%s,
+                    firstname=%s
                 WHERE phone=%s
-            """, (mentor, updateuser, phone))
+            """, (mentor, updateuser, lastname, firstname, phone))
         conn.commit()
 
 # ----------------------------
@@ -999,8 +1001,10 @@ ACCOUNT_PAGE = """
     <form method="post">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <label>Identifiant</label><input value="{{ m[1] }}" readonly>
-      <label>Nom</label><input value="{{ m[4] }}" readonly>
-      <label>Prénom</label><input value="{{ m[5] }}" readonly>
+      <label>Nom</label>
+      <input name="lastname" value="{{ m[4] }}" placeholder="Nom de famille de l'adhérent (ex: Ilunga)">
+      <label>Prénom</label>
+      <input name="firstname" value="{{ m[5] }}" placeholder="Prénom de l'adhérent (ex: Jean)">
       <label>Mentor</label>
       <input name="mentor" value="{{ m[3] }}" placeholder="Phone d’un mentor (ex: 998889560)">     
       <label>Statut</label><input value="{{ m[9] }}" readonly>
@@ -1030,14 +1034,24 @@ def account():
         try:
             mentor_new = (request.form.get("mentor") or "").strip()
             pwd = (request.form.get("new_password") or "").strip()
+            ln = request.form.get("lastname")
+            fn = request.form.get("firstname")
 
             changed = []
+
+            # 0) changement nom/prénom (si modifié)
+            if ln != m[4] or fn != m[5]:
+                nom_prenom=1 
+            else:
+                nom_prenom=0
 
             # 1) mentor (si modifié)
             if mentor_new and mentor_new != (m[3] or ""):
                 mentor_ok = validate_mentor_phone_or_raise(mentor_new, current_user_phone=phone)
-                update_member_mentor(phone, mentor_ok, updateuser=phone)
+                update_member_mentor(phone, mentor_ok, updateuser=phone, lastname=ln, firstname=fn)
                 changed.append("Mentor")
+                if nom_prenom==1:
+                    changed.append("Nom et/ou Prénom")
 
             # 2) mot de passe (si fourni)
             if pwd:
