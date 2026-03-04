@@ -229,7 +229,7 @@ def fetch_dashboard_stats():
             S = S[0] if S else Decimal("0")
 
             # N = actifs
-            cur.execute("SELECT COUNT(*) FROM membres WHERE currentstatute = 'actif'")
+            cur.execute("SELECT COUNT(*) FROM membres WHERE currentstatute = 'actif' or currentstatute = 'probatoire'")
             N = cur.fetchone()[0] or 0
 
             # B = brut (non radié et non suspendu)
@@ -921,6 +921,8 @@ DASHBOARD_PAGE = """
   </div>
 </body></html>
 """
+
+# ENDPOINT #0 HOME PAGE ( menu card + cadran statistiques)
 @app.get("/")
 @login_required
 def home():
@@ -987,8 +989,12 @@ ACCOUNT_PAGE = """
  .err{background:#ffe9ea;border:1px solid #ffb3b8}
 </style></head><body>
 <div class="wrap">
-  <h2>Mon compte</h2>
-  <p><a href="{{ url_for('home') }}">← Retour</a></p>
+  <span class="top">
+    <div class="brand">KM</div>
+    <div class="hdr">
+      <h2>Mon compte</h2>
+      <p><a href="{{ url_for('home') }}">← Retour</a></p>
+  </span>
   <div class="card">
     <form method="post">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
