@@ -990,10 +990,7 @@ ACCOUNT_PAGE = """
 </style></head><body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;">
-      <span>  class="top">
-        <div class="brand">KM</div>
-        <div class="hdr">
-        <h2>Mon compte</h2></span>
+      <span><h2>Mon compte</h2></span>
       <span><a href="{{ url_for('home') }}">← Retour</a></span>
   </div>
 </div>
