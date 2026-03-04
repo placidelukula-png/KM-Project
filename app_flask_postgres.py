@@ -993,7 +993,7 @@ ACCOUNT_PAGE = """
     <div class="brand">KM</div>
     <div class="hdr">
       <h2>Mon compte</h2>
-      <p><a href="{{ url_for('home') }}">← Retour</a></p>
+      <a href="{{ url_for('home') }}">← Retour</a>
   </span>
   <div class="card">
     <form method="post">
