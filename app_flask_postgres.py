@@ -561,7 +561,7 @@ def validate_member_form(form, for_update=False):
   
     balance_str = _strip(form.get("balance")) or None
     currentstatute = _strip(form.get("currentstatute"))
-    password = form.get("password") or "123456789"  # valeur par défaut si pas fourni (ex: update sans changer le mdp)
+    password = form.get("password") or ""  # valeur par défaut si pas fourni (ex: update sans changer le mdp)
 
     if not phone or not membertype or not mentor or not lastname or not firstname or not birthdate_str or not membershipdate_str or not balance_str or not currentstatute:
         raise ValueError("Veuillez remplir tous les champs obligatoires.")
