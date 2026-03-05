@@ -1668,7 +1668,7 @@ DATAGENERALFOLLOWUP_PAGE = """
   </div>
   
   <!-- Recherche rapide par phone -->
-  <div class="card" style="margin-top:10px; padding:12px;">
+  <div class="card" style="margin-top:5px; padding:12px;">
     <form method="get" action="{{ url_for('search_member') }}">
       <div class="grid" style="grid-template-columns: 2fr 1fr; align-items:end;">
         <div>
