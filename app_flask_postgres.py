@@ -1876,21 +1876,36 @@ def update(member_id: int):
         data = validate_member_form(request.form, for_update=True)
         updateuser = session.get("user") or ADMIN_PHONE
         new_pwd = (data["password"] or "").strip() or None
-
-        update_member(
-            member_id=member_id,
-            phone=data["phone"],
-            membertype=data["membertype"],
-            mentor=data["mentor"],
-            lastname=data["lastname"],
-            firstname=data["firstname"],
-            birthdate_date=data["birthdate"],           # <= important (clé = "birthdate")
-            membershipdate=data["membershipdate"],      # <= important
-            balance=data["balance"],                    # <= important
-            currentstatute=data["currentstatute"],
-            updateuser=updateuser,
-            new_password_plain=new_pwd,
-        )
+        if new_pwd :   
+            update_member(
+                member_id=member_id,
+                phone=data["phone"],
+                membertype=data["membertype"],
+                mentor=data["mentor"],
+                lastname=data["lastname"],
+                firstname=data["firstname"],
+                birthdate_date=data["birthdate"],           # <= important (clé = "birthdate")
+                membershipdate=data["membershipdate"],      # <= important
+                balance=data["balance"],                    # <= important
+                currentstatute=data["currentstatute"],
+                updateuser=updateuser,
+                new_password_plain=new_pwd,
+            )
+        else:
+            update_member(
+                member_id=member_id,
+                phone=data["phone"],
+                membertype=data["membertype"],
+                mentor=data["mentor"],
+                lastname=data["lastname"],
+                firstname=data["firstname"],
+                birthdate_date=data["birthdate"],           # <= important (clé = "birthdate")
+                membershipdate=data["membershipdate"],      # <= important
+                balance=data["balance"],                    # <= important
+                currentstatute=data["currentstatute"],
+                updateuser=updateuser,
+                new_password_plain=None,  # ne pas changer le mot de passe
+            )
 
         return redirect(url_for("datageneralfollowup"))
 
