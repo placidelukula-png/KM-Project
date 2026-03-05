@@ -607,10 +607,12 @@ def validate_mentor_phone_or_raise(mentor_phone: str, *, current_user_phone: str
         raise ValueError("Mentor introuvable : ce phone n'existe pas dans la table 'membres'.")
 
     # Index d’après votre modèle : membertype = row[2]
-    if mentor_row[2] != "mentor":
-        raise ValueError("Mentor invalide : ce membre existe mais n'est pas de type 'mentor'.")
+    if mentor_row[2] not in ("mentor", "admin"):
+        raise ValueError("Mentor invalide : ce membre existe mais n'est pas de type 'mentor' ou 'admin'.")
 
-    # (Optionnel) on pourrait aussi vérifier statut mentor_row[9] == 'actif'
+    # (Optionnel) on pourrait aussi vérifier statut mentor_row[9] == 'Suspendu'
+    if mentor_row[9]  in ("Radié", "Suspendu"):
+        raise ValueError("Mentor invalide : ce membre existe mais est  'Suspendu' ou 'Radié'.")
     return mentor_phone
 
 # ------------------------------------
