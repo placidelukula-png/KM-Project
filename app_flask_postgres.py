@@ -331,7 +331,7 @@ def create_member_minimal(cur, phone: str, firstname: str, lastname: str):
         DEFAULT_UPDATEUSER,
         pwd_hash,
     ))
-    log.info("Nouveau membre créé automatiquement: %s (%s %s)", phone, firstname, lastname)
+    #log.info("Nouveau membre créé automatiquement: %s (%s %s)", phone, firstname, lastname)
 
 
 def fetch_all_membres():
@@ -649,12 +649,12 @@ def login_required(view):
 def verify_user(phone: str, password: str) -> bool:
     """Retourne True si (phone, password) est valide et statut autorisé."""
     row = fetch_password_hash_and_statute_by_phone(phone)
-    log.info("Login attempt; data in : row=%s", row)
+    #log.info("Login attempt; data in : row=%s", row)
     if not row:
         return False
 
     pwd_hash, statut = row
-    log.info("Login attempt: phone=%s statut=%s", phone, statut)
+    #log.info("Login attempt: phone=%s statut=%s", phone, statut)
 
     # bloque login pour suspendu & radié
     if statut in ("radié", "suspendu"):
@@ -1459,7 +1459,7 @@ def import_mouvements():
         with get_conn() as conn:
             with conn.cursor() as cur:
                 for row in reader:
-                    log.info("contenu de 'row' dans le reader=%s", row)                   
+                    #log.info("contenu de 'row' dans le reader=%s", row)                   
                     try:
                         phone = (row.get("phone") or "").strip()
                         firstname = (row.get("firstname") or "").strip()
@@ -1480,9 +1480,9 @@ def import_mouvements():
                         libelle="Transfert mobile money du %s - %s" % (mvt_date, reference)
                         updatedate=date.today()
 
-                        log.info("contenu de 'amount' formaté=%s", amount)  
-                        log.info("contenu de 'mvt_date' formaté=%s", mvt_date)  
-                        log.info("contenu de 'updatedate' formaté=%s", updatedate)  
+                        #log.info("contenu de 'amount' formaté=%s", amount)  
+                        #log.info("contenu de 'mvt_date' formaté=%s", mvt_date)  
+                        #log.info("contenu de 'updatedate' formaté=%s", updatedate)  
 
                         if not phone or debitcredit not in ("D", "C"):
                             skipped += 1
@@ -1494,14 +1494,14 @@ def import_mouvements():
                         if not cur.fetchone(): 
                             create_member_minimal(cur, phone, firstname, lastname)
                             created += 1
-                            log.info("Membre créé automatiquement pour phone=%s", phone)
+                            #log.info("Membre créé automatiquement pour phone=%s", phone)
                            
                         # 1) insert mouvement
                         cur.execute("""
                           INSERT INTO mouvements (phone, firstname, lastname, mvt_date, amount, debitcredit,reference,updatedate,libelle,updated_by)
                           VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
                         """, (phone, firstname, lastname, mvt_date, amount, debitcredit, reference,date.today(),libelle,session.get("user")))
-                        log.info("Mouvement inséré pour phone=%s, amount=%s, debitcredit=%s, reference=%s", phone, amount, debitcredit, reference)
+                        #log.info("Mouvement inséré pour phone=%s, amount=%s, debitcredit=%s, reference=%s", phone, amount, debitcredit, reference)
                         inserted += 1
 
                         # 2) update balance membre
@@ -1877,7 +1877,7 @@ def update(member_id: int):
         updateuser = session.get("user") or ADMIN_PHONE
         new_pwd = (data["password"] or "").strip() or None
         if new_pwd : 
-            log.info("Le mot de passe a été modifié de ? à %s", new_pwd)  
+            #log.info("Le mot de passe a été modifié de ? à %s", new_pwd)  
             update_member(
                 member_id=member_id,
                 phone=data["phone"],
@@ -1893,7 +1893,7 @@ def update(member_id: int):
                 new_password_plain=new_pwd,
             )
         else:
-            log.info("Le mot de passe n'a pas été modifié.")
+            #log.info("Le mot de passe n'a pas été modifié.")
             update_member(
                 member_id=member_id,
                 phone=data["phone"],
