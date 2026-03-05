@@ -1876,7 +1876,8 @@ def update(member_id: int):
         data = validate_member_form(request.form, for_update=True)
         updateuser = session.get("user") or ADMIN_PHONE
         new_pwd = (data["password"] or "").strip() or None
-        if new_pwd :   
+        if new_pwd : 
+            log.info("Le mot de passe a été modifié de ? à %s", new_pwd)  
             update_member(
                 member_id=member_id,
                 phone=data["phone"],
@@ -1892,6 +1893,7 @@ def update(member_id: int):
                 new_password_plain=new_pwd,
             )
         else:
+            log.info("Le mot de passe n'a pas été modifié.")
             update_member(
                 member_id=member_id,
                 phone=data["phone"],
@@ -1903,8 +1905,7 @@ def update(member_id: int):
                 membershipdate=data["membershipdate"],      # <= important
                 balance=data["balance"],                    # <= important
                 currentstatute=data["currentstatute"],
-                updateuser=updateuser,
-                new_password_plain=None,  # ne pas changer le mot de passe
+                updateuser=updateuser
             )
 
         return redirect(url_for("datageneralfollowup"))
