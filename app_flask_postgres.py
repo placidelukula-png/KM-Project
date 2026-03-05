@@ -1023,7 +1023,7 @@ ACCOUNT_PAGE = """
   </div>
 </div></body></html>
 """
-# Endpoint1 Mon Compte (menu card)
+# Endpoint#01 Mon Compte (menu card)
 @app.route("/account", methods=["GET","POST"])
 @login_required
 def account():
@@ -1660,9 +1660,13 @@ DATAGENERALFOLLOWUP_PAGE = """
 </head>
 
 <body>
-<div class="wrap">
-  <h2>KM-Kimya  Les Membres</h2>
-
+  <div class="wrap">
+    <div style="display:flex;justify-content:space-between;">
+        <span><h2>KM-Kimya  Les adhérants</h2></span>
+        <span><a href="{{ url_for('home') }}">← Retour</a></span>
+    </div>
+  </div>
+  
   <!-- Recherche rapide par phone -->
   <div class="card" style="margin-top:10px; padding:12px;">
     <form method="get" action="{{ url_for('search_member') }}">
@@ -1677,13 +1681,11 @@ DATAGENERALFOLLOWUP_PAGE = """
         </div>
       </div>
     </form>
-  </div>
-
-  <p><a href="{{ url_for('home') }}">← Retour</a></p>  
+  </div> 
 
   {% if edit_row %}
   <div class="card">
-    <h2 style="margin-top:0;">Edit member (ID {{ edit_row[0] }})</h2>
+    <h4 style="margin-top:0;">Edit member (ID {{ edit_row[0] }})</h4>
     <form method="post" action="{{ url_for('update', member_id=edit_row[0]) }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <div class="grid">
