@@ -1668,7 +1668,7 @@ DATAGENERALFOLLOWUP_PAGE = """
   </div>
   
   <!-- Recherche rapide par phone -->
-  <div class="card" style="margin-top:5px; padding:12px;">
+  <div class="card" style="margin-top:0px; padding:12px;">
     <form method="get" action="{{ url_for('search_member') }}">
       <div class="grid" style="grid-template-columns: 2fr 1fr; align-items:end;">
         <div>
@@ -1685,7 +1685,7 @@ DATAGENERALFOLLOWUP_PAGE = """
 
   {% if edit_row %}
   <div class="card">
-    <h4 style="margin-top:0;">Edit member (ID {{ edit_row[0] }})</h4>
+    <h9 style="margin-top:0;">Edit member (ID {{ edit_row[0] }})</h9>
     <form method="post" action="{{ url_for('update', member_id=edit_row[0]) }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <div class="grid">
