@@ -1905,7 +1905,8 @@ def update(member_id: int):
                 membershipdate=data["membershipdate"],      # <= important
                 balance=data["balance"],                    # <= important
                 currentstatute=data["currentstatute"],
-                updateuser=updateuser
+                updateuser=updateuser,
+                new_password_plain=None
             )
 
         return redirect(url_for("datageneralfollowup"))
