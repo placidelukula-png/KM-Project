@@ -983,7 +983,7 @@ ACCOUNT_PAGE = """
  body{font-family:Arial;margin:20px} .wrap{max-width:900px;margin:0 auto}
  .card{border:1px solid #e7e7e7;border-radius:16px;padding:16px}
  label{display:block;margin:10px 0 4px;font-weight:700}
- input{width:100%;padding:10px;border:1px solid #ddd;border-radius:10px}
+ input{width:80%;padding:10px;border:1px solid #ddd;border-radius:10px}
  input[readonly]{background:#f6f6f6}
  .row{display:flex;gap:10px;margin-top:12px}
  .btn{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#111;color:#fff;cursor:pointer}
