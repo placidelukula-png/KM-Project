@@ -998,7 +998,7 @@ ACCOUNT_PAGE = """
    gap:16px;
  }
 
- @media (max-width:700px){
+ @media (max-width:600px){
    .grid{
      grid-template-columns:1fr;
    }
