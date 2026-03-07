@@ -926,7 +926,7 @@ DASHBOARD_PAGE = """
 </body></html>
 """
 
-# ENDPOINT #0 HOME PAGE ( menu card + cadran statistiques)
+# Endpoint#0 HOME PAGE ( menu card + cadran statistiques)
 @app.get("/")
 @login_required
 def home():
@@ -991,6 +991,19 @@ ACCOUNT_PAGE = """
  .msg{margin-top:12px;padding:10px;border-radius:12px}
  .ok{background:#eaffea;border:1px solid #b8ffb8}
  .err{background:#ffe9ea;border:1px solid #ffb3b8}
+
+ .grid{
+   display:grid;
+   grid-template-columns:1fr 1fr;
+   gap:16px;
+ }
+
+ @media (max-width:700px){
+   .grid{
+     grid-template-columns:1fr;
+   }
+ }
+
 </style></head><body>
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;">
@@ -999,30 +1012,60 @@ ACCOUNT_PAGE = """
   </div>
 </div>
 <div class="wrap">
-  <div class="card">
-    <form method="post">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <label>Identifiant</label><input value="{{ m[1] }}" readonly>
-      <label>Nom</label>
-      <input name="lastname" value="{{ m[4] }}" placeholder="Nom de famille de l'adhérent (ex: Ilunga)">
-      <label>Prénom</label>
-      <input name="firstname" value="{{ m[5] }}" placeholder="Prénom de l'adhérent (ex: Jean)">
-      <label>Mentor</label>
-      <input name="mentor" value="{{ m[3] }}" placeholder="Phone d’un mentor (ex: 998889560)">     
-      <label>Statut</label><input value="{{ m[9] }}" readonly>
-      <label>Solde</label><input value="{{ m[10] }}" readonly>
+<div class="card">
+<form method="post">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-      <label>Nouveau mot de passe</label>
-      <input name="new_password" type="password" placeholder="laisser vide pour ne pas changer">
-      <div class="row">
-        <button class="btn" type="submit">Enregistrer</button>
-        <a class="btn2" href="{{ url_for('home') }}">Annuler</a>
-      </div>
-      {% if message %}
-        <div class="msg {{ 'err' if is_error else 'ok' }}">{{ message }}</div>
-      {% endif %}
-    </form>
-  </div>
+<div class="grid">
+
+<div>
+<label>Identifiant</label>
+<input value="{{ m[1] }}" readonly>
+</div>
+
+<div>
+<label>Statut</label>
+<input value="{{ m[9] }}" readonly>
+</div>
+
+<div>
+<label>Nom</label>
+<input name="lastname" value="{{ m[4] }}" placeholder="Nom de famille (ex: Ilunga)">
+</div>
+
+<div>
+<label>Prénom</label>
+<input name="firstname" value="{{ m[5] }}" placeholder="Prénom (ex: Jean)">
+</div>
+
+<div>
+<label>Mentor</label>
+<input name="mentor" value="{{ m[3] }}" placeholder="Phone d’un mentor (ex: 998889560)">
+</div>
+
+<div>
+<label>Solde</label>
+<input value="{{ m[10] }}" readonly>
+</div>
+
+<div style="grid-column:1 / span 2;">
+<label>Nouveau mot de passe</label>
+<input name="new_password" type="password" placeholder="laisser vide pour ne pas changer">
+</div>
+
+</div>
+
+<div class="row">
+<button class="btn" type="submit">Enregistrer</button>
+<a class="btn2" href="{{ url_for('home') }}">Annuler</a>
+</div>
+
+{% if message %}
+<div class="msg {{ 'err' if is_error else 'ok' }}">{{ message }}</div>
+{% endif %}
+
+</form>
+</div>
 </div></body></html>
 """
 # Endpoint#01 Mon Compte (menu card)
@@ -1051,7 +1094,8 @@ def account():
             if (mentor_new and mentor_new != (m[3] or "")) or nom_prenom:
                 mentor_ok = validate_mentor_phone_or_raise(mentor_new, current_user_phone=phone)
                 update_member_mentor(phone, mentor_ok, updateuser=phone, lastname=ln, firstname=fn)
-                changed.append("Mentor")
+                if mentor_new:
+                    changed.append("Mentor")
                 if nom_prenom==1:
                     changed.append("Nom et/ou Prénom")
 
@@ -1113,7 +1157,7 @@ MY_MVT_PAGE = """
   </table>
 </div></body></html>
 """
-# Endpoint2 Mes mouvements (menu card)
+# Endpoint#02 Mes mouvements (menu card)
 @app.get("/mouvements")
 @login_required
 def my_mouvements():
@@ -1169,7 +1213,7 @@ DECES_PAGE = """
 </div>
 </div></body></html>
 """
-# Endpoint3 Déclaration décès (menu card)
+# Endpoint#03 Déclaration décès (menu card)
 import uuid
 
 @app.route("/deces", methods=["GET","POST"])
@@ -1242,7 +1286,7 @@ MENTOR_APP_PAGE = """
 </div>
 </div></body></html>
 """
-# Endpoint4 Mentor application (menu card)
+# Endpoint#04 Mentor application (menu card)
 @app.route("/mentor-application", methods=["GET","POST"])
 @login_required
 def mentor_application():
@@ -1287,7 +1331,7 @@ GROUPE_PAGE = """
 </table>
 </div></body></html>
 """
-# Endpoint5 Mon groupe (menu card)
+# Endpoint#05 Mon groupe (menu card)
 @app.get("/groupe")
 @mentor_required
 def groupe():
@@ -1333,7 +1377,7 @@ ADD_MEMBER_PAGE = """
 </form>
 </div></div></body></html>
 """
-# Endpoint6 Créer un membre (menu card)
+# Endpoint#06 Créer un membre (menu card)
 @app.route("/addmember", methods=["GET","POST"])
 @mentor_required
 def add_member():
@@ -1395,7 +1439,7 @@ IMPORT_PAGE = """
 </div>
 </div></body></html>
 """
-# Endpoint7 Importer cotisations (menu card)
+# Endpoint#07 Importer cotisations (menu card)
 import re
 from datetime import date
 
@@ -1603,7 +1647,7 @@ CHECK_MVT_PAGE = """
 </table>
 </div></body></html>
 """
-
+# Endpoint#08 Check mouvements (menu card)
 @app.get("/checkmouvements")
 @admin_required
 def check_mouvements():
@@ -1813,7 +1857,7 @@ DATAGENERALFOLLOWUP_PAGE = """
 </html>
 """
 
-# Endpoint9 Data general follow-up (menu card)
+# Endpoint#09 Data general follow-up (menu card)
 @app.get("/datageneralfollowup")
 @admin_required
 def datageneralfollowup():
@@ -1931,7 +1975,7 @@ def update(member_id: int):
             statutes=STATUTES,
         )
 
-
+#suppression d'adhérent (pas l'admin par défaut)
 @app.post("/delete/<int:member_id>")
 @login_required
 def delete(member_id: int):
@@ -2058,7 +2102,7 @@ TRANSFER_PAGE = """
 </div>
 </div></body></html>
 """
-#(10) Endpoint10 Transfert de cotisations (menu card)
+# Endpoint#10 Transfert de cotisations (menu card)
 @app.route("/transfer", methods=["GET","POST"])
 @login_required
 def transfer():
