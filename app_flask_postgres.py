@@ -995,10 +995,10 @@ ACCOUNT_PAGE = """
  .grid{
    display:grid;
    grid-template-columns:1fr 1fr;
-   gap:16px;
+   gap:26px;
  }
 
- @media (max-width:200px){
+ @media (max-width:700px){
    .grid{
      grid-template-columns:1fr;
    }
