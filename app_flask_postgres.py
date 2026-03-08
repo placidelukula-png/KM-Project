@@ -1603,8 +1603,8 @@ CHECK_MVT_PAGE = """
 <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Check mouvements</title>
 <style>
- body{font-family:Arial;margin:20px} .wrap{max-width:1200px;margin:0 auto}
- table{width:80%;border-collapse:collapse}
+ body{font-family:Arial;margin:20px} .wrap{max-width:1250px;margin:0 auto}
+ table{width:90%;border-collapse:collapse}
  th,td{padding:10px;border-bottom:1px solid #eee;text-align:left}
  th{background:#f6f6f6}
  input,select{padding:8px;border:1px solid #ddd;border-radius:10px}
