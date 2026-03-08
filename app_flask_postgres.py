@@ -1256,7 +1256,7 @@ MENTOR_APP_PAGE = """
  body{font-family:Arial;margin:20px} .wrap{max-width:800px;margin:0 auto}
  .card{border:1px solid #e7e7e7;border-radius:16px;padding:16px}
  label{display:block;margin:10px 0 4px;font-weight:700}
- input,select{width:100%;padding:10px;border:1px solid #ddd;border-radius:10px}
+ input,select{width:80%;padding:10px;border:1px solid #ddd;border-radius:10px}
  input[readonly]{background:#f6f6f6}
  .row{display:flex;gap:10px;margin-top:12px}
  .btn{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#111;color:#fff;cursor:pointer}
@@ -1349,7 +1349,7 @@ ADD_MEMBER_PAGE = """
  body{font-family:Arial;margin:20px} .wrap{max-width:900px;margin:0 auto}
  .card{border:1px solid #e7e7e7;border-radius:16px;padding:16px}
  label{display:block;margin:10px 0 4px;font-weight:700}
- input{width:100%;padding:10px;border:1px solid #ddd;border-radius:10px}
+ input{width:80%;padding:10px;border:1px solid #ddd;border-radius:10px}
  .row{display:flex;gap:10px;margin-top:12px}
  .btn{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#111;color:#fff;cursor:pointer}
  .btn2{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#fff;color:#111;cursor:pointer}
@@ -1604,7 +1604,7 @@ CHECK_MVT_PAGE = """
 <title>Check mouvements</title>
 <style>
  body{font-family:Arial;margin:20px} .wrap{max-width:1200px;margin:0 auto}
- table{width:100%;border-collapse:collapse}
+ table{width:80%;border-collapse:collapse}
  th,td{padding:10px;border-bottom:1px solid #eee;text-align:left}
  th{background:#f6f6f6}
  input,select{padding:8px;border:1px solid #ddd;border-radius:10px}
@@ -1687,7 +1687,7 @@ DATAGENERALFOLLOWUP_PAGE = """
     .muted { color:#555; margin-top:0; }
     .card { border:1px solid #ddd; border-radius: 10px; padding: 16px; margin: 18px 0; }
     label { display:block; margin: 8px 0 4px; font-weight:600; }
-    input, select { padding: 10px; width: 100%; box-sizing: border-box; border:1px solid #ccc; border-radius: 8px; }
+    input, select { padding: 10px; width: 80%; box-sizing: border-box; border:1px solid #ccc; border-radius: 8px; }
     .grid { display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .btn { padding: 10px 14px; border-radius: 10px; border: 1px solid #111; background:#111; color:#fff; cursor:pointer; }
     .btn.secondary { background:#fff; color:#111; }
@@ -2066,7 +2066,7 @@ TRANSFER_PAGE = """
  body{font-family:Arial;margin:20px} .wrap{max-width:800px;margin:0 auto}
  .card{border:1px solid #e7e7e7;border-radius:16px;padding:16px}
  label{display:block;margin:10px 0 4px;font-weight:700}
- input{width:100%;padding:10px;border:1px solid #ddd;border-radius:10px}
+ input{width:80%;padding:10px;border:1px solid #ddd;border-radius:10px}
  .row{display:flex;gap:10px;margin-top:12px}
  .btn{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#111;color:#fff;cursor:pointer}
  .btn2{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#fff;color:#111;cursor:pointer}
