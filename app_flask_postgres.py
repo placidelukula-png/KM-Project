@@ -1177,7 +1177,7 @@ DECES_PAGE = """
  body{font-family:Arial;margin:20px} .wrap{max-width:800px;margin:0 auto}
  .card{border:1px solid #e7e7e7;border-radius:16px;padding:16px}
  label{display:block;margin:10px 0 4px;font-weight:700}
- input{width:100%;padding:10px;border:1px solid #ddd;border-radius:10px}
+ input{width:80%;padding:10px;border:1px solid #ddd;border-radius:10px}
  .row{display:flex;gap:10px;margin-top:12px}
  .btn{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#111;color:#fff;cursor:pointer}
  .btn2{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#fff;color:#111;cursor:pointer}
@@ -1614,7 +1614,7 @@ CHECK_MVT_PAGE = """
 <h2>Check mouvements (admin)</h2>
 <p><a href="{{ url_for('home') }}">← Retour</a></p>
 <table>
-<thead><tr><th>ID</th><th>Phone</th><th>Firstname</th><th>Date</th><th>Amount</th><th>D/C</th><th>Reference</th><th>Action</th></tr></thead>
+<thead><tr><th>ID</th><th>Phone</th><th>Firstname</th><th>Date</th><th>Amount</th><th>D/C</th><th>Reference</th><th>Libellé</th><th>Action</th></tr></thead>
 <tbody>
 {% for r in rows %}
 <tr>
@@ -1632,6 +1632,8 @@ CHECK_MVT_PAGE = """
     </select>
   </td>
   <td><input name="reference" value="{{ r[6] }}" size="16"></td>
+  <td><input name="libelle" value="{{ r[7] }}" size="20"></td>
+
   <td>
     <button class="btn" type="submit">Save</button>
 </form>
