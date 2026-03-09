@@ -263,6 +263,12 @@ def fetch_dashboard_stats():
     }
 
 
+def fetch_mentor_profile(mentor_phone: str):
+    mentor_phone = (mentor_phone or "").strip()
+    if not mentor_phone:
+        return None
+    return fetch_member_by_phone(mentor_phone)
+
 # ----------------------------
 # Queries (ORDER des colonnes = contrat avec le HTML)
 # ----------------------------
@@ -992,6 +998,24 @@ ACCOUNT_PAGE = """
  .ok{background:#eaffea;border:1px solid #b8ffb8}
  .err{background:#ffe9ea;border:1px solid #ffb3b8}
 
+ 
+.mentor-box{
+  margin-top:8px;
+  padding:10px 12px;
+  border:1px solid #d9e7ff;
+  background:#f7fbff;
+  border-radius:10px;
+  font-size:13px;
+  line-height:1.45;
+  color:#1a1a1a;
+}
+
+.mentor-warn{
+  border-color:#f0d9a7;
+  background:#fffaf0;
+}
+
+
  .grid{
    display:grid;
    grid-template-columns:1fr 1fr;
@@ -1005,6 +1029,7 @@ ACCOUNT_PAGE = """
  }
 
 </style></head><body>
+
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;">
       <span><h2>Mon compte</h2></span>
@@ -1041,6 +1066,19 @@ ACCOUNT_PAGE = """
 <div>
 <label>Mentor</label>
 <input name="mentor" value="{{ m[3] }}" placeholder="Phone d’un mentor (ex: 998889560)">
+
+{% if mentor_info %}
+  <div class="mentor-box">
+    <div><b>Mentor :</b> {{ mentor_info[1] }}</div>
+    <div><b>Nom :</b> {{ mentor_info[5] }} {{ mentor_info[4] }}</div>
+    <div><b>Statut :</b> mentor {{ mentor_info[9] }}</div>
+  </div>
+{% elif m[3] %}
+  <div class="mentor-box mentor-warn">
+    <div><b>Mentor :</b> {{ m[3] }}</div>
+    <div>Profil mentor non trouvé.</div>
+  </div>
+{% endif %}
 </div>
 
 <div>
@@ -1075,29 +1113,20 @@ def account():
     phone = session["user"]
     m = fetch_member_by_phone(phone)
 
+    mentor_info = fetch_member_by_phone(m[3]) if m and m[3] else None
+
     if request.method == "POST":
         try:
             mentor_new = (request.form.get("mentor") or "").strip()
             pwd = (request.form.get("new_password") or "").strip()
-            ln = request.form.get("lastname")
-            fn = request.form.get("firstname")
 
             changed = []
 
-            # 0) changement nom/prénom (si modifié)
-            if ln != m[4] or fn != m[5]:
-                nom_prenom=1 
-            else:
-                nom_prenom=0
-
             # 1) mentor (si modifié)
-            if (mentor_new and mentor_new != (m[3] or "")) or nom_prenom:
+            if mentor_new and mentor_new != (m[3] or ""):
                 mentor_ok = validate_mentor_phone_or_raise(mentor_new, current_user_phone=phone)
-                update_member_mentor(phone, mentor_ok, updateuser=phone, lastname=ln, firstname=fn)
-                if mentor_new and mentor_new != (m[3] or ""):
-                    changed.append("Mentor")
-                if nom_prenom==1:
-                    changed.append("Nom et/ou Prénom")
+                update_member_mentor(phone, mentor_ok, updateuser=phone)
+                changed.append("Mentor")
 
             # 2) mot de passe (si fourni)
             if pwd:
@@ -1106,22 +1135,43 @@ def account():
 
             # refresh
             m = fetch_member_by_phone(phone)
+            mentor_info = fetch_member_by_phone(m[3]) if m and m[3] else None
 
             if changed:
                 return render_template_string(
-                    ACCOUNT_PAGE, m=m,
+                    ACCOUNT_PAGE,
+                    m=m,
+                    mentor_info=mentor_info,
                     message="Changement(s) enregistré(s) : " + ", ".join(changed) + ".",
                     is_error=False
                 )
-            return render_template_string(ACCOUNT_PAGE, m=m, message="Aucun changement.", is_error=False)
+
+            return render_template_string(
+                ACCOUNT_PAGE,
+                m=m,
+                mentor_info=mentor_info,
+                message="Aucun changement.",
+                is_error=False
+            )
 
         except Exception as e:
-            # log.exception("Erreur update compte")  # si tu veux tracer
             m = fetch_member_by_phone(phone)
-            return render_template_string(ACCOUNT_PAGE, m=m, message=f"Erreur: {e}", is_error=True)
+            mentor_info = fetch_member_by_phone(m[3]) if m and m[3] else None
+            return render_template_string(
+                ACCOUNT_PAGE,
+                m=m,
+                mentor_info=mentor_info,
+                message=f"Erreur: {e}",
+                is_error=True
+            )
 
-    return render_template_string(ACCOUNT_PAGE, m=m, message="", is_error=False)
-
+    return render_template_string(
+        ACCOUNT_PAGE,
+        m=m,
+        mentor_info=mentor_info,
+        message="",
+        is_error=False
+    )
 # ---------------------------------------------------------------
 #   Endpoint #2 — Mes mouvements (lecture seule + balance)
 # ---------------------------------------------------------------
