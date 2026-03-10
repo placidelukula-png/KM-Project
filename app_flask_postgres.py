@@ -1113,20 +1113,29 @@ def account():
     phone = session["user"]
     m = fetch_member_by_phone(phone)
 
-    mentor_info = fetch_member_by_phone(m[3]) if m and m[3] else None
-
     if request.method == "POST":
         try:
             mentor_new = (request.form.get("mentor") or "").strip()
             pwd = (request.form.get("new_password") or "").strip()
+            ln = request.form.get("lastname")
+            fn = request.form.get("firstname")
 
             changed = []
 
+            # 0) changement nom/prénom (si modifié)
+            if ln != m[4] or fn != m[5]:
+                nom_prenom=1 
+            else:
+                nom_prenom=0
+
             # 1) mentor (si modifié)
-            if mentor_new and mentor_new != (m[3] or ""):
+            if (mentor_new and mentor_new != (m[3] or "")) or nom_prenom:
                 mentor_ok = validate_mentor_phone_or_raise(mentor_new, current_user_phone=phone)
-                update_member_mentor(phone, mentor_ok, updateuser=phone)
-                changed.append("Mentor")
+                update_member_mentor(phone, mentor_ok, updateuser=phone, lastname=ln, firstname=fn)
+                if mentor_new and mentor_new != (m[3] or ""):
+                    changed.append("Mentor")
+                if nom_prenom==1:
+                    changed.append("Nom et/ou Prénom")
 
             # 2) mot de passe (si fourni)
             if pwd:
@@ -1139,39 +1148,23 @@ def account():
 
             if changed:
                 return render_template_string(
-                    ACCOUNT_PAGE,
-                    m=m,
-                    mentor_info=mentor_info,
+                    ACCOUNT_PAGE, m=m, mentor_info=mentor_info,
                     message="Changement(s) enregistré(s) : " + ", ".join(changed) + ".",
                     is_error=False
                 )
-
-            return render_template_string(
-                ACCOUNT_PAGE,
-                m=m,
-                mentor_info=mentor_info,
-                message="Aucun changement.",
-                is_error=False
-            )
+            return render_template_string(ACCOUNT_PAGE, m=m, mentor_info=mentor_info, message="Aucun changement.", is_error=False)
 
         except Exception as e:
+            # log.exception("Erreur update compte")  # si tu veux tracer
             m = fetch_member_by_phone(phone)
             mentor_info = fetch_member_by_phone(m[3]) if m and m[3] else None
-            return render_template_string(
-                ACCOUNT_PAGE,
-                m=m,
-                mentor_info=mentor_info,
-                message=f"Erreur: {e}",
-                is_error=True
-            )
+            return render_template_string(ACCOUNT_PAGE, m=m, mentor_info=mentor_info, message=f"Erreur: {e}", is_error=True)
 
-    return render_template_string(
-        ACCOUNT_PAGE,
-        m=m,
-        mentor_info=mentor_info,
-        message="",
-        is_error=False
-    )
+    return render_template_string(ACCOUNT_PAGE, m=m, mentor_info=mentor_info, message="", is_error=False)
+
+
+
+
 # ---------------------------------------------------------------
 #   Endpoint #2 — Mes mouvements (lecture seule + balance)
 # ---------------------------------------------------------------
