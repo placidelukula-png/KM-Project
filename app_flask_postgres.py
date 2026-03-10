@@ -1071,7 +1071,7 @@ ACCOUNT_PAGE = """
   <div class="mentor-box">
     <div><b>Mentor :</b> {{ mentor_info[1] }}</div>
     <div><b>Nom :</b> {{ mentor_info[5] }} {{ mentor_info[4] }}</div>
-    <div><b>Statut :</b> mentor {{ mentor_info[9] }}</div>
+    <div><b>Type & Statut :</b> {{ mentor_info[2] }} {{ mentor_info[9] }}</div>
   </div>
 {% elif m[3] %}
   <div class="mentor-box mentor-warn">
