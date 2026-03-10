@@ -1112,6 +1112,7 @@ ACCOUNT_PAGE = """
 def account():
     phone = session["user"]
     m = fetch_member_by_phone(phone)
+    mentor_info = fetch_member_by_phone(m[3]) if m and m[3] else None
 
     if request.method == "POST":
         try:
