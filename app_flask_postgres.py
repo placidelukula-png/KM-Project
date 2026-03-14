@@ -2376,7 +2376,7 @@ DEUILS_PENDANTS_PAGE = """
 <h2>Deuils pendants</h2>
 <p><a href="{{ url_for('home') }}">← Retour</a></p>
 <table>
-<thead><tr><th>ID</th><th>Phone</th><th>date_deces</th><th>declared_by</th><th>Reference</th><th>Action</th></tr></thead>
+<thead><tr><th>ID</th><th>Phone</th><th>date_deces</th><th>declared_by</th><th>Statut</th><th>Action</th></tr></thead>
 <tbody>
 {% for r in rows %}
 <tr>
@@ -2386,12 +2386,13 @@ DEUILS_PENDANTS_PAGE = """
   <td>{{ r[1] }}</td>
   <td>{{ r[2] }}</td>
   <td>{{ r[3] }}</td>
-  <td>{{ r[4] }}</td>
+  <td>{{ r[5] }}</td>
 
 <td>
 </form>
 
 <!-- Afficher le bouton de déclenchement comptable uniquement si le statut est "validé" -->
+{%if r[5] == "validé"%}
 <form method="post"
       action="{{ url_for('trigger_prestation', deces_id=r[0]) }}"
       onsubmit="return confirm('Confirmer le déclenchement comptable ?');"style="display:inline">
@@ -2402,11 +2403,14 @@ DEUILS_PENDANTS_PAGE = """
 Déclencher la prestation décès
 </button>
 </form>
+{%else%}
+<span style="color:#888;font-size:0.9em;">Statut: {{ r[5] }}</span>
+{% endif %}
 </td>  
 
 </tr>
 {% endfor %}
-{% if not rows %}<tr><td colspan="8">Aucun mouvement.</td></tr>{% endif %}
+{% if not rows %}<tr><td colspan="8">Aucun décès pendant.</td></tr>{% endif %}
 </tbody>
 </table>
 </div></body></html>
