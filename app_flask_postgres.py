@@ -2388,7 +2388,8 @@ DEUILS_PENDANTS_PAGE = """
   <td>{{ r[3] }}</td>
   <td>{{ r[4] }}</td>
 
-<td> method="post"
+<td>  
+<form> method="post"
       action="{{ url_for('trigger_prestation', deces_id=r[0]) }}"
       onsubmit="return confirm('Confirmer le déclenchement comptable ?');"
 
@@ -2397,7 +2398,7 @@ DEUILS_PENDANTS_PAGE = """
 <button class="btn">
 Déclencher la prestation décès
 </button>
-
+</form>
 </td>  
 
 </tr>
