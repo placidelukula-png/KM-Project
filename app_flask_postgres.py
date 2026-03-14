@@ -43,6 +43,7 @@ DEFAULT_PASSWORD_HASH = os.getenv("DEFAULT_PASSWORD_HASH", "123456789")  # à ut
 # pour create_member_minimal(), si tu ne veux pas créer de comptes login automatiques, tu peux laisser DEFAULT_PASSWORD_HASH vide et la fonction mettra une chaîne fixe "NO_LOGIN_CREATED" (ou tu peux aussi définir DEFAULT_PASSWORD_HASH à une chaîne spécifique de ton choix).
 MEMBER_TYPES = ("membre", "independant", "mentor", "admin")
 STATUTES = ("probatoire","actif", "inactif", "suspendu", "radié")
+DECES_STATUTES = ("declaré", "validé", "comptabilisé", "rejeté")
 
 RATELIMIT_STORAGE_URI = os.getenv("RATELIMIT_STORAGE_URI", "memory://")
 
@@ -639,8 +640,8 @@ def create_deces(phone: str, date_deces, declared_by: str, reference: str):
         with conn.cursor() as cur:
             cur.execute("""
                 INSERT INTO deces (phone, date_deces, declared_by, reference,statut)
-                VALUES (%s,%s,%s,%s,%s)
-            """, (phone, date_deces, declared_by, reference, "declaré"))
+                VALUES (%s,%s,%s,%s,'declaré')
+            """, (phone, date_deces, declared_by, reference))
         conn.commit()
 
 def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: str,today):
@@ -1476,7 +1477,7 @@ MENTOR_APP_PAGE = """
   <label>Phone</label><input value="{{ m[1] }}" readonly>
   <label>Nom</label><input value="{{ m[4] }}" readonly>
   <label>Prénom</label><input value="{{ m[5] }}" readonly>
-  <label>Membertype (demande)</label>
+  <label>Membertype (demandé)</label>
   <select name="membertype" required>
     <option value="mentor">mentor</option>
   </select>
@@ -2386,7 +2387,13 @@ DEUILS_PENDANTS_PAGE = """
   <td>{{ r[1] }}</td>
   <td>{{ r[2] }}</td>
   <td>{{ r[3] }}</td>
-  <td><input name="Statut" value="{{ r[5] }}"></td>
+  <td>
+    <select name="statut" required>
+    {% for t in DECES_STATUTES %}
+        <option value="{{ t }}" {{ 'selected' if t==r[5] else '' }}>{{ t }}</option>
+    {% endfor %}
+    </select>
+   </td>
 
 <td>
 </form>
