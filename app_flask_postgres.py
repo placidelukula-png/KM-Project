@@ -164,7 +164,7 @@ def init_db():
                   declared_by   TEXT NOT NULL,
                   created_at    TIMESTAMP NOT NULL DEFAULT NOW(),
                   reference     TEXT,
-                  statut        TEXT DEFAULT 'declaré' CHECK (statut IN ('declaré', 'validé', 'comptabilisé')) 
+                  statut        TEXT DEFAULT 'declaré' CHECK (statut IN ('declaré', 'validé', 'comptabilisé', 'rejeté')) 
                 );
             """)
             cur.execute("CREATE INDEX IF NOT EXISTS idx_deces_phone ON deces(phone);")
@@ -638,9 +638,9 @@ def create_deces(phone: str, date_deces, declared_by: str, reference: str):
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                INSERT INTO deces (phone, date_deces, declared_by, reference)
-                VALUES (%s,%s,%s,%s)
-            """, (phone, date_deces, declared_by, reference))
+                INSERT INTO deces (phone, date_deces, declared_by, reference,statut)
+                VALUES (%s,%s,%s,%s,%s)
+            """, (phone, date_deces, declared_by, reference, "declaré"))
         conn.commit()
 
 def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: str,today):
@@ -2386,7 +2386,7 @@ DEUILS_PENDANTS_PAGE = """
   <td>{{ r[1] }}</td>
   <td>{{ r[2] }}</td>
   <td>{{ r[3] }}</td>
-  <td>{{ r[5] }}</td>
+  <td><input name="Statut" value="{{ r[5] }}"></td>
 
 <td>
 </form>
@@ -2404,7 +2404,7 @@ Déclencher la prestation décès
 </button>
 </form>
 {%else%}
-<span style="color:#888;font-size:0.9em;">Statut: {{ r[5] }}</span>
+<button class="btn" type="submit">Save</button>
 {% endif %}
 </td>  
 
