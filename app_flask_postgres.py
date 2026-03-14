@@ -2389,7 +2389,7 @@ DEUILS_PENDANTS_PAGE = """
   <td>{{ r[4] }}</td>
 
 <form method="post"
-      action="{{ url_for('trigger_prestation', deces_id=rows[0]) }}"
+      action="{{ url_for('trigger_prestation', deces_id=r[0]) }}"
       onsubmit="return confirm('Confirmer le déclenchement comptable ?');">
 
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -2438,7 +2438,7 @@ def trigger_prestation(deces_id):
             if statut == "comptabilisé":
                 return redirect(url_for("deces"))
 
-            if statut != "valide":
+            if statut != "validé":
                 raise ValueError("Le décès doit être validé avant comptabilisation.")
 
     create_prestation_mouvements(phone, prestation)
@@ -2453,8 +2453,6 @@ def trigger_prestation(deces_id):
         conn.commit()
 
     return redirect(url_for("deces"))
-
-
 
 
 
