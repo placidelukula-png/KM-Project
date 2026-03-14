@@ -2376,7 +2376,7 @@ DEUILS_PENDANTS_PAGE = """
 <h2>Deuils pendants</h2>
 <p><a href="{{ url_for('home') }}">← Retour</a></p>
 <table>
-<thead><tr><th>ID</th><th>Phone</th><th>date_deces</th><th>declared_by</th><th>Reference</th></tr></thead>
+<thead><tr><th>ID</th><th>Phone</th><th>date_deces</th><th>declared_by</th><th>Reference</th><th>Action</th></tr></thead>
 <tbody>
 {% for r in rows %}
 <tr>
@@ -2390,7 +2390,7 @@ DEUILS_PENDANTS_PAGE = """
 
 <td> method="post"
       action="{{ url_for('trigger_prestation', deces_id=r[0]) }}"
-      onsubmit="return confirm('Confirmer le déclenchement comptable ?');">
+      onsubmit="return confirm('Confirmer le déclenchement comptable ?');"
 
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
