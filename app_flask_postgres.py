@@ -2389,9 +2389,10 @@ DEUILS_PENDANTS_PAGE = """
   <td>{{ r[3] }}</td>
   <td>
     <select name="statut" required>
-    {% for t in DECES_STATUTES %}
-        <option value="{{ t }}" {{ 'selected' if t==r[5] else '' }}>{{ t }}</option>
-    {% endfor %}
+          <option value="declaré" {{ 'selected' if r[5]=='declaré' else '' }}>declaré</option>
+          <option value="validé" {{ 'selected' if r[5]=='validé' else '' }}>validé</option>
+          <option value="rejeté" {{ 'selected' if r[5]=='rejeté' else '' }}>rejeté</option>
+          <option value="comptabilisé" {{ 'selected' if r[5]=='comptabilisé' else '' }}>comptabilisé</option>
     </select>
    </td>
 
