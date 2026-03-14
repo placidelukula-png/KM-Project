@@ -2380,7 +2380,7 @@ DEUILS_PENDANTS_PAGE = """
 <tbody>
 {% for r in rows %}
 <tr>
-<form method="post" action="{{ url_for('check_mouvements_update', mvt_id=r[0]) }}">
+<form method="post" action="{{ url_for('deuils_pendants', id=r[0]) }}">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <td>{{ r[0] }}</td>
   <td>{{ r[1] }}</td>
