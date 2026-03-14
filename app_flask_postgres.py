@@ -1031,7 +1031,7 @@ DASHBOARD_PAGE = """
     </div>
 
     <div class="card">
-      <div class="icon">➕</div>
+      <div class="icon">👥</div>
       <div>
         <p class="t">Créer un membre</p>
         <p class="d">Enregistrer un nouveau membre.</p>
@@ -2389,7 +2389,7 @@ DEUILS_PENDANTS_PAGE = """
   <td>{{ r[4] }}</td>
 
 <form method="post"
-      action="{{ url_for('trigger_prestation', deces_id=row[0]) }}"
+      action="{{ url_for('trigger_prestation', deces_id=rows[0]) }}"
       onsubmit="return confirm('Confirmer le déclenchement comptable ?');">
 
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -2435,7 +2435,7 @@ def trigger_prestation(deces_id):
             prestation = float(row[1])
             statut = row[2]
 
-            if statut == "comptabilise":
+            if statut == "comptabilisé":
                 return redirect(url_for("deces"))
 
             if statut != "valide":
@@ -2447,7 +2447,7 @@ def trigger_prestation(deces_id):
         with conn.cursor() as cur:
             cur.execute("""
             UPDATE deces
-            SET statut='comptabilise'
+            SET statut='comptabilisé'
             WHERE id=%s
             """,(deces_id,))
         conn.commit()
