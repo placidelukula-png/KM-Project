@@ -3,6 +3,8 @@
 # ---------------------------------
 from __future__ import annotations
 
+from decimal import Decimal
+import code
 from enum import member
 from enum import member
 import os
@@ -161,7 +163,8 @@ def init_db():
                   date_deces    DATE NOT NULL,
                   declared_by   TEXT NOT NULL,
                   created_at    TIMESTAMP NOT NULL DEFAULT NOW(),
-                  reference     TEXT
+                  reference     TEXT,
+                  statut        TEXT DEFAULT 'declaré' CHECK (statut IN ('declaré', 'validé', 'comptabilisé')) 
                 );
             """)
             cur.execute("CREATE INDEX IF NOT EXISTS idx_deces_phone ON deces(phone);")
@@ -178,6 +181,17 @@ def init_db():
                   created_at    TIMESTAMP NOT NULL DEFAULT NOW()
                 );
             """)
+
+            # fichier technique comptable (comptes techniques)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS comptes_techniques (
+                   code TEXT PRIMARY KEY,
+                   libelle TEXT,
+                   balance DECIMAL(18,2) DEFAULT 0,
+                   updatedate DATE,
+                   updateuser TEXT
+                );
+            """) 
 
         conn.commit()
 
@@ -268,6 +282,123 @@ def fetch_mentor_profile(mentor_phone: str):
     if not mentor_phone:
         return None
     return fetch_member_by_phone(mentor_phone)
+
+from decimal import Decimal
+from datetime import datetime
+
+
+def create_prestation_mouvements(deceased_phone, prestation):
+
+    prestation = Decimal(str(prestation))
+    today = datetime.utcnow().date()
+
+    deceased = fetch_member_by_phone(deceased_phone)
+
+    if not deceased:
+        raise ValueError("Membre décédé introuvable")
+
+    deceased_firstname = deceased[5]
+    deceased_lastname = deceased[4]
+
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+
+            # nombre de cotisants actifs
+            cur.execute("""
+            SELECT COUNT(*)
+            FROM membres
+            WHERE currentstatute IN ('actif','probatoire')
+            AND membertype <> 'admin'
+            """)
+            N = cur.fetchone()[0]
+
+            if N == 0:
+                raise ValueError("Aucun membre cotisant.")
+
+            C = (Decimal("1.2") * prestation) / Decimal(N)
+            C = C.quantize(Decimal("0.01"))
+
+            reference = f"PREST-{datetime.utcnow().timestamp()}"
+
+            # 1️⃣ CREDIT prestation
+            cur.execute("""
+            INSERT INTO mouvements
+            (phone,firstname,lastname,mvt_date,amount,debitcredit,reference,libelle)
+            VALUES (%s,%s,%s,%s,%s,'C',%s,%s)
+            """,
+            (
+                deceased_phone,
+                deceased_firstname,
+                deceased_lastname,
+                today,
+                prestation,
+                reference+"-C",
+                f"Prestation décès pour {deceased_phone}"
+            ))
+
+            # balance du décédé
+            cur.execute("""
+            UPDATE membres
+            SET balance = balance + %s,
+                updatedate=CURRENT_DATE,
+                updateuser='system'
+            WHERE phone=%s
+            """,(prestation,deceased_phone))
+
+            # 2️⃣ DEBITS cotisations
+            cur.execute("""
+            SELECT phone,firstname,lastname,currentstatute
+            FROM membres
+            WHERE membertype <> 'admin'
+            """)
+            members = cur.fetchall()
+
+            for m in members:
+
+                phone = m[0]
+                firstname = m[1]
+                lastname = m[2]
+                statut = m[3]
+
+                if statut in ('actif','probatoire'):
+
+                    cur.execute("""
+                    INSERT INTO mouvements
+                    (phone,firstname,lastname,mvt_date,amount,debitcredit,reference,libelle)
+                    VALUES (%s,%s,%s,%s,%s,'D',%s,%s)
+                    """,
+                    (
+                        phone,
+                        firstname,
+                        lastname,
+                        today,
+                        C,
+                        reference+"-"+phone,
+                        f"Cotisation prestation décès {deceased_phone}"
+                    ))
+
+                    cur.execute("""
+                    UPDATE membres
+                    SET balance = balance - %s,
+                        updatedate=CURRENT_DATE,
+                        updateuser='system'
+                    WHERE phone=%s
+                    """,(C,phone))
+
+                elif statut in ('inactif','suspendu'):
+
+                    account = "CT_DUES_INACTIFS" if statut=="inactif" else "CT_DUES_SUSPENDUS"
+
+                    cur.execute("""
+                    UPDATE comptes_techniques
+                    SET balance = balance + %s,
+                        updatedate=CURRENT_DATE,
+                        updateuser='system'
+                    WHERE code=%s
+                    """,(C,account))
+
+        conn.commit()
+
 
 # ----------------------------
 # Queries (ORDER des colonnes = contrat avec le HTML)
@@ -464,6 +595,18 @@ def list_all_mouvements():
             """)
             return cur.fetchall()
 
+
+def list_all_deces():
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT id, phone, date_deces, declared_by, reference
+                FROM deces
+                ORDER BY date_deces DESC, id DESC
+            """)
+            return cur.fetchall()
+
+
 def update_mouvement(id: int, mvt_date, amount, debitcredit, reference, libelle):
     with get_conn() as conn:
         with conn.cursor() as cur:
@@ -550,6 +693,10 @@ def update_member_mentor(phone: str, mentor: str, updateuser: str, lastname: str
                 WHERE phone=%s
             """, (mentor, updateuser, lastname, firstname, phone))
         conn.commit()
+
+
+
+
 
 # ----------------------------
 # Validation
@@ -924,8 +1071,18 @@ DASHBOARD_PAGE = """
         <p class="d">Suivi global & contrôle.</p>
         <a class="link" href="{{ url_for('datageneralfollowup') }}">Ouvrir</a>
       </div>
+    </div>
 
-      {% endif %}
+    <div class="card">
+      <div class="icon">➕</div>
+      <div>
+        <p class="t">Deuils pendants</p>
+        <p class="d">Suivi des déclarations de décès d'adhérents.</p>
+        <a class="link" href="{{ url_for('deuils_pendants') }}">Ouvrir</a>
+      </div>
+    </div>
+      
+    {% endif %}
 
     </div>
   </div>
@@ -1289,6 +1446,8 @@ def deces():
 
     return render_template_string(DECES_PAGE, phone_in=phone_in, date_in=date_in,
                                   found_name=found_name, message=message, is_error=is_error)
+
+
 
 #----------------------------------------------------------------------
 # Endpoint #4 — Mentor application (membertype => uniquement 'mentor')
@@ -2197,6 +2356,106 @@ def transfer():
     return render_template_string(TRANSFER_PAGE, found_name=found_name, to_phone=to_phone, amount=amount,message=message, is_error=is_error)
             #me2 = fetch_member_by_phone(from_phone)
     #return render_template_string(TRANSFER_PAGE, balance=(me2[10] if me2 else 0),found_name=found_name, to_phone=to_phone, amount=amount,message=message, is_error=is_error)
+
+
+# ------------------------------------------
+# Endpoint #11 — Suivi des deuils pendants
+#-------------------------------------------
+DEUILS_PENDANTS_PAGE = """
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Suivi des declarations de décès</title>
+<style>
+ body{font-family:Arial;margin:20px} .wrap{max-width:1400px;margin:0 auto}
+ table{width:100%;border-collapse:collapse}
+ th,td{padding:10px;border-bottom:1px solid #eee;text-align:left}
+ th{background:#f6f6f6}
+ input,select{padding:8px;border:1px solid #ddd;border-radius:10px}
+ .btn{padding:7px 10px;border:1px solid #111;border-radius:10px;background:#111;color:#fff;cursor:pointer}
+ .btn2{padding:7px 10px;border:1px solid #111;border-radius:10px;background:#fff;color:#111;cursor:pointer}
+</style></head><body><div class="wrap">
+<h2>Deuils pendants</h2>
+<p><a href="{{ url_for('home') }}">← Retour</a></p>
+<table>
+<thead><tr><th>ID</th><th>Phone</th><th>date_deces</th><th>declared_by</th><th>Reference</th></tr></thead>
+<tbody>
+{% for r in rows %}
+<tr>
+<form method="post" action="{{ url_for('check_mouvements_update', mvt_id=r[0]) }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <td>{{ r[0] }}</td>
+  <td>{{ r[1] }}</td>
+  <td>{{ r[2] }}</td>
+  <td>{{ r[3] }}</td>
+  <td>{{ r[4] }}</td>
+
+<form method="post"
+      action="{{ url_for('trigger_prestation', deces_id=row[0]) }}"
+      onsubmit="return confirm('Confirmer le déclenchement comptable ?');">
+
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+<button class="btn">
+Déclencher la prestation décès
+</button>
+
+</form>  
+
+</tr>
+{% endfor %}
+{% if not rows %}<tr><td colspan="8">Aucun mouvement.</td></tr>{% endif %}
+</tbody>
+</table>
+</div></body></html>
+"""
+# Endpoint#11 — Suivi des deuils pendants
+@app.get("/deuils_pendants")
+@admin_required
+def deuils_pendants():
+    rows = list_all_deces()
+    return render_template_string(DEUILS_PENDANTS_PAGE, rows=rows)
+
+@app.post("/deces/prestation/<int:deces_id>")
+@admin_required
+def trigger_prestation(deces_id):
+
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+
+            cur.execute("""
+                SELECT phone, prestation, statut
+                FROM deces
+                WHERE id=%s
+            """,(deces_id,))
+            row = cur.fetchone()
+
+            if not row:
+                abort(404)
+
+            phone = row[0]
+            prestation = float(row[1])
+            statut = row[2]
+
+            if statut == "comptabilise":
+                return redirect(url_for("deces"))
+
+            if statut != "valide":
+                raise ValueError("Le décès doit être validé avant comptabilisation.")
+
+    create_prestation_mouvements(phone, prestation)
+
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+            UPDATE deces
+            SET statut='comptabilise'
+            WHERE id=%s
+            """,(deces_id,))
+        conn.commit()
+
+    return redirect(url_for("deces"))
+
+
+
 
 
 if __name__ == "__main__":
