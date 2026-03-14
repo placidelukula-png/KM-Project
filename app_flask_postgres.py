@@ -2388,10 +2388,13 @@ DEUILS_PENDANTS_PAGE = """
   <td>{{ r[3] }}</td>
   <td>{{ r[4] }}</td>
 
-<td>  
-<form> method="post"
+<td>
+</form>
+
+<!-- Afficher le bouton de déclenchement comptable uniquement si le statut est "validé" -->
+<form method="post"
       action="{{ url_for('trigger_prestation', deces_id=r[0]) }}"
-      onsubmit="return confirm('Confirmer le déclenchement comptable ?');"
+      onsubmit="return confirm('Confirmer le déclenchement comptable ?');"style="display:inline">
 
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
