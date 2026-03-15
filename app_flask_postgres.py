@@ -2447,7 +2447,7 @@ def deuils_pendants():
     rows = list_deces_pendants()
     return render_template_string(DEUILS_PENDANTS_PAGE, rows=rows)
 
-@app.post("/deuils_pendants/update/<int:id>")
+@app.get("/deuils_pendants/update/<int:id>")
 @admin_required
 def deuils_pendants_update(id: int):
     statut = (request.form.get("statut") or "déclaré").strip()
