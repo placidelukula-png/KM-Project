@@ -2424,6 +2424,8 @@ Déclencher la prestation décès
 </form>
 {%else%}
 <button class="btn" type="submit">Save</button>
+deuils_pendants_update
+<div class="msg ok">Statut mis à jour OK</div>
 {% endif %}
 </td>  
 
