@@ -2399,22 +2399,21 @@ DEUILS_PENDANTS_PAGE = """
   <td>{{ r[2] }}</td>
   <td>{{ r[3] }}</td>
   <td>
-<!--  <form method="post" action="{{ url_for('deuils_pendants_update', id=r[0]) }}"> --> 
-<!--  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">             -->
-    <select name="statut" required>
+    <form method="post" action="{{ url_for('deuils_pendants_update', id=r[0]) }}"> --> 
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">             -->
+        <select name="statut" required>
           <option value="déclaré" {{ 'selected' if r[5]=='déclaré' else '' }}>déclaré</option>
           <option value="validé" {{ 'selected' if r[5]=='validé' else '' }}>validé</option>
           <option value="non-éligible" {{ 'selected' if r[5]=='non-éligible' else '' }}>non-éligible</option>
           <option value="comptabilisé" {{ 'selected' if r[5]=='comptabilisé' else '' }}>comptabilisé</option>
-    </select>
-    <button class="btn" type="submit">Save</button>
+        </select>
+        <button class="btn" type="submit">Save</button>
     
-    {% if message %}
-      <div class="msg {{ 'err' if is_error else 'ok' }}">{{ message }}</div>
-    {% endif %}
-
-<!--   <form/>  -->
-   </td>
+        {% if message %}
+            <div class="msg {{ 'err' if is_error else 'ok' }}">{{ message }}</div>
+        {% endif %}
+    <form/>  
+  </td>
 
 <td>
 
@@ -2442,7 +2441,7 @@ Déclencher la prestation décès
 </div></body></html>
 """
 # Endpoint#11 — Suivi des deuils pendants
-@app.post("/deuils_pendants")
+@app.get("/deuils_pendants")
 @admin_required
 def deuils_pendants():
     rows = list_deces_pendants()
