@@ -11,6 +11,7 @@ import os
 import logging
 from datetime import datetime, timedelta
 from functools import wraps
+from weakref import ref
 
 import psycopg
 from psycopg.rows import tuple_row
@@ -43,7 +44,7 @@ DEFAULT_PASSWORD_HASH = os.getenv("DEFAULT_PASSWORD_HASH", "123456789")  # à ut
 # pour create_member_minimal(), si tu ne veux pas créer de comptes login automatiques, tu peux laisser DEFAULT_PASSWORD_HASH vide et la fonction mettra une chaîne fixe "NO_LOGIN_CREATED" (ou tu peux aussi définir DEFAULT_PASSWORD_HASH à une chaîne spécifique de ton choix).
 MEMBER_TYPES = ("membre", "independant", "mentor", "admin")
 STATUTES = ("probatoire","actif", "inactif", "suspendu", "radié")
-DECES_STATUTES = ("declaré", "validé", "comptabilisé", "rejeté")
+DECES_STATUTES = ("déclaré", "validé", "comptabilisé", "non-éligible")
 
 RATELIMIT_STORAGE_URI = os.getenv("RATELIMIT_STORAGE_URI", "memory://")
 
@@ -165,7 +166,7 @@ def init_db():
                   declared_by   TEXT NOT NULL,
                   created_at    TIMESTAMP NOT NULL DEFAULT NOW(),
                   reference     TEXT,
-                  statut        TEXT DEFAULT 'declaré' CHECK (statut IN ('declaré', 'validé', 'comptabilisé', 'rejeté')) 
+                  statut        TEXT DEFAULT 'déclaré' CHECK (statut IN ('déclaré', 'validé', 'comptabilisé', 'non-éligible')) 
                 );
             """)
             cur.execute("CREATE INDEX IF NOT EXISTS idx_deces_phone ON deces(phone);")
@@ -597,16 +598,16 @@ def list_all_mouvements():
             return cur.fetchall()
 
 
-def list_all_deces():
+def list_deces_pendants():
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
                 SELECT id, phone, date_deces, declared_by, reference
                 FROM deces
+                WHERE statut in ('déclaré', 'validé')
                 ORDER BY date_deces DESC, id DESC
             """)
             return cur.fetchall()
-
 
 def update_mouvement(id: int, mvt_date, amount, debitcredit, reference, libelle):
     with get_conn() as conn:
@@ -616,6 +617,16 @@ def update_mouvement(id: int, mvt_date, amount, debitcredit, reference, libelle)
                 SET mvt_date=%s, amount=%s, debitcredit=%s, reference=%s, libelle=%s, updatedate=CURRENT_DATE, updated_by=%s
                 WHERE id=%s
             """, (id,mvt_date, amount, debitcredit, reference, libelle,date.today(), session.get("user")))
+        conn.commit()
+
+def update_deces(id: int, statut: str):
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                UPDATE deces
+                SET statut=%s, updatedate=CURRENT_DATE, updated_by=%s
+                WHERE id=%s
+            """, (statut, session.get("user"), id))
         conn.commit()
 
 def delete_mouvement(id: int):
@@ -640,7 +651,7 @@ def create_deces(phone: str, date_deces, declared_by: str, reference: str):
         with conn.cursor() as cur:
             cur.execute("""
                 INSERT INTO deces (phone, date_deces, declared_by, reference,statut)
-                VALUES (%s,%s,%s,%s,'declaré')
+                VALUES (%s,%s,%s,%s,'déclaré')
             """, (phone, date_deces, declared_by, reference))
         conn.commit()
 
@@ -2389,9 +2400,9 @@ DEUILS_PENDANTS_PAGE = """
   <td>{{ r[3] }}</td>
   <td>
     <select name="statut" required>
-          <option value="declaré" {{ 'selected' if r[5]=='declaré' else '' }}>declaré</option>
+          <option value="déclaré" {{ 'selected' if r[5]=='déclaré' else '' }}>déclaré</option>
           <option value="validé" {{ 'selected' if r[5]=='validé' else '' }}>validé</option>
-          <option value="rejeté" {{ 'selected' if r[5]=='rejeté' else '' }}>rejeté</option>
+          <option value="non-éligible" {{ 'selected' if r[5]=='non-éligible' else '' }}>non-éligible</option>
           <option value="comptabilisé" {{ 'selected' if r[5]=='comptabilisé' else '' }}>comptabilisé</option>
     </select>
    </td>
@@ -2427,8 +2438,16 @@ Déclencher la prestation décès
 @app.get("/deuils_pendants")
 @admin_required
 def deuils_pendants():
-    rows = list_all_deces()
+    rows = list_deces_pendants()
     return render_template_string(DEUILS_PENDANTS_PAGE, rows=rows)
+
+@app.post("/deuils_pendants/update/<int:id>")
+@admin_required
+def deuils_pendants_update(id: int):
+    statut = (request.form.get("statut") or "déclaré").strip()
+    #ref = (request.form.get("reference") or "").strip()
+    update_deces(id, statut)
+    return redirect(url_for("deuils_pendants"))
 
 @app.post("/deces/prestation/<int:deces_id>")
 @admin_required
