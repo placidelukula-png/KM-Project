@@ -614,9 +614,9 @@ def update_mouvement(id: int, mvt_date, amount, debitcredit, reference, libelle)
         with conn.cursor() as cur:
             cur.execute("""
                 UPDATE mouvements
-                SET mvt_date=%s, amount=%s, debitcredit=%s, reference=%s, libelle=%s, updatedate=CURRENT_DATE, updated_by=%s
+                SET mvt_date=%s, amount=%s, debitcredit=%s, reference=%s, libelle=%s, updatedate=%s, updated_by=%s
                 WHERE id=%s
-            """, (id,mvt_date, amount, debitcredit, reference, libelle,date.today(), session.get("user")))
+            """, (mvt_date, amount, debitcredit, reference, libelle, date.today(), session.get("user"), id))
         conn.commit()
 
 def update_deces(id: int, statut: str):
@@ -2399,16 +2399,19 @@ DEUILS_PENDANTS_PAGE = """
   <td>{{ r[2] }}</td>
   <td>{{ r[3] }}</td>
   <td>
+  <form method="post" action="{{ url_for('deuils_pendants_update', id=r[0]) }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <select name="statut" required>
           <option value="déclaré" {{ 'selected' if r[5]=='déclaré' else '' }}>déclaré</option>
           <option value="validé" {{ 'selected' if r[5]=='validé' else '' }}>validé</option>
           <option value="non-éligible" {{ 'selected' if r[5]=='non-éligible' else '' }}>non-éligible</option>
           <option value="comptabilisé" {{ 'selected' if r[5]=='comptabilisé' else '' }}>comptabilisé</option>
     </select>
+    <button class="btn" type="submit">Save</button>
+    <tr><td colspan="8">Statut mis à jour OK</td></tr>
    </td>
 
 <td>
-</form>
 
 <!-- Afficher le bouton de déclenchement comptable uniquement si le statut est "validé" -->
 {%if r[5] == "validé"%}
@@ -2423,12 +2426,9 @@ Déclencher la prestation décès
 </button>
 </form>
 {%else%}
-<button class="btn" type="submit">Save</button>
-deuils_pendants_update
-<div class="msg ok">Statut mis à jour OK</div>
 {% endif %}
 </td>  
-
+</form>
 </tr>
 {% endfor %}
 {% if not rows %}<tr><td colspan="8">Aucun décès pendant.</td></tr>{% endif %}
