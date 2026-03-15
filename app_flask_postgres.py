@@ -2409,6 +2409,12 @@ DEUILS_PENDANTS_PAGE = """
     </select>
     <button class="btn" type="submit">Save</button>
     <tr><td colspan="8">Statut mis à jour OK</td></tr>
+    
+    {% if message %}
+      <div class="msg {{ 'err' if is_error else 'ok' }}">{{ message }}</div>
+    {% endif %}
+
+   <form/> 
    </td>
 
 <td>
@@ -2437,7 +2443,7 @@ Déclencher la prestation décès
 </div></body></html>
 """
 # Endpoint#11 — Suivi des deuils pendants
-@app.get("/deuils_pendants")
+@app.post("/deuils_pendants")
 @admin_required
 def deuils_pendants():
     rows = list_deces_pendants()
@@ -2448,7 +2454,15 @@ def deuils_pendants():
 def deuils_pendants_update(id: int):
     statut = (request.form.get("statut") or "déclaré").strip()
     #ref = (request.form.get("reference") or "").strip()
-    update_deces(id, statut)
+    if request.method == "POST":
+       try :
+         if statut not in ("déclaré", "validé", "non-éligible", "comptabilisé"):
+            raise ValueError("Statut invalide.")
+         update_deces(id, statut)
+         message, is_error = "Statut mis à jour OK.", False
+       except Exception as e:
+         message, is_error = f"Erreur: {e}", True
+         log.exception("Erreur lors de la mise à jour du statut du décès: %s", e)
     return redirect(url_for("deuils_pendants"))
 
 @app.post("/deces/prestation/<int:deces_id>")
