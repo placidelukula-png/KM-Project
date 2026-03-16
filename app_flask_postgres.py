@@ -2399,8 +2399,8 @@ DEUILS_PENDANTS_PAGE = """
   <td>{{ r[2] }}</td>
   <td>{{ r[3] }}</td>
   <td>
-    <form method="post" action="{{ url_for('deuils_pendants_update', id=r[0]) }}"> --> 
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">             -->
+    <form method="post" action="{{ url_for('deuils_pendants_update', id=r[0]) }}">  
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">             
         <select name="statut" required>
           <option value="déclaré" {{ 'selected' if r[5]=='déclaré' else '' }}>déclaré</option>
           <option value="validé" {{ 'selected' if r[5]=='validé' else '' }}>validé</option>
@@ -2419,18 +2419,18 @@ DEUILS_PENDANTS_PAGE = """
 
 <!-- Afficher le bouton de déclenchement comptable uniquement si le statut est "validé" -->
 {%if r[5] == "validé"%}
-<form method="post"
-      action="{{ url_for('trigger_prestation', deces_id=r[0]) }}"
-      onsubmit="return confirm('Confirmer le déclenchement comptable ?');"style="display:inline">
+    <form method="post"
+        action="{{ url_for('trigger_prestation', deces_id=r[0]) }}"
+        onsubmit="return confirm('Confirmer le déclenchement comptable ?');"style="display:inline">
 
-<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-<button class="btn">
-Déclencher la prestation décès
-</button>
-</form>
-{%else%}
-{% endif %}
+    <button class="btn">
+    Déclencher la prestation décès
+    </button>
+    </form>
+    {%else%}
+    {% endif %}
 </td>  
 </form>
 </tr>
@@ -2501,7 +2501,7 @@ def trigger_prestation(deces_id):
             """,(deces_id,))
         conn.commit()
 
-    return redirect(url_for("deces"))
+    return redirect(url_for("deuils_pendants"))
 
 
 
