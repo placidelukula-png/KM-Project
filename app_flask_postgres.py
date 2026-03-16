@@ -2441,13 +2441,13 @@ Déclencher la prestation décès
 </div></body></html>
 """
 # Endpoint#11 — Suivi des deuils pendants
-@app.get("/deuils_pendants")
+@app.route("/deuils_pendants", methods=["GET", "POST"])
 @admin_required
 def deuils_pendants():
     rows = list_deces_pendants()
     return render_template_string(DEUILS_PENDANTS_PAGE, rows=rows)
 
-@app.get("/deuils_pendants/update/<int:id>")
+@app.post("/deuils_pendants/update/<int:id>")
 @admin_required
 def deuils_pendants_update(id: int):
     statut = (request.form.get("statut") or "déclaré").strip()
