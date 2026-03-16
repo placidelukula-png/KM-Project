@@ -2402,10 +2402,10 @@ DEUILS_PENDANTS_PAGE = """
     <form method="post" action="{{ url_for('deuils_pendants_update', id=r[0]) }}">  
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">             
         <select name="statut" required>
-          <option value="déclaré" {{ 'selected' if r[5]=='déclaré' else '' }}>déclaré</option>
-          <option value="validé" {{ 'selected' if r[5]=='validé' else '' }}>validé</option>
-          <option value="non-éligible" {{ 'selected' if r[5]=='non-éligible' else '' }}>non-éligible</option>
-          <option value="comptabilisé" {{ 'selected' if r[5]=='comptabilisé' else '' }}>comptabilisé</option>
+          <option value="déclaré" {{ 'selected' if r[6]=='déclaré' else '' }}>déclaré</option>
+          <option value="validé" {{ 'selected' if r[6]=='validé' else '' }}>validé</option>
+          <option value="non-éligible" {{ 'selected' if r[6]=='non-éligible' else '' }}>non-éligible</option>
+          <option value="comptabilisé" {{ 'selected' if r[6]=='comptabilisé' else '' }}>comptabilisé</option>
         </select>
         <button class="btn" type="submit">Save</button>
     
