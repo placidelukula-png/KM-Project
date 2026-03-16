@@ -602,7 +602,7 @@ def list_deces_pendants():
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                SELECT id, phone, date_deces, declared_by, reference
+                SELECT id, phone, date_deces, declared_by, reference, created_at,statut
                 FROM deces
                 WHERE statut in ('déclaré', 'validé')
                 ORDER BY date_deces DESC, id DESC
@@ -2398,8 +2398,6 @@ DEUILS_PENDANTS_PAGE = """
   <td>{{ r[1] }}</td>
   <td>{{ r[2] }}</td>
   <td>{{ r[3] }}</td>
-  <td>{{ r[6] }}</td>
-
   <td>
     <form method="post" action="{{ url_for('deuils_pendants_update', id=r[0]) }}">  
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">             
