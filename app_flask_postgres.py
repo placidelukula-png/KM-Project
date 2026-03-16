@@ -2452,6 +2452,9 @@ def deuils_pendants():
 def deuils_pendants_update(id: int):
     statut = (request.form.get("statut") or "déclaré").strip()
     #ref = (request.form.get("reference") or "").strip()
+
+    log.info("Tentative de mise à jour du statut du décès, index: %d, statut: %s, erreur: %s", id, statut, str(e))
+
     if request.method == "POST":
        try :
          if statut not in ("déclaré", "validé", "non-éligible", "comptabilisé"):
