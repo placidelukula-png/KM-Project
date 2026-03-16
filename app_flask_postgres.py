@@ -2456,6 +2456,9 @@ def deuils_pendants_update(id: int):
        try :
          if statut not in ("déclaré", "validé", "non-éligible", "comptabilisé"):
             raise ValueError("Statut invalide.")
+
+         log.info("Mise à jour du statut du décès, index: %d, statut: %s, erreur: %s", id, statut, str(e))
+
          update_deces(id, statut)
          message, is_error = "Statut mis à jour OK.", False
        except Exception as e:
