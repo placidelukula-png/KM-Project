@@ -166,7 +166,9 @@ def init_db():
                   declared_by   TEXT NOT NULL,
                   created_at    TIMESTAMP NOT NULL DEFAULT NOW(),
                   reference     TEXT,
-                  statut        TEXT DEFAULT 'déclaré' CHECK (statut IN ('déclaré', 'validé', 'comptabilisé', 'non-éligible')) 
+                  statut        TEXT DEFAULT 'déclaré' CHECK (statut IN ('déclaré', 'validé', 'comptabilisé', 'non-éligible'))
+                  updated_by    TEXT
+                  updatedate    DATE default CURRENT_DATE 
                 );
             """)
             cur.execute("CREATE INDEX IF NOT EXISTS idx_deces_phone ON deces(phone);")
@@ -624,7 +626,7 @@ def update_deces(id: int, statut: str):
         with conn.cursor() as cur:
             cur.execute("""
                 UPDATE deces
-                SET statut=%s, updated_by=%s
+                SET statut=%s, updatedate=CURRENT_DATE, updated_by=%s
                 WHERE id=%s
             """, (statut, session.get("user"), id))
         conn.commit()
