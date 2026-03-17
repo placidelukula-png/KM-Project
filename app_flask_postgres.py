@@ -624,7 +624,7 @@ def update_deces(id: int, statut: str):
         with conn.cursor() as cur:
             cur.execute("""
                 UPDATE deces
-                SET statut=%s, updatedate=CURRENT_DATE, updated_by=%s
+                SET statut=%s, updated_by=%s
                 WHERE id=%s
             """, (statut, session.get("user"), id))
         conn.commit()
