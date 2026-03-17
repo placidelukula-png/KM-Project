@@ -2366,8 +2366,6 @@ def transfer():
                 log.exception("Erreur lors de l'enregistrement du mouvement de transfert: %s", e)
 
     return render_template_string(TRANSFER_PAGE, found_name=found_name, to_phone=to_phone, amount=amount,message=message, is_error=is_error)
-            #me2 = fetch_member_by_phone(from_phone)
-    #return render_template_string(TRANSFER_PAGE, balance=(me2[10] if me2 else 0),found_name=found_name, to_phone=to_phone, amount=amount,message=message, is_error=is_error)
 
 
 # ------------------------------------------
@@ -2388,54 +2386,45 @@ DEUILS_PENDANTS_PAGE = """
 <h2>Deuils pendants</h2>
 <p><a href="{{ url_for('home') }}">← Retour</a></p>
 <table>
-<thead><tr><th>ID</th><th>Phone</th><th>date_deces</th><th>declared_by</th><th>Statut</th><th>Action</th></tr></thead>
+<thead><tr><th>ID</th><th>Identifiant du défunt</th><th>Date de décès</th><th>déclaré par</th><th>Statut</th><th>Action</th></tr></thead>
 <tbody>
 {% for r in rows %}
 <tr>
-<form method="post" action="{{ url_for('deuils_pendants', id=r[0]) }}">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <td>{{ r[0] }}</td>
   <td>{{ r[1] }}</td>
   <td>{{ r[2] }}</td>
   <td>{{ r[3] }}</td>
+
   <td>
-    <form method="post" action="{{ url_for('deuils_pendants_update', id=r[0]) }}">  
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">             
-        <select name="statut" required>
-          <option value="déclaré" {{ 'selected' if r[6]=='déclaré' else '' }}>déclaré</option>
-          <option value="validé" {{ 'selected' if r[6]=='validé' else '' }}>validé</option>
-          <option value="non-éligible" {{ 'selected' if r[6]=='non-éligible' else '' }}>non-éligible</option>
-          <option value="comptabilisé" {{ 'selected' if r[6]=='comptabilisé' else '' }}>comptabilisé</option>
-        </select>
-        <button class="btn" type="submit">Save</button>
-    
-        {% if message %}
-            <div class="msg {{ 'err' if is_error else 'ok' }}">{{ message }}</div>
-        {% endif %}
-    <form/>  
+    <form method="post" action="{{ url_for('deuils_pendants_update', id=r[0]) }}" style="display:inline;">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <select name="statut" required>
+        <option value="déclaré" {{ 'selected' if r[6]=='déclaré' else '' }}>déclaré</option>
+        <option value="validé" {{ 'selected' if r[6]=='validé' else '' }}>validé</option>
+        <option value="non-éligible" {{ 'selected' if r[6]=='non-éligible' else '' }}>non-éligible</option>
+        <option value="comptabilisé" {{ 'selected' if r[6]=='comptabilisé' else '' }}>comptabilisé</option>
+      </select>
+      <button class="btn" type="submit">Save</button>
+    </form>
   </td>
 
-<td>
-
-<!-- Afficher le bouton de déclenchement comptable uniquement si le statut est "validé" -->
-{%if r[6] == "validé"%}
-    <form method="post"
-        action="{{ url_for('trigger_prestation', deces_id=r[0]) }}"
-        onsubmit="return confirm('Confirmer le déclenchement comptable ?');"style="display:inline">
-
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
-    <button class="btn">
-    Déclencher la prestation décès
-    </button>
-    </form>
-    {%else%}
+  <td>
+    {% if r[6] == "validé" %}
+      <form method="post"
+            action="{{ url_for('trigger_prestation', deces_id=r[0]) }}"
+            onsubmit="return confirm('Confirmer le déclenchement comptable ?');"
+            style="display:inline;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="btn" type="submit">Déclencher la prestation décès</button>
+      </form>
     {% endif %}
-</td>  
-</form>
+  </td>
 </tr>
 {% endfor %}
-{% if not rows %}<tr><td colspan="8">Aucun décès pendant.</td></tr>{% endif %}
+
+{% if not rows %}
+<tr><td colspan="6">Aucun décès pendant.</td></tr>
+{% endif %}
 </tbody>
 </table>
 </div></body></html>
@@ -2453,14 +2442,14 @@ def deuils_pendants_update(id: int):
     statut = (request.form.get("statut") or "déclaré").strip()
     #ref = (request.form.get("reference") or "").strip()
 
-    log.info("Tentative de mise à jour du statut du décès, index: %d, statut: %s, erreur: %s", id, statut, str(e))
+    log.info("Tentative de mise à jour du statut du décès, index: %d, statut: %s, erreur: %s", id, statut, "Aucune erreur détectée")  # Log initial avant validation
 
     if request.method == "POST":
        try :
          if statut not in ("déclaré", "validé", "non-éligible", "comptabilisé"):
             raise ValueError("Statut invalide.")
 
-         log.info("Mise à jour du statut du décès, index: %d, statut: %s, erreur: %s", id, statut, str(e))
+         log.info("demarrage de la mise à jour du statut du décès, index: %d, statut: %s, erreur: %s", id, statut, "Aucune erreur détectée")
 
          update_deces(id, statut)
          message, is_error = "Statut mis à jour OK.", False
@@ -2491,7 +2480,7 @@ def trigger_prestation(deces_id):
             statut = row[2]
 
             if statut == "comptabilisé":
-                return redirect(url_for("deces"))
+                return redirect(url_for("deuils_pendants"))
 
             if statut != "validé":
                 raise ValueError("Le décès doit être validé avant comptabilisation.")
