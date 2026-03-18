@@ -167,8 +167,9 @@ def init_db():
                   created_at    TIMESTAMP NOT NULL DEFAULT NOW(),
                   reference     TEXT,
                   statut        TEXT DEFAULT 'déclaré' CHECK (statut IN ('déclaré', 'validé', 'comptabilisé', 'non-éligible'))
-                  updated_by    TEXT
-                  updatedate    DATE default CURRENT_DATE 
+                  updated_by    
+                  updatedate    DATE default CURRENT_DATE,
+                  prestation      DECIMAL(18,2)       
                 );
             """)
             cur.execute("CREATE INDEX IF NOT EXISTS idx_deces_phone ON deces(phone);")
@@ -228,7 +229,7 @@ def fetch_dashboard_stats():
             cur.execute("""
                 SELECT COALESCE(quantity, 0)
                 FROM id_data
-                WHERE keydata = 'id-data01'  -- clé fixe pour la prestation ciblée
+                WHERE keydata = 'id-data01'  -- clé fixée pour la prestation ciblée
                 ORDER BY id DESC
                 LIMIT 1
             """)
@@ -239,7 +240,7 @@ def fetch_dashboard_stats():
             cur.execute("""
                 SELECT COALESCE(quantity, 0)
                 FROM id_data
-                WHERE keydata = 'id-data02'  -- clé fixe pour la marge de sécurité
+                WHERE keydata = 'id-data02'  -- clé fixée pour la marge de sécurité
                 ORDER BY id DESC
                 LIMIT 1
             """)
@@ -2466,6 +2467,14 @@ def trigger_prestation(deces_id):
 
     with get_conn() as conn:
         with conn.cursor() as cur:
+            stats=fetch_dashboard_stats()
+            prestation = stats["P"]
+            cur.execute("""
+                UPDATE deces
+                SET prestation=%s
+                WHERE id=%s
+            """,(prestation, deces_id))
+            conn.commit()
 
             cur.execute("""
                 SELECT phone, prestation, statut
@@ -2476,6 +2485,8 @@ def trigger_prestation(deces_id):
 
             if not row:
                 abort(404)
+
+            log.info("Données du décès pour déclenchement prestation, index: %d, phone: %s, prestation: %s, statut: %s", deces_id, row[0], row[1], row[2])
 
             phone = row[0]
             prestation = float(row[1])
