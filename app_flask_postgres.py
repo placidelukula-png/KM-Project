@@ -263,7 +263,7 @@ def fetch_dashboard_stats():
     try:
         if N > 0:
             C = (Decimal(1+S) * Decimal(P)) / Decimal(N)        # S = marge de sécurité (en %) modifiable pour couvrir les frais et les imprévus.  
-            #C = C.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+            C = C.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
         else:
             C = Decimal("0.00")
     except (InvalidOperation, ZeroDivisionError):
@@ -319,8 +319,31 @@ def create_prestation_mouvements(deceased_phone, prestation):
 
             if N == 0:
                 raise ValueError("Aucun membre cotisant.")
+#
+            # P = prestation ciblée
+            cur.execute("""
+                SELECT COALESCE(quantity, 0)
+                FROM id_data
+                WHERE keydata = 'id-data01'  -- clé fixée pour la prestation ciblée
+                ORDER BY id DESC
+                LIMIT 1
+            """)
+            P = cur.fetchone()
+            P = P[0] if P else Decimal("0")
+            
+            # S = Marge de securité fixée pour couvrir les frais et imprevues
+            cur.execute("""
+                SELECT COALESCE(quantity, 0)
+                FROM id_data
+                WHERE keydata = 'id-data02'  -- clé fixée pour la marge de sécurité
+                ORDER BY id DESC
+                LIMIT 1
+            """)
+            S = cur.fetchone()
+            S = S[0] if S else Decimal("0")
 
-            C = (Decimal("1.2") * prestation) / Decimal(N)
+#
+            C = (Decimal(1+S) * prestation) / Decimal(N)
             C = C.quantize(Decimal("0.01"))
 
             reference = f"PREST-{datetime.utcnow().timestamp()}"
@@ -379,7 +402,7 @@ def create_prestation_mouvements(deceased_phone, prestation):
                         today,
                         C,
                         reference+"-"+phone,
-                        f"Cotisation décès de : {deceased_firstname} {deceased_lastname} identifiant:{deceased_phone}"
+                        f"Cotisation décès de : {deceased_firstname} {deceased_lastname} //{deceased_phone}"
                     ))
 
                     cur.execute("""
@@ -2466,6 +2489,7 @@ def trigger_prestation(deces_id):
         with conn.cursor() as cur:
             stats=fetch_dashboard_stats()
             prestation = stats["P"]
+
             cur.execute("""
                 UPDATE deces
                 SET prestation=%s
@@ -2478,12 +2502,13 @@ def trigger_prestation(deces_id):
                 FROM deces
                 WHERE id=%s
             """,(deces_id,))
+            conn.commit()
             row = cur.fetchone()
 
             if not row:
                 abort(404)
 
-            log.info("Données du décès pour déclenchement prestation, index: %d, phone: %s, prestation: %s, statut: %s", deces_id, row[0], row[1], row[2])
+            #log.info("Données du décès pour déclenchement prestation, index: %d, phone: %s, prestation: %s, statut: %s", deces_id, row[0], row[1], row[2])
 
             phone = row[0]
             prestation = float(row[1])
@@ -2494,6 +2519,14 @@ def trigger_prestation(deces_id):
 
             if statut != "validé":
                 raise ValueError("Le décès doit être validé avant comptabilisation.")
+            
+        # L'adhérent est radié (statut "radié") et ne peut plus faire de mouvement, mais on garde son historique et ses données pour l'historique et les stats
+            cur.execute("""
+                UPDATE members
+                SET currentstatus=%s
+                WHERE phone=%s
+            """,('radié', row[0]))
+            conn.commit()
 
     create_prestation_mouvements(phone, prestation)
 
@@ -2502,8 +2535,8 @@ def trigger_prestation(deces_id):
             cur.execute("""
             UPDATE deces
             SET statut='comptabilisé'
-            WHERE id=%s
-            """,(deces_id,))
+            WHERE id=%s or phone=%s
+            """,(deces_id, row[0]))
         conn.commit()
 
     return redirect(url_for("deuils_pendants"))
