@@ -379,7 +379,7 @@ def create_prestation_mouvements(deceased_phone, prestation):
                         today,
                         C,
                         reference+"-"+phone,
-                        f"Cotisation prestation décès {deceased_phone}"
+                        f"Cotisation décès de : {deceased_firstname} {deceased_lastname} identifiant:{deceased_phone}"
                     ))
 
                     cur.execute("""
@@ -1336,8 +1336,6 @@ def account():
     return render_template_string(ACCOUNT_PAGE, m=m, mentor_info=mentor_info, message="", is_error=False)
 
 
-
-
 # ---------------------------------------------------------------
 #   Endpoint #2 — Mes mouvements (lecture seule + balance)
 # ---------------------------------------------------------------
@@ -1356,7 +1354,7 @@ MY_MVT_PAGE = """
   <div class="pill">Solde actuel: <b>{{ balance }}</b></div>
   <table>
     <thead><tr>
-      <th>Date</th><th>Montant</th><th>D/C</th><th>Référence</th><th>Libellé</th>
+      <th>Date</th><th>Montant</th><th>D/C</th><th>Libellé</th>
     </tr></thead>
     <tbody>
     {% for r in rows %}
@@ -1364,7 +1362,6 @@ MY_MVT_PAGE = """
         <td>{{ r[3].strftime('%d/%m/%Y') }}</td>
         <td>{{ r[4] }}</td>
         <td>{{ r[5] }}</td>
-        <td>{{ r[6] }}</td>
         <td>{{ r[7] }}</td>
       </tr>
     {% endfor %}
