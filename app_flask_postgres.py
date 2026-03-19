@@ -263,7 +263,7 @@ def fetch_dashboard_stats():
     try:
         if N > 0:
             C = (Decimal(1+S) * Decimal(P)) / Decimal(N)        # S = marge de sécurité (en %) modifiable pour couvrir les frais et les imprévus.  
-            C = C.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+            #C = C.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
         else:
             C = Decimal("0.00")
     except (InvalidOperation, ZeroDivisionError):
