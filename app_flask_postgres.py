@@ -2528,7 +2528,7 @@ def trigger_prestation(deces_id):
                         UPDATE members
                         SET currentstatute=%s
                         WHERE phone=%s
-                        """,('radié', phone))
+                        """,('XXXXX', phone))
                     conn.commit()
             log.info("L'adhérant avec phone %s radié suite à la validation de son décès.", phone)
 
