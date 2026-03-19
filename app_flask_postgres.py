@@ -166,7 +166,7 @@ def init_db():
                   declared_by   TEXT NOT NULL,
                   created_at    TIMESTAMP NOT NULL DEFAULT NOW(),
                   reference     TEXT,
-                  statut        TEXT DEFAULT 'déclaré' CHECK (statut IN ('déclaré', 'validé', 'comptabilisé', 'non-éligible'))
+                  statut        TEXT DEFAULT 'déclaré' CHECK (statut IN ('déclaré', 'validé', 'comptabilisé', 'non-éligible')),
                   updated_by    TEXT,
                   updatedate    DATE default CURRENT_DATE,
                   prestation    DECIMAL(18,2)       
@@ -313,7 +313,7 @@ def create_prestation_mouvements(deceased_phone, prestation):
             SELECT COUNT(*)
             FROM membres
             WHERE currentstatute IN ('actif','probatoire')
-            AND membertype <> 'admin'
+            AND phone <> 'admin'
             """)
             N = cur.fetchone()[0]
 
@@ -377,7 +377,7 @@ def create_prestation_mouvements(deceased_phone, prestation):
             cur.execute("""
             SELECT phone,firstname,lastname,currentstatute
             FROM membres
-            WHERE membertype <> 'admin'
+            WHERE phone <> 'admin'
             """)
             members = cur.fetchall()
 
@@ -802,7 +802,7 @@ def validate_mentor_phone_or_raise(mentor_phone: str, *, current_user_phone: str
         raise ValueError("Mentor invalide : ce membre existe mais n'est pas de type 'mentor' ou 'admin'.")
 
     # (Optionnel) on pourrait aussi vérifier statut mentor_row[9] == 'Suspendu'
-    if mentor_row[9]  in ("Radié", "Suspendu"):
+    if mentor_row[9]  in ("radié", "suspendu"):
         raise ValueError("Mentor invalide : ce membre existe mais est  'Suspendu' ou 'Radié'.")
     return mentor_phone
 
@@ -2525,8 +2525,9 @@ def trigger_prestation(deces_id):
                 UPDATE members
                 SET currentstatute=%s
                 WHERE phone=%s
-            """,('radié', row[0]))
+            """,('radié', phone))
             conn.commit()
+            log.info("Membre avec phone %s radié suite à la validation de son décès.", phone)
 
     create_prestation_mouvements(phone, prestation)
 
