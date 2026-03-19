@@ -167,9 +167,9 @@ def init_db():
                   created_at    TIMESTAMP NOT NULL DEFAULT NOW(),
                   reference     TEXT,
                   statut        TEXT DEFAULT 'déclaré' CHECK (statut IN ('déclaré', 'validé', 'comptabilisé', 'non-éligible'))
-                  updated_by    
+                  updated_by    TEXT,
                   updatedate    DATE default CURRENT_DATE,
-                  prestation      DECIMAL(18,2)       
+                  prestation    DECIMAL(18,2)       
                 );
             """)
             cur.execute("CREATE INDEX IF NOT EXISTS idx_deces_phone ON deces(phone);")
@@ -2523,7 +2523,7 @@ def trigger_prestation(deces_id):
         # L'adhérent est radié (statut "radié") et ne peut plus faire de mouvement, mais on garde son historique et ses données pour l'historique et les stats
             cur.execute("""
                 UPDATE members
-                SET currentstatus=%s
+                SET currentstatute=%s
                 WHERE phone=%s
             """,('radié', row[0]))
             conn.commit()
