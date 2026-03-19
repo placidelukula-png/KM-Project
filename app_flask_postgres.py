@@ -2521,16 +2521,16 @@ def trigger_prestation(deces_id):
                 raise ValueError("Le décès doit être validé avant comptabilisation.")
             
             # L'adhérent est radié (statut "radié") et ne peut plus faire de mouvement, mais on garde son historique et ses données pour l'historique et les stats
-            log.info("L'adhérant avec phone %s va être radié suite à la validation de son décès.", phone)
+            log.info("L'adhérant avec phone %s va être radié suite à la confirmation de son décès.", phone)
             with get_conn() as conn:
                 with conn.cursor() as cur:
                     cur.execute("""
                         UPDATE members
                         SET currentstatute=%s
                         WHERE phone=%s
-                        """,('XXXXX', phone))
+                        """,('inactif', phone))
                     conn.commit()
-            log.info("L'adhérant avec phone %s radié suite à la validation de son décès.", phone)
+            log.info("L'adhérant avec phone %s radié suite à la confirmation de son décès.", phone)
 
     create_prestation_mouvements(phone, prestation)
 
