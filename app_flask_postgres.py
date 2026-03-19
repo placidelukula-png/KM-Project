@@ -2465,14 +2465,14 @@ def deuils_pendants_update(id: int):
     statut = (request.form.get("statut") or "déclaré").strip()
     #ref = (request.form.get("reference") or "").strip()
 
-    log.info("Tentative de mise à jour du statut du décès, index: %d, statut: %s, erreur: %s", id, statut, "Aucune erreur détectée")  # Log initial avant validation
+    #log.info("Tentative de mise à jour du statut du décès, index: %d, statut: %s, erreur: %s", id, statut, "Aucune erreur détectée")  # Log initial avant validation
 
     if request.method == "POST":
        try :
          if statut not in ("déclaré", "validé", "non-éligible", "comptabilisé"):
             raise ValueError("Statut invalide.")
 
-         log.info("demarrage de la mise à jour du statut du décès, index: %d, statut: %s, erreur: %s", id, statut, "Aucune erreur détectée")
+         #log.info("demarrage de la mise à jour du statut du décès, index: %d, statut: %s, erreur: %s", id, statut, "Aucune erreur détectée")
 
          update_deces(id, statut)
          message, is_error = "Statut mis à jour OK.", False
@@ -2520,14 +2520,17 @@ def trigger_prestation(deces_id):
             if statut != "validé":
                 raise ValueError("Le décès doit être validé avant comptabilisation.")
             
-        # L'adhérent est radié (statut "radié") et ne peut plus faire de mouvement, mais on garde son historique et ses données pour l'historique et les stats
-            cur.execute("""
-                UPDATE members
-                SET currentstatute=%s
-                WHERE phone=%s
-            """,('radié', phone))
-            conn.commit()
-            log.info("Membre avec phone %s radié suite à la validation de son décès.", phone)
+            # L'adhérent est radié (statut "radié") et ne peut plus faire de mouvement, mais on garde son historique et ses données pour l'historique et les stats
+            log.info("L'adhérant avec phone %s va être radié suite à la validation de son décès.", phone)
+            with get_conn() as conn:
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        UPDATE members
+                        SET currentstatute=%s
+                        WHERE phone=%s
+                        """,('radié', phone))
+                    conn.commit()
+            log.info("L'adhérant avec phone %s radié suite à la validation de son décès.", phone)
 
     create_prestation_mouvements(phone, prestation)
 
