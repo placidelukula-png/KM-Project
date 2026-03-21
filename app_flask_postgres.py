@@ -617,7 +617,7 @@ def list_mouvements_by_phone(phone: str):
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                SELECT id, phone, firstname, mvt_date, amount, debitcredit, reference, libelle, updatedate, updated_by
+                SELECT id, phone, lastname, mvt_date, amount, debitcredit, reference, libelle, updatedate, updated_by
                 FROM mouvements
                 WHERE phone=%s
                 ORDER BY mvt_date DESC, id DESC
@@ -628,7 +628,7 @@ def list_all_mouvements():
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                SELECT id, phone, firstname, mvt_date, amount, debitcredit, reference, libelle, updatedate, updated_by
+                SELECT id, phone, lastname, mvt_date, amount, debitcredit, reference, libelle, updatedate, updated_by
                 FROM mouvements
                 ORDER BY mvt_date DESC, id DESC
             """)
@@ -1870,7 +1870,7 @@ CHECK_MVT_PAGE = """
 <h2>Check mouvements (admin)</h2>
 <p><a href="{{ url_for('home') }}">← Retour</a></p>
 <table>
-<thead><tr><th>ID</th><th>Phone</th><th>Firstname</th><th>Date</th><th>Amount</th><th>D/C</th><th>Reference</th><th>Libellé</th><th>Action</th></tr></thead>
+<thead><tr><th>ID</th><th>Phone</th><th>Nom</th><th>Date</th><th>Montant</th><th>D/C</th><th>Libellé</th><th>Action</th></tr></thead>
 <tbody>
 {% for r in rows %}
 <tr>
@@ -1887,7 +1887,7 @@ CHECK_MVT_PAGE = """
       <option value="C" {{ 'selected' if r[5]=='C' else '' }}>C</option>
     </select>
   </td>
-  <td><input name="reference" value="{{ r[6] }}" size="16"></td>
+  
   <td><input name="libelle" value="{{ r[7] }}" size="20"></td>
 
   <td>
