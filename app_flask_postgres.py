@@ -1437,8 +1437,10 @@ DECES_PAGE = """
 <div class="card">
 <form method="post">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
   <label>Phone du membre</label>
   <input name="phone" value="{{ phone_in or '' }}" required>
+
   <label>Date de décès (JJ/MM/AAAA)</label>
   <input name="date_deces" value="{{ date_in or '' }}" required>
 
@@ -1473,7 +1475,7 @@ def deces():
 
     dec = fetch_deces_by_phone(phone_in) if phone_in else None
     if dec:
-        return render_template_string(DECES_PAGE, phone_in=phone_in, date_in=date_in,found_name="", 
+        return render_template_string(DECES_PAGE, phone_in="", date_in="",found_name="", 
                                       message="Ce décès avais déjà été déclaré. Merci de contacter l'administrateur.", is_error=True)
 
     if request.method == "POST":
