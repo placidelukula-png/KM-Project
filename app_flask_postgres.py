@@ -169,7 +169,8 @@ def init_db():
                   statut        TEXT DEFAULT 'déclaré' CHECK (statut IN ('déclaré', 'validé', 'comptabilisé', 'non-éligible')),
                   updated_by    TEXT,
                   updatedate    DATE default CURRENT_DATE,
-                  prestation    DECIMAL(18,2)       
+                  prestation    DECIMAL(18,2),
+                  note          TEXT
                 );
             """)
             cur.execute("CREATE INDEX IF NOT EXISTS idx_deces_phone ON deces(phone);")
