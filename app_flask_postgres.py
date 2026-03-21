@@ -3,7 +3,7 @@
 # ---------------------------------
 from __future__ import annotations
 
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 import code
 from enum import member
 from enum import member
@@ -428,6 +428,29 @@ def create_prestation_mouvements(deceased_phone, prestation):
         conn.commit()
 
 
+def list_deces_pendants():
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT id, phone, date_deces, declared_by, note, created_at, statut, prestation
+                FROM deces
+                ORDER BY id DESC
+            """)
+            return cur.fetchall()
+
+
+def update_deces(id: int, statut: str):
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                UPDATE deces
+                SET statut=%s
+                WHERE id=%s
+            """, (statut, id))
+        conn.commit()
+
+
+
 # ----------------------------
 # Queries (ORDER des colonnes = contrat avec le HTML)
 # ----------------------------
@@ -624,16 +647,16 @@ def list_all_mouvements():
             return cur.fetchall()
 
 
-def list_deces_pendants():
-    with get_conn() as conn:
-        with conn.cursor() as cur:
-            cur.execute("""
-                SELECT id, phone, date_deces, declared_by, reference, created_at,statut
-                FROM deces
-                WHERE statut in ('déclaré', 'validé')
-                ORDER BY date_deces DESC, id DESC
-            """)
-            return cur.fetchall()
+#def list_deces_pendants():
+#    with get_conn() as conn:
+#        with conn.cursor() as cur:
+#            cur.execute("""
+#                SELECT id, phone, date_deces, declared_by, reference, created_at,statut
+#                FROM deces
+#                WHERE statut in ('déclaré', 'validé')
+#                ORDER BY date_deces DESC, id DESC
+#            """)
+#            return cur.fetchall()
 
 def update_mouvement(id: int, mvt_date, amount, debitcredit, reference, libelle):
     with get_conn() as conn:
@@ -645,15 +668,15 @@ def update_mouvement(id: int, mvt_date, amount, debitcredit, reference, libelle)
             """, (mvt_date, amount, debitcredit, reference, libelle, date.today(), session.get("user"), id))
         conn.commit()
 
-def update_deces(id: int, statut: str):
-    with get_conn() as conn:
-        with conn.cursor() as cur:
-            cur.execute("""
-                UPDATE deces
-                SET statut=%s, updatedate=CURRENT_DATE, updated_by=%s
-                WHERE id=%s
-            """, (statut, session.get("user"), id))
-        conn.commit()
+#def update_deces(id: int, statut: str):
+#    with get_conn() as conn:
+#        with conn.cursor() as cur:
+#            cur.execute("""
+#                UPDATE deces
+#                SET statut=%s, updatedate=CURRENT_DATE, updated_by=%s
+#                WHERE id=%s
+#            """, (statut, session.get("user"), id))
+#        conn.commit()
 
 def delete_mouvement(id: int):
     with get_conn() as conn:
@@ -2391,159 +2414,311 @@ def transfer():
     return render_template_string(TRANSFER_PAGE, found_name=found_name, to_phone=to_phone, amount=amount,message=message, is_error=is_error)
 
 
-# ------------------------------------------
+# ------------------------------------------------
 # Endpoint #11 — Suivi des deuils pendants
-#-------------------------------------------
+# ------------------------------------------------
 DEUILS_PENDANTS_PAGE = """
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Suivi des declarations de décès</title>
-<style>
- body{font-family:Arial;margin:20px} .wrap{max-width:1400px;margin:0 auto}
- table{width:100%;border-collapse:collapse}
- th,td{padding:10px;border-bottom:1px solid #eee;text-align:left}
- th{background:#f6f6f6}
- input,select{padding:8px;border:1px solid #ddd;border-radius:10px}
- .btn{padding:7px 10px;border:1px solid #111;border-radius:10px;background:#111;color:#fff;cursor:pointer}
- .btn2{padding:7px 10px;border:1px solid #111;border-radius:10px;background:#fff;color:#111;cursor:pointer}
-</style></head><body><div class="wrap">
-<h2>Deuils pendants</h2>
-<p><a href="{{ url_for('home') }}">← Retour</a></p>
-<table>
-<thead><tr><th>ID</th><th>Identifiant du défunt</th><th>Date de décès</th><th>déclaré par</th><th>Statut</th><th>Action</th></tr></thead>
-<tbody>
-{% for r in rows %}
-<tr>
-  <td>{{ r[0] }}</td>
-  <td>{{ r[1] }}</td>
-  <td>{{ r[2] }}</td>
-  <td>{{ r[3] }}</td>
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Suivi des déclarations de décès</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .wrap { max-width: 1400px; margin: 0 auto; }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .muted { color: #666; margin-top: 4px; }
+    .msg {
+      margin: 12px 0;
+      padding: 10px 12px;
+      border-radius: 10px;
+    }
+    .ok { background: #eaffea; border: 1px solid #b8ffb8; color: #0a5a0a; }
+    .err { background: #ffe9ea; border: 1px solid #ffb3b8; color: #7a0010; }
 
-  <td>
-    <form method="post" action="{{ url_for('deuils_pendants_update', id=r[0]) }}" style="display:inline;">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <select name="statut" required>
-        <option value="déclaré" {{ 'selected' if r[6]=='déclaré' else '' }}>déclaré</option>
-        <option value="validé" {{ 'selected' if r[6]=='validé' else '' }}>validé</option>
-        <option value="non-éligible" {{ 'selected' if r[6]=='non-éligible' else '' }}>non-éligible</option>
-        <option value="comptabilisé" {{ 'selected' if r[6]=='comptabilisé' else '' }}>comptabilisé</option>
-      </select>
-      <button class="btn" type="submit">Save</button>
-    </form>
-  </td>
+    table { width: 100%; border-collapse: collapse; }
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+      vertical-align: middle;
+    }
+    th { background: #f6f6f6; }
 
-  <td>
-    {% if r[6] == "validé" %}
-      <form method="post"
-            action="{{ url_for('trigger_prestation', deces_id=r[0]) }}"
-            onsubmit="return confirm('Confirmer le déclenchement comptable ?');"
-            style="display:inline;">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <button class="btn" type="submit">Déclencher la prestation décès</button>
-      </form>
-    {% endif %}
-  </td>
-</tr>
-{% endfor %}
+    input, select {
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+    }
 
-{% if not rows %}
-<tr><td colspan="6">Aucun décès pendant.</td></tr>
-{% endif %}
-</tbody>
-</table>
-</div></body></html>
+    .btn {
+      padding: 7px 10px;
+      border: 1px solid #111;
+      border-radius: 10px;
+      background: #111;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .btn2 {
+      padding: 7px 10px;
+      border: 1px solid #111;
+      border-radius: 10px;
+      background: #fff;
+      color: #111;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .inline-form {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+    }
+
+    .small { font-size: 12px; color: #666; }
+
+    @media (max-width: 900px) {
+      table, thead, tbody, th, td, tr { display: block; }
+      thead { display: none; }
+      tr {
+        border: 1px solid #eee;
+        border-radius: 12px;
+        margin-bottom: 12px;
+        padding: 8px;
+      }
+      td {
+        border: none;
+        padding: 8px 4px;
+      }
+      td::before {
+        content: attr(data-label);
+        display: block;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div>
+      <h2 style="margin:0;">Deuils pendants</h2>
+      <div class="muted">Suivi administratif et comptable des déclarations de décès</div>
+    </div>
+    <div>
+      <a class="btn2" href="{{ url_for('home') }}">← Retour</a>
+    </div>
+  </div>
+
+  {% if message %}
+    <div class="msg {{ 'err' if is_error else 'ok' }}">{{ message }}</div>
+  {% endif %}
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Identifiant du défunt</th>
+        <th>Date de décès</th>
+        <th>Déclaré par</th>
+        <th>Statut</th>
+        <th>Prestation</th>
+        <th>Action statut</th>
+        <th>Action comptable</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in rows %}
+      <tr>
+        <td data-label="ID">{{ r[0] }}</td>
+        <td data-label="Identifiant du défunt">{{ r[1] }}</td>
+        <td data-label="Date de décès">
+          {% if r[2] %}
+            {{ r[2].strftime('%d/%m/%Y') if r[2].strftime else r[2] }}
+          {% else %}
+            —
+          {% endif %}
+        </td>
+        <td data-label="Déclaré par">{{ r[3] or '—' }}</td>
+
+        <td data-label="Statut">{{ r[6] or 'déclaré' }}</td>
+
+        <td data-label="Prestation">
+          {% if r[7] is not none %}
+            {{ r[7] }}
+          {% else %}
+            —
+          {% endif %}
+        </td>
+
+        <td data-label="Action statut">
+          <form method="post"
+                action="{{ url_for('deuils_pendants_update', id=r[0]) }}"
+                class="inline-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <select name="statut" required>
+              <option value="déclaré" {{ 'selected' if r[6]=='déclaré' else '' }}>déclaré</option>
+              <option value="validé" {{ 'selected' if r[6]=='validé' else '' }}>validé</option>
+              <option value="non-éligible" {{ 'selected' if r[6]=='non-éligible' else '' }}>non-éligible</option>
+              <option value="comptabilisé" {{ 'selected' if r[6]=='comptabilisé' else '' }}>comptabilisé</option>
+            </select>
+            <button class="btn" type="submit">Save</button>
+          </form>
+        </td>
+
+        <td data-label="Action comptable">
+          {% if r[6] == "validé" %}
+            <form method="post"
+                  action="{{ url_for('trigger_prestation', deces_id=r[0]) }}"
+                  class="inline-form"
+                  onsubmit="return confirm('Confirmer le déclenchement comptable de la prestation décès ?');">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="btn" type="submit">Déclencher la prestation décès</button>
+            </form>
+          {% elif r[6] == "comptabilisé" %}
+            <span class="small">Déjà comptabilisé</span>
+          {% else %}
+            <span class="small">Disponible après validation</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+
+      {% if not rows %}
+      <tr>
+        <td colspan="8">Aucun décès pendant.</td>
+      </tr>
+      {% endif %}
+    </tbody>
+  </table>
+
+</div>
+</body>
+</html>
 """
-# Endpoint#11 — Suivi des deuils pendants
-@app.route("/deuils_pendants", methods=["GET", "POST"])
+
+
+# 
+# Endpoint #11 — Suivi des deuils pendants
+
+@app.route("/deuils_pendants", methods=["GET"])
 @admin_required
 def deuils_pendants():
     rows = list_deces_pendants()
-    return render_template_string(DEUILS_PENDANTS_PAGE, rows=rows)
+    return render_template_string(
+        DEUILS_PENDANTS_PAGE,
+        rows=rows,
+        message="",
+        is_error=False
+    )
+
 
 @app.post("/deuils_pendants/update/<int:id>")
 @admin_required
 def deuils_pendants_update(id: int):
     statut = (request.form.get("statut") or "déclaré").strip()
-    #ref = (request.form.get("reference") or "").strip()
 
-    #log.info("Tentative de mise à jour du statut du décès, index: %d, statut: %s, erreur: %s", id, statut, "Aucune erreur détectée")  # Log initial avant validation
+    log.info("Tentative de mise à jour du statut du décès, id=%s, statut=%s", id, statut)
 
-    if request.method == "POST":
-       try :
-         if statut not in ("déclaré", "validé", "non-éligible", "comptabilisé"):
+    try:
+        if statut not in ("déclaré", "validé", "non-éligible", "comptabilisé"):
             raise ValueError("Statut invalide.")
 
-         #log.info("demarrage de la mise à jour du statut du décès, index: %d, statut: %s, erreur: %s", id, statut, "Aucune erreur détectée")
+        update_deces(id, statut)
+        log.info("Mise à jour du statut OK, id=%s, statut=%s", id, statut)
 
-         update_deces(id, statut)
-         message, is_error = "Statut mis à jour OK.", False
-       except Exception as e:
-         message, is_error = f"Erreur: {e}", True
-         log.exception("Erreur lors de la mise à jour du statut du décès: %s", e)
-    return redirect(url_for("deuils_pendants"))
+        rows = list_deces_pendants()
+        return render_template_string(
+            DEUILS_PENDANTS_PAGE,
+            rows=rows,
+            message="Statut mis à jour OK.",
+            is_error=False
+        )
+
+    except Exception as e:
+        log.exception("Erreur lors de la mise à jour du statut du décès: %s", e)
+        rows = list_deces_pendants()
+        return render_template_string(
+            DEUILS_PENDANTS_PAGE,
+            rows=rows,
+            message=f"Erreur: {e}",
+            is_error=True
+        )
+
 
 @app.post("/deces/prestation/<int:deces_id>")
 @admin_required
 def trigger_prestation(deces_id):
+    try:
+        with get_conn() as conn:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    SELECT phone, prestation, statut
+                    FROM deces
+                    WHERE id=%s
+                """, (deces_id,))
+                row = cur.fetchone()
 
-    with get_conn() as conn:
-        with conn.cursor() as cur:
-            stats=fetch_dashboard_stats()
-            prestation = stats["P"]
+                if not row:
+                    abort(404)
 
-            cur.execute("""
-                UPDATE deces
-                SET prestation=%s
-                WHERE id=%s
-            """,(prestation, deces_id))
+                phone = row[0]
+                prestation = float(row[1]) if row[1] is not None else 0.0
+                statut = row[2]
+
+                if statut == "comptabilisé":
+                    rows = list_deces_pendants()
+                    return render_template_string(
+                        DEUILS_PENDANTS_PAGE,
+                        rows=rows,
+                        message="Cette prestation a déjà été comptabilisée.",
+                        is_error=False
+                    )
+
+                if statut != "validé":
+                    raise ValueError("Le décès doit être validé avant comptabilisation.")
+
+        # Génération des écritures comptables
+        create_prestation_mouvements(phone, prestation)
+
+        with get_conn() as conn:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    UPDATE deces
+                    SET statut='comptabilisé'
+                    WHERE id=%s
+                """, (deces_id,))
             conn.commit()
 
-            cur.execute("""
-                SELECT phone, prestation, statut
-                FROM deces
-                WHERE id=%s
-            """,(deces_id,))
-            conn.commit()
-            row = cur.fetchone()
+        rows = list_deces_pendants()
+        return render_template_string(
+            DEUILS_PENDANTS_PAGE,
+            rows=rows,
+            message="Prestation décès comptabilisée avec succès.",
+            is_error=False
+        )
 
-            if not row:
-                abort(404)
-
-            #log.info("Données du décès pour déclenchement prestation, index: %d, phone: %s, prestation: %s, statut: %s", deces_id, row[0], row[1], row[2])
-
-            phone = row[0]
-            prestation = float(row[1])
-            statut = row[2]
-
-            if statut == "comptabilisé":
-                return redirect(url_for("deuils_pendants"))
-
-            if statut != "validé":
-                raise ValueError("Le décès doit être validé avant comptabilisation.")
-            
-            # L'adhérent est radié (statut "radié") et ne peut plus faire de mouvement, mais on garde son historique et ses données pour l'historique et les stats
-            #log.info("L'adhérant avec phone %s va être radié suite à la confirmation de son décès.", phone)
-            cur.execute("""
-             UPDATE membres
-             SET currentstatute=%s
-             WHERE phone=%s
-             """,('radié', phone))
-            conn.commit()
-            #log.info("L'adhérant avec phone %s radié suite à la confirmation de son décès.", phone)
-
-    create_prestation_mouvements(phone, prestation)
-
-    with get_conn() as conn:
-        with conn.cursor() as cur:
-            cur.execute("""
-            UPDATE deces
-            SET statut='comptabilisé'
-            WHERE id=%s or phone=%s
-            """,(deces_id, row[0]))
-        conn.commit()
-
-    return redirect(url_for("deuils_pendants"))
-
-
+    except Exception as e:
+        log.exception("Erreur lors du déclenchement comptable de la prestation: %s", e)
+        rows = list_deces_pendants()
+        return render_template_string(
+            DEUILS_PENDANTS_PAGE,
+            rows=rows,
+            message=f"Erreur: {e}",
+            is_error=True
+        )
+    
 
 if __name__ == "__main__":
     # Local uniquement. En prod Render, gunicorn gère le port.
