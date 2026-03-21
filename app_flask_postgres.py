@@ -579,7 +579,18 @@ def delete_member(member_id: int):
         with conn.cursor() as cur:
             cur.execute("DELETE FROM membres WHERE id = %s", (member_id,))
         conn.commit()
-#
+
+def fetch_deces_by_phone(phone: str):
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT id, phone, date_deces, declared_by, reference, created_at,statut
+                FROM deces
+                WHERE phone=%s
+            """, (phone,))
+            return cur.fetchone()
+
+
 def fetch_member_by_phone(phone: str):
     with get_conn() as conn:
         with conn.cursor() as cur:
@@ -1459,6 +1470,11 @@ def deces():
     phone_in = (request.form.get("phone") or "").strip() if request.method == "POST" else ""
     date_in  = (request.form.get("date_deces") or "").strip() if request.method == "POST" else ""
     found_name = ""
+
+    dec = fetch_deces_by_phone(phone_in) if phone_in else None
+    if dec:
+        return render_template_string(DECES_PAGE, phone_in=phone_in, date_in=date_in,found_name="", 
+                                      message="Ce décès avais déjà été déclaré. Merci de contacter l'administrateur.", is_error=True)
 
     if request.method == "POST":
         m = fetch_member_by_phone(phone_in) if phone_in else None
