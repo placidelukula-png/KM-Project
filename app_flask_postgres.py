@@ -402,7 +402,7 @@ def create_prestation_mouvements(deceased_phone, prestation):
                         today,
                         C,
                         reference+"-"+phone,
-                        f"Cotisation décès de : {deceased_firstname} {deceased_lastname} //{deceased_phone}"
+                        f"Contribution décès de : {deceased_firstname} {deceased_lastname} // {deceased_phone}"
                     ))
 
                     cur.execute("""
@@ -1066,6 +1066,14 @@ DASHBOARD_PAGE = """
       </div>
     </div>
 
+    <div class="card">
+      <div class="icon">🎓</div>
+      <div>
+        <p class="t">Historique des décès</p>
+        <p class="d">Liste historique des décès d'adhérents.</p>
+        <a class="link" href="{{ url_for('deces_history') }}">Ouvrir</a>
+      </div>
+    </div>
     
     <!-- Zone 2: mentor + admin -->
     {% if connected_role in ('mentor','admin') %}
