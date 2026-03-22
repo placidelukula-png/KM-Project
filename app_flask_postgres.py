@@ -649,8 +649,8 @@ def list_deces_traites():
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                SELECT id, phone, date_deces, declared_by, reference, created_at,statut,prestation
-                FROM deces
+                SELECT phone,firstname,lastname,date_deces,statut,prestation
+                FROM membres left join deces on membres.phone = deces.phone
                 WHERE statut in ('comptabilisé', 'non-éligible', 'validé')
                 ORDER BY date_deces DESC, id DESC
             """)
@@ -2604,10 +2604,11 @@ DECES_HISTORY_PAGE = """
     {% for r in rows %}
       <tr>
         <td>{{ r[1] }}</td>
-        <td>{{ nam }}</td>
-        <td>{{ r[2].strftime('%d/%m/%Y') }}</td>  
+        <td>{{ r[2] }}</td>
+        <td>{{ r[3] }}</td>
+        <td>{{ r[4].strftime('%d/%m/%Y') }}</td>  
+        <td>{{ r[5] }}</td>
         <td>{{ r[6] }}</td>
-        <td>{{ r[7] }}</td>
       </tr>
     {% endfor %}
     {% if not rows %}<tr><td colspan="4">Aucun décès traité.</td></tr>{% endif %}
@@ -2620,8 +2621,8 @@ DECES_HISTORY_PAGE = """
 @login_required
 def deces_history():
     rows = list_deces_traites()
-    nam = fetch_first_last_by_phone(rows[1]) if rows else None
-    return render_template_string(DECES_HISTORY_PAGE, rows=rows,nam=nam)
+    #nam = fetch_first_last_by_phone(rows[1]) if rows else None
+    return render_template_string(DECES_HISTORY_PAGE, rows=rows)
 
 
 if __name__ == "__main__":
