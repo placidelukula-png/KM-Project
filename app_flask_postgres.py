@@ -584,7 +584,7 @@ def fetch_deces_by_phone(phone: str):
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                SELECT id, phone, date_deces, declared_by, reference, created_at,statut
+                SELECT id, phone, date_deces, declared_by, reference, created_at,statut,updated_by, updatedate, prestation
                 FROM deces
                 WHERE phone=%s
             """, (phone,))
@@ -634,7 +634,6 @@ def list_all_mouvements():
             """)
             return cur.fetchall()
 
-
 def list_deces_pendants():
     with get_conn() as conn:
         with conn.cursor() as cur:
@@ -642,6 +641,17 @@ def list_deces_pendants():
                 SELECT id, phone, date_deces, declared_by, reference, created_at,statut
                 FROM deces
                 WHERE statut in ('déclaré', 'validé')
+                ORDER BY date_deces DESC, id DESC
+            """)
+            return cur.fetchall()
+
+def list_deces_traites():
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT id, phone, date_deces, declared_by, reference, created_at,statut,prestation
+                FROM deces
+                WHERE statut in ('comptabilisé', 'non-éligible', 'validé')
                 ORDER BY date_deces DESC, id DESC
             """)
             return cur.fetchall()
@@ -2569,6 +2579,49 @@ def trigger_prestation(deces_id):
 
     return redirect(url_for("deuils_pendants"))
 
+
+# ----------------------------------------------------------------------------------------------------------------------------
+#   Endpoint #12 — Historique des décès (lecture seule de tous les décès traités, avec prestation versée et nom à l'affichage)
+# ----------------------------------------------------------------------------------------------------------------------------
+DECES_HISTORY_PAGE = """
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Historique des décès</title>
+<style>
+ body{font-family:Arial;margin:20px} .wrap{max-width:1100px;margin:0 auto}
+ .pill{display:inline-block;padding:6px 10px;border:1px solid #ddd;border-radius:999px;background:#fafafa;margin-bottom:10px}
+ table{width:100%;border-collapse:collapse}
+ th,td{padding:10px;border-bottom:1px solid #eee;text-align:left}
+ th{background:#f6f6f6}
+</style></head><body><div class="wrap">
+  <h2>Historique des décès</h2>
+  <p><a href="{{ url_for('home') }}">← Retour</a></p>
+  
+  <table>
+    <thead><tr>
+      <th>Date</th><th>phone</th><th>Nom complet</th><th>date de décès</th><th>Statut</th><th>prestation</th>
+    </tr></thead>
+    <tbody>
+    {% for r in rows %}
+      <tr>
+        <td>{{ r[1] }}</td>
+        <td>{{ nam }}</td>
+        <td>{{ r[2].strftime('%d/%m/%Y') }}</td>  
+        <td>{{ r[6] }}</td>
+        <td>{{ r[7] }}</td>
+      </tr>
+    {% endfor %}
+    {% if not rows %}<tr><td colspan="4">Aucun décès traité.</td></tr>{% endif %}
+    </tbody>
+  </table>
+</div></body></html>
+"""
+# Endpoint#12 Historique des décès (menu card)
+@app.get("/deces_history")
+@login_required
+def deces_history():
+    rows = list_deces_traites()
+    nam = fetch_first_last_by_phone(rows[1]) if rows else None
+    return render_template_string(DECES_HISTORY_PAGE, rows=rows,nam=nam)
 
 
 if __name__ == "__main__":
