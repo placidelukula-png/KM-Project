@@ -652,7 +652,7 @@ def list_deces_traites():
                 SELECT membres.phone,firstname,lastname,date_deces,statut,prestation
                 FROM membres left join deces on membres.phone = deces.phone
                 WHERE statut in ('comptabilisé', 'non-éligible', 'validé')
-                ORDER BY date_deces DESC, id DESC
+                ORDER BY date_deces DESC
             """)
             return cur.fetchall()
 
