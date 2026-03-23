@@ -2603,13 +2603,12 @@ DECES_HISTORY_PAGE = """
     <tbody>
     {% for r in rows %}
       <tr>
+        <td>{{ r[3] }}</td>
+        <td>{{ r[0] }}</td>
         <td>{{ r[1] }}</td>
         <td>{{ r[2] }}</td>
-        <td>{{ r[3] }}</td>
         <td>{{ r[4] }}</td>
-
         <td>{{ r[5] }}</td>
-        <td>{{ r[6] }}</td>
       </tr>
     {% endfor %}
     {% if not rows %}<tr><td colspan="4">Aucun décès traité.</td></tr>{% endif %}
