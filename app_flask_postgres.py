@@ -2606,7 +2606,8 @@ DECES_HISTORY_PAGE = """
         <td>{{ r[1] }}</td>
         <td>{{ r[2] }}</td>
         <td>{{ r[3] }}</td>
-        <td>{{ r[4].strftime('%d/%m/%Y') }}</td>  
+        <td>{{ r[4] }}</td>
+
         <td>{{ r[5] }}</td>
         <td>{{ r[6] }}</td>
       </tr>
@@ -2621,9 +2622,10 @@ DECES_HISTORY_PAGE = """
 @login_required
 def deces_history():
     rows = list_deces_traites()
-    #nam = fetch_first_last_by_phone(rows[1]) if rows else None
     return render_template_string(DECES_HISTORY_PAGE, rows=rows)
 
+
+#        <td>{{ r[4].strftime('%d/%m/%Y') }}</td>  
 
 if __name__ == "__main__":
     # Local uniquement. En prod Render, gunicorn gère le port.
