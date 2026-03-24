@@ -2598,12 +2598,12 @@ DECES_HISTORY_PAGE = """
   
   <table>
     <thead><tr>
-      <th>Date</th><th>phone</th><th>Nom complet</th><th>date de décès</th><th>Statut</th><th>prestation</th>
+      <th>Date de décès</th><th>phone</th><th>Prénom</th><th>Nom de famille</th><th>Dernier statut</th><th>prestation</th>
     </tr></thead>
     <tbody>
     {% for r in rows %}
       <tr>
-        <td>{{ r[3] }}</td>
+        <td>{{ r[3].strftime('%d/%m/%Y') }}</td>  
         <td>{{ r[0] }}</td>
         <td>{{ r[1] }}</td>
         <td>{{ r[2] }}</td>
@@ -2624,7 +2624,7 @@ def deces_history():
     return render_template_string(DECES_HISTORY_PAGE, rows=rows)
 
 
-#        <td>{{ r[4].strftime('%d/%m/%Y') }}</td>  
+#        <td>{{ r[3].strftime('%d/%m/%Y') }}</td>  
 
 if __name__ == "__main__":
     # Local uniquement. En prod Render, gunicorn gère le port.
