@@ -195,16 +195,18 @@ def init_db():
 #            cur.execute("""
 #                DELETE FROM comptes_techniques;
 #            """)
-#            # Mise en exploitation : demarrage avec statuts 'inactif' pour tous et mentor 'admin' pour , date d'adhésion 31/12/2099 et date de naissance 01/01/1920 pour tous. 
-            cur.execute("""
-                UPDATE membres SET currentstatute = 'inactif', 
-                                   mentor = 'admin', 
-                                   membershipdate = datetime.strptime("12/31/2099", "%d/%m/%Y").date(),
-                                   birthdate = datetime.strptime("01/01/1920", "%d/%m/%Y").date(), 
-                                   updatedate=CURRENT_DATE, 
-                                   updateuser='System'
-            """)
 
+#            # Mise en exploitation : demarrage avec statuts 'inactif' pour tous et mentor 'admin' pour , date d'adhésion 31/12/2099 et date de naissance 01/01/1920 pour tous.
+            cur.execute("""
+                UPDATE membres
+                SET currentstatute = 'inactif',
+                    mentor = 'admin',
+                    membershipdate = DATE '2099-12-31',
+                    birthdate = DATE '1920-01-01',
+                    balance = 0,
+                    updatedate = CURRENT_DATE,
+                    updateuser = 'System'
+            """)
 
 
         conn.commit()
