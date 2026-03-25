@@ -187,16 +187,15 @@ def init_db():
                 );
             """)
 
-            # fichier technique comptable (comptes techniques)
+
+            # Effaçage de toutes les données de la table MOUVEMENTS (données comptables)
             cur.execute("""
-                CREATE TABLE IF NOT EXISTS comptes_techniques (
-                   code TEXT PRIMARY KEY,
-                   libelle TEXT,
-                   balance DECIMAL(18,2) DEFAULT 0,
-                   updatedate DATE,
-                   updateuser TEXT
-                );
-            """) 
+                DELETE FROM mouvements;
+            """)
+            # Effaçage de toutes les données de la table COMPTES_TECHNIQUES (données comptables)
+            cur.execute("""
+                DELETE FROM comptes_techniques;
+            """)
 
         conn.commit()
 
@@ -1984,7 +1983,7 @@ DATAGENERALFOLLOWUP_PAGE = """
 <body>
   <div class="wrap">
     <div style="display:flex;justify-content:space-between;">
-        <span><h2>KM-Kimya  Les adhérants</h2></span>
+        <span><h2>KM-Kimya      Les membres</h2></span>
         <span><a href="{{ url_for('home') }}">← Retour</a></span>
     </div>
   </div>
@@ -2001,6 +2000,11 @@ DATAGENERALFOLLOWUP_PAGE = """
           <button class="btn" type="submit">Vérifier</button>
           <a class="btn secondary" href="{{ url_for('datageneralfollowup') }}">Réinitialiser</a>
         </div>
+***        
+        <div class="row" style="margin-top:0;">
+          <a class="btn secondary" href="{{ url_for('statutes_update') }}">Actualisation statuts</a>
+        </div>
+***
       </div>
     </form>
   </div> 
@@ -2272,6 +2276,7 @@ def add_security_headers(resp):
     resp.headers["Content-Security-Policy"] = "default-src 'self' 'unsafe-inline';"
     return resp
 
+
 @app.get("/datageneralfollowup/search")
 @admin_required
 def search_member():
@@ -2331,6 +2336,54 @@ def search_member():
         statutes=STATUTES,
         q_phone=q_phone,
     )
+
+@app.get("/statutes_update()")
+@login_required
+def edit(member_id: int):
+    row = fetch_one(member_id)
+    rows = fetch_all_membres()
+    phone = session.get("user")
+    prof = get_user_profile_by_phone(phone) if phone else None
+    firstname, lastname, membertype = (prof or ("", "", "membre"))
+    if not row:
+        return render_template_string(
+            DATAGENERALFOLLOWUP_PAGE,
+            rows=rows,
+            edit_row=None,
+            edit_birthdate="",
+            edit_membershipdate="",
+            edit_balance=0.0,
+            #message=f"Member ID {member_id} introuvable.",
+            #is_error=True,
+            message="",
+            is_error=False,
+            ##
+            member_types=MEMBER_TYPES,
+            statutes=STATUTES,
+            #
+            user_fullname=f"{firstname} {lastname}".strip(),
+            user_membertype=membertype,
+            #
+        )
+
+    edit_birthdate = row[6].strftime("%d/%m/%Y") if row[6] else ""
+    edit_membershipdate = row[14].strftime("%d/%m/%Y")
+    edit_balance = float(row[10]) if row[10] is not None else 0.0
+
+    
+    return render_template_string(
+        DATAGENERALFOLLOWUP_PAGE,
+        rows=rows,
+        edit_row=row,
+        edit_birthdate=edit_birthdate,
+        edit_membershipdate=edit_membershipdate,
+        edit_balance=edit_balance,
+        message="",
+        is_error=False,
+        member_types=MEMBER_TYPES,
+        statutes=STATUTES,
+    )
+
 
 # --------------------------------------------------------------------------------------
 # Endpoint #10 — Transfert de cotisations (débit/crédit + blocage si solde insuffisant)
