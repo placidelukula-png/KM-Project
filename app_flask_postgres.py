@@ -1981,12 +1981,12 @@ DATAGENERALFOLLOWUP_PAGE = """
 
 <body>
   <div class="wrap">
-    <div class="d-flex flex-nowrap" style="margin-top:0;">
-        <h2>KM-Kimya ...  Les membres</h2>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 style="margin:0;">KM-Kimya        Les membres</h2>
         <a href="{{ url_for('home') }}">← Retour</a>
     </div>
-  </div>
-  
+  </div>  
+
   <!-- Recherche rapide par phone -->
   <div class="card" style="margin-top:0px; padding:12px;">
     <form method="get" action="{{ url_for('search_member') }}">
