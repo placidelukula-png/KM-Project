@@ -2339,7 +2339,7 @@ def search_member():
 
 @app.get("/statutes_update()")
 @login_required
-def edit(member_id: int):
+def statutes_update():
     row = fetch_one(member_id)
     rows = fetch_all_membres()
     phone = session.get("user")
