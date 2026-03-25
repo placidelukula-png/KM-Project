@@ -1982,7 +1982,7 @@ DATAGENERALFOLLOWUP_PAGE = """
 <body>
   <div class="wrap">
     <div style="display:flex;justify-content:space-between;">
-        <span><h2>KM-Kimya        Les membres</h2>
+        <span><h2>KM-Kimya  Les membres</h2>
         <a href="{{ url_for('home') }}">← Retour</a></span>
     </div>
   </div>
@@ -1990,18 +1990,20 @@ DATAGENERALFOLLOWUP_PAGE = """
   <!-- Recherche rapide par phone -->
   <div class="card" style="margin-top:0px; padding:12px;">
     <form method="get" action="{{ url_for('search_member') }}">
-      <div class="grid" style="grid-template-columns: 1fr  1fr 1fr; align-items:end;">
+      <div class="grid" style="grid-template-columns: 1fr 1fr 2fr; align-items:end;">
         <div class="d-flex flex-nowrap" style="margin-top:0;">
           <label>Rechercher un adhérent par phone</label>
-          <input name="q_phone" placeholder="Ex: 998886955" value="{{ q_phone or '' }}">
+          <input name="q_phone" placeholder="Exemple: 998886955" value="{{ q_phone or '' }}">
         </div>
         <div class="d-flex flex-nowrap" style="margin-top:0;">
           <button class="btn" type="submit">Vérifier</button>
           <a class="btn secondary" href="{{ url_for('datageneralfollowup') }}">Réinitialiser</a>
-        </div>  
-        <div class="d-flex flex-nowrap" style="margin-top:0;">
-          <a class="btn secondary" href="{{ url_for('statutes_update') }}">Actualisation statuts</a>
         </div>
+        <div class="d-flex flex-nowrap" style="margin-top:0;">
+          <a class="btn secondary" href="{{ url_for('statutes_update') }}" style="color: red; background-color: blue;">
+            Actualisation statuts
+          </a>
+        </div>  
       </div>
     </form>
   </div> 
