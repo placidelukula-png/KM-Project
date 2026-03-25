@@ -187,15 +187,14 @@ def init_db():
                 );
             """)
 
-
-            # Effaçage de toutes les données de la table MOUVEMENTS (données comptables)
-            cur.execute("""
-                DELETE FROM mouvements;
-            """)
-            # Effaçage de toutes les données de la table COMPTES_TECHNIQUES (données comptables)
-            cur.execute("""
-                DELETE FROM comptes_techniques;
-            """)
+#            # Effaçage de toutes les données de la table MOUVEMENTS (données comptables)
+#            cur.execute("""
+#                DELETE FROM mouvements;
+#            """)
+#            # Effaçage de toutes les données de la table COMPTES_TECHNIQUES (données comptables)
+#            cur.execute("""
+#                DELETE FROM comptes_techniques;
+#            """)
 
         conn.commit()
 
@@ -1983,8 +1982,8 @@ DATAGENERALFOLLOWUP_PAGE = """
 <body>
   <div class="wrap">
     <div style="display:flex;justify-content:space-between;">
-        <span><h2>KM-Kimya      Les membres</h2></span>
-        <span><a href="{{ url_for('home') }}">← Retour</a></span>
+        <span><h2>KM-Kimya        Les membres</h2>
+        <a href="{{ url_for('home') }}">← Retour</a></span>
     </div>
   </div>
   
@@ -1992,19 +1991,19 @@ DATAGENERALFOLLOWUP_PAGE = """
   <div class="card" style="margin-top:0px; padding:12px;">
     <form method="get" action="{{ url_for('search_member') }}">
       <div class="grid" style="grid-template-columns: 2fr 1fr; align-items:end;">
+       <span>
         <div>
-          <label>Rechercher un membre par phone</label>
-          <input name="q_phone" placeholder="Ex: 815550066" value="{{ q_phone or '' }}">
+          <label>Rechercher un adhérent par phone</label>
+          <input name="q_phone" placeholder="Ex: 998886955" value="{{ q_phone or '' }}">
         </div>
         <div class="row" style="margin-top:0;">
           <button class="btn" type="submit">Vérifier</button>
           <a class="btn secondary" href="{{ url_for('datageneralfollowup') }}">Réinitialiser</a>
-        </div>
-***        
+        </div>  
         <div class="row" style="margin-top:0;">
           <a class="btn secondary" href="{{ url_for('statutes_update') }}">Actualisation statuts</a>
         </div>
-***
+       </span>
       </div>
     </form>
   </div> 
