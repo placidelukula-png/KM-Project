@@ -1999,7 +1999,7 @@ DATAGENERALFOLLOWUP_PAGE = """
           <button class="btn" type="submit">Vérifier</button>
           <a class="btn secondary" href="{{ url_for('datageneralfollowup') }}">Réinitialiser</a>
         </div>
-        <div class="d-flex flex-nowrap" style="margin-top:0;">
+        <div class="d-flex flex-nowrap";">
          <a class="btn secondary ms-auto" href="{{ url_for('statutes_update') }}" style="color: blue; background-color: lightblue;">
             Actualisation statuts
          </a>
