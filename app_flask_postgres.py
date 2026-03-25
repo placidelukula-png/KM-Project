@@ -1981,9 +1981,9 @@ DATAGENERALFOLLOWUP_PAGE = """
 
 <body>
   <div class="wrap">
-    <div style="display:flex;justify-content:space-between;">
-        <span><h2>KM-Kimya  Les membres</h2>
-        <a href="{{ url_for('home') }}">← Retour</a></span>
+    <div class="d-flex flex-nowrap" style="margin-top:0;">
+        <h2>KM-Kimya ...  Les membres</h2>
+        <a href="{{ url_for('home') }}">← Retour</a>
     </div>
   </div>
   
@@ -1999,7 +1999,7 @@ DATAGENERALFOLLOWUP_PAGE = """
           <button class="btn" type="submit">Vérifier</button>
           <a class="btn secondary" href="{{ url_for('datageneralfollowup') }}">Réinitialiser</a>
         </div>
-        <div class="d-flex flex-nowrap";">
+        <div class="d-flex flex-nowrap" style="margin-top:0;">
          <a class="btn secondary ms-auto" href="{{ url_for('statutes_update') }}" style="color: blue; background-color: lightblue;">
             Actualisation statuts
          </a>
