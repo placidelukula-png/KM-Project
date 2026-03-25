@@ -1991,19 +1991,17 @@ DATAGENERALFOLLOWUP_PAGE = """
   <div class="card" style="margin-top:0px; padding:12px;">
     <form method="get" action="{{ url_for('search_member') }}">
       <div class="grid" style="grid-template-columns: 2fr 1fr; align-items:end;">
-       <span>
-        <div>
+        <div class="d-flex flex-nowrap" style="margin-top:0;">
           <label>Rechercher un adhérent par phone</label>
           <input name="q_phone" placeholder="Ex: 998886955" value="{{ q_phone or '' }}">
         </div>
-        <div class="row" style="margin-top:0;">
+        <div class="d-flex flex-nowrap" style="margin-top:0;">
           <button class="btn" type="submit">Vérifier</button>
           <a class="btn secondary" href="{{ url_for('datageneralfollowup') }}">Réinitialiser</a>
         </div>  
-        <div class="row" style="margin-top:0;">
+        <div class="d-flex flex-nowrap" style="margin-top:0;">
           <a class="btn secondary" href="{{ url_for('statutes_update') }}">Actualisation statuts</a>
         </div>
-       </span>
       </div>
     </form>
   </div> 
