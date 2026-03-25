@@ -1988,25 +1988,34 @@ DATAGENERALFOLLOWUP_PAGE = """
   </div>  
 
   <!-- Recherche rapide par phone -->
+
   <div class="card" style="margin-top:0px; padding:12px;">
     <form method="get" action="{{ url_for('search_member') }}">
-      <div class="grid" style="grid-template-columns: 1fr 1fr 1fr; align-items:end;">
-        <div class="d-flex flex-nowrap" style="margin-top:0;">
-          <label>Rechercher un adhérent par phone</label>
-          <input name="q_phone" placeholder="Exemple: 998886955" value="{{ q_phone or '' }}">
+        <div class="grid" style="grid-template-columns: 1fr 1fr 1fr; align-items:end;">
+
+        <!-- Champ recherche -->
+        <div style="display:flex; flex-direction:column;">
+            <label>Rechercher un adhérent par phone</label>
+            <input name="q_phone" placeholder="Exemple: 998886955" value="{{ q_phone or '' }}">
         </div>
-        <div class="d-flex flex-nowrap" style="margin-top:0;">
-          <button class="btn" type="submit">Vérifier</button>
-          <a class="btn secondary" href="{{ url_for('datageneralfollowup') }}">Réinitialiser</a>
+
+        <!-- Boutons Vérifier + Réinitialiser -->
+        <div style="display:flex; align-items:center; gap:10px;">
+            <button class="btn" type="submit">Vérifier</button>
+            <a class="btn secondary" href="{{ url_for('datageneralfollowup') }}">Réinitialiser</a>
         </div>
-        <div class="d-flex flex-nowrap" style="margin-top:0;">
-         <a class="btn secondary ms-auto" href="{{ url_for('statutes_update') }}" style="color: blue; background-color: lightblue;">
+
+        <!-- Bouton Actualisation -->
+        <div style="display:flex; align-items:center;">
+            <a class="btn secondary" href="{{ url_for('statutes_update') }}"
+            style="color: blue; background-color: lightblue;">
             Actualisation statuts
-         </a>
+            </a>
         </div>
-      </div>
+
+        </div>
     </form>
-  </div> 
+  </div>  
 
   {% if edit_row %}
   <div class="card">
