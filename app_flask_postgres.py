@@ -195,6 +195,17 @@ def init_db():
 #            cur.execute("""
 #                DELETE FROM comptes_techniques;
 #            """)
+#            # Mise en exploitation : demarrage avec statuts 'inactif' pour tous et mentor 'admin' pour , date d'adhésion 31/12/2099 et date de naissance 01/01/1920 pour tous. 
+            cur.execute("""
+                UPDATE membres SET currentstatute = 'inactif', 
+                                   mentor = 'admin', 
+                                   membershipdate = datetime.strptime("12/31/2099", "%d/%m/%Y").date(),
+                                   birthdate = datetime.strptime("01/01/1920", "%d/%m/%Y").date(), 
+                                   updatedate=CURRENT_DATE, 
+                                   updateuser='System'
+            """)
+
+
 
         conn.commit()
 
@@ -1756,6 +1767,9 @@ import csv
 def import_mouvements():
     if request.method == "GET":
         return render_template_string(IMPORT_PAGE, message="", is_error=False, stats="")
+    # CONTRIBUTION ATTENDUE ACTUELLE: lire la table id_data sous la clé ***our chaque ligne:
+    stats=fetch_dashboard_stats()
+    contribution_minimum = stats["C"]
 
     # POST
     f = request.files.get("mobilemoneyfile")
@@ -1793,7 +1807,7 @@ def import_mouvements():
                         #mouvem_date = datetime.strptime(mvt_date, "%d/%m/%Y").date()
                         #mvt_date=mouvem_date
                         #libelle = (row.get("reference") or "").strip()
-                        libelle="Transfert mobile money du %s - %s" % (mvt_date, reference)
+                        libelle="Transfert Mobile Money du %s - %s" % (mvt_date, reference)
                         updatedate=date.today()
 
                         #log.info("contenu de 'amount' formaté=%s", amount)  
@@ -1839,7 +1853,7 @@ def import_mouvements():
                           SET currentstatute = 'inactif',
                               updatedate = CURRENT_DATE,
                               updateuser = %s
-                          WHERE phone = %s AND balance <  0 AND currentstatute = 'actif'
+                          WHERE phone = %s AND balance <  contribution_minimum AND currentstatute in ('actif','probatoire')
                         """, (session.get("user"), phone))
                         if cur.rowcount:
                             flagged_inactif += 1
@@ -1982,7 +1996,7 @@ DATAGENERALFOLLOWUP_PAGE = """
 <body>
   <div class="wrap">
     <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h2 style="margin:0;">KM-Kimya        Les membres</h2>
+        <h2 style="margin:0;">KM-Kimya__________Les membres</h2>
         <a href="{{ url_for('home') }}">← Retour</a>
     </div>
   </div>  
