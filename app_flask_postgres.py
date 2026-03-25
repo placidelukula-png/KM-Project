@@ -1990,7 +1990,7 @@ DATAGENERALFOLLOWUP_PAGE = """
   <!-- Recherche rapide par phone -->
   <div class="card" style="margin-top:0px; padding:12px;">
     <form method="get" action="{{ url_for('search_member') }}">
-      <div class="grid" style="grid-template-columns: 2fr 1fr; align-items:end;">
+      <div class="grid" style="grid-template-columns: 1fr  1fr 1fr; align-items:end;">
         <div class="d-flex flex-nowrap" style="margin-top:0;">
           <label>Rechercher un adhérent par phone</label>
           <input name="q_phone" placeholder="Ex: 998886955" value="{{ q_phone or '' }}">
