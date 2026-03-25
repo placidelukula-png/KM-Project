@@ -1990,7 +1990,7 @@ DATAGENERALFOLLOWUP_PAGE = """
   <!-- Recherche rapide par phone -->
   <div class="card" style="margin-top:0px; padding:12px;">
     <form method="get" action="{{ url_for('search_member') }}">
-      <div class="grid" style="grid-template-columns: 1fr 1fr 2fr; align-items:end;">
+      <div class="grid" style="grid-template-columns: 1fr 1fr 1fr; align-items:end;">
         <div class="d-flex flex-nowrap" style="margin-top:0;">
           <label>Rechercher un adhérent par phone</label>
           <input name="q_phone" placeholder="Exemple: 998886955" value="{{ q_phone or '' }}">
@@ -1999,11 +1999,11 @@ DATAGENERALFOLLOWUP_PAGE = """
           <button class="btn" type="submit">Vérifier</button>
           <a class="btn secondary" href="{{ url_for('datageneralfollowup') }}">Réinitialiser</a>
         </div>
-        <div class="d-flex flex-nowrap" style="margin-top:0; align-items:end;">
-          <a class="btn secondary" href="{{ url_for('statutes_update') }}" style="color: blue; background-color: lightblue;">
+        <div class="d-flex flex-nowrap" style="margin-top:0;">
+         <a class="btn secondary ms-auto" href="{{ url_for('statutes_update') }}" style="color: blue; background-color: lightblue;">
             Actualisation statuts
-          </a>
-        </div>  
+         </a>
+        </div>
       </div>
     </form>
   </div> 
