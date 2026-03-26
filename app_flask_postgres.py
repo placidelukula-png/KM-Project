@@ -535,18 +535,18 @@ def fetch_password_hash_and_statute_by_phone(phone: str):
 
 
 def insert_member(phone, membertype, mentor, lastname, firstname, birthdate_date, idtype, idpicture_url,
-                  currentstatute, updateuser, password_plain):
+                  currentstatute, updateuser, password_plain,membershipdate):
     pwd_hash = generate_password_hash(password_plain)
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
                 INSERT INTO membres
                 (phone, membertype, mentor, lastname, firstname, birthdate, idtype, idpicture_url,
-                 currentstatute, updatedate, updateuser, password_hash)
+                 currentstatute, updatedate, updateuser, password_hash, membershipdate)
                 VALUES
-                (%s,%s,%s,%s,%s,%s,%s,%s,%s,CURRENT_DATE,%s,%s)
+                (%s,%s,%s,%s,%s,%s,%s,%s,%s,CURRENT_DATE,%s,%s,%s)
             """, (phone, membertype, mentor, lastname, firstname, birthdate_date, idtype, idpicture_url,
-                  currentstatute, updateuser, pwd_hash))
+                  currentstatute, updateuser, pwd_hash, membershipdate))
         conn.commit()
 
 def update_member(
