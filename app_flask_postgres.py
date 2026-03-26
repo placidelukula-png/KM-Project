@@ -187,6 +187,11 @@ def init_db():
                 );
             """)
 
+            # Effaçage de toutes les données de la table deces (table des décès declarés, en cours de traitement ou traités)
+            cur.execute("""
+                DELETE FROM deces;
+            """)
+
 #            # Effaçage de toutes les données de la table MOUVEMENTS (données comptables)
 #            cur.execute("""
 #                DELETE FROM mouvements;
@@ -737,6 +742,26 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
                         (amount, from_phone, from_phone))
             cur.execute("UPDATE membres SET balance = balance + %s, updatedate=CURRENT_DATE, updateuser=%s WHERE phone=%s",
                         (amount, from_phone, to_phone))
+
+            # 4) update currentstatute and membershipdate (ex: réactiver un membre inactif qui reçoit un transfert)
+            # log.info("Avant transfert: from %s statut=%s, to %s statut=%s", from_phone, me[9], to_phone, to_member[9])
+            # logique métier : si le membre reçoit un transfert et qu'il est inactif, on le réactive et on met à jour sa date d'adhésion (ex: pour que les cotisations soient calculées correctement ensuite)
+            # logique métier : si le membre envoie un transfert et qu'il est inactif, on ne change pas son statut (il doit recevoir un transfert pour être réactivé, on ne veut pas que l'envoi d'un transfert puisse faire basculer un membre en actif)
+            cur.execute("""
+                UPDATE membres
+                SET currentstatute = CASE
+                    WHEN phone = %s AND currentstatute = 'inactif' THEN 'actif'
+                    ELSE currentstatute
+                END,
+                membershipdate = CASE
+                    WHEN phone = %s AND currentstatute = 'inactif' THEN CURRENT_DATE
+                    ELSE membershipdate
+                END,
+                updatedate=CURRENT_DATE,
+                updateuser=%s
+                WHERE phone IN (%s, %s)
+            """, (to_phone, to_phone, from_phone, from_phone, to_phone)) 
+                    
         conn.commit()
 
 def fetch_member_by_phone_like(q_phone: str):
