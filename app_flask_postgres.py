@@ -197,17 +197,16 @@ def init_db():
 #            """)
 
 #            # Mise en exploitation : demarrage avec statuts 'inactif' pour tous et mentor 'admin' pour , date d'adhésion 31/12/2099 et date de naissance 01/01/1920 pour tous.
-            cur.execute("""
-                UPDATE membres
-                SET currentstatute = 'inactif',
-                    mentor = 'admin',
-                    membershipdate = DATE '2099-12-31',
-                    birthdate = DATE '1920-01-01',
-                    balance = 0,
-                    updatedate = CURRENT_DATE,
-                    updateuser = 'System'
-            """)
-
+#            cur.execute("""
+#                UPDATE membres
+#                SET currentstatute = 'inactif',
+#                    mentor = 'admin',
+#                    membershipdate = DATE '2099-12-31',
+#                    birthdate = DATE '1920-01-01',
+#                    balance = 0,
+#                    updatedate = CURRENT_DATE,
+#                    updateuser = 'System'
+#            """)
 
         conn.commit()
 
@@ -733,12 +732,11 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
                 VALUES (%s,%s,%s,%s,%s,'C',%s, %s)
             """, (to_phone, to_member[5], to_member[4], today, amount, ref_base + "-C", lib))
 
-            # 3) update balances
+            # 3) update balances 
             cur.execute("UPDATE membres SET balance = balance - %s, updatedate=CURRENT_DATE, updateuser=%s WHERE phone=%s",
                         (amount, from_phone, from_phone))
             cur.execute("UPDATE membres SET balance = balance + %s, updatedate=CURRENT_DATE, updateuser=%s WHERE phone=%s",
                         (amount, from_phone, to_phone))
-
         conn.commit()
 
 def fetch_member_by_phone_like(q_phone: str):
@@ -1677,10 +1675,11 @@ def add_member():
 
             mentor = session["user"]
             membertype = "membre"
-            statut = "probatoire"
+            statut = "inactif"
             updateuser = session["user"]
+            membershipdate = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
 
-            insert_member(phone, membertype, mentor, lastname, firstname, birthdate, idtype, None, statut, updateuser, password)
+            insert_member(phone, membertype, mentor, lastname, firstname, birthdate, idtype, None, statut, updateuser, password, membershipdate)
             return render_template_string(ADD_MEMBER_PAGE, message="Membre créé.", is_error=False)
         except psycopg.errors.UniqueViolation:
             return render_template_string(ADD_MEMBER_PAGE, message="Ce phone existe déjà.", is_error=True)
@@ -1769,7 +1768,7 @@ import csv
 def import_mouvements():
     if request.method == "GET":
         return render_template_string(IMPORT_PAGE, message="", is_error=False, stats="")
-    # CONTRIBUTION ATTENDUE ACTUELLE: lire la table id_data sous la clé ***our chaque ligne:
+    # CONTRIBUTION ATTENDUE ACTUELLE: à partir de la table id_data et du champ "C" (contribution minimale) pour appliquer la règle d'inactivité
     stats=fetch_dashboard_stats()
     contribution_minimum = stats["C"]
 
@@ -1855,8 +1854,8 @@ def import_mouvements():
                           SET currentstatute = 'inactif',
                               updatedate = CURRENT_DATE,
                               updateuser = %s
-                          WHERE phone = %s AND balance <  contribution_minimum AND currentstatute in ('actif','probatoire')
-                        """, (session.get("user"), phone))
+                          WHERE phone = %s AND balance <  %s AND currentstatute in ('actif','probatoire')
+                        """, (session.get("user"), phone, contribution_minimum))
                         if cur.rowcount:
                             flagged_inactif += 1
 
