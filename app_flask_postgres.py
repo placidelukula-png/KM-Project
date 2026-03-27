@@ -773,12 +773,16 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
                     ELSE 'inactif'
                 END
                 WHERE phone IN (%s, %s);
-                membershipdate = CASE 
+            """, (to_phone,C,to_phone,C,from_phone,C,from_phone,C,to_phone,from_phone))
+
+            cur.execute("""
+                UPDATE membres
+                SET membershipdate = CASE 
                     WHEN phone = %s AND to_month < 3 AND to_balance > %s AND membershipdate = %s THEN CURRENT_DATE
                     ELSE limit_date
                 END
                 WHERE phone = %s;
-            """, (to_phone,C,to_phone,C,from_phone,C,from_phone,C,to_phone,from_phone,to_phone,C,limit_date,to_phone))
+            """, (to_phone,C,limit_date,to_phone))
 #####                    
         conn.commit()
 
