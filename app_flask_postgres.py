@@ -765,19 +765,18 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
 
             cur.execute("""
                 UPDATE membres
-                SET currentstatute = 'probatoire',
-                    membershipdate = CURRENT_DATE    
-                    WHEN phone = %s AND to_month < 3 AND to_balance > %s AND membershipdate = %s              
-                    ELSE currentstatute, membershipdate
+                SET currentstatute = 'probatoire'
+                    WHEN phone = %s AND to_month < 3 AND to_balance > %s      
+                    ELSE currentstatute
                 END,
                 currentstatute = 'inactif'
-                    WHEN phone = %s AND from_month < 3 AND from_balance > %s AND currentstatute = 'actif' 
+                    WHEN phone = %s AND from_balance < %s 
                     ELSE currentstatute
                 END,
                 updatedate=CURRENT_DATE,
                 updateuser=%s
                 WHERE phone IN (%s, %s)
-            """, (to_phone,C,limit_date,from_phone,C, from_phone,to_phone,from_phone)) 
+            """, (to_phone,C,from_phone,C, from_phone,to_phone,from_phone)) 
                     
         conn.commit()
 
