@@ -763,7 +763,6 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
             to_balance = to_member[10]
             log.info("from_phone=%s,from_balance=%s, >>> to_phone=%s, to_balance=%s", from_phone, from_balance, to_phone, to_balance)
 #####
-            if to_month < 3 AND to_balance > 
              
             cur.execute("""
                 UPDATE membres
@@ -776,6 +775,8 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
                 END
                 WHERE phone IN (%s, %s);
             """, (to_phone,C,to_phone,C,from_phone,C,from_phone,C,to_phone,from_phone))
+
+            log.info("from_phone=%s,from_balance=%s, >>> to_phone=%s, to_balance=%s", from_phone, from_balance, to_phone, to_balance)
 
             cur.execute("""
                 UPDATE membres
