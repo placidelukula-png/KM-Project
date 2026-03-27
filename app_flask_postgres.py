@@ -767,10 +767,10 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
             cur.execute("""
                 UPDATE membres
                 SET currentstatute = CASE 
-                    WHEN phone = %s AND balance > %s AND MONTHS_BETWEEN(CURRENT_DATE, membershipdate) < 3 THEN 'probatoire'
-                    WHEN phone = %s AND MONTHS_BETWEEN(CURRENT_DATE, membershipdate) >= 3 AND balance > %s THEN 'actif'
-                    WHEN phone = %s AND MONTHS_BETWEEN(CURRENT_DATE, membershipdate) < 3 AND balance > %s THEN 'probatoire'
-                    WHEN phone = %s AND MONTHS_BETWEEN(CURRENT_DATE, membershipdate) >= 3 AND balance > %s THEN 'actif'
+                    WHEN phone = %s AND balance > %s AND TIMESTAMPDIFF(MONTH,CURRENT_DATE, membershipdate) < 3 THEN 'probatoire'
+                    WHEN phone = %s AND TIMESTAMPDIFF(MONTH,CURRENT_DATE, membershipdate) >= 3 AND balance > %s THEN 'actif'
+                    WHEN phone = %s AND TIMESTAMPDIFF(MONTH,CURRENT_DATE, membershipdate) < 3 AND balance > %s THEN 'probatoire'
+                    WHEN phone = %s AND TIMESTAMPDIFF(MONTH,CURRENT_DATE, membershipdate) >= 3 AND balance > %s THEN 'actif'
                     ELSE 'inactif'
                 END
                 WHERE phone IN (%s, %s);
