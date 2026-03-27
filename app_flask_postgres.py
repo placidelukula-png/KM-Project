@@ -746,7 +746,7 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
             cur.execute("UPDATE membres SET balance = balance + %s, updatedate=CURRENT_DATE, updateuser=%s WHERE phone=%s",
                         (amount, from_phone, to_phone))
 
-            # 4) update currentstatute and membershipdate (ex: réactiver un membre inactif qui reçoit un transfert)
+            # 4) update currentstatute and membershipdate (par exemple: réactiver un membre inactif qui reçoit un transfert)
             me = fetch_member_by_phone(from_phone)
             to_member = fetch_member_by_phone(to_phone)
             C= fetch_dashboard_stats()["C"]
@@ -763,13 +763,15 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
             to_balance = to_member[10]
             log.info("from_phone=%s,from_balance=%s, >>> to_phone=%s, to_balance=%s", from_phone, from_balance, to_phone, to_balance)
 #####
+            if to_month < 3 AND to_balance > 
+             
             cur.execute("""
                 UPDATE membres
                 SET currentstatute = CASE 
-                    WHEN phone = %s AND to_month < 3 AND to_balance > %s THEN 'probatoire'
-                    WHEN phone = %s AND to_month >= 3 AND to_balance > %s THEN 'actif'
-                    WHEN phone = %s AND from_month < 3 AND from_balance > %s THEN 'probatoire'
-                    WHEN phone = %s AND from_month >= 3 AND from_balance > %s THEN 'actif'
+                    WHEN phone = %s AND balance > %s AND MONTHS_BETWEEN(CURRENT_DATE, membershipdate) < 3 THEN 'probatoire'
+                    WHEN phone = %s AND MONTHS_BETWEEN(CURRENT_DATE, membershipdate) >= 3 AND balance > %s THEN 'actif'
+                    WHEN phone = %s AND MONTHS_BETWEEN(CURRENT_DATE, membershipdate) < 3 AND balance > %s THEN 'probatoire'
+                    WHEN phone = %s AND MONTHS_BETWEEN(CURRENT_DATE, membershipdate) >= 3 AND balance > %s THEN 'actif'
                     ELSE 'inactif'
                 END
                 WHERE phone IN (%s, %s);
@@ -778,7 +780,7 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
             cur.execute("""
                 UPDATE membres
                 SET membershipdate = CASE 
-                    WHEN phone = %s AND to_month < 3 AND to_balance > %s AND membershipdate = %s THEN CURRENT_DATE
+                    WHEN phone = %s AND balance > %s AND membershipdate = %s THEN CURRENT_DATE
                     ELSE limit_date
                 END
                 WHERE phone = %s;
