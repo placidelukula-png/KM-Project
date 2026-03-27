@@ -762,33 +762,24 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
             from_balance = me[10]
             to_balance = to_member[10]
             log.info("from_phone=%s,from_balance=%s, >>> to_phone=%s, to_balance=%s", from_phone, from_balance, to_phone, to_balance)
-
+#####
             cur.execute("""
                 UPDATE membres
-                SET currentstatute = 'probatoire'
-                    WHERE phone = %s AND to_month < 3 AND to_balance > %s      
-                END,
-                currentstatute = 'inactif'
-                    WHERE phone = %s AND from_balance < %s 
-                END,
-                updatedate=CURRENT_DATE,
-                updateuser=%s
-                WHERE phone IN (%s, %s)
-            """, (to_phone,C,from_phone,C, from_phone,to_phone,from_phone)) 
-                    
-            cur.execute("""
-                UPDATE membres
-                SET membershipdate = CURRENT_DATE
-                    WHERE phone = %s AND membershipdate = %s AND to_balance > %s      
-                END,
-                membershipdate = CURRENT_DATE
-                    WHERE phone = %s AND from_balance < %s 
-                END,
-                updatedate=CURRENT_DATE,
-                updateuser=%s
-                WHERE phone IN (%s, %s)
-            """, (to_phone,limit_date,C,from_phone,C, from_phone,to_phone,from_phone)) 
-                    
+                SET currentstatute = CASE 
+                    WHEN phone = %s AND to_month < 3 AND to_balance > %s THEN 'probatoire'
+                    WHEN phone = %s AND to_month >= 3 AND to_balance > %s THEN 'actif'
+                    WHEN phone = %s AND from_month < 3 AND from_balance > %s THEN 'probatoire'
+                    WHEN phone = %s AND from_month >= 3 AND from_balance > %s THEN 'actif'
+                    ELSE 'inactif'
+                END
+                WHERE phone IN (%s, %s);
+                SET membershipdate = CASE 
+                    WHEN phone = %s AND to_month < 3 AND to_balance > %s AND membershipdate = %s THEN CURRENT_DATE
+                    ELSE limit_date
+                END
+                WHERE phone = %s;
+            """, (to_phone,C,to_phone,C,from_phone,C,from_phone,C,to_phone,from_phone,to_phone,C,limit_date,to_phone))
+#####                    
         conn.commit()
 
 def fetch_member_by_phone_like(q_phone: str):
