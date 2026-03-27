@@ -726,21 +726,6 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
     today = datetime.utcnow().date()
     lib=f"Transfert de {amount} de {from_phone} vers {to_phone}"
 
-#from datetime import datetime
-#
-#def diff_month(d1, d2):
-#    """Calculates the difference in calendar months between two datetime objects."""
-#    return (d1.year - d2.year) * 12 + d1.month - d2.month
-#
-## Example usage:
-#date_1_str = '24/12/2021'
-#date_2_str = '26/3/2022'
-#
-#start = datetime.strptime(date_1_str, "%d/%m/%Y")
-#end = datetime.strptime(date_2_str, "%d/%m/%Y")
-#
-#difference_in_months = diff_month(end, start)
-
     with get_conn() as conn:
         with conn.cursor() as cur:
             # 1) insert mouvement DEBIT (from)
@@ -767,10 +752,10 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
             C= fetch_dashboard_stats()["C"]
 
                 #a) Période probatoire :
-            start = datetime.strptime(me[13], "%d/%m/%Y")
-            from_month = diff_month(start,today)
-            start = datetime.strptime(to_member[13], "%d/%m/%Y")
-            to_month = diff_month(start,today)
+            #start = datetime.strptime(me[13], "%d/%m/%Y")
+            from_month = diff_month(me[13],today)
+            #start = datetime.strptime(to_member[13], "%d/%m/%Y")
+            to_month = diff_month(to_member[13],today)
             log.info("from_phone=%s, to_phone=%s, >>> from_month=%s, to_month=%s", from_phone, to_phone, from_month, to_month)
             limit_date = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
                 #b) Solde actuel :
