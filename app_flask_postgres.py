@@ -767,11 +767,9 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
                 UPDATE membres
                 SET currentstatute = 'probatoire'
                     WHERE phone = %s AND to_month < 3 AND to_balance > %s      
-                    ELSE currentstatute
                 END,
                 currentstatute = 'inactif'
                     WHERE phone = %s AND from_balance < %s 
-                    ELSE currentstatute
                 END,
                 updatedate=CURRENT_DATE,
                 updateuser=%s
@@ -782,11 +780,9 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
                 UPDATE membres
                 SET membershipdate = CURRENT_DATE
                     WHERE phone = %s AND membershipdate = %s AND to_balance > %s      
-                    ELSE currentstatute
                 END,
                 membershipdate = CURRENT_DATE
                     WHERE phone = %s AND from_balance < %s 
-                    ELSE currentstatute
                 END,
                 updatedate=CURRENT_DATE,
                 updateuser=%s
