@@ -614,8 +614,7 @@ def fetch_member_by_phone(phone: str):
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                SELECT id, phone, membertype, mentor, lastname, firstname, birthdate,
-                       idtype, idpicture_url, currentstatute, balance, updatedate, updateuser, membershipdate
+                SELECT id, phone, membertype, mentor, lastname, firstname, birthdate,idtype, idpicture_url, currentstatute, balance, updatedate, updateuser, membershipdate
                 FROM membres
                 WHERE phone=%s
             """, (phone,))
@@ -768,9 +767,9 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
             C= fetch_dashboard_stats()["C"]
 
                 #a) Période probatoire :
-            start = datetime.strptime(me[14], "%d/%m/%Y")
+            start = datetime.strptime(me[13], "%d/%m/%Y")
             from_month = diff_month(start,today)
-            start = datetime.strptime(to_member[14], "%d/%m/%Y")
+            start = datetime.strptime(to_member[13], "%d/%m/%Y")
             to_month = diff_month(start,today)
             log.info("from_phone=%s, to_phone=%s, >>> from_month=%s, to_month=%s", from_phone, to_phone, from_month, to_month)
             limit_date = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
