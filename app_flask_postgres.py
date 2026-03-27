@@ -11,6 +11,7 @@ import os
 import logging
 from datetime import datetime, timedelta
 from functools import wraps
+import select
 from weakref import ref
 
 import psycopg
@@ -187,12 +188,12 @@ def init_db():
                 );
             """)
 
-            # Effaçage de toutes les données de la table deces (table des décès declarés, en cours de traitement ou traités)
-            cur.execute("""
-                DELETE FROM deces;
-            """)
+#            # Effaçage de toutes les données de la table deces (table des décès declarés, en cours de traitement ou traités)
+#            cur.execute("""
+#                DELETE FROM deces;
+#            """)
 
-#            # Effaçage de toutes les données de la table MOUVEMENTS (données comptables)
+#            # Effaçage de toutes les données des tables MOUVEMENTS et comptes_techniques (données comptables)
 #            cur.execute("""
 #                DELETE FROM mouvements;
 #            """)
@@ -215,6 +216,9 @@ def init_db():
 
         conn.commit()
 
+def diff_month(d1, d2):
+    """Calculates the difference in calendar months between two datetime objects."""
+    return (d1.year - d2.year) * 12 + d1.month - d2.month
 
 def fetch_first_last_by_phone(phone: str):
     with get_conn() as conn:
@@ -611,7 +615,7 @@ def fetch_member_by_phone(phone: str):
         with conn.cursor() as cur:
             cur.execute("""
                 SELECT id, phone, membertype, mentor, lastname, firstname, birthdate,
-                       idtype, idpicture_url, currentstatute, balance, updatedate, updateuser
+                       idtype, idpicture_url, currentstatute, balance, updatedate, updateuser, membershipdate
                 FROM membres
                 WHERE phone=%s
             """, (phone,))
@@ -722,7 +726,22 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
     to_member = fetch_member_by_phone(to_phone)
     today = datetime.utcnow().date()
     lib=f"Transfert de {amount} de {from_phone} vers {to_phone}"
-    
+
+#from datetime import datetime
+#
+#def diff_month(d1, d2):
+#    """Calculates the difference in calendar months between two datetime objects."""
+#    return (d1.year - d2.year) * 12 + d1.month - d2.month
+#
+## Example usage:
+#date_1_str = '24/12/2021'
+#date_2_str = '26/3/2022'
+#
+#start = datetime.strptime(date_1_str, "%d/%m/%Y")
+#end = datetime.strptime(date_2_str, "%d/%m/%Y")
+#
+#difference_in_months = diff_month(end, start)
+
     with get_conn() as conn:
         with conn.cursor() as cur:
             # 1) insert mouvement DEBIT (from)
@@ -744,23 +763,37 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
                         (amount, from_phone, to_phone))
 
             # 4) update currentstatute and membershipdate (ex: réactiver un membre inactif qui reçoit un transfert)
-            # log.info("Avant transfert: from %s statut=%s, to %s statut=%s", from_phone, me[9], to_phone, to_member[9])
-            # logique métier : si le membre reçoit un transfert et qu'il est inactif, on le réactive et on met à jour sa date d'adhésion (ex: pour que les cotisations soient calculées correctement ensuite)
-            # logique métier : si le membre envoie un transfert et qu'il est inactif, on ne change pas son statut (il doit recevoir un transfert pour être réactivé, on ne veut pas que l'envoi d'un transfert puisse faire basculer un membre en actif)
+            me = fetch_member_by_phone(from_phone)
+            to_member = fetch_member_by_phone(to_phone)
+            C= fetch_dashboard_stats()["C"]
+
+                #a) Période probatoire :
+            start = datetime.strptime(me[14], "%d/%m/%Y")
+            from_month = diff_month(start,today)
+            start = datetime.strptime(to_member[14], "%d/%m/%Y")
+            to_month = diff_month(start,today)
+            log.info("from_phone=%s, to_phone=%s, >>> from_month=%s, to_month=%s", from_phone, to_phone, from_month, to_month)
+            limit_date = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
+                #b) Solde actuel :
+            from_balance = me[10]
+            to_balance = to_member[10]
+            log.info("from_phone=%s,from_balance=%s, >>> to_phone=%s, to_balance=%s", from_phone, from_balance, to_phone, to_balance)
+
             cur.execute("""
                 UPDATE membres
-                SET currentstatute = CASE
-                    WHEN phone = %s AND currentstatute = 'inactif' THEN 'actif'
-                    ELSE currentstatute
+                SET currentstatute = 'probatoire',
+                    membershipdate = CURRENT_DATE,    
+                    WHEN phone = %s AND %s < 3 AND %s > %s AND membershipdate = %s              
+                    ELSE currentstatute, membershipdate
                 END,
-                membershipdate = CASE
-                    WHEN phone = %s AND currentstatute = 'inactif' THEN CURRENT_DATE
-                    ELSE membershipdate
+                currentstatute = 'inactif'
+                    WHEN phone = %s AND %s < 3 AND currentstatute = 'actif' 
+                    ELSE currentstatute
                 END,
                 updatedate=CURRENT_DATE,
                 updateuser=%s
                 WHERE phone IN (%s, %s)
-            """, (to_phone, to_phone, from_phone, from_phone, to_phone)) 
+            """, (to_phone,to_month,to_balance,C,limit_date,from_phone,to_balance, from_phone,to_phone,from_phone)) 
                     
         conn.commit()
 
