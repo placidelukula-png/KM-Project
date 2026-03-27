@@ -766,7 +766,7 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
             cur.execute("""
                 UPDATE membres
                 SET currentstatute = 'probatoire',
-                    membershipdate = CURRENT_DATE,    
+                    membershipdate = CURRENT_DATE    
                     WHEN phone = %s AND to_month < 3 AND to_balance > %s AND membershipdate = %s              
                     ELSE currentstatute, membershipdate
                 END,
