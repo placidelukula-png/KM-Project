@@ -763,20 +763,55 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
             to_balance = to_member[10]
             log.info("from_phone=%s,from_balance=%s, >>> to_phone=%s, to_balance=%s", from_phone, from_balance, to_phone, to_balance)
 #####
-             
-            cur.execute("""
-                UPDATE membres
-                SET currentstatute = CASE 
-                    WHEN phone = %s AND balance > %s AND TIMESTAMPDIFF(MONTH,CURRENT_DATE, membershipdate) < 3 THEN 'probatoire'
-                    WHEN phone = %s AND TIMESTAMPDIFF(MONTH,CURRENT_DATE, membershipdate) >= 3 AND balance > %s THEN 'actif'
-                    WHEN phone = %s AND TIMESTAMPDIFF(MONTH,CURRENT_DATE, membershipdate) < 3 AND balance > %s THEN 'probatoire'
-                    WHEN phone = %s AND TIMESTAMPDIFF(MONTH,CURRENT_DATE, membershipdate) >= 3 AND balance > %s THEN 'actif'
-                    ELSE 'inactif'
-                END
-                WHERE phone IN (%s, %s);
-            """, (to_phone,C,to_phone,C,from_phone,C,from_phone,C,to_phone,from_phone))
+            #pour celui qui reçoit : si période probatoire < 3 mois => statut probatoire ou inactif selon solde, si période probatoire >= 3 mois => statut actif ou inactif selon solde
+            if  to_month < 3 or to_month > 99:
+                cur.execute("""
+                    UPDATE membres
+                        WHEN phone = %s AND balance > %s THEN 'probatoire'
+                        ELSE 'inactif'
+                    END
+                    WHERE phone in (%s);
+                """, (to_phone,C,to_phone))
 
-            log.info("from_phone=%s,from_balance=%s, >>> to_phone=%s, to_balance=%s", from_phone, from_balance, to_phone, to_balance)
+            if  to_month >= 3:
+                cur.execute("""
+                    UPDATE membres
+                        WHEN phone = %s AND balance > %s THEN 'actif'
+                        ELSE 'inactif'
+                    END
+                    WHERE phone IN (%s);
+                """, (to_phone,C,to_phone))
+
+            #pour celui qui donne: si période probatoire < 3 mois => statut probatoire ou inactif selon solde, si période probatoire >= 3 mois => statut actif ou inactif selon solde
+            if  from_month < 3 or from_month > 99:
+                cur.execute("""
+                    UPDATE membres
+                        WHEN phone = %s AND balance > %s THEN 'probatoire'
+                        ELSE 'inactif'
+                    END
+                    WHERE phone in (%s);
+                """, (from_phone,C,from_phone))
+
+            if  from_month >= 3:
+                cur.execute("""
+                    UPDATE membres
+                        WHEN phone = %s AND balance > %s THEN 'actif'
+                        ELSE 'inactif'
+                    END
+                    WHERE phone IN (%s);
+                """, (from_phone,C,from_phone))
+
+
+            #cur.execute("""
+            #    UPDATE membres
+            #        WHEN phone = %s AND balance > %s AND TIMESTAMPDIFF(MONTH,CURRENT_DATE, membershipdate) < 3 THEN 'probatoire'
+            #        WHEN phone = %s AND TIMESTAMPDIFF(MONTH,CURRENT_DATE, membershipdate) >= 3 AND balance > %s THEN 'actif'
+            #        WHEN phone = %s AND TIMESTAMPDIFF(MONTH,CURRENT_DATE, membershipdate) < 3 AND balance > %s THEN 'probatoire'
+            #        WHEN phone = %s AND TIMESTAMPDIFF(MONTH,CURRENT_DATE, membershipdate) >= 3 AND balance > %s THEN 'actif'
+            #        ELSE 'inactif'
+            #    END
+            #    WHERE phone IN (%s, %s);
+            #""", (to_phone,C,to_phone,C,from_phone,C,from_phone,C,to_phone,from_phone))
 
             cur.execute("""
                 UPDATE membres
@@ -1908,6 +1943,18 @@ def import_mouvements():
                         """, (session.get("user"), phone, contribution_minimum))
                         if cur.rowcount:
                             flagged_inactif += 1
+
+                        # 4) règle demandée: si phone du mouvement = phone d'un membre ET balance > C (contribution minimale) ET membershipdate = "31/12/2099" alors membershipdate = date du jour (=> activation du membre)
+                        limit_date = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
+                        cur.execute("""
+                            UPDATE membres
+                            SET membershipdate = CASE 
+                                WHEN phone = %s AND balance > %s AND membershipdate = %s THEN CURRENT_DATE
+                                ELSE limit_date
+                            END
+                            WHERE phone = %s;
+                        """, (phone, contribution_minimum, limit_date, phone))
+
 
                     except Exception:
                         skipped += 1
