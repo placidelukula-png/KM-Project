@@ -766,7 +766,8 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
             #pour celui qui reçoit : si période probatoire < 3 mois => statut probatoire ou inactif selon solde, si période probatoire >= 3 mois => statut actif ou inactif selon solde
             if  to_month < 3 or to_month > 99:
                 cur.execute("""
-                    UPDATE membres
+                    UPDATE 
+                    SET currentstatute = CASE
                         WHEN phone = %s AND balance > %s THEN 'probatoire'
                         ELSE 'inactif'
                     END
@@ -776,6 +777,7 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
             if  to_month >= 3:
                 cur.execute("""
                     UPDATE membres
+                    SET currentstatute = CASE
                         WHEN phone = %s AND balance > %s THEN 'actif'
                         ELSE 'inactif'
                     END
@@ -786,6 +788,7 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
             if  from_month < 3 or from_month > 99:
                 cur.execute("""
                     UPDATE membres
+                    SET currentstatute = CASE
                         WHEN phone = %s AND balance > %s THEN 'probatoire'
                         ELSE 'inactif'
                     END
@@ -795,6 +798,7 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
             if  from_month >= 3:
                 cur.execute("""
                     UPDATE membres
+                    SET currentstatute = CASE
                         WHEN phone = %s AND balance > %s THEN 'actif'
                         ELSE 'inactif'
                     END
