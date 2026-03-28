@@ -2098,7 +2098,7 @@ DATAGENERALFOLLOWUP_PAGE = """
 <body>
   <div class="wrap">
     <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h2 style="margin:0;">KM-Kimya__________Les membres</h2>
+        <h2 style="margin:0;">KM-Kimya. . . . . . . . . . .Les membres</h2>
         <a href="{{ url_for('home') }}">← Retour</a>
     </div>
   </div>  
@@ -2461,53 +2461,43 @@ def search_member():
         q_phone=q_phone,
     )
 
-@app.get("/statutes_update()")
+@app.post("/statutes_update()")
 @login_required
 def statutes_update():
-    row = fetch_one(member_id)
-    rows = fetch_all_membres()
-    phone = session.get("user")
-    prof = get_user_profile_by_phone(phone) if phone else None
-    firstname, lastname, membertype = (prof or ("", "", "membre"))
-    if not row:
-        return render_template_string(
-            DATAGENERALFOLLOWUP_PAGE,
-            rows=rows,
-            edit_row=None,
-            edit_birthdate="",
-            edit_membershipdate="",
-            edit_balance=0.0,
-            #message=f"Member ID {member_id} introuvable.",
-            #is_error=True,
-            message="",
-            is_error=False,
-            ##
-            member_types=MEMBER_TYPES,
-            statutes=STATUTES,
-            #
-            user_fullname=f"{firstname} {lastname}".strip(),
-            user_membertype=membertype,
-            #
-        )
+###
+    # Statute's update triggered by user=%s", 
+    updateuser = session.get("user") or ADMIN_PHONE
 
-    edit_birthdate = row[6].strftime("%d/%m/%Y") if row[6] else ""
-    edit_membershipdate = row[14].strftime("%d/%m/%Y")
-    edit_balance = float(row[10]) if row[10] is not None else 0.0
+    # Preparation des parametres de calcul :
+    C= fetch_dashboard_stats()["C"]
+    limit_date = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
 
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+
+            cur.execute("""
+                UPDATE membres
+                SET membershipdate = CASE 
+                    WHEN balance > %s AND membershipdate = %s THEN CURRENT_DATE
+                    ELSE membershipdate
+                END 
+            """, (C, limit_date))
+
+            cur.execute("""
+                UPDATE membres
+                SET currentstatute = CASE
+                    WHEN (EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12 + EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))) < 3 
+                        AND balance > %s THEN 'probatoire'
+                    WHEN (EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12 + EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))) >= 3 
+                        AND balance > %s THEN 'actif'
+                    ELSE 'inactif'
+                END
+            """, (C, C))
+
+        conn.commit()
+
+    return redirect(url_for("datageneralfollowup"))
     
-    return render_template_string(
-        DATAGENERALFOLLOWUP_PAGE,
-        rows=rows,
-        edit_row=row,
-        edit_birthdate=edit_birthdate,
-        edit_membershipdate=edit_membershipdate,
-        edit_balance=edit_balance,
-        message="",
-        is_error=False,
-        member_types=MEMBER_TYPES,
-        statutes=STATUTES,
-    )
-
 
 # --------------------------------------------------------------------------------------
 # Endpoint #10 — Transfert de cotisations (débit/crédit + blocage si solde insuffisant)
