@@ -821,7 +821,7 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
                 UPDATE membres
                 SET membershipdate = CASE 
                     WHEN phone = %s AND balance > %s AND membershipdate = %s THEN CURRENT_DATE
-                    ELSE '2099-12-31'
+                    ELSE membershipdate
                 END
                 WHERE phone = %s;
             """, (to_phone,C,limit_date,to_phone))
@@ -1954,7 +1954,7 @@ def import_mouvements():
                             UPDATE membres
                             SET membershipdate = CASE 
                                 WHEN phone = %s AND balance > %s AND membershipdate = %s THEN CURRENT_DATE
-                                ELSE '2099-12-31'
+                                ELSE membershipdate
                             END
                             WHERE phone = %s;
                         """, (phone, contribution_minimum, limit_date, phone))
@@ -2123,12 +2123,13 @@ DATAGENERALFOLLOWUP_PAGE = """
 
         <!-- Bouton Actualisation -->
         <div style="display:flex; align-items:center;">
-            <a class="btn secondary" href="{{ url_for('statutes_update') }}"
-            style="color: blue; background-color: lightblue;">
-            Actualisation statuts
-            </a>
+            <form action="{{ url_for('statutes_update') }}" method="POST" style="margin:0;">
+                <button type="submit" class="btn secondary"
+                        style="color: blue; background-color: lightblue;">
+                    Actualisation statuts
+                </button>
+            </form>
         </div>
-
         </div>
     </form>
   </div>  
