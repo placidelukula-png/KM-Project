@@ -2461,43 +2461,43 @@ def search_member():
         q_phone=q_phone,
     )
 
-@app.post("/statutes_update()")
+@app.post("/statutes_update")
 @login_required
 def statutes_update():
-###
-    # Statute's update triggered by user=%s", 
     updateuser = session.get("user") or ADMIN_PHONE
-
-    # Preparation des parametres de calcul :
-    C= fetch_dashboard_stats()["C"]
+    #C = fetch_dashboard_stats()["C"]
+    from decimal import Decimal
+    C = Decimal(str(fetch_dashboard_stats()["C"]).replace(" ", ""))
     limit_date = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
 
     with get_conn() as conn:
         with conn.cursor() as cur:
-
             cur.execute("""
                 UPDATE membres
                 SET membershipdate = CASE 
                     WHEN balance > %s AND membershipdate = %s THEN CURRENT_DATE
                     ELSE membershipdate
-                END 
+                END
             """, (C, limit_date))
 
             cur.execute("""
                 UPDATE membres
                 SET currentstatute = CASE
-                    WHEN (EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12 + EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))) < 3 
-                        AND balance > %s THEN 'probatoire'
-                    WHEN (EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12 + EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))) >= 3 
-                        AND balance > %s THEN 'actif'
+                    WHEN (EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12
+                         + EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))) < 3
+                         AND balance > %s THEN 'probatoire'
+                    WHEN (EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12
+                         + EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))) >= 3
+                         AND balance > %s THEN 'actif'
                     ELSE 'inactif'
-                END
-            """, (C, C))
+                END,
+                updatedate = CURRENT_DATE,
+                updateuser = %s
+            """, (C, C, updateuser))
 
         conn.commit()
 
-    return redirect(url_for("datageneralfollowup"))
-    
+    return redirect(url_for("datageneralfollowup"))    
 
 # --------------------------------------------------------------------------------------
 # Endpoint #10 — Transfert de cotisations (débit/crédit + blocage si solde insuffisant)
