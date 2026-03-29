@@ -2518,7 +2518,7 @@ def statutes_update():
             rows_updated = cur.rowcount
 
         conn.commit()
-
+    log.info("Actualisation des statuts terminée. %s statut(s) mis à jour.", rows_updated)
     flash(f"{rows_updated} statut(s) mis à jour avec succès", "success")
     return redirect(url_for("datageneralfollowup"))
 
