@@ -2123,7 +2123,8 @@ DATAGENERALFOLLOWUP_PAGE = """
 
         <!-- Bouton Actualisation -->
         <div style="display:flex; align-items:center;">
-            <form action="{{ url_for('statutes_update') }}" method="POST" style="margin:0;">
+            <form action="{{ url_for('statutes_update') }}" on submit="return confirm('Confirmer l\'actualisation des statuts ?');" method="POST" style="margin:0;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button type="submit" class="btn secondary"
                         style="color: blue; background-color: lightblue;">
                     Actualisation statuts
