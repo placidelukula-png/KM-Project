@@ -17,7 +17,7 @@ from weakref import ref
 import psycopg
 from psycopg.rows import tuple_row
 
-from flask import Flask, request, redirect, url_for, render_template_string, session, abort
+from flask import Flask, flash, request, redirect, url_for, render_template_string, session, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.middleware.proxy_fix import ProxyFix
 
@@ -2466,39 +2466,99 @@ def search_member():
 @login_required
 def statutes_update():
     updateuser = session.get("user") or ADMIN_PHONE
-    #C = fetch_dashboard_stats()["C"]
     from decimal import Decimal
+
     C = Decimal(str(fetch_dashboard_stats()["C"]).replace(" ", ""))
     limit_date = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
 
     with get_conn() as conn:
         with conn.cursor() as cur:
+
             cur.execute("""
                 UPDATE membres
                 SET membershipdate = CASE 
-                    WHEN balance > %s AND membershipdate = %s THEN CURRENT_DATE
+                    WHEN balance >= %s AND membershipdate = %s THEN CURRENT_DATE
                     ELSE membershipdate
                 END
             """, (C, limit_date))
 
+
             cur.execute("""
-                UPDATE membres
-                SET currentstatute = CASE
-                    WHEN (EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12
-                         + EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))) < 3
-                         AND balance > %s THEN 'probatoire'
-                    WHEN (EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12
-                         + EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))) >= 3
-                         AND balance > %s THEN 'actif'
-                    ELSE 'inactif'
-                END,
-                updatedate = CURRENT_DATE,
-                updateuser = %s
-            """, (C, C, updateuser))
+                WITH computed AS (
+                    SELECT 
+                        id,
+                        CASE
+                            WHEN (
+                                EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12 +
+                                EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))
+                            ) < 3 AND balance >= %s THEN 'probatoire'
+                            
+                            WHEN (
+                                EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12 +
+                                EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))
+                            ) >= 3 AND balance >= %s THEN 'actif'
+                            
+                            ELSE 'inactif'
+                        END AS new_statut
+                    FROM membres
+                    WHERE membershipdate <> %s
+                )
+
+                UPDATE membres m
+                SET 
+                    currentstatute = c.new_statut,
+                    updatedate = CURRENT_DATE,
+                    updateuser = %s
+                FROM computed c
+                WHERE m.id = c.id
+                AND m.currentstatute IS DISTINCT FROM c.new_statut
+            """, (C, C, limit_date, updateuser))            
+
+            rows_updated = cur.rowcount
 
         conn.commit()
 
-    return redirect(url_for("datageneralfollowup"))    
+    flash(f"{rows_updated} statut(s) mis à jour avec succès", "success")
+    return redirect(url_for("datageneralfollowup"))
+
+
+#@app.post("/statutes_update")
+#@login_required
+#def statutes_update():
+#    updateuser = session.get("user") or ADMIN_PHONE
+#    #C = fetch_dashboard_stats()["C"]
+#    from decimal import Decimal
+#    C = Decimal(str(fetch_dashboard_stats()["C"]).replace(" ", ""))
+#    limit_date = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
+
+#    with get_conn() as conn:
+#        with conn.cursor() as cur:
+#            cur.execute("""
+#                UPDATE membres
+#                SET membershipdate = CASE 
+#                    WHEN balance >= %s AND membershipdate = %s THEN CURRENT_DATE
+#                    ELSE membershipdate
+#                END
+#            """, (C, limit_date))
+
+#
+#            cur.execute("""
+#                UPDATE membres
+#                SET currentstatute = CASE
+#                    WHEN (EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12
+#                         + EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))) < 3
+#                         AND balance >= %s THEN 'probatoire'
+#                    WHEN (EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12
+#                         + EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))) >= 3
+#                         AND balance >= %s THEN 'actif'
+#                    ELSE 'inactif'
+#                END,
+#                    updatedate = CURRENT_DATE,
+#                    updateuser = %s
+#                WHERE membershipdate <> %s ;                    
+#            """, (C, C, limit_date, updateuser))
+#        conn.commit()
+#    return redirect(url_for("datageneralfollowup"))    
 
 # --------------------------------------------------------------------------------------
 # Endpoint #10 — Transfert de cotisations (débit/crédit + blocage si solde insuffisant)
