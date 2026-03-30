@@ -2123,7 +2123,7 @@ DATAGENERALFOLLOWUP_PAGE = """
 
         <!-- Bouton Actualisation -->
         <div style="display:flex; align-items:center;">
-            <form action="{{ url_for('statutes_update') }}" on submit="return confirm('Confirmer l\'actualisation des statuts ?');" method="POST" style="margin:0;">
+            <form action="{{ url_for('statutes_update') }}" onsubmit="return confirm('⚠️ Confirmer l’actualisation des statuts ?');" method="POST" style="margin:0;">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button type="submit" class="btn secondary"
                         style="color: blue; background-color: lightblue;">
@@ -2472,6 +2472,8 @@ def statutes_update():
     C = Decimal(str(fetch_dashboard_stats()["C"]).replace(" ", ""))
     limit_date = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
 
+    log.info("Début de l'actualisation des statuts. Seuil Cotisation=%s, date limite=%s", C, limit_date)
+
     with get_conn() as conn:
         with conn.cursor() as cur:
 
@@ -2484,6 +2486,7 @@ def statutes_update():
                 currentstatute = 'probatoire'
             """, (C, limit_date))
 
+            log.info("Mise à jour des membres avec date d'adhesion autre que la date limite et solde suffisant.")
 
             cur.execute("""
                 WITH computed AS (
