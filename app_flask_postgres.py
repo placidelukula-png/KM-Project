@@ -2126,7 +2126,7 @@ DATAGENERALFOLLOWUP_PAGE = """
             <div action="{{ url_for('statutes_update') }}" onsubmit="return confirm('⚠️ Confirmer l’actualisation des statuts ?');" method="POST" style="margin:0;">
                 <button type="submit" class="btn secondary"
                         style="color: blue; background-color: lightblue;">
-                    Actualisation statuts
+                    Actualisation des statuts
                 </button>
             </div>
         </div>
