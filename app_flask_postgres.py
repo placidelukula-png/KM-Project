@@ -2118,7 +2118,7 @@ DATAGENERALFOLLOWUP_PAGE = """
             <!-- Boutons Vérifier + Réinitialiser -->
             <div style="display:flex; align-items:center; gap:10px;">
                 <button class="btn" type="submit">Vérifier</button>
-                <a class="btn secondary" href="{{ url_for('statutes_update') }}">Réinitialiser</a>
+                <a class="btn secondary" href="{{ url_for('datageneralfollowup') }}">Réinitialiser</a>
             </div>
 
             <!-- Bouton Actualisation -->
@@ -2127,7 +2127,7 @@ DATAGENERALFOLLOWUP_PAGE = """
                             style="color: blue; background-color: lightblue;">
                         Actualisation des statuts
                 </button>
-                <div action="{{ url_for('statutes_update') }}" onsubmit="return confirm('⚠️ Confirmer l’actualisation des statuts ?');" method="POST" style="margin:0;"></div>
+                <a class="btn secondary" href="{{ url_for('statutes_update') }}" onsubmit="return confirm('⚠️ Confirmer l’actualisation des statuts ?');" method="POST" style="margin:0;"></a>
             </div>
         </div>
     </form>
