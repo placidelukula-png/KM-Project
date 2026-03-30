@@ -2118,7 +2118,7 @@ DATAGENERALFOLLOWUP_PAGE = """
             <!-- Boutons Vérifier + Réinitialiser -->
             <div style="display:flex; align-items:center; gap:10px;">
                 <button class="btn" type="submit">Vérifier</button>
-                <a class="btn secondary" href="{{ url_for('datageneralfollowup') }}">Réinitialiser</a>
+                <a class="btn secondary" href="{{ url_for('statutes_update') }}">Réinitialiser</a>
             </div>
 
             <!-- Bouton Actualisation -->
