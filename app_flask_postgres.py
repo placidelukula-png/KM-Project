@@ -2109,27 +2109,26 @@ DATAGENERALFOLLOWUP_PAGE = """
     <form method="get" action="{{ url_for('search_member') }}">
         <div class="grid" style="grid-template-columns: 1fr 1fr 1fr; align-items:end;">
 
-        <!-- Champ recherche -->
-        <div style="display:flex; flex-direction:column;">
-            <label>Rechercher un adhérent par phone</label>
-            <input name="q_phone" placeholder="Exemple: 998886955" value="{{ q_phone or '' }}">
-        </div>
-
-        <!-- Boutons Vérifier + Réinitialiser -->
-        <div style="display:flex; align-items:center; gap:10px;">
-            <button class="btn" type="submit">Vérifier</button>
-            <a class="btn secondary" href="{{ url_for('datageneralfollowup') }}">Réinitialiser</a>
-        </div>
-
-        <!-- Bouton Actualisation -->
-        <div style="display:flex; align-items:center;">
-            <div action="{{ url_for('statutes_update') }}" onsubmit="return confirm('⚠️ Confirmer l’actualisation des statuts ?');" method="POST" style="margin:0;">
-                <button type="submit" class="btn secondary"
-                        style="color: blue; background-color: lightblue;">
-                    Actualisation des statuts
-                </button>
+            <!-- Champ recherche -->
+            <div style="display:flex; flex-direction:column;">
+                <label>Rechercher un adhérent par phone</label>
+                <input name="q_phone" placeholder="Exemple: 998886955" value="{{ q_phone or '' }}">
             </div>
-        </div>
+
+            <!-- Boutons Vérifier + Réinitialiser -->
+            <div style="display:flex; align-items:center; gap:10px;">
+                <button class="btn" type="submit">Vérifier</button>
+                <a class="btn secondary" href="{{ url_for('datageneralfollowup') }}">Réinitialiser</a>
+            </div>
+
+            <!-- Bouton Actualisation -->
+            <div style="display:flex; align-items:center;">
+                <button type="submit" class="btn secondary"
+                            style="color: blue; background-color: lightblue;">
+                        Actualisation des statuts
+                </button>
+                <div action="{{ url_for('statutes_update') }}" onsubmit="return confirm('⚠️ Confirmer l’actualisation des statuts ?');" method="POST" style="margin:0;"></div>
+            </div>
         </div>
     </form>
   </div>  
