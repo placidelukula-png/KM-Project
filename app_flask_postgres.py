@@ -2183,40 +2183,14 @@ DATAGENERALFOLLOWUP_PAGE = """
                 <button class="btn" type="submit">Vérifier</button>
                 <a class="btn secondary" href="{{ url_for('datageneralfollowup') }}">Réinitialiser</a>
             </div>
-###
-            
-<form method="post">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <label>Identifiant du bénéficiaire</label>
-  <input name="to_phone" value="{{ to_phone or '' }}" required>
-  <label>Montant à transférer (en $)</label>
-  <input name="amount" type="number" value="{{ amount or 0 }}" required>
 
-  {% if found_name %}
-    <div class="msg ok">Membre trouvé: <b>{{ found_name }}</b></div>
-  {% elif to_phone %}
-    <div class="msg err">Phone inconnu (membre non trouvé).</div>
-  {% endif %}
-
-  <div class="row">
-    <button class="btn" name="action" value="check" type="submit">Vérifier</button>
-    <button class="btn2" name="action" value="confirm" type="submit">Confirmer</button>
-  </div>
-
-  {% if message %}
-    <div class="msg {{ 'err' if is_error else 'ok' }}">{{ message }}</div>
-  {% endif %}
-</form>
-
-
-###
             <!-- Bouton Actualisation -->
             <div style="display:flex; align-items:center;">
                 <button type="submit" class="btn secondary"
                             style="color: blue; background-color: lightblue;">
                         Actualisation des statuts
                 </button>
-                <a class="btn secondary" href="{{ url_for('statutes_update') }}" onsubmit="return confirm('⚠️ Confirmer l’actualisation des statuts ?');" method="POST" style="margin:0;"></a>
+                <a class="btn secondary" href="{{ url_for('launch_statutes_update') }}" onsubmit="return confirm('⚠️ Confirmer l’actualisation des statuts ?');" method="POST" style="margin:0;"></a>
             </div>
         </div>
     </form>
