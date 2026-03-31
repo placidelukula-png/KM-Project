@@ -981,6 +981,63 @@ def get_user_profile_by_phone(phone: str):
                 WHERE phone = %s
             """, (phone,))
             return cur.fetchone()
+def statutes_update():
+    updateuser = session.get("user") or ADMIN_PHONE
+    C = Decimal(str(fetch_dashboard_stats()["C"]).replace(" ", ""))
+    limit_date = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
+
+    log.info("Début de l'actualisation des statuts. Seuil Cotisation=%s, date limite=%s", C, limit_date)
+
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+
+            cur.execute("""
+                UPDATE membres
+                SET membershipdate = CASE 
+                    WHEN balance >= %s AND membershipdate = %s THEN CURRENT_DATE
+                    ELSE membershipdate
+                END,
+                currentstatute = 'probatoire'
+            """, (C, limit_date))
+
+            log.info("Mise à jour des membres avec date d'adhesion autre que la date limite et solde suffisant.")
+
+            cur.execute("""
+                WITH computed AS (
+                    SELECT 
+                        id,
+                        CASE
+                            WHEN (
+                                EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12 +
+                                EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))
+                            ) < 3 AND balance >= %s THEN 'probatoire'
+                            
+                            WHEN (
+                                EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12 +
+                                EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))
+                            ) >= 3 AND balance >= %s THEN 'actif'
+                            
+                            ELSE 'inactif'
+                        END AS new_statut
+                    FROM membres
+                    WHERE membershipdate <> %s
+                )
+
+                UPDATE membres m
+                SET 
+                    currentstatute = c.new_statut,
+                    updatedate = CURRENT_DATE,
+                    updateuser = %s
+                FROM computed c
+                WHERE m.id = c.id
+                AND m.currentstatute IS DISTINCT FROM c.new_statut
+            """, (C, C, limit_date, updateuser))            
+
+            rows_updated = cur.rowcount
+
+        conn.commit()
+        log.info("Actualisation des statuts terminée. %s statut(s) mis à jour.", rows_updated)
+        flash(f"{rows_updated} statut(s) mis à jour avec succès", "success")
 
 #
 # ----------------------------
@@ -993,6 +1050,14 @@ LOGIN_PAGE = """
   <meta charset="utf-8">
   <title>Login</title>
   <style>
+
+    body {
+        background-image: url('c:/user/placid/python/km_project/Documents_ref/logo KM-Kimya.jpg');
+        background-size: cover; /* Adapte l'image à l'écran */
+        background-repeat: no-repeat; /* Empêche la répétition */
+        background-position: center; /* Centre l'image */
+    }
+  
     body { font-family: Arial, sans-serif; margin: 30px; }
     .wrap { max-width: 420px; margin: 0 auto; }
     .card { border:1px solid #ddd; border-radius: 10px; padding: 16px; margin-top: 40px; }
@@ -2120,7 +2185,33 @@ DATAGENERALFOLLOWUP_PAGE = """
                 <button class="btn" type="submit">Vérifier</button>
                 <a class="btn secondary" href="{{ url_for('datageneralfollowup') }}">Réinitialiser</a>
             </div>
+###
+            
+<form method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label>Identifiant du bénéficiaire</label>
+  <input name="to_phone" value="{{ to_phone or '' }}" required>
+  <label>Montant à transférer (en $)</label>
+  <input name="amount" type="number" value="{{ amount or 0 }}" required>
 
+  {% if found_name %}
+    <div class="msg ok">Membre trouvé: <b>{{ found_name }}</b></div>
+  {% elif to_phone %}
+    <div class="msg err">Phone inconnu (membre non trouvé).</div>
+  {% endif %}
+
+  <div class="row">
+    <button class="btn" name="action" value="check" type="submit">Vérifier</button>
+    <button class="btn2" name="action" value="confirm" type="submit">Confirmer</button>
+  </div>
+
+  {% if message %}
+    <div class="msg {{ 'err' if is_error else 'ok' }}">{{ message }}</div>
+  {% endif %}
+</form>
+
+
+###
             <!-- Bouton Actualisation -->
             <div style="display:flex; align-items:center;">
                 <button type="submit" class="btn secondary"
@@ -2463,63 +2554,17 @@ def search_member():
 
 @app.post("/statutes_update")
 @login_required
-def statutes_update():
+def launch_statutes_update():
     updateuser = session.get("user") or ADMIN_PHONE
+    #C = fetch_dashboard_stats()["C"]
     from decimal import Decimal
-
     C = Decimal(str(fetch_dashboard_stats()["C"]).replace(" ", ""))
     limit_date = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
-
     log.info("Début de l'actualisation des statuts. Seuil Cotisation=%s, date limite=%s", C, limit_date)
 
-    with get_conn() as conn:
-        with conn.cursor() as cur:
+    statutes_update
+    
 
-            cur.execute("""
-                UPDATE membres
-                SET membershipdate = CASE 
-                    WHEN balance >= %s AND membershipdate = %s THEN CURRENT_DATE
-                    ELSE membershipdate
-                END,
-                currentstatute = 'probatoire'
-            """, (C, limit_date))
-
-            log.info("Mise à jour des membres avec date d'adhesion autre que la date limite et solde suffisant.")
-
-            cur.execute("""
-                WITH computed AS (
-                    SELECT 
-                        id,
-                        CASE
-                            WHEN (
-                                EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12 +
-                                EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))
-                            ) < 3 AND balance >= %s THEN 'probatoire'
-                            
-                            WHEN (
-                                EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12 +
-                                EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))
-                            ) >= 3 AND balance >= %s THEN 'actif'
-                            
-                            ELSE 'inactif'
-                        END AS new_statut
-                    FROM membres
-                    WHERE membershipdate <> %s
-                )
-
-                UPDATE membres m
-                SET 
-                    currentstatute = c.new_statut,
-                    updatedate = CURRENT_DATE,
-                    updateuser = %s
-                FROM computed c
-                WHERE m.id = c.id
-                AND m.currentstatute IS DISTINCT FROM c.new_statut
-            """, (C, C, limit_date, updateuser))            
-
-            rows_updated = cur.rowcount
-
-        conn.commit()
         log.info("Actualisation des statuts terminée. %s statut(s) mis à jour.", rows_updated)
         flash(f"{rows_updated} statut(s) mis à jour avec succès", "success")
     return redirect(url_for("datageneralfollowup"))
