@@ -1056,9 +1056,7 @@ LOGIN_PAGE = """
         background-size: cover; /* Adapte l'image à l'écran */
         background-repeat: no-repeat; /* Empêche la répétition */
         background-position: center; /* Centre l'image */
-    }
-  
-    body { font-family: Arial, sans-serif; margin: 30px; }
+        font-family: Arial, sans-serif; margin: 30px; }
     .wrap { max-width: 420px; margin: 0 auto; }
     .card { border:1px solid #ddd; border-radius: 10px; padding: 16px; margin-top: 40px; }
     label { display:block; margin: 8px 0 4px; font-weight:600; }
