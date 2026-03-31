@@ -1348,6 +1348,10 @@ def home():
         N=stats["N"],
         B=stats["B"],
         C=stats["C"],
+        #####Provisoirement, en attendant voir l'évolution du demarrage du Projet.
+        P=0
+        C=0 
+        #########les deux lignes ci-dessus seront effacées incessament############
         # vos autres variables si nécessaires
         edit_row=None,
         edit_birthdate="",
