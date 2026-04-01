@@ -1359,14 +1359,14 @@ def home():
         connected_label=connected_label,
         connected_role=connected_role,
         # ✅ nouvelles variables template
-        P=stats["P"],
+        #P=stats["P"],
         N=stats["N"],
         B=stats["B"],
-        C=stats["C"],
+        #C=stats["C"],
         #####Provisoirement, en attendant voir l'évolution du demarrage du Projet.
         P=0,
         C=0,
-        #########les deux lignes ci-dessus seront effacées incessament############
+        #########les deux lignes ci-dessus seront effacées incessament et les qutre précedentes corrigées############
         # vos autres variables si nécessaires
         edit_row=None,
         edit_birthdate="",
