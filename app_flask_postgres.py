@@ -215,11 +215,11 @@ def init_db():
 #            """)
 #
 #            # Fixation de la prestation visée.
-            cur.execute("""
-                UPDATE id_data
-                SET quantity = 25  -- exemple de valeur pour la prestation visée
-                WHERE keydata = 'id-data01'
-            """)
+#            cur.execute("""
+#                UPDATE id_data
+#                SET quantity = 25  -- exemple de valeur pour la prestation visée
+#                WHERE keydata = 'id-data01'
+#            """)
 #
 #            # Fixation de la marge de sécurité.
 #            cur.execute("""
@@ -228,7 +228,6 @@ def init_db():
 #                WHERE keydata = 'id-data02'
 #            """)
 #            
-
         conn.commit()
 
 def diff_month(d1, d2):
@@ -2186,34 +2185,33 @@ DATAGENERALFOLLOWUP_PAGE = """
   </div>  
 
   <!-- Recherche rapide par phone -->
+    <div class="card" style="margin-top:0px; padding:12px;">
+        <!-- GRILLE PRINCIPALE -->
+        <div class="grid" style="grid-template-columns: 1fr 1fr 1fr; align-items:end; gap:20px;">
 
-  <div class="card" style="margin-top:0px; padding:12px;">
-    <form method="get" action="{{ url_for('search_member') }}">
-        <div class="grid" style="grid-template-columns: 1fr 1fr 1fr; align-items:end;">
+            <!-- BLOC 1 : RECHERCHE (Formulaire GET) -->
+            <form method="get" action="{{ url_for('search_member') }}" style="display:contents;">
+                <div style="display:flex; flex-direction:column;">
+                    <label>Rechercher un adhérent par phone</label>
+                    <input name="q_phone" placeholder="Exemple: 998886955" value="{{ q_phone or '' }}">
+                </div>
 
-            <!-- Champ recherche -->
-            <div style="display:flex; flex-direction:column;">
-                <label>Rechercher un adhérent par phone</label>
-                <input name="q_phone" placeholder="Exemple: 998886955" value="{{ q_phone or '' }}">
-            </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <button class="btn" type="submit">Vérifier</button>
+                    <a class="btn secondary" href="{{ url_for('datageneralfollowup') }}">Réinitialiser</a>
+                </div>
+            </form> <!-- FERMETURE DU PREMIER FORMULAIRE ICI -->
 
-            <!-- Boutons Vérifier + Réinitialiser -->
-            <div style="display:flex; align-items:center; gap:10px;">
-                <button class="btn" type="submit">Vérifier</button>
-                <a class="btn secondary" href="{{ url_for('datageneralfollowup') }}">Réinitialiser</a>
-            </div>
-
-            <!-- Bouton Actualisation -->
-            <div style="display:flex; align-items:center;">
-                <button type="submit" class="btn secondary"
-                            style="color: blue; background-color: lightblue;">
-                        Actualisation des statuts
+            <!-- BLOC 2 : ACTUALISATION (Formulaire POST) -->
+            <form action="{{ url_for('launch_statutes_update') }}" method="POST" style="display:flex; align-items:center; justify-content: flex-end;">
+                <button type="submit" class="btn btn-primary" onclick="return confirm('Voulez-vous vraiment actualiser les statuts ?')">
+                    🔄 Actualiser les Statuts
                 </button>
-                <a class="btn secondary" href="{{ url_for('launch_statutes_update') }}" onsubmit="return confirm('⚠️ Confirmer l’actualisation des statuts ?');" method="POST" style="margin:0;"></a>
-            </div>
+            </form>
+
         </div>
-    </form>
-  </div>  
+    </div>
+
 
   {% if edit_row %}
   <div class="card">
@@ -2557,6 +2555,7 @@ def launch_statutes_update():
 
     #log.info("Actualisation des statuts terminée. %s statut(s) mis à jour.", rows_updated)
     #flash(f"{rows_updated} statut(s) mis à jour avec succès", "success")
+    flash("statut(s) mis à jour avec succès", "success")
 
     return redirect(url_for("datageneralfollowup"))
 
