@@ -201,7 +201,7 @@ def init_db():
 #            cur.execute("""
 #                DELETE FROM comptes_techniques;
 #            """)
-
+#
 #            # Mise en exploitation : demarrage avec statuts 'inactif' pour tous et mentor 'admin' pour , date d'adhésion 31/12/2099 et date de naissance 01/01/1920 pour tous.
 #            cur.execute("""
 #                UPDATE membres
@@ -213,6 +213,21 @@ def init_db():
 #                    updatedate = CURRENT_DATE,
 #                    updateuser = 'System'
 #            """)
+#
+#            # Fixation de la prestation visée.
+            cur.execute("""
+                UPDATE id_data
+                SET quantity = 25  -- exemple de valeur pour la prestation visée
+                WHERE keydata = 'id-data01'
+            """)
+#
+#            # Fixation de la marge de sécurité.
+#            cur.execute("""
+#                UPDATE id_data
+#                SET quantity = 1.1  -- exemple de valeur pour la marge de sécurité
+#                WHERE keydata = 'id-data02'
+#            """)
+#            
 
         conn.commit()
 
@@ -1349,8 +1364,8 @@ def home():
         B=stats["B"],
         C=stats["C"],
         #####Provisoirement, en attendant voir l'évolution du demarrage du Projet.
-        P=0
-        C=0 
+        P=0,
+        C=0,
         #########les deux lignes ci-dessus seront effacées incessament############
         # vos autres variables si nécessaires
         edit_row=None,
