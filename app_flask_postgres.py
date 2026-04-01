@@ -2558,8 +2558,7 @@ def launch_statutes_update():
     limit_date = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
     log.info("Début de l'actualisation des statuts. Seuil Cotisation=%s, date limite=%s", C, limit_date)
 
-    statutes_update(updateuser, C, limit_date)
-
+    statutes_update()
     #log.info("Actualisation des statuts terminée. %s statut(s) mis à jour.", rows_updated)
     #flash(f"{rows_updated} statut(s) mis à jour avec succès", "success")
     flash("statut(s) mis à jour avec succès", "success")
