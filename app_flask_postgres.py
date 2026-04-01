@@ -1358,14 +1358,10 @@ def home():
         connected_label=connected_label,
         connected_role=connected_role,
         # ✅ nouvelles variables template
-        #P=stats["P"],
+        P=stats["P"],
         N=stats["N"],
         B=stats["B"],
-        #C=stats["C"],
-        #####Provisoirement, en attendant voir l'évolution du demarrage du Projet.
-        P=0,
-        C=0,
-        #########les deux lignes ci-dessus seront effacées incessament et les qutre précedentes corrigées############
+        C=stats["C"],
         # vos autres variables si nécessaires
         edit_row=None,
         edit_birthdate="",
@@ -2214,6 +2210,17 @@ DATAGENERALFOLLOWUP_PAGE = """
                 </button>
             </form>
             
+            <!-- Zone d'affichage des messages de succès ou d'erreur -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" style="padding: 10px; margin-bottom: 20px; border-radius: 5px; border: 1px solid; 
+                    {% if category == 'success' %} background-color: #d4edda; color: #155724; border-color: #c3e6cb; {% else %} background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; {% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
 
 
         </div>
