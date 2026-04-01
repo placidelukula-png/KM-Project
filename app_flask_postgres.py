@@ -2202,12 +2202,19 @@ DATAGENERALFOLLOWUP_PAGE = """
                 </div>
             </form> <!-- FERMETURE DU PREMIER FORMULAIRE ICI -->
 
+
             <!-- BLOC 2 : ACTUALISATION (Formulaire POST) -->
             <form action="{{ url_for('launch_statutes_update') }}" method="POST" style="display:flex; align-items:center; justify-content: flex-end;">
+                
+                <!-- AJOUTEZ CETTE LIGNE ICI -->
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
                 <button type="submit" class="btn btn-primary" onclick="return confirm('Voulez-vous vraiment actualiser les statuts ?')">
                     🔄 Actualiser les Statuts
                 </button>
             </form>
+            
+
 
         </div>
     </div>
