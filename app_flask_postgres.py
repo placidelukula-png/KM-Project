@@ -1059,53 +1059,156 @@ def statutes_update():
 # ----------------------------
 LOGIN_PAGE = """
 <!doctype html>
-<html>
+<html lang="fr">
 <head>
   <meta charset="utf-8">
-  <title>Login</title>
-  <style>
+  <title>Connexion KM-Kimya</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <style>
     body {
-        background-image: url("{{url_for('static', filename='logoKMKim01.jpg')}}"); /* Image de fond */
-        background-size: cover; /* Adapte l'image à l'écran */
-        background-repeat: no-repeat; /* Empêche la répétition */
-        background-position: center; /* Centre l'image */
-        height: 100vh; /* Assure que le body prend toute la hauteur de la fenêtre */
-        margin: 0; /* Supprime les marges par défaut */
-        font-family: Arial, sans-serif; margin: 30px;
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+                    url("{{ url_for('static', filename='logoKMKim01.jpg') }}");
+        background-size: cover;
+        background-position: center;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .container {
+        display: flex;
+        max-width: 900px;
+        width: 95%;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    }
+
+    /* LEFT PANEL IMAGE */
+    .left {
+        flex: 1;
+        background: url("{{ url_for('static', filename='kmkimya_poster.jpg') }}") center/cover no-repeat;
+        display: none;
+    }
+
+    /* RIGHT PANEL LOGIN */
+    .right {
+        flex: 1;
+        background: rgba(255,255,255,0.95);
+        padding: 40px;
+        backdrop-filter: blur(10px);
+    }
+
+    h2 {
+        margin-top: 0;
+        text-align: center;
+        color: #1E3A8A;
+    }
+
+    label {
+        display:block;
+        margin-top: 15px;
+        font-weight: 600;
+        color: #333;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px;
+        margin-top: 5px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+        transition: 0.3s;
+    }
+
+    input:focus {
+        border-color: #1E3A8A;
+        outline: none;
+        box-shadow: 0 0 5px rgba(30,58,138,0.3);
+    }
+
+    .btn {
+        width: 100%;
+        margin-top: 20px;
+        padding: 12px;
+        border-radius: 10px;
+        border: none;
+        background: linear-gradient(135deg, #1E3A8A, #2563EB);
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .msg {
+        margin-top: 15px;
+        padding: 10px;
+        border-radius: 8px;
+        background: #ffe9ea;
+        color: #7a0010;
+        text-align: center;
+    }
+
+    .small {
+        margin-top: 15px;
+        font-size: 0.9em;
+        color: #555;
+        text-align: center;
+    }
+
+    /* Responsive */
+    @media(min-width: 768px) {
+        .left {
+            display: block;
         }
-    .wrap { max-width: 420px; margin: 0 auto; }
-    .card { border:1px solid #ddd; border-radius: 10px; padding: 16px; margin-top: 40px; }
-    label { display:block; margin: 8px 0 4px; font-weight:600; }
-    input { padding: 10px; width: 100%; box-sizing: border-box; border:1px solid #ccc; border-radius: 8px; }
-    .btn { margin-top: 12px; padding: 10px 14px; border-radius: 10px; border: 1px solid #111; background:#111; color:#fff; cursor:pointer; width:100%; }
-    .msg { padding: 10px 12px; border-radius: 10px; margin-top: 12px; }
-    .error { background:#ffe9ea; border:1px solid #ffb3b8; color:#7a0010; }
-    .small { font-size: 0.92em; color:#444; margin-top: 10px; }
+    }
   </style>
 </head>
+
 <body>
-<div class="wrap">
-  <div class="card">
-    <h2 style="margin-top:0;">Connexion KM-Kimya</h2>
-    <form method="post" action="{{ url_for('login') }}">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <label>Identifiant <small>(nº téléphone sans prefixes)</small> :</label>
-      <input name="phone" value="admin" required>
-      <label>Mot de passe :</label>
-      <input name="password" type="password" required>
-      <button class="btn" type="submit">Se connecter</button>
-    </form>
 
-    {% if message %}
-      <div class="msg error">{{ message }}</div>
-    {% endif %}
+<div class="container">
 
-    <div class="small">
-      <small>Accès refusé si statut = 'suspendu' ou 'radié', ou membre inexistant.</small>
+    <!-- IMAGE PANEL -->
+    <div class="left"></div>
+
+    <!-- LOGIN PANEL -->
+    <div class="right">
+        <h2>Connexion KM-Kimya</h2>
+
+        <form method="post" action="{{ url_for('login') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <label>Identifiant</label>
+            <input name="phone" placeholder="Numéro sans préfixe" required>
+
+            <label>Mot de passe</label>
+            <input name="password" type="password" required>
+
+            <button class="btn" type="submit">Se connecter</button>
+        </form>
+
+        {% if message %}
+            <div class="msg">{{ message }}</div>
+        {% endif %}
+
+        <div class="small">
+            Accès refusé si statut = suspendu ou radié
+        </div>
     </div>
-  </div>
+
 </div>
+
 </body>
 </html>
 """
