@@ -1066,7 +1066,7 @@ LOGIN_PAGE = """
   <style>
 
     body {
-        background-image: url("{{ url_for('static', filename='logoKMKimya.jpg') }}"); /* Image de fond */
+        background-image: url("{{url_for('static', filename='logoKMKimya.jpg')}}"); /* Image de fond */
         background-size: cover; /* Adapte l'image à l'écran */
         background-repeat: no-repeat; /* Empêche la répétition */
         background-position: center; /* Centre l'image */
