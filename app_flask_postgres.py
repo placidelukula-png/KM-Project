@@ -120,7 +120,7 @@ def get_conn():
         # fallback local
         DATABASE_URL = "postgresql://postgres:1234@localhost:5432/kmkimya"
 
-    return psycopg2.connect(DATABASE_URL)
+    return psycopg.connect(DATABASE_URL)
 #####
 
 def init_db():
