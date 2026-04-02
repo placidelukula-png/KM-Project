@@ -1066,12 +1066,13 @@ LOGIN_PAGE = """
   <style>
 
     body {
-        background-image: url("{{url_for('static', filename='logoKMKimya.jpg')}}"); /* Image de fond */
+        background-image: url("{{url_for('static', filename='logoKMKimya01.jpg')}}"); /* Image de fond */
         background-size: cover; /* Adapte l'image à l'écran */
         background-repeat: no-repeat; /* Empêche la répétition */
         background-position: center; /* Centre l'image */
         height: 100vh; /* Assure que le body prend toute la hauteur de la fenêtre */
         margin: 0; /* Supprime les marges par défaut */
+        font-family: Arial, sans-serif; margin: 30px;
         }
     .wrap { max-width: 420px; margin: 0 auto; }
     .card { border:1px solid #ddd; border-radius: 10px; padding: 16px; margin-top: 40px; }
