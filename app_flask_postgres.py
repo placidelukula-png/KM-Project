@@ -105,11 +105,23 @@ limiter = Limiter(
 # ----------------------------
 # DB helpers
 # ----------------------------
+#def get_conn():
+#    if not DATABASE_URL:
+#        raise RuntimeError("DATABASE_URL manquant (Render > KM-Project > Environment).")
+#    # tuple_row => on garde des tuples (r[0], r[1]...) cohérents avec ton HTML
+#    return psycopg.connect(DATABASE_URL, row_factory=tuple_row)
+#####
+import os
+
 def get_conn():
+    DATABASE_URL = os.getenv("DATABASE_URL")
+
     if not DATABASE_URL:
-        raise RuntimeError("DATABASE_URL manquant (Render > KM-Project > Environment).")
-    # tuple_row => on garde des tuples (r[0], r[1]...) cohérents avec ton HTML
-    return psycopg.connect(DATABASE_URL, row_factory=tuple_row)
+        # fallback local
+        DATABASE_URL = "postgresql://postgres:1234@localhost:5432/kmkimya"
+
+    return psycopg2.connect(DATABASE_URL)
+#####
 
 def init_db():
     with get_conn() as conn:
