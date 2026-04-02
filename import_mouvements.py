@@ -52,6 +52,7 @@ REQUIRED_COLS = [
 # Helpers
 # ----------------------------
 def get_conn():
+    DATABASE_URL = "postgresql://km_user:kMh4PYoxLAv7JUbdxIJp5ppOMyDMHUe5@dpg-d5k0ga0gjchc739p71vg-a/km_db_sabj"  # Render Internal Database URL
     if not DATABASE_URL:
         raise RuntimeError("DATABASE_URL manquant (ENV).")
     return psycopg.connect(DATABASE_URL, row_factory=tuple_row)

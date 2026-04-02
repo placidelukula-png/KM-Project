@@ -1066,11 +1066,13 @@ LOGIN_PAGE = """
   <style>
 
     body {
-        background-image: url('c:/user/placid/python/km_project/Documents_ref/logo KM-Kimya.jpg');
+        background-image: url("{{ url_for('static', filename='logoKMKimya.jpg') }}"); /* Image de fond */
         background-size: cover; /* Adapte l'image à l'écran */
         background-repeat: no-repeat; /* Empêche la répétition */
         background-position: center; /* Centre l'image */
-        font-family: Arial, sans-serif; margin: 30px; }
+        height: 100vh; /* Assure que le body prend toute la hauteur de la fenêtre */
+        margin: 0; /* Supprime les marges par défaut */
+        }
     .wrap { max-width: 420px; margin: 0 auto; }
     .card { border:1px solid #ddd; border-radius: 10px; padding: 16px; margin-top: 40px; }
     label { display:block; margin: 8px 0 4px; font-weight:600; }
@@ -1191,7 +1193,7 @@ DASHBOARD_PAGE = """
     <!-- ✅ Cadran statistiques (coin supérieur droit) -->
     <div class="statsbox">
       <div class="stats-title">Indicateurs clés : </div>
-      <div class="stats-row"><span>Prestation ciblée . . . . . . . . . . . . . . . .</span><b>{{ P }}</b></div>
+      <div class="stats-row"><span>Prestation disponible . . . . . . . . . . . . . .</span><b>{{ P }}</b></div>
       <div class="stats-row"><span>Adhérents actifs. . . . . . . . . . . . . . . . .</span><b>{{ N }}</b></div>
       <div class="stats-row"><span>Adhérents (brut). . . . . . . . . . . . . . . . .</span><b>{{ B }}</b></div>
       <div class="stats-row"><span>Contribution individuelle attendue. . . .</span><b>{{ C }}</b></div>
