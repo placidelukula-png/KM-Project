@@ -200,6 +200,17 @@ def init_db():
                 );
             """)
 
+            # comptes techniques (pour comptabiliser les cotisations des membres inactifs ou suspendus qui ne sont pas débités dans la table mouvements)       
+            cur.execute("""    
+                CREATE TABLE IF NOT EXISTS comptes_techniques (
+                  id            BIGSERIAL PRIMARY KEY, 
+                  code          TEXT NOT NULL UNIQUE,  
+                  description   TEXT,  
+                  balance       DECIMAL(18,2) NOT NULL DEFAULT 0,      
+                  updatedate    DATE NOT NULL DEFAULT CURRENT_DATE,    
+                  updateuser    TEXT NOT NULL  
+                );
+            """)   
 
 #           # Correction exceptionnelle sur les données de base d'un adhérent.
 #            cur.execute("""
@@ -210,22 +221,14 @@ def init_db():
 #                WHERE id = 65;
 #            """)
 
-#            cur.execute("""
-#                UPDATE membres
-#                SET phone = '998541025',
-#                    firstname = 'Betty',
-#                    lastname = 'Tongota'
-#                WHERE id = 91;
-#            """)
 
 #            # Correction exceptionnelle en haut-volume  les donnees de base d'un adhérent.
-            cur.execute("""
-                    UPDATE membres
-                    SET currentstatute = CASE
-                        WHEN balance = 0 THEN 'inactif'
-                        ELSE currentstatute 
-                    END;
-            """)
+#                    UPDATE membres
+#                    SET currentstatute = CASE
+#                        WHEN balance = 0 THEN 'inactif'
+#                        ELSE currentstatute 
+#                    END;
+#            """)
 
 
 
@@ -267,11 +270,11 @@ def init_db():
 #            """)
 #
 #            # Fixation de la prestation visée.
-#            cur.execute("""
-#                UPDATE id_data
-#                SET quantity = 25  -- exemple de valeur pour la prestation visée
-#                WHERE keydata = 'id-data01'
-#            """)
+            cur.execute("""
+                UPDATE id_data
+                SET quantity = 50  -- exemple de valeur pour la prestation ciblée
+                WHERE keydata = 'id-data01'
+            """)
 #
 #            # Fixation de la marge de sécurité.
 #            cur.execute("""
