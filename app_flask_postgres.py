@@ -202,13 +202,13 @@ def init_db():
 
 
 #           # Correction exceptionnelle sur les données de base d'un adhérent.
-            cur.execute("""
-                UPDATE membres
-                SET phone = '817670140',
-                    firstname = 'Jeanine',
-                    lastname = 'Balola'
-                WHERE id = 65;
-            """)
+#            cur.execute("""
+#                UPDATE membres
+#                SET phone = '817670140',
+#                    firstname = 'Jeanine',
+#                    lastname = 'Balola'
+#                WHERE id = 65;
+#            """)
 
 #            cur.execute("""
 #                UPDATE membres
@@ -218,6 +218,15 @@ def init_db():
 #                WHERE id = 91;
 #            """)
 
+#            # Correction exceptionnelle en haut-volume  les donnees de base d'un adhérent.
+            cur.execute("""
+                    UPDATE membres
+                    SET currentstatute = CASE
+                        WHEN balance = 0 THEN 'inactif'
+                        ELSE currentstatute 
+                    END;
+            """)
+
 
 
 #            # Correction exceptionnelle su les donnees de base d'un adhérent.
@@ -225,7 +234,7 @@ def init_db():
 #                    UPDATE membres
 #                    SET currentstatute = CASE
 #                        WHEN phone = %s AND balance > %s THEN 'probatoire'
-#                        ELSE 'inactif'
+#                        ELSE currentstatute 
 #                    END
 #                    WHERE phone in (%s);
 #                """, (to_phone,C,to_phone))
