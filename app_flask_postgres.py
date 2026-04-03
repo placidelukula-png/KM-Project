@@ -1306,13 +1306,13 @@ def login():
 from flask import render_template
 
 # 1. Route pour le formulaire d'inscription
-@app.route('/add-member')
+@app.route('/add_member')
 def inscription():
     # Ici, tu renverras vers ton formulaire d'ajout à la table 'membres'
     return render_template_string(ADD_MEMBER_PAGE)
 
 # 2. Route pour la page d'informations
-@app.route('/infos-association')
+@app.route('/infos_association')
 def infos_association():
     return render_template_string(INFOS_ASSOCIATION_PAGE)
 
@@ -2033,9 +2033,9 @@ from flask import request, session, render_template_string
 from datetime import datetime
 import psycopg # ou psycopg2 selon ta config
 
-@app.route("/add-member", methods=["GET", "POST"])
+@app.route("/add_member", methods=["GET", "POST"])
 @mentor_required
-def inscription():
+def add_member():
     if request.method == "POST":
         try:
             # 1. Récupération des données du formulaire
