@@ -1309,12 +1309,12 @@ from flask import render_template
 @app.route('/add-member')
 def inscription():
     # Ici, tu renverras vers ton formulaire d'ajout à la table 'membres'
-    return render_template(ADD_MEMBER_PAGE)
+    return render_template_string(ADD_MEMBER_PAGE)
 
 # 2. Route pour la page d'informations
 @app.route('/infos-association')
 def infos_association():
-    return render_template(INFOS_ASSOCIATION_PAGE)
+    return render_template_string(INFOS_ASSOCIATION_PAGE)
 
 
 # --------------------------------------
@@ -2029,40 +2029,91 @@ ADD_MEMBER_PAGE = """
 </div></body></html>
 """
 # Endpoint#06 Créer un membre (menu card)
-@app.route("/addmember", methods=["GET","POST"])
+from flask import request, session, render_template_string
+from datetime import datetime
+import psycopg # ou psycopg2 selon ta config
+
+@app.route("/add-member", methods=["GET", "POST"])
 @mentor_required
-def add_member():
+def inscription():
     if request.method == "POST":
         try:
+            # 1. Récupération des données du formulaire
             phone = (request.form.get("phone") or "").strip()
-            
-            # --- NOUVELLE VALIDATION ICI ---
-            if phone.startswith("0") or phone.startswith("+243"):
-                return render_template_string(ADD_MEMBER_PAGE, 
-                    message="Le numéro ne doit pas avoir des prefixes '0' ou '+243'.", 
-                    is_error=True)
-            # -------------------------------
-            
             lastname = (request.form.get("lastname") or "").strip()
             firstname = (request.form.get("firstname") or "").strip()
-            birthdate = datetime.strptime((request.form.get("birthdate") or "").strip(), "%d/%m/%Y").date()
+            birthdate_str = (request.form.get("birthdate") or "").strip()
             idtype = (request.form.get("idtype") or "").strip()
             password = (request.form.get("password") or "").strip()
 
-            mentor = session["user"]
+            # 2. Validation du numéro de téléphone (Sécurité Python)
+            if phone.startswith("0") or phone.startswith("+"):
+                return render_template_string(ADD_MEMBER_PAGE, 
+                    message="Erreur : Le numéro ne doit pas commencer par 0 ou +243.", 
+                    is_error=True)
+
+            # 3. Conversion de la date
+            birthdate = datetime.strptime(birthdate_str, "%d/%m/%Y").date()
+
+            # 4. Préparation des variables automatiques
+            mentor = session.get("user")
+            updateuser = session.get("user")
             membertype = "membre"
             statut = "inactif"
-            updateuser = session["user"]
             membershipdate = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
 
-            insert_member(phone, membertype, mentor, lastname, firstname, birthdate, idtype, None, statut, updateuser, password, membershipdate)
-            return render_template_string(ADD_MEMBER_PAGE, message="Membre créé.", is_error=False)
-        except psycopg.errors.UniqueViolation:
-            return render_template_string(ADD_MEMBER_PAGE, message="Ce phone existe déjà.", is_error=True)
-        except Exception as e:
-            return render_template_string(ADD_MEMBER_PAGE, message=f"Erreur: {e}", is_error=True)
+            # 5. Appel de ta fonction d'insertion (assure-toi qu'elle utilise %s)
+            insert_member(phone, membertype, mentor, lastname, firstname, birthdate, 
+                          idtype, None, statut, updateuser, password, membershipdate)
+            
+            return render_template_string(ADD_MEMBER_PAGE, 
+                message=f"Succès : {firstname} {lastname} a été créé.", 
+                is_error=False)
 
+        except Exception as e:
+            return render_template_string(ADD_MEMBER_PAGE, 
+                message=f"Erreur d'enregistrement : {e}", 
+                is_error=True)
+
+    # Affichage normal de la page (GET)
     return render_template_string(ADD_MEMBER_PAGE, message="", is_error=False)
+
+###
+#@app.route("/addmember", methods=["GET","POST"])
+#@mentor_required
+#def add_member():
+#    if request.method == "POST":
+#        try:
+#            phone = (request.form.get("phone") or "").strip()
+#            
+#            # --- NOUVELLE VALIDATION ICI ---
+#            if phone.startswith("0") or phone.startswith("+243"):
+#                return render_template_string(ADD_MEMBER_PAGE, 
+#                    message="Le numéro ne doit pas avoir des prefixes '0' ou '+243'.", 
+#                    is_error=True)
+            # -------------------------------
+            
+#           lastname = (request.form.get("lastname") or "").strip()
+#            firstname = (request.form.get("firstname") or "").strip()
+#            birthdate = datetime.strptime((request.form.get("birthdate") or "").strip(), "%d/%m/%Y").date()
+#            idtype = (request.form.get("idtype") or "").strip()
+#            password = (request.form.get("password") or "").strip()
+
+#            mentor = session["user"]
+#            membertype = "membre"
+#            statut = "inactif"
+#            updateuser = session["user"]
+#            membershipdate = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
+
+#            insert_member(phone, membertype, mentor, lastname, firstname, birthdate, idtype, None, statut, updateuser, password, membershipdate)
+#            return render_template_string(ADD_MEMBER_PAGE, message="Membre créé.", is_error=False)
+#        except psycopg.errors.UniqueViolation:
+#            return render_template_string(ADD_MEMBER_PAGE, message="Ce phone existe déjà.", is_error=True)
+#        except Exception as e:
+#            return render_template_string(ADD_MEMBER_PAGE, message=f"Erreur: {e}", is_error=True)
+
+#    return render_template_string(ADD_MEMBER_PAGE, message="", is_error=False)
+###
 
 #----------------------------------------------------------------------------
 # Endpoint #7 — Importer cotisations (admin) : exécuter import_mouvements.py
