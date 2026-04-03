@@ -210,13 +210,13 @@ def init_db():
                 WHERE id = 65;
             """)
 
-            cur.execute("""
-                UPDATE membres
-                SET phone = '998541025',
-                    firstname = 'Betty',
-                    lastname = 'Tongota'
-                WHERE id = 91;
-            """)
+#            cur.execute("""
+#                UPDATE membres
+#                SET phone = '998541025',
+#                    firstname = 'Betty',
+#                    lastname = 'Tongota'
+#                WHERE id = 91;
+#            """)
 
 
 
