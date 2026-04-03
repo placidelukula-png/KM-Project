@@ -206,7 +206,7 @@ def init_db():
                 UPDATE membres
                 SET phone = '998541025',
                     firstname = 'Betty',
-                    lastname = 'Tongota',
+                    lastname = 'Tongota'
                 WHERE id = 91;
             """)
 
@@ -214,7 +214,7 @@ def init_db():
                 UPDATE membres
                 SET phone = '817670140',
                     firstname = 'Jeanine',
-                    lastname = 'Balola',
+                    lastname = 'Balola'
                 WHERE id = 65;
             """)
 
