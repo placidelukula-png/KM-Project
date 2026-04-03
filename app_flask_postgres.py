@@ -204,19 +204,20 @@ def init_db():
 #           # Correction exceptionnelle sur les données de base d'un adhérent.
             cur.execute("""
                 UPDATE membres
+                SET phone = '817670140',
+                    firstname = 'Jeanine',
+                    lastname = 'Balola'
+                WHERE id = 65;
+            """)
+
+            cur.execute("""
+                UPDATE membres
                 SET phone = '998541025',
                     firstname = 'Betty',
                     lastname = 'Tongota'
                 WHERE id = 91;
             """)
 
-            cur.execute("""
-                UPDATE membres
-                SET phone = '817670140',
-                    firstname = 'Jeanine',
-                    lastname = 'Balola'
-                WHERE id = 65;
-            """)
 
 
 #            # Correction exceptionnelle su les donnees de base d'un adhérent.
