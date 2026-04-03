@@ -3153,9 +3153,9 @@ INFOS_ASSOCIATION_PAGE = """
 </html>
 """
 # Endpoint#13 Texte presentation Association et Methodologie de travail
-@app.get("/infos_association")
-def infos_association():
-    return render_template_string(INFOS_ASSOCIATION_PAGE)   
+#@app.get("/infos_association")
+#def infos_association():
+#    return render_template_string(INFOS_ASSOCIATION_PAGE)   
 
 #        
 
