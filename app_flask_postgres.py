@@ -270,11 +270,11 @@ def init_db():
 #            """)
 #
 #            # Fixation de la prestation visée.
-            cur.execute("""
-                UPDATE id_data
-                SET quantity = 50  -- exemple de valeur pour la prestation ciblée
-                WHERE keydata = 'id-data01'
-            """)
+#            cur.execute("""
+#                UPDATE id_data
+#                SET quantity = 50  -- exemple de valeur pour la prestation ciblée
+#                WHERE keydata = 'id-data01'
+#            """)
 #
 #            # Fixation de la marge de sécurité.
 #            cur.execute("""
@@ -1245,7 +1245,7 @@ LOGIN_PAGE = """
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
             <label>Identifiant</label>
-            <input name="phone" placeholder="Numéro sans préfixe" required>
+            <input name="phone" placeholder=" numéro de téléphone sans préfixe" required>
 
             <label>Mot de passe</label>
             <input name="password" type="password" required>
@@ -1258,11 +1258,26 @@ LOGIN_PAGE = """
         {% endif %}
 
         <div class="small">
-            Accès refusé si statut = suspendu ou radié
+            Accès refusé pour les  suspendus et les radiés
         </div>
     </div>
 
 </div>
+
+
+<!-- Dans ta page Login-Page.html -->
+<div class="navigation-buttons" style="margin-top: 20px; display: flex; gap: 10px;">
+    <!-- Bouton Inscription -->
+    <a href="{{ url_for('inscription') }}">
+        <button type="button">Devenir adhérent</button>
+    </a>
+
+    <!-- Bouton Infos Association -->
+    <a href="{{ url_for('infos_association') }}">
+        <button type="button">À propos de l'association</button>
+    </a>
+</div>
+
 
 </body>
 </html>
@@ -1288,6 +1303,18 @@ def login():
 
     return render_template_string(LOGIN_PAGE)
   
+from flask import render_template
+
+# 1. Route pour le formulaire d'inscription
+@app.route('/add-member')
+def inscription():
+    # Ici, tu renverras vers ton formulaire d'ajout à la table 'membres'
+    return render_template(ADD_MEMBER_PAGE)
+
+# 2. Route pour la page d'informations
+@app.route('/infos-association')
+def infos_association():
+    return render_template(INFOS_ASSOCIATION_PAGE)
 
 
 # --------------------------------------
@@ -1972,7 +1999,14 @@ ADD_MEMBER_PAGE = """
 <div class="card">
 <form method="post">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <label>Phone</label><input name="phone" required>
+  
+  <label>Phone</label>
+  <input name="phone" 
+       placeholder="Exemple: 998889560" 
+       required 
+       pattern="^[^0\+].*" 
+       title="Le numéro ne doit pas commencer par 0 ou +">
+  
   <label>Nom</label><input name="lastname" required>
   <label>Prénom</label><input name="firstname" required>
   <label>Date naissance (JJ/MM/AAAA)</label><input name="birthdate" required>
@@ -1994,6 +2028,14 @@ def add_member():
     if request.method == "POST":
         try:
             phone = (request.form.get("phone") or "").strip()
+            
+            # --- NOUVELLE VALIDATION ICI ---
+            if phone.startswith("0") or phone.startswith("+243"):
+                return render_template_string(ADD_MEMBER_PAGE, 
+                    message="Le numéro ne doit pas avoir des prefixes '0' ou '+243'.", 
+                    is_error=True)
+            # -------------------------------
+            
             lastname = (request.form.get("lastname") or "").strip()
             firstname = (request.form.get("firstname") or "").strip()
             birthdate = datetime.strptime((request.form.get("birthdate") or "").strip(), "%d/%m/%Y").date()
@@ -3062,9 +3104,60 @@ DECES_HISTORY_PAGE = """
 def deces_history():
     rows = list_deces_traites()
     return render_template_string(DECES_HISTORY_PAGE, rows=rows)
+#
+# ---------------------------------------------------------------------------   
+# Endpoint #13 — Texte presentation Association et Methodologie de travail
+# ---------------------------------------------------------------------------
+INFOS_ASSOCIATION_PAGE = """
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>À propos - Notre Association</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 20px; background: #f9f9f9; color: #333; }
+        .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { color: #111; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        h2 { color: #444; margin-top: 25px; }
+        p { margin-bottom: 15px; text-align: justify; }
+        .footer { margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; }
+        .btn-back { display: inline-block; padding: 10px 20px; background: #111; color: #fff; text-decoration: none; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Notre Association</h1>
+        
+        <h2>Notre Mission</h2>
+        <p>
+            Bienvenue au sein de notre communauté. Notre association a pour mission principale de rassembler les forces vives afin de promouvoir le développement et l'entraide entre tous les membres. Fondée sur des valeurs de solidarité, nous travaillons quotidiennement à la création d'un réseau solide où chaque adhérent trouve sa place et contribue à l'essor collectif.
+        </p>
+        <p>
+            Nous croyons fermement que l'accès à l'information et le partage d'expériences sont les clés de la réussite. C'est pourquoi nous mettons en œuvre des projets concrets qui répondent aux besoins réels de notre communauté, tout en garantissant une transparence totale dans notre gestion.
+        </p>
 
+        <h2>Méthodologie de travail</h2>
+        <p>
+            Notre approche repose sur une organisation rigoureuse divisée en plusieurs piliers : l'identification, l'accompagnement et le suivi. Chaque nouveau membre est intégré via un système de mentorat (mentor) qui assure une transmission fluide des valeurs et des procédures de l'association.
+        </p>
+        <p>
+            Nous utilisons des outils numériques modernes pour faciliter la communication et la gestion des données. Les mises à jour régulières de nos fichiers membres nous permettent de maintenir une base de données active et dynamique, garantissant ainsi que personne n'est laissé pour compte dans nos initiatives sociales.
+        </p>
 
-#        <td>{{ r[3].strftime('%d/%m/%Y') }}</td>  
+        <div class="footer">
+            <a href="{{ url_for('login') }}" class="btn-back">← Retour à la connexion</a>
+        </div>
+    </div>
+</body>
+</html>
+"""
+# Endpoint#13 Texte presentation Association et Methodologie de travail
+@app.get("/infos_association")
+def infos_association():
+    return render_template_string(INFOS_ASSOCIATION_PAGE)   
+
+#        
 
 if __name__ == "__main__":
     # Local uniquement. En prod Render, gunicorn gère le port.
