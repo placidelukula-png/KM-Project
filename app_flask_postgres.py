@@ -2004,7 +2004,7 @@ ADD_MEMBER_PAGE = """
   <input name="phone" 
        placeholder="Exemple: 998889560" 
        required 
-       pattern="^[^0\+].*" 
+       pattern="^[^0\\+].*" 
        title="Le numéro ne doit pas commencer par 0 ou +">
   
   <label>Nom</label><input name="lastname" required>
@@ -2019,7 +2019,14 @@ ADD_MEMBER_PAGE = """
   </div>
   {% if message %}<div class="msg {{ 'err' if is_error else 'ok' }}">{{ message }}</div>{% endif %}
 </form>
-</div></div></body></html>
+
+</div>
+
+<div class="footer">
+    <a href="{{ url_for('login') }}" class="btn-back">← Retour à la connexion</a>
+</div>
+
+</div></body></html>
 """
 # Endpoint#06 Créer un membre (menu card)
 @app.route("/addmember", methods=["GET","POST"])
