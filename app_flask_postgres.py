@@ -271,18 +271,18 @@ def init_db():
 #            """)
 #
 #            # Fixation de la prestation visée.
-#            cur.execute("""
-#                UPDATE id_data
-#                SET quantity = 50  -- exemple de valeur pour la prestation ciblée
-#                WHERE keydata = 'id-data01'
-#            """)
+            cur.execute("""
+                UPDATE id_data
+                SET quantity = 65  -- exemple de valeur pour la prestation ciblée
+                WHERE keydata = 'id-data01'
+            """)
 #
 #            # Fixation de la marge de sécurité.
-#            cur.execute("""
-#                UPDATE id_data
-#                SET quantity = 1.1  -- exemple de valeur pour la marge de sécurité
-#                WHERE keydata = 'id-data02'
-#            """)
+            cur.execute("""
+                UPDATE id_data
+                SET quantity = 1.1  -- exemple de valeur pour la marge de sécurité
+                WHERE keydata = 'id-data02'
+            """)
 #            
         conn.commit()
 
