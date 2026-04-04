@@ -2448,63 +2448,48 @@ DATAGENERALFOLLOWUP_PAGE = """
     </div>
   </div>  
 
-  <!-- Recherche rapide par phone -->
-    <div class="card" style="margin-top:0px; padding:12px;">
-        <!-- GRILLE PRINCIPALE -->
-        <div class="grid" style="grid-template-columns: 1fr 1fr 1fr; align-items:end; gap:20px;">
+<div class="card" style="margin-top:0px; padding:12px;">
+    <!-- GRILLE PRINCIPALE : On passe à 2 colonnes -->
+    <div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; align-items: end; gap: 20px;">
 
-            <!-- BLOC 1 : RECHERCHE (Formulaire GET) -->
-            <form method="get" action="{{ url_for('search_member') }}" style="display:contents;">
-                <div style="display:flex; flex-direction:column;">
-                    <label>Rechercher un adhérent par phone</label>
-                    <input name="q_phone" placeholder="Exemple: 998886955" value="{{ q_phone or '' }}">
-                </div>
-
-                <div style="display:flex; align-items:center; gap:10px;">
+        <!-- CADRAN 1 : Contient le BLOC 1 -->
+        <div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px;">
+            <form method="get" action="{{ url_for('search_member') }}" style="display: flex; flex-direction: column; gap: 10px;">
+                <label>Rechercher un adhérent par phone</label>
+                <input name="q_phone" placeholder="Exemple: 998886955" value="{{ q_phone or '' }}">
+                <div style="display: flex; gap: 10px;">
                     <button class="btn" type="submit">Vérifier</button>
                     <a class="btn secondary" href="{{ url_for('datageneralfollowup') }}">Réinitialiser</a>
                 </div>
-            </form> <!-- FERMETURE DU PREMIER FORMULAIRE ICI -->
+            </form>
+        </div>
 
+        <!-- CADRAN 2 : Contient le BLOC 2 et le BLOC 3 -->
+        <div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; display: flex; flex-direction: column; gap: 10px;">
             
-            <!-- BLOC 2 : PARAMETRES (Formulaire POST) -->
-            <form action="{{ url_for('parametrage') }}" method="POST" style="display:flex; align-items:center; justify-content: flex-end;">
-                
-                <!-- AJOUTEZ CETTE LIGNE ICI -->
+            <!-- BLOC 2 -->
+            <form action="{{ url_for('parametrage') }}" method="POST">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
-                <button type="submit" class="btn btn-primary" onclick="return confirm('Voulez-vous vraiment actualiser les statuts ?')">
+                <button type="submit" class="btn btn-primary" style="width: 100%;" onclick="return confirm('...')">
                     🔄 Actualiser les paramètres
                 </button>
             </form>
-                        
 
-            <!-- BLOC 3 : ACTUALISATION (Formulaire POST) -->
-            <form action="{{ url_for('launch_statutes_update') }}" method="POST" style="display:flex; align-items:center; justify-content: flex-end;">
-                
-                <!-- AJOUTEZ CETTE LIGNE ICI -->
+            <!-- BLOC 3 -->
+            <form action="{{ url_for('launch_statutes_update') }}" method="POST">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
-                <button type="submit" class="btn btn-primary" onclick="return confirm('Voulez-vous vraiment actualiser les statuts ?')">
+                <button type="submit" class="btn btn-primary" style="width: 100%;" onclick="return confirm('...')">
                     🔄 Actualiser les Statuts
                 </button>
             </form>
-            
-            <!-- Zone d'affichage des messages de succès ou d'erreur -->
-            {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                <div class="alert alert-{{ category }}" style="padding: 10px; margin-bottom: 20px; border-radius: 5px; border: 1px solid; 
-                    {% if category == 'success' %} background-color: #d4edda; color: #155724; border-color: #c3e6cb; {% else %} background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; {% endif %}">
-                    {{ message }}
-                </div>
-                {% endfor %}
-            {% endif %}
-            {% endwith %}
-
-
         </div>
     </div>
+
+    <!-- Zone d'alerte (en dessous de la grille) -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        <!-- ... votre code d'alerte ... -->
+    {% endwith %}
+</div>
 
 
   {% if edit_row %}
