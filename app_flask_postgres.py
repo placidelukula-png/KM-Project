@@ -2455,7 +2455,7 @@ DATAGENERALFOLLOWUP_PAGE = """
         <!-- CADRAN 1 : Contient le BLOC 1 -->
         <div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px;">
             <form method="get" action="{{ url_for('search_member') }}" style="display: flex; flex-direction: column; gap: 10px;">
-                <label>Rechercher un adhérent par phone</label>
+                <label>Par phone</label>
                 <input name="q_phone" placeholder="Exemple: 998886955" value="{{ q_phone or '' }}">
                 <div style="display: flex; gap: 10px;">
                     <button class="btn" type="submit">Vérifier</button>
@@ -3228,32 +3228,44 @@ PARAMETRAGE_PAGE = """
 <title>Mise à jour des indicateurs de travail</title>
 <style>
  body{font-family:Arial;margin:20px} .wrap{max-width:1100px;margin:0 auto}
- .pill{display:inline-block;padding:6px 10px;border:1px solid #ddd;border-radius:999px;background:#fafafa;margin-bottom:10px}
- table{width:100%;border-collapse:collapse}
+ table{width:100%;border-collapse:collapse;margin-top:20px}
  th,td{padding:10px;border-bottom:1px solid #eee;text-align:left}
  th{background:#f6f6f6}
+ input[type="number"], input[type="text"]{width:100%; padding:5px; border:1px solid #ccc; border-radius:4px;}
+ .btn-save{background:#28a745; color:white; padding:10px 20px; border:none; border-radius:4px; cursor:pointer; margin-top:20px}
 </style></head><body><div class="wrap">
   <h2>Indicateurs de travail</h2>
   <p><a href="{{ url_for('home') }}">← Retour</a></p>
   
-  <table>
-    <thead><tr>
-      <th>DatePrénom</th><th>Nom de famille</th><th>Dernier statut</th><th>prestation</th>
-    </tr></thead>
-    <tbody>
-    {% for r in rows %}
-      <tr>
-        <td>{{ r[0] }}</td>
-        <td>{{ r[1] }}</td>
-        <td>{{ r[2] }}</td>
-        <td>{{ r[4] }}</td>
-        <td>{{ r[5] }}</td>
-      </tr>
-    {% endfor %}
-    {% if not rows %}<tr><td colspan="4">Aucun indicateur enregistré.</td></tr>{% endif %}
-    </tbody>
-  </table>
-</div></body></html></html>
+  <form method="POST" action="{{ url_for('save_parametrage') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <table>
+      <thead><tr>
+        <th>Donnée clef</th><th>Description</th><th>Quantité</th><th>Modifié par</th><th>Date modification</th>
+      </tr></thead>
+      <tbody>
+      {% for r in rows %}
+        <tr>
+          <!-- On garde la clef en texte mais on l'envoie en hidden pour identifier la ligne -->
+          <td>{{ r[0] }}<input type="hidden" name="key_{{ loop.index }}" value="{{ r[0] }}"></td>
+          <td>{{ r[1] }}</td>
+          <td>
+            <input type="number" name="value_{{ loop.index }}" value="{{ r[2] }}">
+          </td>
+          <td>{{ r[4] }}</td>
+          <td>{{ r[5] }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    
+    {% if rows %}
+      <button type="submit" class="btn-save">Enregistrer les modifications</button>
+    {% else %}
+      <p>Aucun indicateur enregistré.</p>
+    {% endif %}
+  </form>
+</div></body></html>
 """
 # Endpoint#14 — Paramétrage des indicateurs de travail
 @app.post("/parametrage")
