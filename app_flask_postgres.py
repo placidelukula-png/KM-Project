@@ -1260,23 +1260,21 @@ LOGIN_PAGE = """
             Accès refusé pour les  suspendus et les radiés
         </div>
 
-        <div class="navigation-buttons" style="margin-top: 20px; display: flex; gap: 10px;">
+        <div class="navigation-buttons" style="margin-top: 20px; display: flex; gap: 10px;justify-content: center; align-items: center;">
             <!-- Bouton Inscription -->
             <a href="{{ url_for('add_member') }}">
-                <button type="button">Devenir adhérent</button>
+                <button type="button">inscription</button>
             </a>
 
             <!-- Bouton Infos Association -->
             <a href="{{ url_for('infos_association') }}">
-                <button type="button">À propos de l'association</button>
+                <button type="button">notre association</button>
             </a>
         </div>
         
     </div>
 
 </div>
-
-
 
 </body>
 </html>
