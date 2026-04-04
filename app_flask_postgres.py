@@ -3201,15 +3201,20 @@ INFOS_ASSOCIATION_PAGE = """
             Bienvenue au sein de notre communauté. Notre association a pour mission principale de rassembler les forces vives afin de promouvoir le développement et l'entraide entre tous les membres. Fondée sur des valeurs de solidarité, nous travaillons quotidiennement à la création d'un réseau solide où chaque adhérent trouve sa place et contribue à l'essor collectif.
         </p>
         <p>
-            Nous croyons fermement que l'accès à l'information et le partage d'expériences sont les clés de la réussite. C'est pourquoi nous mettons en œuvre des projets concrets qui répondent aux besoins réels de notre communauté, tout en garantissant une transparence totale dans notre gestion.
+        KM-KIMYA est une association solidaire engagée dans la réduction du choc économique lié aux funérailles.
         </p>
 
         <h2>Méthodologie de travail</h2>
         <p>
-            Notre approche repose sur une organisation rigoureuse divisée en plusieurs piliers : l'identification, l'accompagnement et le suivi. Chaque nouveau membre est intégré via un système de mentorat (mentor) qui assure une transmission fluide des valeurs et des procédures de l'association.
+            Nous utilisons des outils numériques modernes pour faciliter la communication et la gestion des données. Les mises à jour régulières de nos fichiers membres nous permettent de maintenir une base de données active et dynamique, garantissant ainsi que personne n'est laissé pour compte dans nos initiatives sociales.
         </p>
         <p>
-            Nous utilisons des outils numériques modernes pour faciliter la communication et la gestion des données. Les mises à jour régulières de nos fichiers membres nous permettent de maintenir une base de données active et dynamique, garantissant ainsi que personne n'est laissé pour compte dans nos initiatives sociales.
+            Pour adhérer il suffit d'envoyer par mobile-money $5.50 dans un des numéros ci-dessous :
+             +243 824807663 pour Mpesa
+             +243 999944459 pour Airtel-money
+             +243 891273191 pour Orange-money
+             +243 903077077 pour Africell-money
+            Notre approche repose sur une organisation rigoureuse divisée en plusieurs piliers : l'identification, l'accompagnement et le suivi. Chaque nouveau membre est intégré via un système de mentorat (mentor) qui assure une transmission fluide des valeurs et des procédures de l'association.
         </p>
 
         <div class="footer">
