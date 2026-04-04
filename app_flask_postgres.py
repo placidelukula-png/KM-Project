@@ -1237,7 +1237,6 @@ LOGIN_PAGE = """
     <!-- IMAGE PANEL -->
     <div class="left"></div>
 
-    <!-- LOGIN PANEL -->
     <div class="right">
         <h2>Connexion KM-Kimya</h2>
 
@@ -1260,23 +1259,23 @@ LOGIN_PAGE = """
         <div class="small">
             Accès refusé pour les  suspendus et les radiés
         </div>
+
+        <div class="navigation-buttons" style="margin-top: 20px; display: flex; gap: 10px;">
+            <!-- Bouton Inscription -->
+            <a href="{{ url_for('add_member') }}">
+                <button type="button">Devenir adhérent</button>
+            </a>
+
+            <!-- Bouton Infos Association -->
+            <a href="{{ url_for('infos_association') }}">
+                <button type="button">À propos de l'association</button>
+            </a>
+        </div>
+        
     </div>
 
 </div>
 
-
-<!-- Dans ta page Login-Page.html -->
-<div class="navigation-buttons" style="margin-top: 20px; display: flex; gap: 10px;">
-    <!-- Bouton Inscription -->
-    <a href="{{ url_for('inscription') }}">
-        <button type="button">Devenir adhérent</button>
-    </a>
-
-    <!-- Bouton Infos Association -->
-    <a href="{{ url_for('infos_association') }}">
-        <button type="button">À propos de l'association</button>
-    </a>
-</div>
 
 
 </body>
