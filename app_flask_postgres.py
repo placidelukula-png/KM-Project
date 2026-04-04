@@ -2452,11 +2452,16 @@ DATAGENERALFOLLOWUP_PAGE = """
     <!-- GRILLE PRINCIPALE : On passe à 2 colonnes -->
     <div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; align-items: end; gap: 20px;">
 
-        <!-- CADRAN 1 : Contient le BLOC 1 -->
+        <!-- CADRAN 1 contient BLOC 1 -->
         <div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px;">
-            <form method="get" action="{{ url_for('search_member') }}" style="display: flex; flex-direction: column; gap: 10px;">
-                <label>Par phone</label>
-                <input name="q_phone" placeholder="Exemple: 998886955" value="{{ q_phone or '' }}">
+            <form method="get" action="{{ url_for('search_member') }}">
+                
+                <!-- DIV DE REGROUPEMENT EN LIGNE -->
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                    <label style="white-space: nowrap;">Chercher par phone</label>
+                    <input name="q_phone" placeholder="Exemple: 998886955" value="{{ q_phone or '' }}" style="flex-grow: 1;">
+                </div>
+
                 <div style="display: flex; gap: 10px;">
                     <button class="btn" type="submit">Vérifier</button>
                     <a class="btn secondary" href="{{ url_for('datageneralfollowup') }}">Réinitialiser</a>
@@ -3237,7 +3242,7 @@ PARAMETRAGE_PAGE = """
   <h2>Indicateurs de travail</h2>
   <p><a href="{{ url_for('home') }}">← Retour</a></p>
   
-  <form method="POST" action="{{ url_for('save_parametrage') }}">
+  <form method="POST" action="{{ url_for('parametrage') }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <table>
       <thead><tr>
