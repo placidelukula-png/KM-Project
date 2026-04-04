@@ -921,6 +921,16 @@ def update_member_mentor(phone: str, mentor: str, updateuser: str, lastname: str
             """, (mentor, updateuser, lastname, firstname, phone))
         conn.commit()
 
+def update_id_data(keydata: str, quantity: Decimal):
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                UPDATE id_data
+                SET quantity=%s
+                WHERE keydata=%s
+            """, (quantity, keydata))
+        conn.commit()
+
 def list_id_data():
     with get_conn() as conn:
         with conn.cursor() as cur:
@@ -3266,7 +3276,9 @@ PARAMETRAGE_PAGE = """
           <td>{{ r[0] }}<input type="hidden" name="key_{{ loop.index }}" value="{{ r[0] }}"></td>
           <td>{{ r[1] }}</td>
           <td>
-            <input type="number" name="value_{{ loop.index }}" value="{{ r[2] }}" step="any" required>
+            <input type="number" name="value_{{ loop.index }}" 
+                   value="{{ "%.2f"|format(r[2]|float) }}" 
+                   step="0.01">
           </td>
           <td>{{ r[4] }}</td>
           <td>{{ r[5] }}</td>
@@ -3284,10 +3296,38 @@ PARAMETRAGE_PAGE = """
 </div></body></html>
 """
 # Endpoint#14 — Paramétrage des indicateurs de travail
-@app.post("/parametrage")
+from flask import request, redirect, url_for, flash
+from decimal import Decimal, ROUND_HALF_UP
+
+@app.route("/parametrage", methods=["GET", "POST"])
 def parametrage():
+    if request.method == "POST":
+        # 1. On récupère toutes les lignes de la base pour connaître le nombre d'éléments
+        rows = list_id_data() 
+        
+        try:
+            # 2. On boucle sur le nombre de lignes (en utilisant loop.index qui commence à 1)
+            for i in range(1, len(rows) + 1):
+                key = request.form.get(f"key_{i}")
+                value_raw = request.form.get(f"value_{i}")
+                
+                if key and value_raw:
+                    # Conversion propre avec l'arrondi financier que nous avons vu
+                    new_value = Decimal(value_raw).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+                    
+                    # 3. APPEL A VOTRE BASE DE DONNÉES (Exemple d'exécution)
+                    update_id_data(key, new_value) 
+                    # Remplacez par votre fonction SQL : "UPDATE table SET quantite = %s WHERE cle = %s"
+            
+            flash("Mise à jour réussie !", "success")
+        except Exception as e:
+            flash(f"Erreur lors de l'enregistrement : {e}", "danger")
+            
+        return redirect(url_for('parametrage'))
+
+    # Si c'est un GET, on affiche simplement la page
     rows = list_id_data()
-    return render_template_string(PARAMETRAGE_PAGE, rows=rows)   
+    return render_template_string(PARAMETRAGE_PAGE, rows=rows)
 
 
 #        
