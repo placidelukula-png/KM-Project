@@ -15,6 +15,7 @@ import select
 from weakref import ref
 
 import psycopg
+from psycopg import rows
 from psycopg.rows import tuple_row
 
 from flask import Flask, flash, request, redirect, url_for, render_template_string, session, abort
@@ -920,8 +921,15 @@ def update_member_mentor(phone: str, mentor: str, updateuser: str, lastname: str
             """, (mentor, updateuser, lastname, firstname, phone))
         conn.commit()
 
-
-
+def list_id_data():
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT keydata,decript,quantity,note,created_by,created_at,id   
+                FROM id_data
+                ORDER BY keydata DESC
+            """)
+            return cur.fetchall()
 
 
 # ----------------------------
@@ -1257,18 +1265,18 @@ LOGIN_PAGE = """
         {% endif %}
 
         <div class="small">
-            Accès refusé pour les  suspendus et les radiés
+            Accès refusé aux suspendus et aux radiés
         </div>
 
         <div class="navigation-buttons" style="margin-top: 20px; display: flex; gap: 10px;justify-content: center; align-items: center;">
             <!-- Bouton Inscription -->
             <a href="{{ url_for('add_member') }}">
-                <button type="button">inscription</button>
+                <button type="button">Inscription libre</button>
             </a>
 
             <!-- Bouton Infos Association -->
             <a href="{{ url_for('infos_association') }}">
-                <button type="button">notre association</button>
+                <button type="button">Notre association</button>
             </a>
         </div>
         
@@ -1992,7 +2000,9 @@ ADD_MEMBER_PAGE = """
  .err{background:#ffe9ea;border:1px solid #ffb3b8}
 </style></head><body><div class="wrap">
 <h2>Créer un membre</h2>
-<p><a href="{{ url_for('home') }}">← Retour</a></p>
+
+<!-- <p><a href="{{ url_for('home') }}">← Retour</a></p> -->
+
 <div class="card">
 <form method="post">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -2456,8 +2466,20 @@ DATAGENERALFOLLOWUP_PAGE = """
                 </div>
             </form> <!-- FERMETURE DU PREMIER FORMULAIRE ICI -->
 
+            
+            <!-- BLOC 2 : PARAMETRES (Formulaire POST) -->
+            <form action="{{ url_for('parameters_update') }}" method="POST" style="display:flex; align-items:center; justify-content: flex-end;">
+                
+                <!-- AJOUTEZ CETTE LIGNE ICI -->
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-            <!-- BLOC 2 : ACTUALISATION (Formulaire POST) -->
+                <button type="submit" class="btn btn-primary" onclick="return confirm('Voulez-vous vraiment actualiser les statuts ?')">
+                    🔄 Actualiser les paramètres
+                </button>
+            </form>
+                        
+
+            <!-- BLOC 3 : ACTUALISATION (Formulaire POST) -->
             <form action="{{ url_for('launch_statutes_update') }}" method="POST" style="display:flex; align-items:center; justify-content: flex-end;">
                 
                 <!-- AJOUTEZ CETTE LIGNE ICI -->
@@ -3212,8 +3234,51 @@ INFOS_ASSOCIATION_PAGE = """
 #def infos_association():
 #    return render_template_string(INFOS_ASSOCIATION_PAGE)   
 
-#        
+#
+# -------------------------------------------------------   
+# Endpoint #14 — Paramétrage des indicateurs de travail
+# -------------------------------------------------------
+PARAMETRAGE_PAGE = """
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mise à jour des indicateurs de travail</title>
+<style>
+ body{font-family:Arial;margin:20px} .wrap{max-width:1100px;margin:0 auto}
+ .pill{display:inline-block;padding:6px 10px;border:1px solid #ddd;border-radius:999px;background:#fafafa;margin-bottom:10px}
+ table{width:100%;border-collapse:collapse}
+ th,td{padding:10px;border-bottom:1px solid #eee;text-align:left}
+ th{background:#f6f6f6}
+</style></head><body><div class="wrap">
+  <h2>Indicateurs de travail</h2>
+  <p><a href="{{ url_for('home') }}">← Retour</a></p>
+  
+  <table>
+    <thead><tr>
+      <th>DatePrénom</th><th>Nom de famille</th><th>Dernier statut</th><th>prestation</th>
+    </tr></thead>
+    <tbody>
+    {% for r in rows %}
+      <tr>
+        <td>{{ r[0] }}</td>
+        <td>{{ r[1] }}</td>
+        <td>{{ r[2] }}</td>
+        <td>{{ r[4] }}</td>
+        <td>{{ r[5] }}</td>
+      </tr>
+    {% endfor %}
+    {% if not rows %}<tr><td colspan="4">Aucun indicateur enregistré.</td></tr>{% endif %}
+    </tbody>
+  </table>
+</div></body></html></html>
+"""
+# Endpoint#14 — Paramétrage des indicateurs de travail
+@app.post("/parametrage")
+def parametrage():
+    rows = list_id_data()
+    return render_template_string(PARAMETRAGE_PAGE, rows=rows)   
 
+
+#        
+# --------------------------------------------------------------------------------------
 if __name__ == "__main__":
     # Local uniquement. En prod Render, gunicorn gère le port.
     app.run(host="0.0.0.0", port=5000, debug=True)
