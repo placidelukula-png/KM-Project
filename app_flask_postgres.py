@@ -2468,7 +2468,7 @@ DATAGENERALFOLLOWUP_PAGE = """
 
             
             <!-- BLOC 2 : PARAMETRES (Formulaire POST) -->
-            <form action="{{ url_for('parameters_update') }}" method="POST" style="display:flex; align-items:center; justify-content: flex-end;">
+            <form action="{{ url_for('parametrage') }}" method="POST" style="display:flex; align-items:center; justify-content: flex-end;">
                 
                 <!-- AJOUTEZ CETTE LIGNE ICI -->
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
