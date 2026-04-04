@@ -3208,15 +3208,21 @@ INFOS_ASSOCIATION_PAGE = """
         <p>
             Nous utilisons des outils numériques modernes pour faciliter la communication et la gestion des données. Les mises à jour régulières de nos fichiers membres nous permettent de maintenir une base de données active et dynamique, garantissant ainsi que personne n'est laissé pour compte dans nos initiatives sociales.
         </p>
-        <p>
-            Pour adhérer il suffit d'envoyer par mobile-money $5.50 dans un des numéros ci-dessous :
-             +243 824807663 pour Mpesa
-             +243 999944459 pour Airtel-money
-             +243 891273191 pour Orange-money
-             +243 903077077 pour Africell-money
-            Notre approche repose sur une organisation rigoureuse divisée en plusieurs piliers : l'identification, l'accompagnement et le suivi. Chaque nouveau membre est intégré via un système de mentorat (mentor) qui assure une transmission fluide des valeurs et des procédures de l'association.
-        </p>
+        <p>Pour adhérer il suffit d'envoyer par mobile-money $5.50 dans un des numéros ci-dessous :</p>
 
+        <ul>
+            <li><strong>+243 824807663</strong> pour Mpesa</li>
+            <li><strong>+243 999944459</strong> pour Airtel-money</li>
+            <li><strong>+243 891273191</strong> pour Orange-money</li>
+            <li><strong>+243 903077077</strong> pour Africell-money</li>
+        </ul>
+
+        <p>
+            Notre approche repose sur une organisation rigoureuse divisée en plusieurs piliers : 
+            l'identification, l'accompagnement et le suivi. Chaque nouveau membre est intégré 
+            via un système de mentorat (mentor) qui assure une transmission fluide des valeurs 
+            et des procédures de l'association.
+        </p>
         <div class="footer">
             <a href="{{ url_for('login') }}" class="btn-back">← Retour à la connexion</a>
         </div>
@@ -3260,7 +3266,7 @@ PARAMETRAGE_PAGE = """
           <td>{{ r[0] }}<input type="hidden" name="key_{{ loop.index }}" value="{{ r[0] }}"></td>
           <td>{{ r[1] }}</td>
           <td>
-            <input type="number" name="value_{{ loop.index }}" value="{{ r[2] }}">
+            <input type="number" name="value_{{ loop.index }}" value="{{ r[2] }}" step="any" required>
           </td>
           <td>{{ r[4] }}</td>
           <td>{{ r[5] }}</td>
