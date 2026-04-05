@@ -2073,9 +2073,14 @@ def add_member():
             birthdate = datetime.strptime(birthdate_str, "%d/%m/%Y").date()
 
             # 4. Préparation des variables automatiques
-            mentor = session.get("user")
-            updateuser = session.get("user")
-            membertype = "membre"
+            if not session.get("user"):
+                mentor = 'admin'
+                updateuser = 'admin'
+            else:
+                mentor = session.get("user")
+                updateuser = session.get("user")
+
+            membertype = "independant"
             statut = "inactif"
             membershipdate = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
 
