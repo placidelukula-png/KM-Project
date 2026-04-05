@@ -1073,7 +1073,7 @@ def statutes_update():
     C = Decimal(str(fetch_dashboard_stats()["C"]).replace(" ", ""))
     limit_date = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
 
-    log.info("Début de l'actualisation des statuts. Seuil Cotisation=%s, date limite=%s", C, limit_date)
+    #log.info("Début de l'actualisation des statuts. Seuil Cotisation=%s, date limite=%s", C, limit_date)
 
     with get_conn() as conn:
         with conn.cursor() as cur:
@@ -2051,7 +2051,7 @@ from datetime import datetime
 import psycopg # ou psycopg2 selon ta config
 
 @app.route("/add_member", methods=["GET", "POST"])
-@mentor_required
+#@mentor_required
 def add_member():
     if request.method == "POST":
         try:
@@ -2095,42 +2095,6 @@ def add_member():
     # Affichage normal de la page (GET)
     return render_template_string(ADD_MEMBER_PAGE, message="", is_error=False)
 
-###
-#@app.route("/addmember", methods=["GET","POST"])
-#@mentor_required
-#def add_member():
-#    if request.method == "POST":
-#        try:
-#            phone = (request.form.get("phone") or "").strip()
-#            
-#            # --- NOUVELLE VALIDATION ICI ---
-#            if phone.startswith("0") or phone.startswith("+243"):
-#                return render_template_string(ADD_MEMBER_PAGE, 
-#                    message="Le numéro ne doit pas avoir des prefixes '0' ou '+243'.", 
-#                    is_error=True)
-            # -------------------------------
-            
-#           lastname = (request.form.get("lastname") or "").strip()
-#            firstname = (request.form.get("firstname") or "").strip()
-#            birthdate = datetime.strptime((request.form.get("birthdate") or "").strip(), "%d/%m/%Y").date()
-#            idtype = (request.form.get("idtype") or "").strip()
-#            password = (request.form.get("password") or "").strip()
-
-#            mentor = session["user"]
-#            membertype = "membre"
-#            statut = "inactif"
-#            updateuser = session["user"]
-#            membershipdate = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
-
-#            insert_member(phone, membertype, mentor, lastname, firstname, birthdate, idtype, None, statut, updateuser, password, membershipdate)
-#            return render_template_string(ADD_MEMBER_PAGE, message="Membre créé.", is_error=False)
-#        except psycopg.errors.UniqueViolation:
-#            return render_template_string(ADD_MEMBER_PAGE, message="Ce phone existe déjà.", is_error=True)
-#        except Exception as e:
-#            return render_template_string(ADD_MEMBER_PAGE, message=f"Erreur: {e}", is_error=True)
-
-#    return render_template_string(ADD_MEMBER_PAGE, message="", is_error=False)
-###
 
 #----------------------------------------------------------------------------
 # Endpoint #7 — Importer cotisations (admin) : exécuter import_mouvements.py
@@ -2298,7 +2262,7 @@ def import_mouvements():
                           SET currentstatute = 'inactif',
                               updatedate = CURRENT_DATE,
                               updateuser = %s
-                          WHERE phone = %s AND balance <  %s AND currentstatute in ('actif','probatoire')
+                          WHERE phone = %s AND balance <  %s AND currentstatute in ('actif','probatoire')   
                         """, (session.get("user"), phone, contribution_minimum))
                         if cur.rowcount:
                             flagged_inactif += 1
@@ -2308,7 +2272,7 @@ def import_mouvements():
                         cur.execute("""
                             UPDATE membres
                             SET membershipdate = CASE 
-                                WHEN phone = %s AND balance > %s AND membershipdate = %s THEN CURRENT_DATE
+                                WHEN phone = %s AND balance >= %s AND membershipdate = %s THEN CURRENT_DATE
                                 ELSE membershipdate
                             END
                             WHERE phone = %s;
@@ -2843,7 +2807,7 @@ def launch_statutes_update():
     from decimal import Decimal
     C = Decimal(str(fetch_dashboard_stats()["C"]).replace(" ", ""))
     limit_date = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
-    log.info("Début de l'actualisation des statuts. Seuil Cotisation=%s, date limite=%s", C, limit_date)
+    #log.info("Début de l'actualisation des statuts. Seuil Cotisation=%s, date limite=%s", C, limit_date)
 
     statutes_update()
     #log.info("Actualisation des statuts terminée. %s statut(s) mis à jour.", rows_updated)
@@ -2852,44 +2816,6 @@ def launch_statutes_update():
 
     return redirect(url_for("datageneralfollowup"))
 
-
-#@app.post("/statutes_update")
-#@login_required
-#def statutes_update():
-#    updateuser = session.get("user") or ADMIN_PHONE
-#    #C = fetch_dashboard_stats()["C"]
-#    from decimal import Decimal
-#    C = Decimal(str(fetch_dashboard_stats()["C"]).replace(" ", ""))
-#    limit_date = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
-
-#    with get_conn() as conn:
-#        with conn.cursor() as cur:
-#            cur.execute("""
-#                UPDATE membres
-#                SET membershipdate = CASE 
-#                    WHEN balance >= %s AND membershipdate = %s THEN CURRENT_DATE
-#                    ELSE membershipdate
-#                END
-#            """, (C, limit_date))
-
-#
-#            cur.execute("""
-#                UPDATE membres
-#                SET currentstatute = CASE
-#                    WHEN (EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12
-#                         + EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))) < 3
-#                         AND balance >= %s THEN 'probatoire'
-#                    WHEN (EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12
-#                         + EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))) >= 3
-#                         AND balance >= %s THEN 'actif'
-#                    ELSE 'inactif'
-#                END,
-#                    updatedate = CURRENT_DATE,
-#                    updateuser = %s
-#                WHERE membershipdate <> %s ;                    
-#            """, (C, C, limit_date, updateuser))
-#        conn.commit()
-#    return redirect(url_for("datageneralfollowup"))    
 
 # --------------------------------------------------------------------------------------
 # Endpoint #10 — Transfert de cotisations (débit/crédit + blocage si solde insuffisant)
