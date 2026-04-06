@@ -222,17 +222,14 @@ def init_db():
 #                WHERE id = 65;
 #            """)
 
+            # Correction en haut-volume (date d'adhésion des memres potentiels est 2099-12-31).
+            cur.execute("""
+                    UPDATE membres
+                       SET membershipdate = DATE '2099-12-31',
+                    WHERE currentstatute = 'inactif';
+            """)
 
-#            # Correction exceptionnelle en haut-volume  les donnees de base d'un adhérent.
-#                    UPDATE membres
-#                    SET currentstatute = CASE
-#                        WHEN balance = 0 THEN 'inactif'
-#                        ELSE currentstatute 
-#                    END;
-#            """)
-
-
-
+#
 #            # Correction exceptionnelle su les donnees de base d'un adhérent.
 #            cur.execute("""
 #                    UPDATE membres
@@ -271,18 +268,18 @@ def init_db():
 #            """)
 #
 #            # Fixation de la prestation visée.
-            cur.execute("""
-                UPDATE id_data
-                SET quantity = 65  -- exemple de valeur pour la prestation ciblée
-                WHERE keydata = 'id-data01'
-            """)
+#            cur.execute("""
+#                UPDATE id_data
+#                SET quantity = 65  -- exemple de valeur pour la prestation ciblée
+#                WHERE keydata = 'id-data01'
+#            """)
 #
 #            # Fixation de la marge de sécurité.
-            cur.execute("""
-                UPDATE id_data
-                SET quantity = 1.1  -- exemple de valeur pour la marge de sécurité
-                WHERE keydata = 'id-data02'
-            """)
+#            cur.execute("""
+#                UPDATE id_data
+#                SET quantity = 1.1  -- exemple de valeur pour la marge de sécurité
+#                WHERE keydata = 'id-data02'
+#            """)
 #            
         conn.commit()
 
@@ -3142,12 +3139,12 @@ INFOS_ASSOCIATION_PAGE = """
             Bienvenue au sein de notre communauté. Notre association a pour mission principale de rassembler les forces vives afin de promouvoir le développement et l'entraide entre tous les membres. Fondée sur des valeurs de solidarité, nous travaillons quotidiennement à la création d'un réseau solide où chaque adhérent trouve sa place et contribue à l'essor collectif.
         </p>
         <p>
-        KM-KIMYA est une association solidaire engagée dans la réduction du choc économique lié aux funérailles.
+        KM-KIMYA est une association solidaire engagée dans la réduction du choc économique lié aux funérailles par la mutualisation de petites contributions financières et le versement rapide d'une aide significative à la famille eprouvée.
         </p>
 
         <h2>Méthodologie de travail</h2>
         <p>
-            Nous utilisons des outils numériques modernes pour faciliter la communication et la gestion des données. Les mises à jour régulières de nos fichiers membres nous permettent de maintenir une base de données active et dynamique, garantissant ainsi que personne n'est laissé pour compte dans nos initiatives sociales.
+            Nous utilisons des outils numériques modernes pour faciliter la communication et la gestion des données. Les mises à jour régulières de nos fichiers des membres nous permettent de maintenir une base de données active et dynamique, garantissant ainsi que personne n'est laissé pour compte dans nos initiatives sociales.
         </p>
         <p>Pour adhérer il suffit d'envoyer par mobile-money $5.50 dans un des numéros ci-dessous :</p>
 
