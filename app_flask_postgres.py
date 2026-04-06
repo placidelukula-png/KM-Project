@@ -1143,7 +1143,7 @@ LOGIN_PAGE = """
         margin: 0;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
-                    url("{{ url_for('static', filename='logoKMKim01.jpg') }}");
+                    url("{{ url_for('static', filename='logoKMKim02.jpg') }}");
         background-size: cover;
         background-position: center;
         height: 100vh;
