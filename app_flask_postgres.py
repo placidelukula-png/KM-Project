@@ -225,7 +225,7 @@ def init_db():
             # Correction en haut-volume (date d'adhésion des memres potentiels est 2099-12-31).
             cur.execute("""
                     UPDATE membres
-                       SET membershipdate = DATE '2099-12-31',
+                       SET membershipdate = DATE '2099-12-31'
                     WHERE currentstatute = 'inactif';
             """)
 
@@ -3161,6 +3161,11 @@ INFOS_ASSOCIATION_PAGE = """
             via un système de mentorat (mentor) qui assure une transmission fluide des valeurs 
             et des procédures de l'association.
         </p>
+        <p>
+           Cette association ne crée pas une nouvelle pratique. Elle structure et sécurise une valeur culturelle existante : la solidarité.
+           L’objectif est de transformer une réaction émotionnelle ponctuelle en un mécanisme organisé, équitable et durable, au service de la dignité des familles et de la cohésion communautaire.
+        </p>
+
         <div class="footer">
             <a href="{{ url_for('login') }}" class="btn-back">← Retour à la connexion</a>
         </div>
