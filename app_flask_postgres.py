@@ -560,7 +560,7 @@ def create_member_minimal(cur, phone: str, firstname: str, lastname: str):
     DEFAULT_MEMBER_TYPE = "independant"
     DEFAULT_MENTOR="admin"
     DEFAULT_IDTYPE = "CE"
-    DEFAULT_STATUTE = "probatoire"
+    DEFAULT_STATUTE = "inactif"
     DEFAULT_UPDATEUSER = "System"
 
     cur.execute("""
@@ -1152,7 +1152,7 @@ LOGIN_PAGE = """
         margin: 0;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
-                    url("{{ url_for('static', filename='logoKMKim02.jpg') }}");
+                    url("{{ url_for('static', filename='logokmkimya1.jpg') }}");
         background-size: cover;
         background-position: center;
         height: 100vh;
@@ -2145,7 +2145,10 @@ IMPORT_PAGE = """
 </div>
 </div></body></html>
 """
+
+#---------------------------------------------------------------
 # Endpoint#07 Importer cotisations (menu card)
+#---
 import re
 from datetime import date
 
