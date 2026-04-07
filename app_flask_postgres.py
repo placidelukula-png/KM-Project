@@ -818,7 +818,7 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
 ####
             #   b) Update de 'membershipdate' et 'currentstatute' en fonction de la date d'adhésion et du solde du membre qui reçoit (to) et du membre qui donne (from) :           
             #       (*) cas de date d'adhésion 2099-12-31 (membre potentiel) : '
-            if me[14] == datetime.strptime("31/12/2099", "%d/%m/%Y").date() or to_member[14] == datetime.strptime("31/12/2099", "%d/%m/%Y").date():
+            if me[13] == datetime.strptime("31/12/2099", "%d/%m/%Y").date() or to_member[13] == datetime.strptime("31/12/2099", "%d/%m/%Y").date():
                 cur.execute("""
                     UPDATE membres
                     SET membershipdate = CURRENT_DATE,
