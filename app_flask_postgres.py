@@ -2303,12 +2303,15 @@ def import_mouvements():
                             WHERE phone = %s;
                         """, (phone, contribution_minimum, limit_date, phone))
 
-                        # 5) règle demandée: si phone du mouvement = phone d'un membre ET balance > C (contribution minimale) ET la durée entre aujourdhui et membershipdate superieure ou egale à 90 jours (=> activation du membre)
+                        # 5) règle demandée: si phone du mouvement = phone d'un membre ET balance > C (contribution minimale) ET la durée entre aujourdhui et membershipdate superieure ou egale à 3 mois (=> activation du membre)
                         limit_date = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
                         cur.execute("""
                             UPDATE membres
                             SET currentstatute = CASE 
-                                WHEN phone = %s AND balance >= %s AND DATEDIFF(CURRENT_DATE, membershipdate) >= 90 THEN 'actif'
+                                WHEN phone = %s AND balance >= %s AND (
+                                EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12 +
+                                EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))
+                            ) >= 3 THEN 'actif'
                                 ELSE currentstatute
                             END
                             WHERE phone = %s;
