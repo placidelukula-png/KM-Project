@@ -269,7 +269,7 @@ def init_db():
 #            TRUNCATE TABLE id_data;
 #            INSERT INTO id_data 
 #            SELECT * FROM id_data_BACKUP_20260409;
-                        """)
+#                        """)
 #-----------------------------------------------------------------------------------
                         
 #           # Correction exceptionnelle sur les données de base d'un adhérent.
