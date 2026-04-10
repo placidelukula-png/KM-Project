@@ -130,47 +130,58 @@ def init_db():
         with conn.cursor() as cur:
             # membres (avec balance)
             cur.execute("""
-                CREATE TABLE IF NOT EXISTS membres (
-                  id             BIGSERIAL PRIMARY KEY,
-                  phone          TEXT NOT NULL UNIQUE,
-                  membertype     TEXT NOT NULL,
-                  mentor         TEXT NOT NULL,
-                  lastname       TEXT NOT NULL,
-                  firstname      TEXT NOT NULL,
-                  birthdate      DATE NOT NULL,
-                  idtype         TEXT,
-                  idpicture_url  TEXT,
-                  currentstatute TEXT NOT NULL,
-                  balance        DECIMAL(18,2) NOT NULL DEFAULT 0,
-                  updatedate     DATE NOT NULL DEFAULT CURRENT_DATE,
-                  updateuser     TEXT NOT NULL,
-                  password_hash  TEXT NOT NULL,
-                  membershipdate DATE NOT NULL DEFAULT CURRENT_DATE,
-                  CONSTRAINT membres_membertype_chk
-                    CHECK (membertype IN ('membre','independant','mentor','admin')),
-                  CONSTRAINT membres_currentstatute_chk
-                    CHECK (currentstatute IN ('probatoire','actif','inactif','suspendu','radié'))
-                );
-            """)
+                alter table membres
+                add column if not exists adresse TEXT,
+                add column if not exists beneficiaire TEXT; 
+                        """)       
+#                CREATE TABLE IF NOT EXISTS membres (
+#                  id             BIGSERIAL PRIMARY KEY,
+#                  phone          TEXT NOT NULL UNIQUE,
+#                  membertype     TEXT NOT NULL,
+#                  mentor         TEXT NOT NULL,
+#                  lastname       TEXT NOT NULL,
+#                  firstname      TEXT NOT NULL,
+#                  birthdate      DATE NOT NULL,
+#                  idtype         TEXT,
+#                  idpicture_url  TEXT,
+#                  currentstatute TEXT NOT NULL,
+#                  balance        DECIMAL(18,2) NOT NULL DEFAULT 0,
+#                  updatedate     DATE NOT NULL DEFAULT CURRENT_DATE,
+#                  updateuser     TEXT NOT NULL,
+#                  password_hash  TEXT NOT NULL,
+#                  membershipdate DATE NOT NULL DEFAULT CURRENT_DATE,
+#                  adresse        TEXT,
+#                  beneficiaire   TEXT,
+#                  CONSTRAINT membres_membertype_chk
+#                    CHECK (membertype IN ('membre','independant','mentor','admin')),
+#                  CONSTRAINT membres_currentstatute_chk
+#                    CHECK (currentstatute IN ('probatoire','actif','inactif','suspendu','radié'))
+#                );
+#            """)
 
             # mouvements
             cur.execute("""
-                CREATE TABLE IF NOT EXISTS mouvements (
-                  id           BIGSERIAL PRIMARY KEY,
-                  phone        TEXT NOT NULL,
-                  firstname    TEXT NOT NULL,
-                  lastname     TEXT NOT NULL,
-                  mvt_date     DATE NOT NULL,
-                  amount       DECIMAL(18,2) NOT NULL DEFAULT 0,
-                  debitcredit  VARCHAR(1) NOT NULL CHECK (debitcredit IN ('D','C')),
-                  reference    TEXT NOT NULL UNIQUE,
-                  updatedate   DATE NOT NULL DEFAULT CURRENT_DATE,
-                  libelle      TEXT,
-                  updated_by   TEXT
-                  );
-            """)
-            cur.execute("CREATE INDEX IF NOT EXISTS idx_mouvements_phone ON mouvements(phone);")
-            cur.execute("CREATE INDEX IF NOT EXISTS idx_mouvements_date ON mouvements(mvt_date);")
+                alter table mouvements
+                add column if not exists regie TEXT;
+                        """)       
+                        
+#                CREATE TABLE IF NOT EXISTS mouvements (
+#                  id           BIGSERIAL PRIMARY KEY,
+#                  phone        TEXT NOT NULL,
+#                  firstname    TEXT NOT NULL,
+#                  lastname     TEXT NOT NULL,
+#                  mvt_date     DATE NOT NULL,
+#                  amount       DECIMAL(18,2) NOT NULL DEFAULT 0,
+#                  debitcredit  VARCHAR(1) NOT NULL CHECK (debitcredit IN ('D','C')),
+#                  reference    TEXT NOT NULL UNIQUE,
+#                  updatedate   DATE NOT NULL DEFAULT CURRENT_DATE,
+#                  libelle      TEXT,
+#                  updated_by   TEXT,
+#                  regie        TEXT
+#                  );
+#            """)
+#            cur.execute("CREATE INDEX IF NOT EXISTS idx_mouvements_phone ON mouvements(phone);")
+#            cur.execute("CREATE INDEX IF NOT EXISTS idx_mouvements_date ON mouvements(mvt_date);")
 
             # décès
             cur.execute("""
@@ -674,18 +685,18 @@ def fetch_password_hash_and_statute_by_phone(phone: str):
 
 
 def insert_member(phone, membertype, mentor, lastname, firstname, birthdate_date, idtype, idpicture_url,
-                  currentstatute, updateuser, password_plain,membershipdate):
+                  currentstatute, updateuser, beneficiaire, adressse, password_plain, membershipdate):
     pwd_hash = generate_password_hash(password_plain)
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
                 INSERT INTO membres
                 (phone, membertype, mentor, lastname, firstname, birthdate, idtype, idpicture_url,
-                 currentstatute, updatedate, updateuser, password_hash, membershipdate)
+                 currentstatute, updatedate, updateuser,beneficiaire, adressse, password_hash, membershipdate)
                 VALUES
-                (%s,%s,%s,%s,%s,%s,%s,%s,%s,CURRENT_DATE,%s,%s,%s)
+                (%s,%s,%s,%s,%s,%s,%s,%s,%s,CURRENT_DATE,%s,%s,%s,%s)
             """, (phone, membertype, mentor, lastname, firstname, birthdate_date, idtype, idpicture_url,
-                  currentstatute, updateuser, pwd_hash, membershipdate))
+                  currentstatute, updateuser, beneficiaire, adressse, pwd_hash, membershipdate))
         conn.commit()
 
 def update_member(
@@ -765,7 +776,7 @@ def list_mouvements_by_phone(phone: str):
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                SELECT id, phone, lastname, mvt_date, amount, debitcredit, reference, libelle, updatedate, updated_by
+                SELECT id, phone, lastname, mvt_date, amount, debitcredit, reference, libelle, updatedate, updated_by,regie
                 FROM mouvements
                 WHERE phone=%s
                 ORDER BY mvt_date DESC, id DESC
@@ -776,7 +787,7 @@ def list_all_mouvements():
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                SELECT id, phone, lastname, mvt_date, amount, debitcredit, reference, libelle, updatedate, updated_by
+                SELECT id, phone, lastname, mvt_date, amount, debitcredit, reference, libelle, updatedate, updated_by,regie
                 FROM mouvements
                 ORDER BY mvt_date DESC, id DESC
             """)
@@ -2087,6 +2098,9 @@ ADD_MEMBER_PAGE = """
   <label>Prénom</label><input name="firstname" required>
   <label>Date naissance (JJ/MM/AAAA)</label><input name="birthdate" required>
   <label>IdType</label><input name="idtype" required>
+  <label>Bénéficiaire</label><input name="beneficiaire" required>
+  <label>Adresse</label><input name="adresse" required>
+
   <label>Mot de passe</label><input name="password" type="password" required>
 
   <div class="row">
@@ -2120,6 +2134,8 @@ def add_member():
             firstname = (request.form.get("firstname") or "").strip()
             birthdate_str = (request.form.get("birthdate") or "").strip()
             idtype = (request.form.get("idtype") or "").strip()
+            beneficiaire = (request.form.get("beneficiaire") or "").strip()
+            adressse = (request.form.get("adresse") or "").strip()
             password = (request.form.get("password") or "").strip()
 
             # 2. Validation du numéro de téléphone (Sécurité Python)
@@ -2145,7 +2161,7 @@ def add_member():
 
             # 5. Appel de ta fonction d'insertion (assure-toi qu'elle utilise %s)
             insert_member(phone, membertype, mentor, lastname, firstname, birthdate, 
-                          idtype, None, statut, updateuser, password, membershipdate)
+                          idtype, None, statut, updateuser,beneficiaire, adressse, password, membershipdate)
             
             return render_template_string(ADD_MEMBER_PAGE, 
                 message=f"Succès : {firstname} {lastname} a été créé.", 
@@ -2276,6 +2292,7 @@ def import_mouvements():
                         lastname = (row.get("lastname") or "").strip()
                         debitcredit = (row.get("debitcredit") or "").strip().upper()  # 'D' / 'C'
                         reference = (row.get("reference") or "").strip()
+                        regie = (row.get("regie") or "").strip()
 
                         #amount = float((row.get("amount") or "0").strip())
                         amount_raw = (row.get("amount") or "0").strip().replace(",", ".")
@@ -2316,9 +2333,9 @@ def import_mouvements():
 
                         #insertion :
                         cur.execute("""
-                          INSERT INTO mouvements (phone, firstname, lastname, mvt_date, amount, debitcredit,reference,updatedate,libelle,updated_by)
-                          VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
-                        """, (phone, firstname, lastname, mvt_date, amount, debitcredit, reference,date.today(),libelle,session.get("user")))
+                          INSERT INTO mouvements (phone, firstname, lastname, mvt_date, amount, debitcredit,reference,updatedate,libelle,updated_by,regie)
+                          VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                        """, (phone, firstname, lastname, mvt_date, amount, debitcredit, reference,date.today(),libelle,session.get("user"), regie))
                         #log.info("Mouvement inséré pour phone=%s, amount=%s, debitcredit=%s, reference=%s", phone, amount, debitcredit, reference)
                         inserted += 1
 
@@ -2444,7 +2461,7 @@ CHECK_MVT_PAGE = """
   </td>
   
   <td><input name="libelle" value="{{ r[7] }}" size="20"></td>
-
+  <td><input name="regie" value="{{ r[10] }}" size="20"></td>
   <td>
     <button class="btn" type="submit">Save</button>
 </form>
