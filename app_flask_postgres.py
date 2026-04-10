@@ -211,8 +211,48 @@ def init_db():
                   updatedate    DATE NOT NULL DEFAULT CURRENT_DATE,    
                   updateuser    TEXT NOT NULL  
                 );
-            """)   
+            """)
 
+#---------------------------------------------------------------------------------
+#           PROCESSUS DE PRISE DE BACKUP & RESTAURATION DES DONNEES 
+#           (ex: avant une opération de correction en haut-volume ou 
+#            une opération de correction exceptionnelle sur les données
+#            de base d'un adhérent) 
+#            NOTA: OPERATION EN DEUX ETAPES DISTINCTES - (1) DUMP puis (2) RESTAURATION
+#           (jamais les deux en meme temps) 
+#---------------------------------------------------------------------------------
+#            # DUMP - Prise de backup des tables principales de l'application :
+            cur.execute("""
+            SELECT * INTO membres_BACKUP_20260409 
+            FROM membres;
+            SELECT * INTO mouvements_BACKUP_20260409 
+            FROM mouvements;                        
+            SELECT * INTO id_data_BACKUP_20260409 
+            FROM id_data;
+            SELECT * INTO deces_BACKUP_20260409 
+            FROM deces;                        
+            SELECT * INTO comptes_techniques_BACKUP_20260409    
+            FROM comptes_techniques;
+                        
+#            # RESTAURATION - Vider la table source et réinjecter les données du backup                 
+#            TRUNCATE TABLE membres;
+#            INSERT INTO membres 
+#            SELECT * FROM membres_BACKUP_20260409;
+#            TRUNCATE TABLE mouvements;
+#            INSERT INTO mouvements 
+#            SELECT * FROM mouvements_BACKUP_20260409;
+#            TRUNCATE TABLE deces;
+#            INSERT INTO deces 
+#            SELECT * FROM deces_BACKUP_20260409;
+#            TRUNCATE TABLE comptes_techniques;
+#            INSERT INTO comptes_techniques 
+#            SELECT * FROM comptes_techniques_BACKUP_20260409;
+#            TRUNCATE TABLE id_data;
+#            INSERT INTO id_data 
+#            SELECT * FROM id_data_BACKUP_20260409;
+                        """)
+#-----------------------------------------------------------------------------------
+                        
 #           # Correction exceptionnelle sur les données de base d'un adhérent.
 #            cur.execute("""
 #                UPDATE membres
@@ -551,7 +591,9 @@ def create_member_minimal(cur, phone: str, firstname: str, lastname: str):
     On met des valeurs par défaut cohérentes.
     """
     # Birthdate: valeur technique si inconnue (à ajuster si tu veux)
-    default_birthdate = datetime.today().date()
+    #default_birthdate = datetime.today().date()
+    default_birthdate = datetime.strptime("1900-01-01", "%Y-%m-%d").date()
+    default_membershipdate = datetime.strptime("2099-12-31", "%Y-%m-%d").date()  # date d'adhésion lointaine pour forcer la mise à jour lors de la première cotisation
 
     # Password_hash : si tu ne veux pas créer de compte login automatique,
     # tu peux mettre un hash “impossible” et forcer un reset plus tard.
@@ -566,9 +608,9 @@ def create_member_minimal(cur, phone: str, firstname: str, lastname: str):
     cur.execute("""
         INSERT INTO membres
         (phone, membertype, mentor, lastname, firstname, birthdate, idtype, idpicture_url,
-         currentstatute, updatedate, updateuser, password_hash, balance)
+         currentstatute, updatedate, updateuser, password_hash, membershipdate)
         VALUES
-        (%s, %s, %s, %s, %s, %s, %s, NULL, %s, CURRENT_DATE, %s, %s, 0)
+        (%s, %s, %s, %s, %s, %s, %s, NULL, %s, CURRENT_DATE, %s, %s, %s)
         ON CONFLICT (phone) DO NOTHING;
     """, (
         phone,
@@ -581,6 +623,7 @@ def create_member_minimal(cur, phone: str, firstname: str, lastname: str):
         DEFAULT_STATUTE,
         DEFAULT_UPDATEUSER,
         pwd_hash,
+        default_membershipdate
     ))
     #log.info("Nouveau membre créé automatiquement: %s (%s %s)", phone, firstname, lastname)
 
@@ -1077,6 +1120,7 @@ def get_user_profile_by_phone(phone: str):
                 WHERE phone = %s
             """, (phone,))
             return cur.fetchone()
+        
 def statutes_update():
     updateuser = session.get("user") or ADMIN_PHONE
     C = Decimal(str(fetch_dashboard_stats()["C"]).replace(" ", ""))
@@ -1093,42 +1137,28 @@ def statutes_update():
                     WHEN balance >= %s AND membershipdate = %s THEN CURRENT_DATE
                     ELSE membershipdate
                 END,
-                currentstatute = 'probatoire'
             """, (C, limit_date))
 
             log.info("Mise à jour des membres avec date d'adhesion autre que la date limite et solde suffisant.")
 
             cur.execute("""
-                WITH computed AS (
-                    SELECT 
-                        id,
-                        CASE
-                            WHEN (
-                                EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12 +
-                                EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))
-                            ) < 3 AND balance >= %s THEN 'probatoire'
-                            
-                            WHEN (
-                                EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12 +
-                                EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))
-                            ) >= 3 AND balance >= %s THEN 'actif'
-                            
-                            ELSE 'inactif'
-                        END AS new_statut
-                    FROM membres
-                    WHERE membershipdate <> %s
-                )
-
-                UPDATE membres m
+                UPDATE membres
                 SET 
-                    currentstatute = c.new_statut,
-                    updatedate = CURRENT_DATE,
-                    updateuser = %s
-                FROM computed c
-                WHERE m.id = c.id
-                AND m.currentstatute IS DISTINCT FROM c.new_statut
-            """, (C, C, limit_date, updateuser))            
-
+                  currentstatute = CASE 
+                    WHEN (
+                        EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12 +
+                        EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))
+                    ) < 3 AND balance >= %s THEN 'probatoire'
+                    
+                    WHEN (
+                        EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12 +
+                        EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))
+                    ) >= 3 AND balance >= %s THEN 'actif'
+                    
+                    ELSE 'inactif'
+                  END,
+                WHERE membershipdate <> %s
+            """, (C,C, limit_date))
             rows_updated = cur.rowcount
 
         conn.commit()
@@ -2193,6 +2223,7 @@ import csv
 def import_mouvements():
     if request.method == "GET":
         return render_template_string(IMPORT_PAGE, message="", is_error=False, stats="")
+    
     # CONTRIBUTION ATTENDUE ACTUELLE: à partir de la table id_data et du champ "C" (contribution minimale) pour appliquer la règle d'inactivité
     stats=fetch_dashboard_stats()
     contribution_minimum = stats["C"]
@@ -2215,6 +2246,9 @@ def import_mouvements():
         with get_conn() as conn:
             with conn.cursor() as cur:
                 for row in reader:
+                    # Ignorer les lignes totalement vides
+                    if not any(row.values()):
+                        continue
                     #log.info("contenu de 'row' dans le reader=%s", row)                   
                     try:
                         phone = (row.get("phone") or "").strip()
@@ -2905,7 +2939,9 @@ TRANSFER_PAGE = """
 </div>
 </div></body></html>
 """
+#
 # Endpoint#10 Transfert de cotisations (menu card)
+# Note: on peut faire un seul endpoint pour les 2 actions "check" et "confirm" (simplification) car la logique de vérification est la même dans les 2 cas, et on affiche les messages d'erreur/confirmation dans la même page. Donc pas besoin de faire 2 endpoints séparés.
 @app.route("/transfer", methods=["GET","POST"])
 @login_required
 def transfer():
@@ -3017,7 +3053,9 @@ DEUILS_PENDANTS_PAGE = """
 </table>
 </div></body></html>
 """
+#
 # Endpoint#11 — Suivi des deuils pendants
+#
 @app.route("/deuils_pendants", methods=["GET", "POST"])
 @admin_required
 def deuils_pendants():
@@ -3267,6 +3305,11 @@ PARAMETRAGE_PAGE = """
     {% else %}
       <p>Aucun indicateur enregistré.</p>
     {% endif %}
+
+    {% if message %}
+        <div class="msg {{ 'err' if is_error else 'ok' }}">{{ message }}</div>
+    {% endif %}
+
   </form>
 </div></body></html>
 """
