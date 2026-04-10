@@ -222,16 +222,16 @@ def init_db():
 #           (jamais les deux en meme temps) 
 #---------------------------------------------------------------------------------
 ####        # DUMP - Prise de backup des tables principales de l'application :
-            # Utilisez des commentaires SQL (--) à l'intérieur de la chaîne
-            sql_commands = """
-            -- DUMP - Création des backups
-            DROP TABLE IF EXISTS membres_BACKUP_20260409;
-            CREATE TABLE membres_BACKUP_20260409 AS SELECT * FROM membres;
-
-            DROP TABLE IF EXISTS mouvements_BACKUP_20260409;
-            CREATE TABLE mouvements_BACKUP_20260409 AS SELECT * FROM mouvements;
-            """
-            cur.execute(sql_commands)
+#            # Utilisez des commentaires SQL (--) à l'intérieur de la chaîne
+#            sql_commands = """
+#            -- DUMP - Création des backups
+#            DROP TABLE IF EXISTS membres_BACKUP_20260409;
+#            CREATE TABLE membres_BACKUP_20260409 AS SELECT * FROM membres;
+#
+#            DROP TABLE IF EXISTS mouvements_BACKUP_20260409;
+#            CREATE TABLE mouvements_BACKUP_20260409 AS SELECT * FROM mouvements;
+#            """
+#            cur.execute(sql_commands)
 
 #            sql_commands = """
 #            -- RESTAURATION - Vider les tables sources et réinjecter les données des backups
@@ -1155,7 +1155,7 @@ def statutes_update():
                 SET membershipdate = CASE 
                     WHEN balance >= %s AND membershipdate = %s THEN CURRENT_DATE
                     ELSE membershipdate
-                END,
+                END
             """, (C, limit_date))
 
             log.info("Mise à jour des membres avec date d'adhesion autre que la date limite et solde suffisant.")
@@ -1175,7 +1175,7 @@ def statutes_update():
                     ) >= 3 AND balance >= %s THEN 'actif'
                     
                     ELSE 'inactif'
-                  END,
+                  END
                 WHERE membershipdate <> %s
             """, (C,C, limit_date))
             rows_updated = cur.rowcount
