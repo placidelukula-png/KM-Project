@@ -221,18 +221,37 @@ def init_db():
 #            NOTA: OPERATION EN DEUX ETAPES DISTINCTES - (1) DUMP puis (2) RESTAURATION
 #           (jamais les deux en meme temps) 
 #---------------------------------------------------------------------------------
-#            # DUMP - Prise de backup des tables principales de l'application :
-            cur.execute("""
-            SELECT * INTO membres_BACKUP_20260409 
-            FROM membres;
-            SELECT * INTO mouvements_BACKUP_20260409 
-            FROM mouvements;                        
-            SELECT * INTO id_data_BACKUP_20260409 
-            FROM id_data;
-            SELECT * INTO deces_BACKUP_20260409 
-            FROM deces;                        
-            SELECT * INTO comptes_techniques_BACKUP_20260409    
-            FROM comptes_techniques;
+####        # DUMP - Prise de backup des tables principales de l'application :
+            # Utilisez des commentaires SQL (--) à l'intérieur de la chaîne
+            sql_commands = """
+            -- DUMP - Création des backups
+            DROP TABLE IF EXISTS membres_BACKUP_20260409;
+            CREATE TABLE membres_BACKUP_20260409 AS SELECT * FROM membres;
+
+            DROP TABLE IF EXISTS mouvements_BACKUP_20260409;
+            CREATE TABLE mouvements_BACKUP_20260409 AS SELECT * FROM mouvements;
+            """
+            cur.execute(sql_commands)
+
+#            sql_commands = """
+#            -- RESTAURATION - Vider les tables sources et réinjecter les données des backups
+#            TRUNCATE TABLE membres;
+#            INSERT INTO membres SELECT * FROM membres_BACKUP_20260409;
+#
+#            TRUNCATE TABLE mouvements;
+#            INSERT INTO mouvements SELECT * FROM mouvements_BACKUP_20260409;
+#            """
+#            cur.execute(sql_commands)
+#####
+#            SELECT * INTO membres_BACKUP_20260409 
+#            SELECT * INTO mouvements_BACKUP_20260409 
+#            FROM mouvements;                        
+#            SELECT * INTO id_data_BACKUP_20260409 
+#            FROM id_data;
+#            SELECT * INTO deces_BACKUP_20260409 
+#            FROM deces;                        
+#            SELECT * INTO comptes_techniques_BACKUP_20260409    
+#            FROM comptes_techniques;
                         
 #            # RESTAURATION - Vider la table source et réinjecter les données du backup                 
 #            TRUNCATE TABLE membres;
@@ -2287,6 +2306,14 @@ def import_mouvements():
                             #log.info("Membre créé automatiquement pour phone=%s", phone)
                            
                         # 1) insert mouvement
+                        # Vérifier que la référence n'existe pas déjà (pour éviter les doublons en cas de réimport du même fichier)
+                        cur.execute("SELECT 1 FROM mouvements WHERE reference = %s", (reference,))
+                        if cur.fetchone():
+                            log.warning("Référence déjà existante : %s", reference)
+                            skipped += 1
+                            continue
+
+                        #insertion :
                         cur.execute("""
                           INSERT INTO mouvements (phone, firstname, lastname, mvt_date, amount, debitcredit,reference,updatedate,libelle,updated_by)
                           VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
