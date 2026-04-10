@@ -5,6 +5,7 @@ from __future__ import annotations
 
 from decimal import Decimal
 import code
+from email import message
 from enum import member
 from enum import member
 import os
@@ -2569,7 +2570,19 @@ DATAGENERALFOLLOWUP_PAGE = """
 
     <!-- Zone d'alerte (en dessous de la grille) -->
     {% with messages = get_flashed_messages(with_categories=true) %}
-        <!-- ... votre code d'alerte ... -->
+
+        <!-- Utilisation des messages flash de Flask -->    
+    {% if messages %}
+        {% for category, message in messages %}
+        <div class="msg {{ 'err' if category == 'danger' else 'ok' }}" 
+            style="padding:10px; margin-top:20px; border-radius:4px; 
+                    background: {{ '#f8d7da' if category == 'danger' else '#d4edda' }}; 
+                    color: {{ '#721c24' if category == 'danger' else '#155724' }};">
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+
     {% endwith %}
 </div>
 
@@ -3333,14 +3346,27 @@ PARAMETRAGE_PAGE = """
       <p>Aucun indicateur enregistré.</p>
     {% endif %}
 
-    {% if message %}
-        <div class="msg {{ 'err' if is_error else 'ok' }}">{{ message }}</div>
+    <!-- Utilisation des messages flash de Flask -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+        <div class="msg {{ 'err' if category == 'danger' else 'ok' }}" 
+            style="padding:10px; margin-top:20px; border-radius:4px; 
+                    background: {{ '#f8d7da' if category == 'danger' else '#d4edda' }}; 
+                    color: {{ '#721c24' if category == 'danger' else '#155724' }};">
+            {{ message }}
+        </div>
+        {% endfor %}
     {% endif %}
+    {% endwith %}
 
   </form>
 </div></body></html>
 """
+#
 # Endpoint#14 — Paramétrage des indicateurs de travail
+# Note: on peut faire un seul endpoint pour les 2 actions "check" et "confirm" (simplification) car la logique de vérification est la même dans les 2 cas, 
+# et on affiche les messages d'erreur/confirmation dans la même page. Donc pas besoin de faire 2 endpoints séparés.
 from flask import request, redirect, url_for, flash
 from decimal import Decimal, ROUND_HALF_UP
 
@@ -3372,7 +3398,7 @@ def parametrage():
 
     # Si c'est un GET, on affiche simplement la page
     rows = list_id_data()
-    return render_template_string(PARAMETRAGE_PAGE, rows=rows)
+    return render_template_string(PARAMETRAGE_PAGE,message=message, rows=rows)
 
 
 #        
