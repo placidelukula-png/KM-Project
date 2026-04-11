@@ -996,6 +996,34 @@ def update_member_mentor(phone: str, mentor: str, updateuser: str, lastname: str
             """, (mentor, updateuser, lastname, firstname, phone))
         conn.commit()
 
+def update_member_beneficiaire(phone: str, beneficiaire: str, updateuser: str, lastname: str, firstname: str):
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                UPDATE membres
+                SET beneficiaire=%s,
+                    updatedate=CURRENT_DATE,
+                    updateuser=%s,
+                    lastname=%s,
+                    firstname=%s
+                WHERE phone=%s
+            """, (beneficiaire, updateuser, lastname, firstname, phone))
+        conn.commit()
+
+def update_member_adresse(phone: str, adresse: str, updateuser: str, lastname: str, firstname: str):
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                UPDATE membres
+                SET adresse=%s,
+                    updatedate=CURRENT_DATE,
+                    updateuser=%s,
+                    lastname=%s,
+                    firstname=%s
+                WHERE phone=%s
+            """, (adresse, updateuser, lastname, firstname, phone))
+        conn.commit()
+
 def update_id_data(keydata: str, quantity: Decimal):
     with get_conn() as conn:
         with conn.cursor() as cur:
@@ -1086,6 +1114,29 @@ def validate_mentor_phone_or_raise(mentor_phone: str, *, current_user_phone: str
     if mentor_row[9]  in ("radié", "suspendu"):
         raise ValueError("Mentor invalide : ce membre existe mais est  'Suspendu' ou 'Radié'.")
     return mentor_phone
+
+def validate_beneficiaire_phone_or_raise(beneficiaire_phone: str, *, current_user_phone: str) -> str:
+    beneficiaire_phone = (beneficiaire_phone or "").strip()
+
+    if not beneficiaire_phone:
+        raise ValueError("Veuillez saisir le phone du bénéficiaire.")
+
+    # Optionnel mais recommandé : empêcher auto-mentor
+    if beneficiaire_phone == current_user_phone:
+        raise ValueError("Bénéficiaire invalide : vous ne pouvez pas être votre propre bénéficiaire.")
+
+    beneficiaire_row = fetch_member_by_phone(beneficiaire_phone)
+    if not beneficiaire_row:
+        raise ValueError("Bénéficiaire introuvable : ce phone n'existe pas dans la table 'membres'.")
+
+    # Index d’après votre modèle : membertype = row[2]
+    if beneficiaire_row[2] not in ("bénéficiaire", "admin"):
+        raise ValueError("Bénéficiaire invalide : ce membre existe mais n'est pas de type 'mentor' ou 'admin'.")
+
+    # (Optionnel) on pourrait aussi vérifier statut beneficiaire_row[9] == 'Suspendu'
+    if beneficiaire_row[9]  in ("radié", "suspendu"):
+        raise ValueError("Bénéficiaire invalide : ce membre existe mais est  'Suspendu' ou 'Radié'.")
+    return beneficiaire_phone
 
 # ------------------------------------
 # Décorateurs d'accès (login + rôles)
@@ -1747,7 +1798,7 @@ ACCOUNT_PAGE = """"
 </div>
 
 <!-- SECTION NOM -->
-<div style="color:blue;" class="inline-2">
+<div style="color:black;" class="inline-2">
 <div>
 <label>Nom</label>
 <input name="lastname" value="{{ m[4] }}">
@@ -1789,6 +1840,19 @@ ACCOUNT_PAGE = """"
 <div>
 <label>Bénéficiaire</label>
 <input name="beneficiaire" value="{{ m[14] }}">
+{% if beneficiaire_info %}
+  <div class="beneficiaire-box">
+    <div><b>Bénéficiaire :</b> {{ beneficiaire_info[1] }}</div>
+    <div><b>Nom :</b> {{ beneficiaire_info[5] }} {{ beneficiaire_info[4] }}</div>
+    <div><b>Type & Statut :</b> {{ beneficiaire_info[2] }} {{ beneficiaire_info[9] }}</div>
+  </div>
+{% elif m[14] %}
+  <div class="beneficiaire-box beneficiaire-warn">
+    <div><b>Bénéficiaire :</b> {{ m[14] }}</div>
+    <div>Profil bénéficiaire non trouvé.</div>
+  </div>
+{% endif %}
+
 </div>
 
 </div>
@@ -1841,11 +1905,19 @@ def account():
 
             changed = []
 
-            # 0) changement nom/prénom (si modifié)
+            # 0) changement nom/prénom, bénéficiaire ou adresse (si modifié)
             if ln != m[4] or fn != m[5]:
                 nom_prenom=1 
             else:
                 nom_prenom=0
+
+            if adresse_new != (m[13] or ""):
+                update_member_adresse(phone, adresse_new, updateuser=phone, lastname=ln, firstname=fn)
+                changed.append("Adresse")
+
+            if beneficiaire_new != (m[14] or ""):
+                update_member_beneficiaire(phone, beneficiaire_new, updateuser=phone, lastname=ln, firstname=fn)
+                changed.append("Bénéficiaire")
 
             # 1) mentor (si modifié)
             if (mentor_new and mentor_new != (m[3] or "")) or nom_prenom:
