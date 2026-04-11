@@ -1647,140 +1647,70 @@ def logout():
 #   Endpoint #1 — Mon compte (lecture + mot de passe modifiable)
 # ---------------------------------------------------------------
 ACCOUNT_PAGE = """
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Mon compte</title>
+
 <style>
- body{font-family:Arial, sans-serif;margin:20px;background-color:#f9f9f9} 
+ body{font-family:Arial;margin:20px}
  .wrap{max-width:900px;margin:0 auto}
- .card{border:1px solid #e7e7e7;border-radius:16px;padding:20px;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,0.05)}
- label{display:block;margin:10px 0 4px;font-weight:700;font-size:14px;color:#555}
- input{width:100%;padding:10px;border:1px solid #ddd;border-radius:10px;box-sizing:border-box} /* box-sizing important */
- input[readonly]{background:#f6f6f6}
- 
- /* Conteneurs d'alignement */
- .flex-row{display:flex;gap:15px;margin-bottom:10px}
- .flex-item{flex:1}
- .full-width{width:100%}
-
- .btn{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#111;color:#fff;cursor:pointer}
- .msg{margin-top:12px;padding:10px;border-radius:12px}
-
- /* Mentor & Beneficiaire (même traitement) */
- .person-box{
-  margin-top:8px;
-  padding:12px;
-  border:1px solid #d9e7ff;
-  background:#f7fbff;
-  border-radius:10px;
-  font-size:13px;
-  line-height:1.45;
-  color:#1a1a1a;
-}
-</style></head><body>
-
-<div class="wrap">
-  <h2>Mon compte</h2>
-  <div class="card">
-      
-      <!-- 1) Identifiant, Statut et Solde sur la même ligne -->
-      <div class="flex-row">
-          <div class="flex-item"><label>Identifiant</label><input type="text" value="ID123" readonly></div>
-          <div class="flex-item"><label>Statut</label><input type="text" value="Actif" readonly></div>
-          <div class="flex-item"><label>Solde</label><input type="text" value="100€" readonly></div>
-      </div>
-
-      <!-- 2) Nom et Prénom sur la ligne suivante -->
-      <div class="flex-row">
-          <div class="flex-item"><label>Nom</label><input type="text" value="Doe" readonly></div>
-          <div class="flex-item"><label>Prénom</label><input type="text" value="John" readonly></div>
-      </div>
-
-      <!-- 3) Adresse occupe une ligne entiere -->
-      <div style="margin-bottom:10px">
-          <label>Adresse</label>
-          <input type="text" value="123 Rue de Paris, 75000" readonly>
-      </div>
-
-      <hr style="border:0;border-top:1px solid #eee;margin:20px 0">
-
-      <!-- 4) Mentor et Beneficiaire alignés -->
-      <div class="flex-row">
-          <div class="flex-item">
-              <label>Mentor</label>
-              <div class="person-box">Jean Dupont (ID: M99)</div>
-          </div>
-          <div class="flex-item">
-              <label>Bénéficiaire</label>
-              <!-- 5) Même traitement appliqué -->
-              <div class="person-box">
-
-
-
-
-
-
-
-
-ACCOUNT_PAGE = """
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Mon compte</title>
-<style>
- body{font-family:Arial;margin:20px} .wrap{max-width:900px;margin:0 auto}
  .card{border:1px solid #e7e7e7;border-radius:16px;padding:16px}
+
  label{display:block;margin:10px 0 4px;font-weight:700}
  input{width:80%;padding:10px;border:1px solid #ddd;border-radius:10px}
  input[readonly]{background:#f6f6f6}
+
  .row{display:flex;gap:10px;margin-top:12px}
+
  .btn{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#111;color:#fff;cursor:pointer}
  .btn2{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#fff;color:#111;cursor:pointer}
+
  .msg{margin-top:12px;padding:10px;border-radius:12px}
  .ok{background:#eaffea;border:1px solid #b8ffb8}
  .err{background:#ffe9ea;border:1px solid #ffb3b8}
 
- 
-.mentor-box{
+ .mentor-box{
   margin-top:8px;
   padding:10px 12px;
   border:1px solid #d9e7ff;
   background:#f7fbff;
   border-radius:10px;
   font-size:13px;
-  line-height:1.45;
-  color:#1a1a1a;
-}
+ }
 
-.mentor-warn{
+ .mentor-warn{
   border-color:#f0d9a7;
   background:#fffaf0;
-}
-
-
- .grid{
-   display:grid;
-   grid-template-columns:1fr 1fr;
-   gap:26px;
  }
 
- @media (max-width:700px){
-   .grid{
-     grid-template-columns:1fr;
-   }
+ .flex-row{
+   display:flex;
+   gap:20px;
  }
 
-</style></head><body>
+</style>
+</head>
+
+<body>
 
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;">
-      <span><h2>Mon compte</h2></span>
-      <span><a href="{{ url_for('home') }}">← Retour</a></span>
+      <h2>Mon compte</h2>
+      <a href="{{ url_for('home') }}">← Retour</a>
   </div>
 </div>
+
 <div class="wrap">
 <div class="card">
+
 <form method="post">
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-<span style="color: blue;"> >
+<!-- SECTION INFO -->
+<div style="color:blue;">
 <div>
 <label>Identifiant</label>
 <input value="{{ m[1] }}" readonly>
@@ -1795,30 +1725,33 @@ ACCOUNT_PAGE = """
 <label>Solde</label>
 <input value="{{ m[10] }}" readonly>
 </div>
-</span>
+</div>
 
-<span style="color: green;">
+<!-- SECTION NOM -->
+<div style="color:green;">
 <div>
 <label>Nom</label>
-<input name="lastname" value="{{ m[4] }}" placeholder="Nom de famille (ex: Ilunga)">
+<input name="lastname" value="{{ m[4] }}">
 </div>
 
 <div>
 <label>Prénom</label>
-<input name="firstname" value="{{ m[5] }}" placeholder="Prénom (ex: Jean)">
+<input name="firstname" value="{{ m[5] }}">
 </div>
-</span>
+</div>
 
-<div style="grid-column:1 / span 2;">
+<!-- ADRESSE -->
+<div>
 <label>Adresse</label>
-<input name="adresse" value="{{ m[13] }}" placeholder="Adresse (ex: 123 Rue de la Paix, Q. Magasin, Kintambo, Kinshasa)">
+<input name="adresse" value="{{ m[13] }}">
 </div>
 
-      <!-- 4) Mentor et Beneficiaire alignés -->
+<!-- MENTOR + BENEFICIAIRE -->
 <div class="flex-row">
+
 <div>
 <label>Mentor</label>
-<input name="mentor" value="{{ m[3] }}" placeholder="Phone d’un mentor (ex: 998889560)">
+<input name="mentor" value="{{ m[3] }}">
 
 {% if mentor_info %}
   <div class="mentor-box">
@@ -1836,17 +1769,18 @@ ACCOUNT_PAGE = """
 
 <div>
 <label>Bénéficiaire</label>
-<input name="beneficiaire" value="{{ m[14] }}" placeholder="Identifiant du bénéficiaire (ex: 810899722)">
-</div>
+<input name="beneficiaire" value="{{ m[14] }}">
 </div>
 
-<div style="grid-column:1 / span 2;">
+</div>
+
+<!-- PASSWORD -->
+<div>
 <label>Nouveau mot de passe</label>
-<input name="new_password" type="password" placeholder="laisser vide pour ne pas changer">
+<input name="new_password" type="password">
 </div>
 
-</div>
-
+<!-- ACTIONS -->
 <div class="row">
 <button class="btn" type="submit">Enregistrer</button>
 <a class="btn2" href="{{ url_for('home') }}">Annuler</a>
@@ -1857,9 +1791,14 @@ ACCOUNT_PAGE = """
 {% endif %}
 
 </form>
+
 </div>
-</div></body></html>
+</div>
+
+</body>
+</html>
 """
+
 # Endpoint#01 Mon Compte (menu card)
 @app.route("/account", methods=["GET","POST"])
 @login_required
