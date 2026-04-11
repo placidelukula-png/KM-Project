@@ -1728,7 +1728,7 @@ ACCOUNT_PAGE = """
 </div>
 
 <!-- SECTION NOM -->
-ACCOUNT_PAGE = """
+ACCOUNT_PAGE = """"""""
 <!doctype html>
 <html>
 <head>
@@ -1773,6 +1773,23 @@ ACCOUNT_PAGE = """
    gap:20px;
  }
 
+.inline-3{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:16px;
+}
+
+.inline-2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+
+@media (max-width:700px){
+  .inline-3, .inline-2{
+    grid-template-columns:1fr;
+  }
+}
 </style>
 </head>
 
