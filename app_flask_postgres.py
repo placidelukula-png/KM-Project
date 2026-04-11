@@ -1650,6 +1650,81 @@ ACCOUNT_PAGE = """
 <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Mon compte</title>
 <style>
+ body{font-family:Arial, sans-serif;margin:20px;background-color:#f9f9f9} 
+ .wrap{max-width:900px;margin:0 auto}
+ .card{border:1px solid #e7e7e7;border-radius:16px;padding:20px;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,0.05)}
+ label{display:block;margin:10px 0 4px;font-weight:700;font-size:14px;color:#555}
+ input{width:100%;padding:10px;border:1px solid #ddd;border-radius:10px;box-sizing:border-box} /* box-sizing important */
+ input[readonly]{background:#f6f6f6}
+ 
+ /* Conteneurs d'alignement */
+ .flex-row{display:flex;gap:15px;margin-bottom:10px}
+ .flex-item{flex:1}
+ .full-width{width:100%}
+
+ .btn{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#111;color:#fff;cursor:pointer}
+ .msg{margin-top:12px;padding:10px;border-radius:12px}
+
+ /* Mentor & Beneficiaire (même traitement) */
+ .person-box{
+  margin-top:8px;
+  padding:12px;
+  border:1px solid #d9e7ff;
+  background:#f7fbff;
+  border-radius:10px;
+  font-size:13px;
+  line-height:1.45;
+  color:#1a1a1a;
+}
+</style></head><body>
+
+<div class="wrap">
+  <h2>Mon compte</h2>
+  <div class="card">
+      
+      <!-- 1) Identifiant, Statut et Solde sur la même ligne -->
+      <div class="flex-row">
+          <div class="flex-item"><label>Identifiant</label><input type="text" value="ID123" readonly></div>
+          <div class="flex-item"><label>Statut</label><input type="text" value="Actif" readonly></div>
+          <div class="flex-item"><label>Solde</label><input type="text" value="100€" readonly></div>
+      </div>
+
+      <!-- 2) Nom et Prénom sur la ligne suivante -->
+      <div class="flex-row">
+          <div class="flex-item"><label>Nom</label><input type="text" value="Doe" readonly></div>
+          <div class="flex-item"><label>Prénom</label><input type="text" value="John" readonly></div>
+      </div>
+
+      <!-- 3) Adresse occupe une ligne entiere -->
+      <div style="margin-bottom:10px">
+          <label>Adresse</label>
+          <input type="text" value="123 Rue de Paris, 75000" readonly>
+      </div>
+
+      <hr style="border:0;border-top:1px solid #eee;margin:20px 0">
+
+      <!-- 4) Mentor et Beneficiaire alignés -->
+      <div class="flex-row">
+          <div class="flex-item">
+              <label>Mentor</label>
+              <div class="person-box">Jean Dupont (ID: M99)</div>
+          </div>
+          <div class="flex-item">
+              <label>Bénéficiaire</label>
+              <!-- 5) Même traitement appliqué -->
+              <div class="person-box">
+
+
+
+
+
+
+
+
+ACCOUNT_PAGE = """
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mon compte</title>
+<style>
  body{font-family:Arial;margin:20px} .wrap{max-width:900px;margin:0 auto}
  .card{border:1px solid #e7e7e7;border-radius:16px;padding:16px}
  label{display:block;margin:10px 0 4px;font-weight:700}
@@ -1705,26 +1780,24 @@ ACCOUNT_PAGE = """
 <form method="post">
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-<div class="grid">
-
-<div class="flex-row" style="grid-column:1 / span 2;display:flex;gap:20px;align-items:center;">
+<span style="color: blue;"> >
 <div>
 <label>Identifiant</label>
 <input value="{{ m[1] }}" readonly>
 </div>
-<div>
 
 <div>
 <label>Statut</label>
 <input value="{{ m[9] }}" readonly>
 </div>
 
+<div>
 <label>Solde</label>
 <input value="{{ m[10] }}" readonly>
 </div>
-</div>
+</span>
 
-<div class="flex-row">
+<span style="color: green;">
 <div>
 <label>Nom</label>
 <input name="lastname" value="{{ m[4] }}" placeholder="Nom de famille (ex: Ilunga)">
@@ -1734,7 +1807,7 @@ ACCOUNT_PAGE = """
 <label>Prénom</label>
 <input name="firstname" value="{{ m[5] }}" placeholder="Prénom (ex: Jean)">
 </div>
-</div>
+</span>
 
 <div style="grid-column:1 / span 2;">
 <label>Adresse</label>
@@ -1801,6 +1874,10 @@ def account():
             pwd = (request.form.get("new_password") or "").strip()
             ln = request.form.get("lastname")
             fn = request.form.get("firstname")
+####
+            beneficiaire_new = (request.form.get("beneficiaire") or "").strip()
+            adresse_new = (request.form.get("adresse") or "").strip()
+####            
 
             changed = []
 
