@@ -130,58 +130,50 @@ def init_db():
         with conn.cursor() as cur:
             # membres (avec balance)
             cur.execute("""
-                alter table membres
-                add column if not exists adresse TEXT,
-                add column if not exists beneficiaire TEXT; 
-                        """)       
-#                CREATE TABLE IF NOT EXISTS membres (
-#                  id             BIGSERIAL PRIMARY KEY,
-#                  phone          TEXT NOT NULL UNIQUE,
-#                  membertype     TEXT NOT NULL,
-#                  mentor         TEXT NOT NULL,
-#                  lastname       TEXT NOT NULL,
-#                  firstname      TEXT NOT NULL,
-#                  birthdate      DATE NOT NULL,
-#                  idtype         TEXT,
-#                  idpicture_url  TEXT,
-#                  currentstatute TEXT NOT NULL,
-#                  balance        DECIMAL(18,2) NOT NULL DEFAULT 0,
-#                  updatedate     DATE NOT NULL DEFAULT CURRENT_DATE,
-#                  updateuser     TEXT NOT NULL,
-#                  password_hash  TEXT NOT NULL,
-#                  membershipdate DATE NOT NULL DEFAULT CURRENT_DATE,
-#                  adresse        TEXT,
-#                  beneficiaire   TEXT,
-#                  CONSTRAINT membres_membertype_chk
-#                    CHECK (membertype IN ('membre','independant','mentor','admin')),
-#                  CONSTRAINT membres_currentstatute_chk
-#                    CHECK (currentstatute IN ('probatoire','actif','inactif','suspendu','radié'))
-#                );
-#            """)
+                CREATE TABLE IF NOT EXISTS membres (
+                  id             BIGSERIAL PRIMARY KEY,
+                  phone          TEXT NOT NULL UNIQUE,
+                  membertype     TEXT NOT NULL,
+                  mentor         TEXT NOT NULL,
+                  lastname       TEXT NOT NULL,
+                  firstname      TEXT NOT NULL,
+                  birthdate      DATE NOT NULL,
+                  idtype         TEXT,
+                  idpicture_url  TEXT,
+                  currentstatute TEXT NOT NULL,
+                  balance        DECIMAL(18,2) NOT NULL DEFAULT 0,
+                  updatedate     DATE NOT NULL DEFAULT CURRENT_DATE,
+                  updateuser     TEXT NOT NULL,
+                  password_hash  TEXT NOT NULL,
+                  membershipdate DATE NOT NULL DEFAULT CURRENT_DATE,
+                  adresse        TEXT,
+                  beneficiaire   TEXT,
+                  CONSTRAINT membres_membertype_chk
+                    CHECK (membertype IN ('membre','independant','mentor','admin')),
+                  CONSTRAINT membres_currentstatute_chk
+                    CHECK (currentstatute IN ('probatoire','actif','inactif','suspendu','radié'))
+                );
+            """)
 
             # mouvements
             cur.execute("""
-                alter table mouvements
-                add column if not exists regie TEXT;
-                        """)       
-                        
-#                CREATE TABLE IF NOT EXISTS mouvements (
-#                  id           BIGSERIAL PRIMARY KEY,
-#                  phone        TEXT NOT NULL,
-#                  firstname    TEXT NOT NULL,
-#                  lastname     TEXT NOT NULL,
-#                  mvt_date     DATE NOT NULL,
-#                  amount       DECIMAL(18,2) NOT NULL DEFAULT 0,
-#                  debitcredit  VARCHAR(1) NOT NULL CHECK (debitcredit IN ('D','C')),
-#                  reference    TEXT NOT NULL UNIQUE,
-#                  updatedate   DATE NOT NULL DEFAULT CURRENT_DATE,
-#                  libelle      TEXT,
-#                  updated_by   TEXT,
-#                  regie        TEXT
-#                  );
-#            """)
-#            cur.execute("CREATE INDEX IF NOT EXISTS idx_mouvements_phone ON mouvements(phone);")
-#            cur.execute("CREATE INDEX IF NOT EXISTS idx_mouvements_date ON mouvements(mvt_date);")
+                CREATE TABLE IF NOT EXISTS mouvements (
+                  id           BIGSERIAL PRIMARY KEY,
+                  phone        TEXT NOT NULL,
+                  firstname    TEXT NOT NULL,
+                  lastname     TEXT NOT NULL,
+                  mvt_date     DATE NOT NULL,
+                  amount       DECIMAL(18,2) NOT NULL DEFAULT 0,
+                  debitcredit  VARCHAR(1) NOT NULL CHECK (debitcredit IN ('D','C')),
+                  reference    TEXT NOT NULL UNIQUE,
+                  updatedate   DATE NOT NULL DEFAULT CURRENT_DATE,
+                  libelle      TEXT,
+                  updated_by   TEXT,
+                  regie        TEXT
+                  );
+            """)
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_mouvements_phone ON mouvements(phone);")
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_mouvements_date ON mouvements(mvt_date);")
 
             # décès
             cur.execute("""
@@ -755,7 +747,7 @@ def fetch_member_by_phone(phone: str):
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                SELECT id, phone, membertype, mentor, lastname, firstname, birthdate,idtype, idpicture_url, currentstatute, balance, updatedate, updateuser, membershipdate
+                SELECT id, phone, membertype, mentor, lastname, firstname, birthdate,idtype, idpicture_url, currentstatute, balance, updatedate, updateuser, adresse, beneficiaire, membershipdate
                 FROM membres
                 WHERE phone=%s
             """, (phone,))
@@ -1715,16 +1707,24 @@ ACCOUNT_PAGE = """
 
 <div class="grid">
 
+<div class="flex-row" style="grid-column:1 / span 2;display:flex;gap:20px;align-items:center;">
 <div>
 <label>Identifiant</label>
 <input value="{{ m[1] }}" readonly>
 </div>
+<div>
 
 <div>
 <label>Statut</label>
 <input value="{{ m[9] }}" readonly>
 </div>
 
+<label>Solde</label>
+<input value="{{ m[10] }}" readonly>
+</div>
+</div>
+
+<div class="flex-row">
 <div>
 <label>Nom</label>
 <input name="lastname" value="{{ m[4] }}" placeholder="Nom de famille (ex: Ilunga)">
@@ -1734,7 +1734,15 @@ ACCOUNT_PAGE = """
 <label>Prénom</label>
 <input name="firstname" value="{{ m[5] }}" placeholder="Prénom (ex: Jean)">
 </div>
+</div>
 
+<div style="grid-column:1 / span 2;">
+<label>Adresse</label>
+<input name="adresse" value="{{ m[13] }}" placeholder="Adresse (ex: 123 Rue de la Paix, Q. Magasin, Kintambo, Kinshasa)">
+</div>
+
+      <!-- 4) Mentor et Beneficiaire alignés -->
+<div class="flex-row">
 <div>
 <label>Mentor</label>
 <input name="mentor" value="{{ m[3] }}" placeholder="Phone d’un mentor (ex: 998889560)">
@@ -1754,8 +1762,9 @@ ACCOUNT_PAGE = """
 </div>
 
 <div>
-<label>Solde</label>
-<input value="{{ m[10] }}" readonly>
+<label>Bénéficiaire</label>
+<input name="beneficiaire" value="{{ m[14] }}" placeholder="Identifiant du bénéficiaire (ex: 810899722)">
+</div>
 </div>
 
 <div style="grid-column:1 / span 2;">
@@ -2442,7 +2451,7 @@ CHECK_MVT_PAGE = """
 <h2>Check mouvements (admin)</h2>
 <p><a href="{{ url_for('home') }}">← Retour</a></p>
 <table>
-<thead><tr><th>ID</th><th>Phone</th><th>Nom</th><th>Date</th><th>Montant</th><th>D/C</th><th>Libellé</th><th>Action</th></tr></thead>
+<thead><tr><th>ID</th><th>Phone</th><th>Nom</th><th>Date</th><th>Montant</th><th>D/C</th><th>Libellé</th><th>Regie</th><th>Action</th></tr></thead>
 <tbody>
 {% for r in rows %}
 <tr>
