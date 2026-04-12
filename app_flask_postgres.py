@@ -1940,10 +1940,11 @@ def account():
             # refresh
             m = fetch_member_by_phone(phone)
             mentor_info = fetch_member_by_phone(m[3]) if m and m[3] else None
+            beneficiaire_info = fetch_member_by_phone(m[14]) if m and m[14] else None
 
             if changed:
                 return render_template_string(
-                    ACCOUNT_PAGE, m=m, mentor_info=mentor_info,
+                    ACCOUNT_PAGE, m=m, mentor_info=mentor_info, beneficiaire_info=beneficiaire_info,
                     message="Changement(s) enregistré(s) : " + ", ".join(changed) + ".",
                     is_error=False
                 )
