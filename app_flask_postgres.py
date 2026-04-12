@@ -676,19 +676,19 @@ def fetch_password_hash_and_statute_by_phone(phone: str):
             return cur.fetchone()
 
 
-def insert_member(phone, membertype, mentor, lastname, firstname, birthdate_date, idtype, idpicture_url,
-                  currentstatute, updateuser, beneficiaire, adresse, password_plain, membershipdate):
+def insert_member(phone, membertype, mentor, lastname, firstname, birthdate_date, 
+                  currentstatute,updatedate, updateuser, beneficiaire, adresse, password_plain, membershipdate):
     pwd_hash = generate_password_hash(password_plain)
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
                 INSERT INTO membres
-                (phone, membertype, mentor, lastname, firstname, birthdate, idtype, idpicture_url,
-                 currentstatute, updatedate, updateuser,beneficiaire, adressse, password_hash, membershipdate)
+                (phone, membertype, mentor, lastname, firstname, birthdate,
+                 currentstatute, updatedate, updateuser,beneficiaire, adresse, password_hash, membershipdate)
                 VALUES
-                (%s,%s,%s,%s,%s,%s,%s,%s,%s,CURRENT_DATE,%s,%s,%s,%s)
-            """, (phone, membertype, mentor, lastname, firstname, birthdate_date, idtype, idpicture_url,
-                  currentstatute, updateuser, beneficiaire, adresse, pwd_hash, membershipdate))
+                (%s,%s,%s,%s,%s,%s,%s,CURRENT_DATE,%s,%s,%s,%s,%s)
+            """, (phone, membertype, mentor, lastname, firstname, birthdate_date,
+                  currentstatute,updatedate,updateuser, beneficiaire, adresse, pwd_hash, membershipdate))
         conn.commit()
 
 def update_member(
@@ -2281,7 +2281,7 @@ def add_member():
 
             # 5. Appel de ta fonction d'insertion (assure-toi qu'elle utilise %s)
             insert_member(phone, membertype, mentor, lastname, firstname, birthdate, 
-                          None, None, statut, updateuser,beneficiaire, adressse, password, membershipdate)
+                          None, statut, updateuser,beneficiaire, adressse, password, membershipdate)
             
             return render_template_string(ADD_MEMBER_PAGE, 
                 message=f"Succès : {firstname} {lastname} a été créé.", 
