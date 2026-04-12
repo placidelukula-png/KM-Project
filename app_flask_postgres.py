@@ -677,7 +677,7 @@ def fetch_password_hash_and_statute_by_phone(phone: str):
 
 
 def insert_member(phone, membertype, mentor, lastname, firstname, birthdate_date, idtype, idpicture_url,
-                  currentstatute, updateuser, beneficiaire, adressse, password_plain, membershipdate):
+                  currentstatute, updateuser, beneficiaire, adresse, password_plain, membershipdate):
     pwd_hash = generate_password_hash(password_plain)
     with get_conn() as conn:
         with conn.cursor() as cur:
@@ -688,7 +688,7 @@ def insert_member(phone, membertype, mentor, lastname, firstname, birthdate_date
                 VALUES
                 (%s,%s,%s,%s,%s,%s,%s,%s,%s,CURRENT_DATE,%s,%s,%s,%s)
             """, (phone, membertype, mentor, lastname, firstname, birthdate_date, idtype, idpicture_url,
-                  currentstatute, updateuser, beneficiaire, adressse, pwd_hash, membershipdate))
+                  currentstatute, updateuser, beneficiaire, adresse, pwd_hash, membershipdate))
         conn.commit()
 
 def update_member(
@@ -2220,7 +2220,6 @@ ADD_MEMBER_PAGE = """
   <label>Nom</label><input name="lastname" required>
   <label>Prénom</label><input name="firstname" required>
   <label>Date naissance (JJ/MM/AAAA)</label><input name="birthdate" required>
-  <label>IdType</label><input name="idtype" required>
   <label>Bénéficiaire</label><input name="beneficiaire" required>
   <label>Adresse</label><input name="adresse" required>
 
@@ -2256,7 +2255,6 @@ def add_member():
             lastname = (request.form.get("lastname") or "").strip()
             firstname = (request.form.get("firstname") or "").strip()
             birthdate_str = (request.form.get("birthdate") or "").strip()
-            idtype = (request.form.get("idtype") or "").strip()
             beneficiaire = (request.form.get("beneficiaire") or "").strip()
             adressse = (request.form.get("adresse") or "").strip()
             password = (request.form.get("password") or "").strip()
@@ -2284,7 +2282,7 @@ def add_member():
 
             # 5. Appel de ta fonction d'insertion (assure-toi qu'elle utilise %s)
             insert_member(phone, membertype, mentor, lastname, firstname, birthdate, 
-                          idtype, None, statut, updateuser,beneficiaire, adressse, password, membershipdate)
+                          None, None, statut, updateuser,beneficiaire, adressse, password, membershipdate)
             
             return render_template_string(ADD_MEMBER_PAGE, 
                 message=f"Succès : {firstname} {lastname} a été créé.", 
