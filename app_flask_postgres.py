@@ -1121,7 +1121,7 @@ def validate_beneficiaire_phone_or_raise(beneficiaire_phone: str, *, current_use
     if not beneficiaire_phone:
         raise ValueError("Veuillez saisir le phone du bénéficiaire.")
 
-    # Optionnel mais recommandé : empêcher auto-mentor
+    # Optionnel mais recommandé : empêcher auto-beneficiaire
     if beneficiaire_phone == current_user_phone:
         raise ValueError("Bénéficiaire invalide : vous ne pouvez pas être votre propre bénéficiaire.")
 
@@ -1130,12 +1130,12 @@ def validate_beneficiaire_phone_or_raise(beneficiaire_phone: str, *, current_use
         raise ValueError("Bénéficiaire introuvable : ce phone n'existe pas dans la table 'membres'.")
 
     # Index d’après votre modèle : membertype = row[2]
-    if beneficiaire_row[2] not in ("bénéficiaire", "admin"):
-        raise ValueError("Bénéficiaire invalide : ce membre existe mais n'est pas de type 'mentor' ou 'admin'.")
+    #if beneficiaire_row[2] not in ("bénéficiaire", "admin"):
+    #    raise ValueError("Bénéficiaire invalide : ce membre existe mais n'est pas de type 'mentor' ou 'admin'.")
 
     # (Optionnel) on pourrait aussi vérifier statut beneficiaire_row[9] == 'Suspendu'
     if beneficiaire_row[9]  in ("radié", "suspendu"):
-        raise ValueError("Bénéficiaire invalide : ce membre existe mais est  'Suspendu' ou 'Radié'.")
+        raise ValueError("Bénéficiaire invalide : cet adhérent existe mais est  'Suspendu' ou 'Radié'.")
     return beneficiaire_phone
 
 # ------------------------------------
@@ -1840,6 +1840,7 @@ ACCOUNT_PAGE = """"
 <div>
 <label>Bénéficiaire</label>
 <input name="beneficiaire" value="{{ m[14] }}">
+
 {% if beneficiaire_info %}
   <div class="beneficiaire-box">
     <div><b>Bénéficiaire :</b> {{ beneficiaire_info[1] }}</div>
@@ -1852,7 +1853,6 @@ ACCOUNT_PAGE = """"
     <div>Profil bénéficiaire non trouvé.</div>
   </div>
 {% endif %}
-
 </div>
 
 </div>
@@ -1898,10 +1898,13 @@ def account():
             pwd = (request.form.get("new_password") or "").strip()
             ln = request.form.get("lastname")
             fn = request.form.get("firstname")
-####
+
+            mentor_info = fetch_member_by_phone(m[3]) if m and m[3] else None
+            beneficiaire_info = fetch_member_by_phone(m[14]) if m and m[14] else None
+
             beneficiaire_new = (request.form.get("beneficiaire") or "").strip()
             adresse_new = (request.form.get("adresse") or "").strip()
-####            
+            
 
             changed = []
 
@@ -1916,7 +1919,8 @@ def account():
                 changed.append("Adresse")
 
             if beneficiaire_new != (m[14] or ""):
-                update_member_beneficiaire(phone, beneficiaire_new, updateuser=phone, lastname=ln, firstname=fn)
+                beneficiaire_ok = validate_beneficiaire_phone_or_raise(beneficiaire_new, current_user_phone=phone)
+                update_member_beneficiaire(phone, beneficiaire_ok, updateuser=phone, lastname=ln, firstname=fn)
                 changed.append("Bénéficiaire")
 
             # 1) mentor (si modifié)
@@ -1943,13 +1947,13 @@ def account():
                     message="Changement(s) enregistré(s) : " + ", ".join(changed) + ".",
                     is_error=False
                 )
-            return render_template_string(ACCOUNT_PAGE, m=m, mentor_info=mentor_info, message="Aucun changement.", is_error=False)
+            return render_template_string(ACCOUNT_PAGE, m=m, mentor_info=mentor_info, beneficiaire_info=beneficiaire_info, message="Aucun changement.", is_error=False)
 
         except Exception as e:
             # log.exception("Erreur update compte")  # si tu veux tracer
             m = fetch_member_by_phone(phone)
             mentor_info = fetch_member_by_phone(m[3]) if m and m[3] else None
-            return render_template_string(ACCOUNT_PAGE, m=m, mentor_info=mentor_info, message=f"Erreur: {e}", is_error=True)
+            return render_template_string(ACCOUNT_PAGE, m=m, mentor_info=mentor_info, beneficiaire_info=beneficiaire_info, message=f"Erreur: {e}", is_error=True)
 
     return render_template_string(ACCOUNT_PAGE, m=m, mentor_info=mentor_info, message="", is_error=False)
 
