@@ -688,7 +688,7 @@ def insert_member(phone, membertype, mentor, lastname, firstname, birthdate_date
                 VALUES
                 (%s,%s,%s,%s,%s,%s,%s,CURRENT_DATE,%s,%s,%s,%s,%s)
             """, (phone, membertype, mentor, lastname, firstname, birthdate_date,
-                  currentstatute,None,updateuser, beneficiaire, adresse, pwd_hash, membershipdate))
+                  currentstatute,updateuser, beneficiaire, adresse, pwd_hash, membershipdate))
         conn.commit()
 
 def update_member(
