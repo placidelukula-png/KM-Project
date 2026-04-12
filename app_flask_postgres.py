@@ -1842,7 +1842,7 @@ ACCOUNT_PAGE = """"
 <input name="beneficiaire" value="{{ m[14] }}">
 
 {% if beneficiaire_info %}
-  <div class="beneficiaire-box">
+  <div class="mentor-box">
     <div><b>Bénéficiaire :</b> {{ beneficiaire_info[1] }}</div>
     <div><b>Nom :</b> {{ beneficiaire_info[5] }} {{ beneficiaire_info[4] }}</div>
     <div><b>Type & Statut :</b> {{ beneficiaire_info[2] }} {{ beneficiaire_info[9] }}</div>
@@ -1905,7 +1905,6 @@ def account():
             beneficiaire_new = (request.form.get("beneficiaire") or "").strip()
             adresse_new = (request.form.get("adresse") or "").strip()
             
-
             changed = []
 
             # 0) changement nom/prénom, bénéficiaire ou adresse (si modifié)
