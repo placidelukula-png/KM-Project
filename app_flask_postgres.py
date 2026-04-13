@@ -1891,6 +1891,7 @@ def account():
     phone = session["user"]
     m = fetch_member_by_phone(phone)
     mentor_info = fetch_member_by_phone(m[3]) if m and m[3] else None
+    beneficiaire_info = fetch_member_by_phone(m[14]) if m and m[14] else None
 
     if request.method == "POST":
         try:
@@ -1953,6 +1954,7 @@ def account():
             # log.exception("Erreur update compte")  # si tu veux tracer
             m = fetch_member_by_phone(phone)
             mentor_info = fetch_member_by_phone(m[3]) if m and m[3] else None
+            beneficiaire_info = fetch_member_by_phone(m[14]) if m and m[14] else None
             return render_template_string(ACCOUNT_PAGE, m=m, mentor_info=mentor_info, beneficiaire_info=beneficiaire_info, message=f"Erreur: {e}", is_error=True)
 
     return render_template_string(ACCOUNT_PAGE, m=m, mentor_info=mentor_info,beneficiaire_info=beneficiaire_info, message="", is_error=False)
