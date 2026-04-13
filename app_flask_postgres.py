@@ -1955,7 +1955,7 @@ def account():
             mentor_info = fetch_member_by_phone(m[3]) if m and m[3] else None
             return render_template_string(ACCOUNT_PAGE, m=m, mentor_info=mentor_info, beneficiaire_info=beneficiaire_info, message=f"Erreur: {e}", is_error=True)
 
-    return render_template_string(ACCOUNT_PAGE, m=m, mentor_info=mentor_info, message="", is_error=False)
+    return render_template_string(ACCOUNT_PAGE, m=m, mentor_info=mentor_info,beneficiaire_info=beneficiaire_info, message="", is_error=False)
 
 
 # ---------------------------------------------------------------
