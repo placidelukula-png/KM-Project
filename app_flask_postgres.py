@@ -3493,7 +3493,15 @@ PARAMETRAGE_PAGE = """
           <!-- On garde la clef en texte mais on l'envoie en hidden pour identifier la ligne -->
         <!--  <td>{{ r[0] }}<input type="hidden" name="key_{{ loop.index }}" value="{{ r[0] }}"></td> -->
         <!--  <td>{{ r[1] }}<input type="text" name="decript_{{ loop.index }}" value="{{ r[1] }}"></td> -->
-          <td>{{ r[1] }}<input type="text" name="decript" value="{{ r[1] }}"></td>
+          <td>
+                {{ r[0] }}
+                <input type="hidden" name="key_{{ loop.index }}" value="{{ r[0] }}">
+          </td>
+          
+          <td>
+            {{ r[1] }}
+            <input type="text" name="decript_{{ loop.index }}" value="{{ r[1] }}">
+          </td>
 
           <td>
             <input type="number" name="value_{{ loop.index }}" 
@@ -3549,13 +3557,17 @@ def parametrage():
             for i in range(1, len(rows) + 1):
                 key = request.form.get(f"key_{i}")
                 value_raw = request.form.get(f"value_{i}")
-                
+
+                decr = request.form.get(f"decript_{i}")
+                note = request.form.get(f"note_{i}")
+
+
                 if key and value_raw:
                     # Conversion propre avec l'arrondi financier que nous avons vu
                     new_value = Decimal(value_raw).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
                     
                     # 3. APPEL A VOTRE BASE DE DONNÉES (Exemple d'exécution)
-                    update_id_data(key, new_value, session.get("user") or ADMIN_PHONE, decript=request.form.get(f"decript"), note=request.form.get(f"note"))
+                    update_id_data(key, new_value, session.get("user") or ADMIN_PHONE, decript=decr, note=note)
                     # Remplacez par votre fonction SQL : "UPDATE table SET quantite = %s WHERE cle = %s"
             
             flash("Mise à jour réussie !", "success")
