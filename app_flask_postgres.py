@@ -134,7 +134,7 @@ def init_db():
                   id             BIGSERIAL PRIMARY KEY,
                   phone          TEXT NOT NULL UNIQUE,
                   membertype     TEXT NOT NULL,
-                  mentor         TEXT NOT NULL,
+                  mentor         TEXT NOT  NULL DEFAULT 'admin',
                   lastname       TEXT NOT NULL,
                   firstname      TEXT NOT NULL,
                   birthdate      DATE NOT NULL,
@@ -147,7 +147,7 @@ def init_db():
                   password_hash  TEXT NOT NULL,
                   membershipdate DATE NOT NULL DEFAULT CURRENT_DATE,
                   adresse        TEXT,
-                  beneficiaire   TEXT,
+                  beneficiaire   TEXT NOT NULL DEFAULT 'admin',
                   CONSTRAINT membres_membertype_chk
                     CHECK (membertype IN ('membre','independant','mentor','admin')),
                   CONSTRAINT membres_currentstatute_chk
@@ -247,7 +247,8 @@ def init_db():
 #            """
 #            cur.execute(sql_commands)
 #####
-#            SELECT * INTO membres_BACKUP_20260409 
+#            SELECT * INTO membres_BACKUP_20260409
+#            FROM membres;    
 #            SELECT * INTO mouvements_BACKUP_20260409 
 #            FROM mouvements;                        
 #            SELECT * INTO id_data_BACKUP_20260409 
@@ -285,12 +286,37 @@ def init_db():
 #                WHERE id = 65;
 #            """)
 
-            # Correction en haut-volume (date d'adhésion des memres potentiels est 2099-12-31).
+            # Correction en haut-volume (date d'adhésion des membres potentiels est 2099-12-31).
 #            cur.execute("""
 #                    UPDATE membres
 #                       SET membershipdate = DATE '2099-12-31'
 #                    WHERE currentstatute = 'inactif';
 #            """)
+
+            # Correction en haut-volume (remplissage de 'beneficiaire. et 'mentor' par la valeur 'admin' là où c'est NULL).
+            cur.execute("""
+                    UPDATE membres
+                        SET beneficiaire = 'admin'
+                    WHERE beneficiaire IS NULL OR beneficiaire = '';
+            """)
+
+            cur.execute("""
+                    UPDATE membres
+                        SET mentor = 'admin'
+                    WHERE mentor IS NULL OR mentor = '';
+            """)
+
+            cur.execute("""
+                ALTER TABLE membres 
+                    ALTER COLUMN beneficiaire SET NOT NULL,
+                    ALTER COLUMN beneficiaire SET DEFAULT 'admin';
+            """)
+
+            cur.execute("""
+                ALTER TABLE membres 
+                    ALTER COLUMN mentor SET NOT NULL,
+                    ALTER COLUMN mentor SET DEFAULT 'admin';
+            """)
 
 #
 #            # Correction exceptionnelle su les donnees de base d'un adhérent.
