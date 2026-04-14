@@ -3492,7 +3492,7 @@ PARAMETRAGE_PAGE = """
         <tr>
           <!-- On garde la clef en texte mais on l'envoie en hidden pour identifier la ligne -->
           <td>{{ r[0] }}<input type="hidden" name="key_{{ loop.index }}" value="{{ r[0] }}"></td>
-          <td>{{ r[1] }}<input type="text" name="decript_{{ loop.index }}" value="{{ r[1] }}"></td>
+        <!  <td>{{ r[1] }}<input type="text" name="decript_{{ loop.index }}" value="{{ r[1] }}"></td> -->
           <td>
             <input type="number" name="value_{{ loop.index }}" 
                    value="{{ "%.2f"|format(r[2]|float) }}" 
@@ -3553,7 +3553,7 @@ def parametrage():
                     new_value = Decimal(value_raw).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
                     
                     # 3. APPEL A VOTRE BASE DE DONNÉES (Exemple d'exécution)
-                    update_id_data(key, new_value, session.get("user") or ADMIN_PHONE, datetime.now(),decript=request.form.get(f"decript"), note=request.form.get(f"note"))
+                    update_id_data(key, new_value, session.get("user") or ADMIN_PHONE, decript=request.form.get(f"decript"), note=request.form.get(f"note"))
                     # Remplacez par votre fonction SQL : "UPDATE table SET quantite = %s WHERE cle = %s"
             
             flash("Mise à jour réussie !", "success")
