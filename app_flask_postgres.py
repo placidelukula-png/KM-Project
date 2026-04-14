@@ -294,29 +294,29 @@ def init_db():
 #            """)
 
             # Correction en haut-volume (remplissage de 'beneficiaire. et 'mentor' par la valeur 'admin' là où c'est NULL).
-            cur.execute("""
-                    UPDATE membres
-                        SET beneficiaire = 'admin'
-                    WHERE beneficiaire IS NULL OR beneficiaire = '';
-            """)
+#            cur.execute("""
+#                    UPDATE membres
+#                        SET beneficiaire = 'admin'
+#                    WHERE beneficiaire IS NULL OR beneficiaire = '';
+#            """)
 
-            cur.execute("""
-                    UPDATE membres
-                        SET mentor = 'admin'
-                    WHERE mentor IS NULL OR mentor = '';
-            """)
+#            cur.execute("""
+#                    UPDATE membres
+#                        SET mentor = 'admin'
+#                    WHERE mentor IS NULL OR mentor = '';
+#            """)
 
-            cur.execute("""
-                ALTER TABLE membres 
-                    ALTER COLUMN beneficiaire SET NOT NULL,
-                    ALTER COLUMN beneficiaire SET DEFAULT 'admin';
-            """)
+#            cur.execute("""
+#                ALTER TABLE membres 
+#                    ALTER COLUMN beneficiaire SET NOT NULL,
+#                    ALTER COLUMN beneficiaire SET DEFAULT 'admin';
+#            """)
 
-            cur.execute("""
-                ALTER TABLE membres 
-                    ALTER COLUMN mentor SET NOT NULL,
-                    ALTER COLUMN mentor SET DEFAULT 'admin';
-            """)
+#            cur.execute("""
+#                ALTER TABLE membres 
+#                    ALTER COLUMN mentor SET NOT NULL,
+#                    ALTER COLUMN mentor SET DEFAULT 'admin';
+#            """)
 
 #
 #            # Correction exceptionnelle su les donnees de base d'un adhérent.
@@ -3492,7 +3492,7 @@ PARAMETRAGE_PAGE = """
         <tr>
           <!-- On garde la clef en texte mais on l'envoie en hidden pour identifier la ligne -->
           <td>{{ r[0] }}<input type="hidden" name="key_{{ loop.index }}" value="{{ r[0] }}"></td>
-          <td>{{ r[1] }}</td>
+          <td>{{ r[1] }}<input type="hidden" name="desc_{{ loop.index }}" value="{{ r[1] }}"></td>
           <td>
             <input type="number" name="value_{{ loop.index }}" 
                    value="{{ "%.2f"|format(r[2]|float) }}" 
