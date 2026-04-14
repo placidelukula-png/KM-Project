@@ -3567,7 +3567,7 @@ def parametrage():
                     new_value = Decimal(value_raw).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
                     
                     # 3. APPEL A VOTRE BASE DE DONNÉES (Exemple d'exécution)
-                    update_id_data(key, new_value, session.get("user") or ADMIN_PHONE, decript=decr, note=note)
+                    update_id_data(key, new_value, decript=decr, note=note)
                     # Remplacez par votre fonction SQL : "UPDATE table SET quantite = %s WHERE cle = %s"
             
             flash("Mise à jour réussie !", "success")
