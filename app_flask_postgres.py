@@ -3492,7 +3492,7 @@ PARAMETRAGE_PAGE = """
         <tr>
           <!-- On garde la clef en texte mais on l'envoie en hidden pour identifier la ligne -->
           <td>{{ r[0] }}<input type="hidden" name="key_{{ loop.index }}" value="{{ r[0] }}"></td>
-        <!  <td>{{ r[1] }}<input type="text" name="decript_{{ loop.index }}" value="{{ r[1] }}"></td> -->
+        <!--  <td>{{ r[1] }}<input type="text" name="decript_{{ loop.index }}" value="{{ r[1] }}"></td> -->
           <td>
             <input type="number" name="value_{{ loop.index }}" 
                    value="{{ "%.2f"|format(r[2]|float) }}" 
