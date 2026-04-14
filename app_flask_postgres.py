@@ -1050,14 +1050,14 @@ def update_member_adresse(phone: str, adresse: str, updateuser: str, lastname: s
             """, (adresse, updateuser, lastname, firstname, phone))
         conn.commit()
 
-def update_id_data(keydata: str, quantity: Decimal):
+def update_id_data(keydata: str, quantity: Decimal,decript: str, note: str):
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
                 UPDATE id_data
-                SET quantity=%s
+                SET quantity=%s, decript=%s, note=%s, created_at=CURRENT_DATE, created_by=%s
                 WHERE keydata=%s
-            """, (quantity, keydata))
+            """, (quantity, decript, note, session.get("user"), keydata))
         conn.commit()
 
 def list_id_data():
@@ -3492,12 +3492,13 @@ PARAMETRAGE_PAGE = """
         <tr>
           <!-- On garde la clef en texte mais on l'envoie en hidden pour identifier la ligne -->
           <td>{{ r[0] }}<input type="hidden" name="key_{{ loop.index }}" value="{{ r[0] }}"></td>
-          <td>{{ r[1] }}<input type="text" name="decript" value="{{ r[1] }}"></td>
+          <td>{{ r[1] }}<input type="text" name="decript_{{ loop.index }}" value="{{ r[1] }}"></td>
           <td>
             <input type="number" name="value_{{ loop.index }}" 
                    value="{{ "%.2f"|format(r[2]|float) }}" 
                    step="0.01">
           </td>
+          <td>{{ r[3] }}</td>
           <td>{{ r[4] }}</td>
           <td>{{ r[5] }}</td>
         </tr>
@@ -3552,7 +3553,7 @@ def parametrage():
                     new_value = Decimal(value_raw).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
                     
                     # 3. APPEL A VOTRE BASE DE DONNÉES (Exemple d'exécution)
-                    update_id_data(key, new_value) 
+                    update_id_data(key, new_value, session.get("user") or ADMIN_PHONE, datetime.now(),decript=request.form.get(f"decript"), note=request.form.get(f"note"))
                     # Remplacez par votre fonction SQL : "UPDATE table SET quantite = %s WHERE cle = %s"
             
             flash("Mise à jour réussie !", "success")
