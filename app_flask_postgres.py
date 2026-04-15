@@ -3500,23 +3500,22 @@ PARAMETRAGE_PAGE = """
   <h2>Indicateurs de travail</h2>
   <p><a href="{{ url_for('home') }}">← Retour</a></p>
   
-  <thead><tr>
-    <th>Donnée clef</th><th>Description</th><th>Quantité</th><th>Note</th><th>Modifié par</th><th>Date modification</th>
-  </tr></thead>
     {% for r in rows %}
   <form method="POST" action="{{ url_for('parametrage', id_data_id=r[0]) }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <table>
-      <tbody>
+  <table>
+  <tbody>
 
-        <tr>
+<tr>
+  <thead><tr>
+    <th>Donnée clef</th><th>Description</th><th>Quantité</th><th>Note</th><th>Modifié par</th><th>Date modification</th>
+  </tr></thead>
+
           <td>
-                {{ r[0] }}
                 <input type="hidden" name="keydata" value="{{ r[0] }}">
           </td>
           
           <td>
-            {{ r[1] }}
             <input type="text" name="decript" value="{{ r[1] }}">
           </td>
 
@@ -3539,12 +3538,14 @@ PARAMETRAGE_PAGE = """
     </table>
     <td>
       <button class="btn" type="submit">Save</button>
-</form>
+
       <form method="post" action="{{ url_for('id_data_delete') }}" style="display:inline">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <button class="btn2" type="submit" onclick="return confirm('Supprimer?')">Delete</button>
       </form>
     </td>
+</form>
+
 </tr>
 
 </div></body></html>
