@@ -1070,6 +1070,12 @@ def list_id_data():
             """)
             return cur.fetchall()
 
+def delete_id_data(id: int):
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("DELETE FROM id_data WHERE id=%s", (id,))
+        conn.commit()
+
 
 # ----------------------------
 # Validation
@@ -3485,7 +3491,7 @@ PARAMETRAGE_PAGE = """
     <th>Donnée clef</th><th>Description</th><th>Quantité</th><th>Note</th><th>Modifié par</th><th>Date modification</th>
   </tr></thead>
     {% for r in rows %}
-  <form method="POST" action="{{ url_for('parametrage') }}">
+  <form method="POST" action="{{ url_for('parametrage', id_data_id=r[0]) }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <table>
       <tbody>
@@ -3541,7 +3547,8 @@ from decimal import Decimal, ROUND_HALF_UP
 def parametrage():
     if request.method == "POST":
         # 1. On récupère toutes les lignes des indicateurs de travail (pour validation et affichage en cas d'erreur)
-        rows = list_id_data() 
+        rows = list_id_data()
+#        id_data_id = request.args.get("id_data_id")  # Récupérer l'ID de la donnée à mettre à jour depuis les paramètres de l'URL 
         try:
             if not rows:
                 flash("Aucun indicateur trouvé pour mise à jour.", "danger")
@@ -3565,6 +3572,13 @@ def parametrage():
     # Si c'est un GET, on affiche simplement la page
     rows = list_id_data()
     return render_template_string(PARAMETRAGE_PAGE,message=message, rows=rows)
+
+@app.route("/id_data_delete", methods=["GET", "POST"])
+def id_data_delete():
+    id_data_id = request.args.get("id_data_id")
+    delete_id_data(id_data_id)
+    return redirect(url_for("parametrage"))
+
 
 #        
 # --------------------------------------------------------------------------------------
