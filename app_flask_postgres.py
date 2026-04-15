@@ -3506,13 +3506,13 @@ PARAMETRAGE_PAGE = """
   <table>
   <tbody>
 
-<tr>
   <thead><tr>
     <th>Donnée clef</th><th>Description</th><th>Quantité</th><th>Note</th><th>Modifié par</th><th>Date modification</th>
   </tr></thead>
+    <tr>
 
           <td>
-                <input type="hidden" name="keydata" value="{{ r[0] }}">
+                <input type="text" name="keydata" value="{{ r[0] }}">
           </td>
           
           <td>
@@ -3530,23 +3530,26 @@ PARAMETRAGE_PAGE = """
           <td>{{ r[4] }}</td>
           <td>{{ r[5] }}</td>
         </tr>
+
+        <td>
+        <button class="btn" type="submit">Save</button>
+
+        <form method="post" action="{{ url_for('id_data_delete') }}" style="display:inline">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn2" type="submit" onclick="return confirm('Supprimer?')">Delete</button>
+        </form>
+        </td>
+
       {% endfor %}
 
       {% if not rows %}<tr><td colspan="8">Aucun indicateur enregistré.</td></tr>{% endif %}
 
       </tbody>
     </table>
-    <td>
-      <button class="btn" type="submit">Save</button>
 
-      <form method="post" action="{{ url_for('id_data_delete') }}" style="display:inline">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <button class="btn2" type="submit" onclick="return confirm('Supprimer?')">Delete</button>
-      </form>
-    </td>
-</form>
+    </tr>
 
-</tr>
+  </form>
 
 </div></body></html>
 """
