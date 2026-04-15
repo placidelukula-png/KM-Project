@@ -920,12 +920,7 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
                         (amount, from_phone, from_phone))
             cur.execute("UPDATE membres SET balance = balance + %s, updatedate=CURRENT_DATE, updateuser=%s WHERE phone=%s",
                         (amount, from_phone, to_phone))
-####
-            if not me[13] :
-               me[13] = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
-            if not to_member[13] :
-               to_member[13] = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
-####
+
             #   b) Update de 'membershipdate' et 'currentstatute' en fonction de la date d'adhésion et du solde du membre qui reçoit (to) et du membre qui donne (from) :           
             #       (*) cas de date d'adhésion 2099-12-31 (membre potentiel) : '
             if me[13] == datetime.strptime("31/12/2099", "%d/%m/%Y").date() or to_member[13] == datetime.strptime("31/12/2099", "%d/%m/%Y").date():
