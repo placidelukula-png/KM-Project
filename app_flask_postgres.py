@@ -3513,83 +3513,21 @@ PARAMETRAGE_PAGE = """
           <td>{{ r[5] }}</td>
         </tr>
       {% endfor %}
+
+      {% if not rows %}<tr><td colspan="8">Aucun indicateur enregistré.</td></tr>{% endif %}
+
       </tbody>
     </table>
-  <td>
-    <button class="btn" type="submit">Save</button>
-    </form>
-    <form method="post" action="{{ url_for('id_data_delete') }}" style="display:inline">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <button class="btn2" type="submit" onclick="return confirm('Supprimer?')">Delete</button>
-    </form>
-  </td>
-</tr>
-{% endfor %}
-{% if not rows %}<tr><td colspan="8">Aucun indicateur enregistré.</td></tr>{% endif %}
-</tbody>
-</table>
-
-####
-<table>
-<thead><tr><th>ID</th><th>Phone</th><th>Nom</th><th>Date</th><th>Montant</th><th>D/C</th><th>Libellé</th><th>Regie</th><th>Action</th></tr></thead>
-<tbody>
-{% for r in rows %}
-<tr>
-<form method="post" action="{{ url_for('check_mouvements_update', mvt_id=r[0]) }}">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <td>{{ r[0] }}</td>
-  <td>{{ r[1] }}</td>
-  <td>{{ r[2] }}</td>
-  <td><input name="mvt_date" value="{{ r[3].strftime('%d/%m/%Y') }}" size="10"></td>
-  <td><input name="amount" value="{{ r[4] }}" size="8"></td>
-  <td>
-    <select name="debitcredit">
-      <option value="D" {{ 'selected' if r[5]=='D' else '' }}>D</option>
-      <option value="C" {{ 'selected' if r[5]=='C' else '' }}>C</option>
-    </select>
-  </td>
-  
-  <td><input name="libelle" value="{{ r[7] }}" size="20"></td>
-  <td><input name="regie" value="{{ r[10] }}" size="20"></td>
-  <td>
-    <button class="btn" type="submit">Save</button>
+    <td>
+      <button class="btn" type="submit">Save</button>
 </form>
-<form method="post" action="{{ url_for('check_mouvements_delete', mvt_id=r[0]) }}" style="display:inline">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <button class="btn2" type="submit" onclick="return confirm('Supprimer?')">Delete</button>
-</form>
-  </td>
+      <form method="post" action="{{ url_for('id_data_delete') }}" style="display:inline">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="btn2" type="submit" onclick="return confirm('Supprimer?')">Delete</button>
+      </form>
+    </td>
 </tr>
-{% endfor %}
-{% if not rows %}<tr><td colspan="8">Aucun mouvement.</td></tr>{% endif %}
-</tbody>
-</table>
 
-
-
-
-####        
-    {% if rows %}
-      <button type="submit" class="btn-save">Enregistrer les modifications</button>
-    {% else %}
-      <p>Aucun indicateur enregistré.</p>
-    {% endif %}
-
-    <!-- Utilisation des messages flash de Flask -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-        <div class="msg {{ 'err' if category == 'danger' else 'ok' }}" 
-            style="padding:10px; margin-top:20px; border-radius:4px; 
-                    background: {{ '#f8d7da' if category == 'danger' else '#d4edda' }}; 
-                    color: {{ '#721c24' if category == 'danger' else '#155724' }};">
-            {{ message }}
-        </div>
-        {% endfor %}
-    {% endif %}
-    {% endwith %}
-
-  </form>
 </div></body></html>
 """
 #
