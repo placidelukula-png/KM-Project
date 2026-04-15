@@ -888,7 +888,12 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
     me = fetch_member_by_phone(from_phone)
     to_member = fetch_member_by_phone(to_phone)
 
-    log.info("from_phone=%s,from_balance=%s, >>> to_phone=%s, to_balance=%s, from_membershipdate=%s, to_membershipdate=%s", from_phone, from_balance, to_phone, to_balance, me[13], to_member[13])
+    to_balance = to_member[10]
+    from_balance = me[10]   
+    to_membershipdate = to_member[15]
+    from_membershipdate = me[15]
+
+    log.info("from_phone=%s,from_balance=%s, >>> to_phone=%s, to_balance=%s, from_membershipdate=%s, to_membershipdate=%s", from_phone, from_balance, to_phone, to_balance, from_membershipdate, to_membershipdate)
 
     today = datetime.utcnow().date()
     C= fetch_dashboard_stats()["C"]
