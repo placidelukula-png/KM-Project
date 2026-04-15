@@ -372,9 +372,14 @@ def init_db():
 #            
         conn.commit()
 
+#from dateutil.relativedelta import relativedelta
+#def diff_month(d1, d2):
+#    r = relativedelta(d2, d1)
+#    return r.years * 12 + r.months
 def diff_month(d1, d2):
     """Calculates the difference in calendar months between two datetime objects."""
-    return (d1.year - d2.year) * 12 + d1.month - d2.month
+    nb_mois = (d1.year - d2.year) * 12 + d1.month - d2.month
+    return nb_mois
 
 def fetch_first_last_by_phone(phone: str):
     with get_conn() as conn:
