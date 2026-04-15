@@ -3481,41 +3481,94 @@ PARAMETRAGE_PAGE = """
   <h2>Indicateurs de travail</h2>
   <p><a href="{{ url_for('home') }}">← Retour</a></p>
   
+  <thead><tr>
+    <th>Donnée clef</th><th>Description</th><th>Quantité</th><th>Note</th><th>Modifié par</th><th>Date modification</th>
+  </tr></thead>
+    {% for r in rows %}
   <form method="POST" action="{{ url_for('parametrage') }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <table>
-      <thead><tr>
-        <th>Donnée clef</th><th>Description</th><th>Quantité</th><th>Modifié par</th><th>Date modification</th>
-      </tr></thead>
       <tbody>
-      {% for r in rows %}
+
         <tr>
-          <!-- On garde la clef en texte mais on l'envoie en hidden pour identifier la ligne -->
-        <!--  <td>{{ r[0] }}<input type="hidden" name="key_{{ loop.index }}" value="{{ r[0] }}"></td> -->
-        <!--  <td>{{ r[1] }}<input type="text" name="decript_{{ loop.index }}" value="{{ r[1] }}"></td> -->
           <td>
                 {{ r[0] }}
-                <input type="hidden" name="key_{{ loop.index }}" value="{{ r[0] }}">
+                <input type="hidden" name="keydata" value="{{ r[0] }}">
           </td>
           
           <td>
             {{ r[1] }}
-            <input type="text" name="decript_{{ loop.index }}" value="{{ r[1] }}">
+            <input type="text" name="decript" value="{{ r[1] }}">
           </td>
 
           <td>
-            <input type="number" name="value_{{ loop.index }}" 
+            <input type="number" name="quantity" 
                    value="{{ "%.2f"|format(r[2]|float) }}" 
                    step="0.01">
           </td>
-          <td>{{ r[3] }}</td>
+          <td>
+            <input type="text" name="note" value="{{ r[3] }}">
+          </td>
           <td>{{ r[4] }}</td>
           <td>{{ r[5] }}</td>
         </tr>
       {% endfor %}
       </tbody>
     </table>
-    
+  <td>
+    <button class="btn" type="submit">Save</button>
+    </form>
+    <form method="post" action="{{ url_for('id_data_delete') }}" style="display:inline">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="btn2" type="submit" onclick="return confirm('Supprimer?')">Delete</button>
+    </form>
+  </td>
+</tr>
+{% endfor %}
+{% if not rows %}<tr><td colspan="8">Aucun indicateur enregistré.</td></tr>{% endif %}
+</tbody>
+</table>
+
+####
+<table>
+<thead><tr><th>ID</th><th>Phone</th><th>Nom</th><th>Date</th><th>Montant</th><th>D/C</th><th>Libellé</th><th>Regie</th><th>Action</th></tr></thead>
+<tbody>
+{% for r in rows %}
+<tr>
+<form method="post" action="{{ url_for('check_mouvements_update', mvt_id=r[0]) }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <td>{{ r[0] }}</td>
+  <td>{{ r[1] }}</td>
+  <td>{{ r[2] }}</td>
+  <td><input name="mvt_date" value="{{ r[3].strftime('%d/%m/%Y') }}" size="10"></td>
+  <td><input name="amount" value="{{ r[4] }}" size="8"></td>
+  <td>
+    <select name="debitcredit">
+      <option value="D" {{ 'selected' if r[5]=='D' else '' }}>D</option>
+      <option value="C" {{ 'selected' if r[5]=='C' else '' }}>C</option>
+    </select>
+  </td>
+  
+  <td><input name="libelle" value="{{ r[7] }}" size="20"></td>
+  <td><input name="regie" value="{{ r[10] }}" size="20"></td>
+  <td>
+    <button class="btn" type="submit">Save</button>
+</form>
+<form method="post" action="{{ url_for('check_mouvements_delete', mvt_id=r[0]) }}" style="display:inline">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <button class="btn2" type="submit" onclick="return confirm('Supprimer?')">Delete</button>
+</form>
+  </td>
+</tr>
+{% endfor %}
+{% if not rows %}<tr><td colspan="8">Aucun mouvement.</td></tr>{% endif %}
+</tbody>
+</table>
+
+
+
+
+####        
     {% if rows %}
       <button type="submit" class="btn-save">Enregistrer les modifications</button>
     {% else %}
@@ -3549,26 +3602,21 @@ from decimal import Decimal, ROUND_HALF_UP
 @app.route("/parametrage", methods=["GET", "POST"])
 def parametrage():
     if request.method == "POST":
-        # 1. On récupère toutes les lignes de la base pour connaître le nombre d'éléments
+        # 1. On récupère toutes les lignes des indicateurs de travail (pour validation et affichage en cas d'erreur)
         rows = list_id_data() 
-        
         try:
-            # 2. On boucle sur le nombre de lignes (en utilisant loop.index qui commence à 1)
-            for i in range(1, len(rows) + 1):
-                key = request.form.get(f"key_{i}")
-                value_raw = request.form.get(f"value_{i}")
+            if not rows:
+                flash("Aucun indicateur trouvé pour mise à jour.", "danger")
+                return redirect(url_for('parametrage'))         
 
-                decr = request.form.get(f"decript_{i}")
-                note = request.form.get(f"note_{i}")
+            key = request.form.get(f"keydata")
+            value_raw = request.form.get(f"quantity")
+            new_value = Decimal(value_raw).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+            decr = request.form.get(f"decript")
+            note = request.form.get(f"note")
 
-
-                if key and value_raw:
-                    # Conversion propre avec l'arrondi financier que nous avons vu
-                    new_value = Decimal(value_raw).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
-                    
-                    # 3. APPEL A VOTRE BASE DE DONNÉES (Exemple d'exécution)
-                    update_id_data(key, new_value, decript=decr, note=note)
-                    # Remplacez par votre fonction SQL : "UPDATE table SET quantite = %s WHERE cle = %s"
+        # 3. Mise à jour dans la base de données 
+            update_id_data(key, new_value, decript=decr, note=note)
             
             flash("Mise à jour réussie !", "success")
         except Exception as e:
@@ -3579,7 +3627,6 @@ def parametrage():
     # Si c'est un GET, on affiche simplement la page
     rows = list_id_data()
     return render_template_string(PARAMETRAGE_PAGE,message=message, rows=rows)
-
 
 #        
 # --------------------------------------------------------------------------------------
