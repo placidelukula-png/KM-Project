@@ -313,11 +313,11 @@ def init_db():
 #            """)
 
 
-            cur.execute("""
-                ALTER TABLE id_data 
-                    ALTER COLUMN created_at SET DATA TYPE DATE,
-                    ALTER COLUMN created_at SET DEFAULT CURRENT_DATE;
-            """)
+#            cur.execute("""
+#                ALTER TABLE id_data 
+#                    ALTER COLUMN created_at SET DATA TYPE DATE,
+#                    ALTER COLUMN created_at SET DEFAULT CURRENT_DATE;
+#            """)
 
 
 #
@@ -3646,28 +3646,8 @@ COMPTES_PAGE = """
   <h2>⚙️ Comptes Techniques</h2>
   <p><a href="{{ url_for('home') }}">← Retour au menu</a></p>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Code</th><th>Description</th><th>Solde (Balance)</th><th>Dernière Modif</th><th>Utilisateur</th><th>Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for c in comptes %}
-      <tr>
-        <form method="POST" action="{{ url_for('update_compte') }}">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-          <td><input type="text" name="code" value="{{ c[1] }}" readonly class="badge"></td>
-          <td><input type="text" name="description" value="{{ c[2] }}" size="30"></td>
-          <td><input type="number" name="balance" value="{{ c[3] }}" step="0.01" style="width:100px"></td>
-          <td>{{ c[4] }}</td>
-          <td><small>{{ c[5] }}</small></td>
-          <td><button type="submit" class="btn-save">Mettre à jour</button></td>
-        </form>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <p><a href="{{ url_for('debug_view') }}">🔍 Debug View</a></p>
+
 </div></body></html>
 """
 
@@ -3705,6 +3685,16 @@ def update_compte():
         flash(f"Erreur : {e}", "danger")
     
     return redirect(url_for('gestion_comptes'))
+
+@app.route("/debug_view")
+def debug_view():
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT * FROM comptes_techniques")
+            rows = cur.fetchall()
+            # On convertit tout en texte pour l'affichage web
+            return "<br>".join([str(r) for r in rows]) 
+
 
 
 
