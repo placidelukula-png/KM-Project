@@ -1065,15 +1065,36 @@ def update_member_adresse(phone: str, adresse: str, updateuser: str, lastname: s
             """, (adresse, updateuser, lastname, firstname, phone))
         conn.commit()
 
-def update_id_data(keydata: str, quantity: Decimal,decript: str, note: str):
-    with get_conn() as conn:
-        with conn.cursor() as cur:
-            cur.execute("""
-                UPDATE id_data
-                SET quantity=%s, decript=%s, note=%s, created_at=CURRENT_DATE, created_by=%s
-                WHERE keydata=%s
-            """, (quantity, decript, note, session.get("user"), keydata))
-        conn.commit()
+def update_id_data(keydata: str, quantity: Decimal, decript: str, note: str):
+    # Récupérer l'utilisateur actuel ou définir une valeur par défaut
+    current_user = session.get("user", "système")
+    
+    try:
+        with get_conn() as conn:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    UPDATE id_data
+                    SET quantity=%s, 
+                        decript=%s, 
+                        note=%s, 
+                        created_at=CURRENT_DATE, 
+                        created_by=%s
+                    WHERE keydata=%s
+                """, (quantity, decript, note, current_user, keydata))
+            conn.commit()
+    except Exception as e:
+        print(f"Erreur SQL update_id_data: {e}")
+        raise e
+
+#def update_id_data(keydata: str, quantity: Decimal,decript: str, note: str):
+#    with get_conn() as conn:
+#        with conn.cursor() as cur:
+#            cur.execute("""
+#                UPDATE id_data
+#                SET quantity=%s, decript=%s, note=%s, created_at=CURRENT_DATE, created_by=%s
+#                WHERE keydata=%s
+#            """, (quantity, decript, note, session.get("user"), keydata))
+#        conn.commit()
 
 def list_id_data():
     with get_conn() as conn:
@@ -3488,6 +3509,7 @@ INFOS_ASSOCIATION_PAGE = """
 # -------------------------------------------------------   
 # Endpoint #14 — Paramétrage des indicateurs de travail
 # -------------------------------------------------------
+#
 PARAMETRAGE_PAGE = """
 <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Mise à jour des indicateurs de travail</title>
@@ -3497,61 +3519,53 @@ PARAMETRAGE_PAGE = """
  th,td{padding:10px;border-bottom:1px solid #eee;text-align:left}
  th{background:#f6f6f6}
  input[type="number"], input[type="text"]{width:100%; padding:5px; border:1px solid #ccc; border-radius:4px;}
- .btn-save{background:#28a745; color:white; padding:10px 20px; border:none; border-radius:4px; cursor:pointer; margin-top:20px}
+ .btn{background:#28a745; color:white; padding:8px 15px; border:none; border-radius:4px; cursor:pointer}
+ .btn2{background:#dc3545; color:white; padding:8px 15px; border:none; border-radius:4px; cursor:pointer}
 </style></head><body><div class="wrap">
   <h2>Indicateurs de travail</h2>
   <p><a href="{{ url_for('home') }}">← Retour</a></p>
   
-  <form method="POST" action="{{ url_for('parametrage', id_data_id=r[0]) }}">
+  {% if rows %}
+  <form method="POST" action="{{ url_for('parametrage', id_data_id=rows[0]) }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <table>
-  <thead><tr>
-  <th>Donnée clef</th><th>Description</th><th>Quantité</th><th>Note</th><th>Modifié par</th><th>Date modif.</th><th>Actions</th>
-  </tr></thead>
-    <tbody>
-
-    <tr>
-          <td>
-                <input type="text" name="keydata" value="{{ rows[0] }}" size="20" readonly>
-          </td>
-          
-          <td>
-            <input type="text" name="decript" value="{{ rows[1] }}" size="35">
-          </td>
-
+    <table>
+      <thead>
+        <tr>
+          <th>Donnée clef</th><th>Description</th><th>Quantité</th><th>Note</th><th>Modifié par</th><th>Date modif.</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input type="text" name="keydata" value="{{ rows[0] }}" readonly></td>
+          <td><input type="text" name="decript" value="{{ rows[1] }}"></td>
           <td>
             <input type="number" name="quantity" 
-                   value="{{ "%.2f"|format(rows[2]|float) }}" 
+                   value="{{ "%.2f"|format(rows[2]|float) if rows[2] else '0.00' }}" 
                    step="0.01">
           </td>
+          <td><input type="text" name="note" value="{{ rows[3] }}"></td>
+          <td><input type="text" value="{{ rows[4] }}" readonly></td>
+          <td><input type="text" value="{{ rows[5] }}" readonly></td>
           <td>
-            <input type="text" name="note" value="{{ rows[3] }}" size="50">
+            <button class="btn" type="submit">Save</button>
           </td>
-          <td>{{ rows[4] }} size="12" readonly></td>
-          <td>{{ rows[5] }} size="12" readonly></td>
         </tr>
-
-        <td>
-        <button class="btn" type="submit">Save</button>
-
-        <form method="post" action="{{ url_for('id_data_delete') }}" style="display:inline">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <button class="btn2" type="submit" onclick="return confirm('Supprimer?')">Delete</button>
-        </form>
-        </td>
-
-      {% if not rows %}<tr><td colspan="8">Aucun indicateur enregistré.</td></tr>{% endif %}
-
       </tbody>
     </table>
-
-    </tr>
-
   </form>
+
+  <form method="post" action="{{ url_for('id_data_delete', id_data_id=rows[0]) }}" style="margin-top:10px">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="btn2" type="submit" onclick="return confirm('Supprimer?')">Supprimer l'indicateur</button>
+  </form>
+  {% else %}
+    <p>Aucun indicateur enregistré.</p>
+  {% endif %}
 
 </div></body></html>
 """
-#
+
+#-----------------------------------------------
 # Endpoint#14 — Paramétrage des indicateurs de travail
 # Note: on peut faire un seul endpoint pour les 2 actions "check" et "confirm" (simplification) car la logique de vérification est la même dans les 2 cas, 
 # et on affiche les messages d'erreur/confirmation dans la même page. Donc pas besoin de faire 2 endpoints séparés.
