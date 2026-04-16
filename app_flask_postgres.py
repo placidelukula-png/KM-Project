@@ -2774,7 +2774,7 @@ DATAGENERALFOLLOWUP_PAGE = """
             </form>
 
             <!-- BLOC 4 -->
-            <form action="{{ url_for('gestion_comptes') }}" method="GET">
+            <form action="{{ url_for('gestion_comptes') }}" method=["GET","POST"]>
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button type="submit" class="btn btn-primary" style="width: 100%;" onclick="return confirm('...')">
                     🔄 Gestion des comptes
@@ -3557,16 +3557,18 @@ PARAMETRAGE_PAGE = """
           <td>
             <button class="btn" type="submit">Save</button>
           </td>
+          <td>
+            <form method="post" action="{{ url_for('id_data_delete', id_data_id=rows[0]) }}" style="margin-top:10px">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="btn2" type="submit" onclick="return confirm('Supprimer?')">Delete</button>
+            </form>
+          </td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
   </form>
 
-  <form method="post" action="{{ url_for('id_data_delete', id_data_id=rows[0]) }}" style="margin-top:10px">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <button class="btn2" type="submit" onclick="return confirm('Supprimer?')">Delete</button>
-  </form>
   {% else %}
     <p>Aucun indicateur enregistré.</p>
   {% endif %}
