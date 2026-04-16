@@ -2743,7 +2743,7 @@ DATAGENERALFOLLOWUP_PAGE = """
                 
                 <!-- DIV DE REGROUPEMENT EN LIGNE -->
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-                    <label style="white-space: nowrap;">Chercher l'adhérent par identifiant (phone):</label>
+                    <label style="white-space: nowrap;">Rechercher l'adhérent par identifiant (téléphone):</label>
                     <input name="q_phone" placeholder="Exemple: 998886955" value="{{ q_phone or '' }}" style="flex-grow: 1;">
                 </div>
 
@@ -3597,6 +3597,7 @@ def parametrage():
             key = request.form.get(f"keydata")
             value_raw = request.form.get(f"quantity")
             if value_raw is None:
+                log.warning("Aucune valeur de quantité fournie pour la clé %s , voici les data : %s.", key, rows)
                 flash("Valeur invalide pour la quantité.", "danger")
                 return redirect(url_for('parametrage'))
             new_value = Decimal(value_raw).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
