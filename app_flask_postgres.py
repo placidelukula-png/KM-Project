@@ -3509,27 +3509,26 @@ PARAMETRAGE_PAGE = """
   <th>Donnée clef</th><th>Description</th><th>Quantité</th><th>Note</th><th>Modifié par</th><th>Date modif.</th><th>Actions</th>
   </tr></thead>
     <tbody>
-    {% for r in rows %}
 
     <tr>
           <td>
-                <input type="text" name="keydata" value="{{ r[0] }}" size="20" readonly>
+                <input type="text" name="keydata" value="{{ rows[0] }}" size="20" readonly>
           </td>
           
           <td>
-            <input type="text" name="decript" value="{{ r[1] }}" size="35">
+            <input type="text" name="decript" value="{{ rows[1] }}" size="35">
           </td>
 
           <td>
             <input type="number" name="quantity" 
-                   value="{{ "%.2f"|format(r[2]|float) }}" 
+                   value="{{ "%.2f"|format(rows[2]|float) }}" 
                    step="0.01">
           </td>
           <td>
-            <input type="text" name="note" value="{{ r[3] }}" size="50">
+            <input type="text" name="note" value="{{ rows[3] }}" size="50">
           </td>
-          <td>{{ r[4] }} size="12" readonly></td>
-          <td>{{ r[5] }} size="12" readonly></td>
+          <td>{{ rows[4] }} size="12" readonly></td>
+          <td>{{ rows[5] }} size="12" readonly></td>
         </tr>
 
         <td>
@@ -3540,8 +3539,6 @@ PARAMETRAGE_PAGE = """
             <button class="btn2" type="submit" onclick="return confirm('Supprimer?')">Delete</button>
         </form>
         </td>
-
-      {% endfor %}
 
       {% if not rows %}<tr><td colspan="8">Aucun indicateur enregistré.</td></tr>{% endif %}
 
