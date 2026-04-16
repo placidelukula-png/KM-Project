@@ -206,7 +206,8 @@ def init_db():
             """)
 
             # comptes techniques (pour comptabiliser les cotisations des membres inactifs ou suspendus qui ne sont pas débités dans la table mouvements)       
-            cur.execute("""    
+            cur.execute(""" 
+                drop table if exists comptes_techniques;  -- à exécuter une seule fois pour reset la table et repartir à zéro (ex: après une opération de correction en haut-volume ou une opération de correction exceptionnelle sur les données de base d'un adhérent)           
                 CREATE TABLE IF NOT EXISTS comptes_techniques (
                   id            BIGSERIAL PRIMARY KEY, 
                   code          TEXT NOT NULL UNIQUE,  
@@ -2744,7 +2745,7 @@ DATAGENERALFOLLOWUP_PAGE = """
                 <!-- DIV DE REGROUPEMENT EN LIGNE -->
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
                     <label style="white-space: nowrap;">Rechercher l'adhérent par identifiant (téléphone):</label>
-                    <input name="q_phone" placeholder="Exemple: 998886955" value="{{ q_phone or '' }}" style="flex-grow: 1;">
+                    <input name="q_phone" placeholder="Exemple: 998886955" value="{{ q_phone or '' }}" style="flex-grow: 2;">
                 </div>
 
                 <div style="display: flex; gap: 10px;">
@@ -3558,7 +3559,7 @@ PARAMETRAGE_PAGE = """
             <button class="btn" type="submit">Save</button>
           </td>
           <td>
-            <form method="post" action="{{ url_for('id_data_delete', id_data_id=rows[0]) }}" style="margin-top:10px">
+            <form method="post" action="{{ url_for('id_data_delete', id_data_id=r[0]) }}" style="margin-top:10px">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button class="btn2" type="submit" onclick="return confirm('Supprimer?')">Delete</button>
             </form>
@@ -3588,7 +3589,7 @@ def parametrage():
     if request.method == "POST":
         # 1. On récupère toutes les lignes des indicateurs de travail (pour validation et affichage en cas d'erreur)
         rows = list_id_data()
-#        id_data_id = request.args.get("id_data_id")  # Récupérer l'ID de la donnée à mettre à jour depuis les paramètres de l'URL 
+        id_data_id = request.args.get("id_data_id")  # Récupérer l'ID de la donnée à mettre à jour depuis les paramètres de l'URL 
         try:
             if not rows:
                 flash("Aucun indicateur trouvé pour mise à jour.", "danger")
