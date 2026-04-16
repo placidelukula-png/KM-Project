@@ -3537,7 +3537,7 @@ PARAMETRAGE_PAGE = """
       <tbody>
         <tr>
           <td><input type="text" name="keydata" value="{{ rows[0] }}" readonly></td>
-          <td><input type="text" name="decript" value="{{ rows[1] }}"></td>
+          <td><input type="text" name="decript" value="{{ rows[1] }}" size="5"></td>
           <td>
             <input type="number" name="quantity" 
                    value="{{ "%.2f"|format(rows[2]|float) if rows[2] else '0.00' }}" 
@@ -3597,10 +3597,16 @@ def parametrage():
             flash(f"Erreur lors de l'enregistrement : {e}", "danger")
             
         return redirect(url_for('parametrage'))
-
+    
     # Si c'est un GET, on affiche simplement la page
     rows = list_id_data()
-    return render_template_string(PARAMETRAGE_PAGE,message=message, rows=rows)
+    # Si list_id_data() renvoie une liste de listes, on prend la première
+    current_row = rows[0] if rows else None
+    return render_template_string(PARAMETRAGE_PAGE, rows=current_row)
+
+   # # Si c'est un GET, on affiche simplement la page
+   # rows = list_id_data()
+   # return render_template_string(PARAMETRAGE_PAGE,message=message, rows=rows)
 
 @app.route("/id_data_delete", methods=["GET", "POST"])
 def id_data_delete():
