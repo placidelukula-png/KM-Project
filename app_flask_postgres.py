@@ -3657,7 +3657,9 @@ def gestion_comptes():
     # Récupération de tous les comptes techniques
     with get_conn() as conn:
         with conn.cursor() as cur:
-            cur.execute("SELECT code, description, balance, updatedate, updateuser FROM comptes_techniques ORDER BY code ASC")
+            cur.execute("SELECT * FROM comptes_techniques ORDER BY code ASC")
+           # cur.execute("SELECT code, description, balance, updatedate, updateuser FROM comptes_techniques ORDER BY code ASC")
+
             comptes = cur.fetchall()
     return render_template_string(COMPTES_PAGE, comptes=comptes)
 
