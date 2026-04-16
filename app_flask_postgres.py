@@ -3526,7 +3526,8 @@ PARAMETRAGE_PAGE = """
   <p><a href="{{ url_for('home') }}">← Retour</a></p>
   
   {% if rows %}
-  <form method="POST" action="{{ url_for('parametrage', id_data_id=rows[0]) }}">
+
+  <form method="POST" action="{{ url_for('parametrage', id_data_id=rows) }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <table>
       <thead>
@@ -3535,28 +3536,31 @@ PARAMETRAGE_PAGE = """
         </tr>
       </thead>
       <tbody>
+        {% for r in rows %}
+
         <tr>
-          <td><input type="text" name="keydata" value="{{ rows[0] }}" readonly></td>
-          <td><input type="text" name="decript" value="{{ rows[1] }}" size="5"></td>
+          <td><input type="text" name="keydata" value="{{ r[0] }}" size="5" readonly></td>
+          <td><input type="text" name="decript" value="{{ r[1] }}" size="10"></td>
           <td>
             <input type="number" name="quantity" 
-                   value="{{ "%.2f"|format(rows[2]|float) if rows[2] else '0.00' }}" 
+                   value="{{ "%.2f"|format(r[2]|float) if r[2] else '0.00' }}" 
                    step="0.01">
           </td>
-          <td><input type="text" name="note" value="{{ rows[3] }}"></td>
-          <td><input type="text" value="{{ rows[4] }}" readonly></td>
-          <td><input type="text" value="{{ rows[5] }}" readonly></td>
+          <td><input type="text" name="note" value="{{ r[3] }}" size="10"></td>
+          <td><input type="text" value="{{ r[4] }}" size="5" readonly></td>
+          <td><input type="text" value="{{ r[5] }}" size="5" readonly></td>
           <td>
             <button class="btn" type="submit">Save</button>
           </td>
         </tr>
+        {% endfor %}
       </tbody>
     </table>
   </form>
 
   <form method="post" action="{{ url_for('id_data_delete', id_data_id=rows[0]) }}" style="margin-top:10px">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <button class="btn2" type="submit" onclick="return confirm('Supprimer?')">Supprimer l'indicateur</button>
+      <button class="btn2" type="submit" onclick="return confirm('Supprimer?')">Delete</button>
   </form>
   {% else %}
     <p>Aucun indicateur enregistré.</p>
