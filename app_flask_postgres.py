@@ -3596,6 +3596,9 @@ def parametrage():
 
             key = request.form.get(f"keydata")
             value_raw = request.form.get(f"quantity")
+            if value_raw is None:
+                flash("Valeur invalide pour la quantité.", "danger")
+                return redirect(url_for('parametrage'))
             new_value = Decimal(value_raw).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
             decr = request.form.get(f"decript")
             note = request.form.get(f"note")
