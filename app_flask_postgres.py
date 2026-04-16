@@ -2743,7 +2743,7 @@ DATAGENERALFOLLOWUP_PAGE = """
                 
                 <!-- DIV DE REGROUPEMENT EN LIGNE -->
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-                    <label style="white-space: nowrap;">Chercher par phone</label>
+                    <label style="white-space: nowrap;">Chercher l'adhérent par phone</label>
                     <input name="q_phone" placeholder="Exemple: 998886955" value="{{ q_phone or '' }}" style="flex-grow: 1;">
                 </div>
 
@@ -2774,7 +2774,7 @@ DATAGENERALFOLLOWUP_PAGE = """
             </form>
 
             <!-- BLOC 4 -->
-            <form action="{{ url_for('gestion_comptes') }}" method="POST">
+            <form action="{{ url_for('gestion_comptes') }}" method="GET">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button type="submit" class="btn btn-primary" style="width: 100%;" onclick="return confirm('...')">
                     🔄 Gestion des comptes
