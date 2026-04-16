@@ -2772,6 +2772,15 @@ DATAGENERALFOLLOWUP_PAGE = """
                     🔄 Actualiser les Statuts
                 </button>
             </form>
+
+            <!-- BLOC 4 -->
+            <form action="{{ url_for('gestion_comptes') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-primary" style="width: 100%;" onclick="return confirm('...')">
+                    🔄 Gestion des comptes
+                </button>
+            </form>
+
         </div>
     </div>
 
@@ -3500,10 +3509,6 @@ INFOS_ASSOCIATION_PAGE = """
 </body>
 </html>
 """
-# Endpoint#13 Texte presentation Association et Methodologie de travail
-#@app.get("/infos_association")
-#def infos_association():
-#    return render_template_string(INFOS_ASSOCIATION_PAGE)   
 
 #
 # -------------------------------------------------------   
@@ -3606,11 +3611,11 @@ def parametrage():
     rows = list_id_data()
     # Si list_id_data() renvoie une liste de listes, on prend la première
     current_row = rows[0] if rows else None
-    return render_template_string(PARAMETRAGE_PAGE, rows=current_row)
+    #return render_template_string(PARAMETRAGE_PAGE, rows=current_row)
 
    # # Si c'est un GET, on affiche simplement la page
    # rows = list_id_data()
-   # return render_template_string(PARAMETRAGE_PAGE,message=message, rows=rows)
+    return render_template_string(PARAMETRAGE_PAGE,message=message, rows=rows)
 
 @app.route("/id_data_delete", methods=["GET", "POST"])
 def id_data_delete():
@@ -3618,7 +3623,91 @@ def id_data_delete():
     delete_id_data(id_data_id)
     return redirect(url_for("parametrage"))
 
+#-------------------------------------------------
+# Endpoint#15 — Comptes techniques (comptabilité)
+#-------------------------------------------------
+COMPTES_PAGE = """
+<!doctype html><html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gestion des Comptes Techniques</title>
+<style>
+ body{font-family:'Segoe UI',Arial; margin:20px; background:#f4f7f6}
+ .wrap{max-width:1200px; margin:0 auto; background:white; padding:20px; border-radius:8px; shadow:0 2px 5px rgba(0,0,0,0.1)}
+ table{width:100%; border-collapse:collapse; margin-top:20px}
+ th,td{padding:12px; border-bottom:1px solid #eee; text-align:left}
+ th{background:#2c3e50; color:white}
+ input{padding:6px; border:1px solid #ccc; border-radius:4px}
+ .btn-save{background:#27ae60; color:white; border:none; padding:8px 12px; border-radius:4px; cursor:pointer}
+ .btn-save:hover{background:#219150}
+ .badge{background:#ebedef; padding:4px 8px; border-radius:4px; font-size:0.9em}
+</style></head><body><div class="wrap">
+  <h2>⚙️ Comptes Techniques</h2>
+  <p><a href="{{ url_for('home') }}">← Retour au menu</a></p>
 
+  <table>
+    <thead>
+      <tr>
+        <th>Code</th><th>Description</th><th>Solde (Balance)</th><th>Dernière Modif</th><th>Utilisateur</th><th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in comptes %}
+      <tr>
+        <form method="POST" action="{{ url_for('update_compte') }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <td><input type="text" name="code" value="{{ c[1] }}" readonly class="badge"></td>
+          <td><input type="text" name="description" value="{{ c[2] }}" size="30"></td>
+          <td><input type="number" name="balance" value="{{ c[3] }}" step="0.01" style="width:100px"></td>
+          <td>{{ c[4] }}</td>
+          <td><small>{{ c[5] }}</small></td>
+          <td><button type="submit" class="btn-save">Mettre à jour</button></td>
+        </form>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div></body></html>
+"""
+
+#Endpoint 15 — Comptes techniques (comptabilité) (menu card)
+@app.route("/gestion_comptes", methods=["GET"])
+def gestion_comptes():
+    # Récupération de tous les comptes techniques
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT id, code, description, balance, updatedate, updateuser FROM comptes_techniques ORDER BY code ASC")
+            comptes = cur.fetchall()
+    return render_template_string(COMPTES_PAGE, comptes=comptes)
+
+@app.route("/update_compte", methods=["POST"])
+def update_compte():
+    code = request.form.get("code")
+    description = request.form.get("description")
+    balance = request.form.get("balance")
+    user = session.get("user", "admin") # Utilisateur en session
+
+    try:
+        with get_conn() as conn:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    UPDATE comptes_techniques 
+                    SET description = %s, 
+                        balance = %s, 
+                        updatedate = CURRENT_DATE, 
+                        updateuser = %s
+                    WHERE code = %s
+                """, (description, balance, user, code))
+            conn.commit()
+        flash(f"Compte {code} mis à jour avec succès", "success")
+    except Exception as e:
+        flash(f"Erreur : {e}", "danger")
+    
+    return redirect(url_for('gestion_comptes'))
+
+
+
+
+#
 #        
 # --------------------------------------------------------------------------------------
 if __name__ == "__main__":
