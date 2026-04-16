@@ -312,10 +312,13 @@ def init_db():
 #                    ALTER COLUMN beneficiaire SET DEFAULT 'admin';
 #            """)
 
+
             cur.execute("""
                 ALTER TABLE id_data 
-                    ALTER COLUMN created_at SET DATA TYPE DATE DEFAULT CURRENT_DATE;
+                    ALTER COLUMN created_at SET DATA TYPE DATE,
+                    ALTER COLUMN created_at SET DEFAULT CURRENT_DATE;
             """)
+
 
 #
 #            # Correction exceptionnelle su les donnees de base d'un adhérent.
@@ -3499,7 +3502,6 @@ PARAMETRAGE_PAGE = """
   <h2>Indicateurs de travail</h2>
   <p><a href="{{ url_for('home') }}">← Retour</a></p>
   
-    {% for r in rows %}
   <form method="POST" action="{{ url_for('parametrage', id_data_id=r[0]) }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <table>
@@ -3507,6 +3509,8 @@ PARAMETRAGE_PAGE = """
   <th>Donnée clef</th><th>Description</th><th>Quantité</th><th>Note</th><th>Modifié par</th><th>Date modif.</th><th>Actions</th>
   </tr></thead>
     <tbody>
+    {% for r in rows %}
+
     <tr>
           <td>
                 <input type="text" name="keydata" value="{{ r[0] }}" size="20" readonly>
