@@ -2743,7 +2743,7 @@ DATAGENERALFOLLOWUP_PAGE = """
                 
                 <!-- DIV DE REGROUPEMENT EN LIGNE -->
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-                    <label style="white-space: nowrap;">Chercher l'adhérent par phone</label>
+                    <label style="white-space: nowrap;">Chercher l'adhérent par identifiant (phone):</label>
                     <input name="q_phone" placeholder="Exemple: 998886955" value="{{ q_phone or '' }}" style="flex-grow: 1;">
                 </div>
 
