@@ -201,7 +201,7 @@ def init_db():
                   quantity      DECIMAL(18,2),
                   note          TEXT,
                   created_by    TEXT NOT NULL,
-                  created_at    TIMESTAMP NOT NULL DEFAULT NOW()
+                  created_at    DATE NOT NULL DEFAULT CURRENT_DATE
                 );
             """)
 
@@ -312,11 +312,10 @@ def init_db():
 #                    ALTER COLUMN beneficiaire SET DEFAULT 'admin';
 #            """)
 
-#            cur.execute("""
-#                ALTER TABLE membres 
-#                    ALTER COLUMN mentor SET NOT NULL,
-#                    ALTER COLUMN mentor SET DEFAULT 'admin';
-#            """)
+            cur.execute("""
+                ALTER TABLE id_data 
+                    ALTER COLUMN created_at SET DATA TYPE DATE DEFAULT CURRENT_DATE;
+            """)
 
 #
 #            # Correction exceptionnelle su les donnees de base d'un adhérent.
@@ -3504,19 +3503,17 @@ PARAMETRAGE_PAGE = """
   <form method="POST" action="{{ url_for('parametrage', id_data_id=r[0]) }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <table>
-  <tbody>
-
   <thead><tr>
-    <th>Donnée clef</th><th>Description</th><th>Quantité</th><th>Note</th><th>Modifié par</th><th>Date modification</th>
+  <th>Donnée clef</th><th>Description</th><th>Quantité</th><th>Note</th><th>Modifié par</th><th>Date modif.</th><th>Actions</th>
   </tr></thead>
+    <tbody>
     <tr>
-
           <td>
-                <input type="text" name="keydata" value="{{ r[0] }}">
+                <input type="text" name="keydata" value="{{ r[0] }}" size="20" readonly>
           </td>
           
           <td>
-            <input type="text" name="decript" value="{{ r[1] }}">
+            <input type="text" name="decript" value="{{ r[1] }}" size="35">
           </td>
 
           <td>
@@ -3525,10 +3522,10 @@ PARAMETRAGE_PAGE = """
                    step="0.01">
           </td>
           <td>
-            <input type="text" name="note" value="{{ r[3] }}">
+            <input type="text" name="note" value="{{ r[3] }}" size="50">
           </td>
-          <td>{{ r[4] }}</td>
-          <td>{{ r[5] }}</td>
+          <td>{{ r[4] }} size="12" readonly></td>
+          <td>{{ r[5] }} size="12" readonly></td>
         </tr>
 
         <td>
