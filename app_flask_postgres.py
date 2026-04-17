@@ -3601,7 +3601,8 @@ def parametrage():
        if not rows:
           flash("Aucun indicateur trouvé pour mise à jour.", "danger")
           return redirect(url_for('parametrage'))         
-    return redirect(url_for('parametrage'))             
+    rows = list_id_data()
+    return render_template_string(PARAMETRAGE_PAGE,message=message, rows=rows)
 
 @app.route("/update_parameters", methods=["GET", "POST"])
 def update_parameters():
@@ -3620,8 +3621,7 @@ def update_parameters():
             update_id_data(key, new_value, decript=decr, note=note)            
             flash("Mise à jour réussie !", "success")
         except Exception as e:
-            flash(f"Erreur lors de l'enregistrement : {e}", "danger")
-            
+            flash(f"Erreur lors de l'enregistrement : {e}", "danger")    
         return redirect(url_for('parametrage'))
     
     # Si c'est un GET, on affiche simplement la page
