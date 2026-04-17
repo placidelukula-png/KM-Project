@@ -3548,11 +3548,10 @@ PARAMETRAGE_PAGE = """
       </thead>
       <tbody>
         {% for r in rows %}
-
-        <form method="POST" action="{{ url_for('update_parameters', rows=rows) }}">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                
         <tr>
+        <form method="POST" action="{{ url_for('update_parameters', rows=rows) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                
           <td><input type="text" name="keydata" value="{{ r[0] }}" size="5" readonly></td>
           <td><input type="text" name="decript" value="{{ r[1] }}" size="10"></td>
           <td>
@@ -3566,15 +3565,16 @@ PARAMETRAGE_PAGE = """
           <td>
             <button class="btn" type="submit">Save</button>
           </td>
+        </form>
+
           <td>
-            <div method="post" action="{{ url_for('id_data_delete', id_data_id=r[0]) }}" style="margin-top:10px">
+            <form method="post" action="{{ url_for('id_data_delete', id_data_id=r[0]) }}" style="margin-top:10px">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button class="btn2" type="submit" onclick="return confirm('Supprimer?')">Delete</button>
-            </div>
+            </form>
           </td>
         </tr>
         {% endfor %}
-        </form>
 
       </tbody>
     </table>
