@@ -3654,9 +3654,31 @@ COMPTES_PAGE = """
 </style></head><body><div class="wrap">
   <h2>⚙️ Comptes Techniques</h2>
   <p><a href="{{ url_for('home') }}">← Retour au menu</a></p>
+  <!-- <p><a href="{{ url_for('debug_view') }}">🔍 Debug View</a></p> -->
 
-  <p><a href="{{ url_for('debug_view') }}">🔍 Debug View</a></p>
-
+  <table>
+    <thead>
+      <tr>
+        <th>Code</th><th>Description</th><th>Solde (Balance)</th><th>Dernière Modif</th><th>Utilisateur</th><th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in comptes %}
+      <tr>
+        <form method="POST" action="{{ url_for('update_compte') }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <td><input type="text" name="code" value="{{ c[1] }}" readonly class="badge"></td>
+          <td><input type="text" name="description" value="{{ c[2] }}" size="30"></td>
+          <td><input type="number" name="balance" value="{{ c[3] }}" step="0.01" style="width:100px"></td>
+          <td>{{ c[4] }}</td>
+          <td><small>{{ c[5] }}</small></td>
+          <td><button type="submit" class="btn-save">Mettre à jour</button></td>
+        </form>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  
 </div></body></html>
 """
 
