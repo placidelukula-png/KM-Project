@@ -2743,8 +2743,8 @@ DATAGENERALFOLLOWUP_PAGE = """
                 
                 <!-- DIV DE REGROUPEMENT EN LIGNE -->
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-                    <label style="white-space: nowrap;">Rechercher l'adhérent par identifiant (téléphone):</label>
-                    <input name="q_phone" placeholder="Exemple: 998886955" value="{{ q_phone or '' }}" style="flex-grow: 2;">
+                    <label style="white-space: nowrap;">Rechercher l'adhérent par l'identifiant : </label>
+                    <input name="q_phone" placeholder="Exemple: 998886955" value="{{ q_phone or '' }}" style="flex-grow: 1;">
                 </div>
 
                 <div style="display: flex; gap: 10px;">
@@ -3180,8 +3180,8 @@ TRANSFER_PAGE = """
         name="amount"
         type="number"
         value="{{ amount or 0 }}"
-        step="0.01"        <!-- Autorise les décimales au centime -->
-        min="0"            <!-- Empêche les valeurs négatives -->
+        step="0.01"        
+        min="0"            
         required
     >
 
@@ -3630,8 +3630,12 @@ def update_parameters():
 
 @app.route("/id_data_delete", methods=["GET", "POST"])
 def id_data_delete():
-    data_id = request.args.get("id_data_id")
-    delete_id_data(data_id)
+    if request.method == "POST":
+        data_id = request.form.get("id_data_id")
+        try:
+            delete_id_data(data_id)
+        except Exception as e:
+            flash(f"Erreur lors de la suppression : {e}", "danger")
     return redirect(url_for("parametrage"))
 
 #-------------------------------------------------
