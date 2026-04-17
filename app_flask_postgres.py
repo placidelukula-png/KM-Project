@@ -207,7 +207,6 @@ def init_db():
 
             # comptes techniques (pour comptabiliser les cotisations des membres inactifs ou suspendus qui ne sont pas débités dans la table mouvements)       
             cur.execute(""" 
-                drop table if exists comptes_techniques;  -- à exécuter une seule fois pour reset la table et repartir à zéro (ex: après une opération de correction en haut-volume ou une opération de correction exceptionnelle sur les données de base d'un adhérent)           
                 CREATE TABLE IF NOT EXISTS comptes_techniques (
                   id            BIGSERIAL PRIMARY KEY, 
                   code          TEXT NOT NULL UNIQUE,  
@@ -3175,8 +3174,16 @@ TRANSFER_PAGE = """
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <label>Identifiant du bénéficiaire</label>
   <input name="to_phone" value="{{ to_phone or '' }}" required>
-  <label>Montant à transférer (en $)</label>
-  <input name="amount" type="number" value="{{ amount or 0 }}" required>
+  <label for="amount">Montant à transférer (en $)</label>
+    <input 
+        id="amount"
+        name="amount"
+        type="number"
+        value="{{ amount or 0 }}"
+        step="0.01"        <!-- Autorise les décimales au centime -->
+        min="0"            <!-- Empêche les valeurs négatives -->
+        required
+    >
 
   {% if found_name %}
     <div class="msg ok">Membre trouvé: <b>{{ found_name }}</b></div>
@@ -3533,8 +3540,6 @@ PARAMETRAGE_PAGE = """
   
   {% if rows %}
 
-  <form method="POST" action="{{ url_for('parametrage', id_data_id=rows) }}">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <table>
       <thead>
         <tr>
@@ -3544,6 +3549,9 @@ PARAMETRAGE_PAGE = """
       <tbody>
         {% for r in rows %}
 
+        <form method="POST" action="{{ url_for('update_parameters', rows=rows) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                
         <tr>
           <td><input type="text" name="keydata" value="{{ r[0] }}" size="5" readonly></td>
           <td><input type="text" name="decript" value="{{ r[1] }}" size="10"></td>
@@ -3559,16 +3567,17 @@ PARAMETRAGE_PAGE = """
             <button class="btn" type="submit">Save</button>
           </td>
           <td>
-            <form method="post" action="{{ url_for('id_data_delete', id_data_id=r[0]) }}" style="margin-top:10px">
+            <div method="post" action="{{ url_for('id_data_delete', id_data_id=r[0]) }}" style="margin-top:10px">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button class="btn2" type="submit" onclick="return confirm('Supprimer?')">Delete</button>
-            </form>
+            </div>
           </td>
         </tr>
         {% endfor %}
+        </form>
+
       </tbody>
     </table>
-  </form>
 
   {% else %}
     <p>Aucun indicateur enregistré.</p>
@@ -3586,28 +3595,29 @@ from decimal import Decimal, ROUND_HALF_UP
 
 @app.route("/parametrage", methods=["GET", "POST"])
 def parametrage():
+    if request.method == "GET":
+       rows = list_id_data()
+       id_data_id = request.args.get("id_data_id")  # Récupérer l'ID de la donnée à mettre à jour depuis les paramètres de l'URL 
+       if not rows:
+          flash("Aucun indicateur trouvé pour mise à jour.", "danger")
+          return redirect(url_for('parametrage'))         
+    return redirect(url_for('parametrage'))             
+
+@app.route("/update_parameters", methods=["GET", "POST"])
+def update_parameters():
     if request.method == "POST":
-        # 1. On récupère toutes les lignes des indicateurs de travail (pour validation et affichage en cas d'erreur)
-        rows = list_id_data()
-        id_data_id = request.args.get("id_data_id")  # Récupérer l'ID de la donnée à mettre à jour depuis les paramètres de l'URL 
+        key = request.form.get(f"keydata")
+        value_raw = request.form.get(f"quantity")
+        if value_raw is None:
+           log.warning("Aucune valeur de quantité fournie pour la clé %s , voici les data : %s.", key, rows)
+           flash("Valeur invalide pour la quantité.", "danger")
+           return redirect(url_for('parametrage'))
+        
+        new_value = Decimal(value_raw).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        decr = request.form.get(f"decript")
+        note = request.form.get(f"note")
         try:
-            if not rows:
-                flash("Aucun indicateur trouvé pour mise à jour.", "danger")
-                return redirect(url_for('parametrage'))         
-
-            key = request.form.get(f"keydata")
-            value_raw = request.form.get(f"quantity")
-            if value_raw is None:
-                log.warning("Aucune valeur de quantité fournie pour la clé %s , voici les data : %s.", key, rows)
-                flash("Valeur invalide pour la quantité.", "danger")
-                return redirect(url_for('parametrage'))
-            new_value = Decimal(value_raw).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
-            decr = request.form.get(f"decript")
-            note = request.form.get(f"note")
-
-        # 3. Mise à jour dans la base de données 
-            update_id_data(key, new_value, decript=decr, note=note)
-            
+            update_id_data(key, new_value, decript=decr, note=note)            
             flash("Mise à jour réussie !", "success")
         except Exception as e:
             flash(f"Erreur lors de l'enregistrement : {e}", "danger")
@@ -3616,18 +3626,12 @@ def parametrage():
     
     # Si c'est un GET, on affiche simplement la page
     rows = list_id_data()
-    # Si list_id_data() renvoie une liste de listes, on prend la première
-    current_row = rows[0] if rows else None
-    #return render_template_string(PARAMETRAGE_PAGE, rows=current_row)
-
-   # # Si c'est un GET, on affiche simplement la page
-   # rows = list_id_data()
     return render_template_string(PARAMETRAGE_PAGE,message=message, rows=rows)
 
 @app.route("/id_data_delete", methods=["GET", "POST"])
 def id_data_delete():
-    id_data_id = request.args.get("id_data_id")
-    delete_id_data(id_data_id)
+    data_id = request.args.get("id_data_id")
+    delete_id_data(data_id)
     return redirect(url_for("parametrage"))
 
 #-------------------------------------------------
@@ -3662,9 +3666,7 @@ def gestion_comptes():
     # Récupération de tous les comptes techniques
     with get_conn() as conn:
         with conn.cursor() as cur:
-            cur.execute("SELECT * FROM comptes_techniques ORDER BY code ASC")
-           # cur.execute("SELECT code, description, balance, updatedate, updateuser FROM comptes_techniques ORDER BY code ASC")
-
+            cur.execute("SELECT code, description, balance, updatedate, updateuser FROM comptes_techniques ORDER BY code ASC")
             comptes = cur.fetchall()
     return render_template_string(COMPTES_PAGE, comptes=comptes)
 
