@@ -3483,7 +3483,7 @@ INFOS_ASSOCIATION_PAGE = """
             Bienvenue au sein de notre communauté. Notre association a pour mission principale de rassembler les forces vives afin de promouvoir le développement et l'entraide entre tous les membres. Fondée sur des valeurs de solidarité, nous travaillons quotidiennement à la création d'un réseau solide où chaque adhérent trouve sa place et contribue à l'essor collectif.
         </p>
         <p>
-        KM-KIMYA est une association solidaire engagée dans la réduction du choc économique lié aux funérailles par la mutualisation de petites contributions financières et le versement rapide d'une aide significative à la famille eprouvée.
+        KM-KIMYA est une association solidaire engagée dans la réduction du choc économique lié aux funérailles par la mutualisation de petites contributions financières et le versement rapide d'une aide significative à la famille eprouvée. KM-Kimya symbolise le départ dans la paix et la sereinité tel que revé dans la tradition bantoue du bassin du Congo KM = Kuenda Mbote - Kuya Mimpe - Kokende Malamu - Kwenda Muzuri.
         </p>
 
         <h2>Méthodologie de travail</h2>
