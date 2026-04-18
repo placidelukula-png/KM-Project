@@ -840,14 +840,14 @@ def list_deces_traites():
             """)
             return cur.fetchall()
 
-def update_mouvement(id: int, mvt_date, amount, debitcredit, reference, libelle):
+def update_mouvement(id: int, mvt_date, amount, debitcredit, reference, libelle, regie):
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
                 UPDATE mouvements
-                SET mvt_date=%s, amount=%s, debitcredit=%s, reference=%s, libelle=%s, updatedate=%s, updated_by=%s
+                SET mvt_date=%s, amount=%s, debitcredit=%s, reference=%s, libelle=%s, updatedate=%s, updated_by=%s, regie=%s
                 WHERE id=%s
-            """, (mvt_date, amount, debitcredit, reference, libelle, date.today(), session.get("user"), id))
+            """, (mvt_date, amount, debitcredit, reference, libelle, date.today(), session.get("user"), regie, id))
         conn.commit()
 
 def update_deces(id: int, statut: str):
@@ -2682,7 +2682,8 @@ def check_mouvements_update(mvt_id: int):
     dc = (request.form.get("debitcredit") or "D").strip()
     ref = (request.form.get("reference") or "").strip()
     libelle = (request.form.get("libelle") or ref).strip()  # ou tu peux ajouter un champ libellé dans le form si tu veux
-    update_mouvement(mvt_id, d, amount, dc, ref,libelle)
+    regie = (request.form.get("regie") or "").strip()
+    update_mouvement(mvt_id, d, amount, dc, ref,libelle, regie)
     return redirect(url_for("check_mouvements"))
 
 @app.post("/checkmouvements/delete/<int:mvt_id>")
@@ -3483,7 +3484,7 @@ INFOS_ASSOCIATION_PAGE = """
             Bienvenue au sein de notre communauté. Notre association a pour mission principale de rassembler les forces vives afin de promouvoir le développement et l'entraide entre tous les membres. Fondée sur des valeurs de solidarité, nous travaillons quotidiennement à la création d'un réseau solide où chaque adhérent trouve sa place et contribue à l'essor collectif.
         </p>
         <p>
-        KM-KIMYA est une association solidaire engagée dans la réduction du choc économique lié aux funérailles par la mutualisation de petites contributions financières et le versement rapide d'une aide significative à la famille eprouvée. KM-Kimya symbolise le départ dans la paix et la sereinité tel que revé dans la tradition bantoue du bassin du Congo KM = Kuenda Mbote - Kuya Mimpe - Kokende Malamu - Kwenda Muzuri.
+        KM-KIMYA est une association solidaire engagée dans la réduction du choc économique lié aux funérailles par la mutualisation de petites contributions financières et le versement rapide d'une aide significative à la famille éprouvée. KM-Kimya symbolise le départ dans la paix et la sereinité tel que revé dans la tradition bantoue du bassin du Congo KM = Kuenda Mbote - Kuya Mimpe - Kokende Malamu - Kwenda Muzuri.
         </p>
 
         <h2>Méthodologie de travail</h2>
