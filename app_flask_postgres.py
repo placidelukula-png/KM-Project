@@ -3730,10 +3730,6 @@ def debug_view():
             # On convertit tout en texte pour l'affichage web
             return "<br>".join([str(r) for r in rows]) 
 
-
-
-
-
 #
 #        
 # --------------------------------------------------------------------------------------
