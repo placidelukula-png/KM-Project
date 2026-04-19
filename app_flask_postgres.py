@@ -2721,17 +2721,13 @@ DATAGENERALFOLLOWUP_PAGE = """
     <!-- Remplacer la ligne <div class="grid"> par celle-ci -->
     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
  
-
         <!-- CADRAN 1 contient BLOC 1 -->
         <div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px;">
-        
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
-
             <form method="get" action="{{ url_for('search_member') }}">
                 
                 <!-- DIV DE REGROUPEMENT EN LIGNE -->
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-                    <label style="white-space: nowrap;">Rechercher l'adhérent par l'identifiant : </label>
+                    <label style="white-space: nowrap;">Chercher adhérent par identifiant : </label>
                     <input name="q_phone" placeholder="Exemple: 998886955" value="{{ q_phone or '' }}" style="flex-grow: 1;">
                 </div>
 
@@ -2742,7 +2738,7 @@ DATAGENERALFOLLOWUP_PAGE = """
             </form>
         </div>
 
-        <!-- CADRAN 2 : Contient le BLOC 2 et le BLOC 3 -->
+        <!-- CADRAN 2 : Contient le BLOC 2 , 3 et 4 -->
         <div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; display: flex; flex-direction: column; gap: 10px;">
             
             <!-- BLOC 2 -->
@@ -2769,6 +2765,33 @@ DATAGENERALFOLLOWUP_PAGE = """
                 </button>
             </form>
 
+      <!-- CADRAN 3 : Contient le BLOC 5 , 6 et 7 -->
+        <div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; display: flex; flex-direction: column; gap: 10px;">
+            
+            <!-- BLOC 5 -->
+            <form action="{{ url_for('parametrage') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-primary" style="width: 100%;" onclick="return confirm('...')">
+                    🔄 Actualiser les paramètres
+                </button>
+            </form>
+
+            <!-- BLOC 6 -->
+            <form action="{{ url_for('launch_statutes_update') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-primary" style="width: 100%;" onclick="return confirm('...')">
+                    🔄 Actualiser les Statuts
+                </button>
+            </form>
+
+            <!-- BLOC 7 -->
+            <form action="{{ url_for('gestion_comptes') }}" method=["GET","POST"]>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-primary" style="width: 100%;" onclick="return confirm('...')">
+                    🔄 Gestion des comptes
+                </button>
+            </form>            
+
         </div>
     </div>
 
@@ -2793,6 +2816,10 @@ DATAGENERALFOLLOWUP_PAGE = """
 
   {% if edit_row %}
   <div class="card">
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+
+
     <h18 style="margin-top:0;">Adhérent d'index n° {{ edit_row[0] }}</h18>
     <form method="post" action="{{ url_for('update', member_id=edit_row[0]) }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
