@@ -228,12 +228,12 @@ def init_db():
 ####        # DUMP - Prise de backup des tables principales de l'application :
 #            # Utilisez des commentaires SQL (--) à l'intérieur de la chaîne
 #            sql_commands = """
-#            -- DUMP - Création des 
-            cur.execute(""" 
-                DROP TABLE IF EXISTS membres_BACKUP_20260418;
-                CREATE TABLE membres_BACKUP_20260418 AS SELECT * FROM membres;
-                );
-            """)
+#            -- DUMP - Création desbackups des tables principales (membres et mouvements) avec un suffixe de date pour différenciation
+#            cur.execute(""" 
+#                DROP TABLE IF EXISTS membres_BACKUP_20260418;
+#                CREATE TABLE membres_BACKUP_20260418 AS SELECT * FROM membres;
+#                );
+#            """)
 
 #            DROP TABLE IF EXISTS mouvements_BACKUP_20260409;
 #            CREATE TABLE mouvements_BACKUP_20260409 AS SELECT * FROM mouvements;
@@ -309,11 +309,11 @@ def init_db():
 #                    WHERE mentor IS NULL OR mentor = '';
 #            """)
 
-            cur.execute("""
-                ALTER TABLE membres
-                  ALTER COLUMN membershipdate SET NOT NULL,
-                  ALTER COLUMN membershipdate SET DEFAULT DATE('2099-12-31');
-            """)
+#            cur.execute("""
+#                ALTER TABLE membres
+#                  ALTER COLUMN membershipdate SET NOT NULL,
+#                  ALTER COLUMN membershipdate SET DEFAULT DATE('2099-12-31');
+#            """)
 
 #            cur.execute("""
 #                ALTER TABLE id_data 
@@ -2717,7 +2717,10 @@ DATAGENERALFOLLOWUP_PAGE = """
 
 <div class="card" style="margin-top:0px; padding:12px;">
     <!-- GRILLE PRINCIPALE : On passe à 2 colonnes -->
-    <div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; align-items: end; gap: 20px;">
+    <!-- <div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; align-items: end; gap: 20px;"> -->
+    <!-- Remplacer la ligne <div class="grid"> par celle-ci -->
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+ 
 
         <!-- CADRAN 1 contient BLOC 1 -->
         <div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px;">
@@ -2865,7 +2868,6 @@ DATAGENERALFOLLOWUP_PAGE = """
         <tr>
           <th style="width:70px;">ID</th>
           <th>Phone</th>
-          <th>Type</th>
           <th>Mentor</th>
           <th>Lastname</th>
           <th>Firstname</th>
@@ -2879,7 +2881,6 @@ DATAGENERALFOLLOWUP_PAGE = """
         {% for r in rows %}
         <tr>
           <td>{{ r[0] }}</td>
-          <td>{{ r[1] }}</td>
           <td>{{ r[2] }}</td>
           <td>{{ r[3] }}</td>
           <td>{{ r[4] }}</td>
