@@ -2716,7 +2716,7 @@ DATAGENERALFOLLOWUP_PAGE = """
   </div>  
 
 <div class="card" style="margin-top:0px; padding:12px;">
-    <!-- GRILLE PRINCIPALE : On passe à 2 colonnes -->
+    <!-- GRILLE PRINCIPALE : On passe à 2 colonnes puis 3 colonnes-->
     <!-- <div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; align-items: end; gap: 20px;"> -->
     <!-- Remplacer la ligne <div class="grid"> par celle-ci -->
     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
@@ -2724,6 +2724,9 @@ DATAGENERALFOLLOWUP_PAGE = """
 
         <!-- CADRAN 1 contient BLOC 1 -->
         <div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px;">
+        
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+
             <form method="get" action="{{ url_for('search_member') }}">
                 
                 <!-- DIV DE REGROUPEMENT EN LIGNE -->
