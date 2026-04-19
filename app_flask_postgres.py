@@ -145,7 +145,7 @@ def init_db():
                   updatedate     DATE NOT NULL DEFAULT CURRENT_DATE,
                   updateuser     TEXT NOT NULL,
                   password_hash  TEXT NOT NULL,
-                  membershipdate DATE NOT NULL DEFAULT CURRENT_DATE,
+                  membershipdate DATE NOT NULL DEFAULT DATE('2099-12-31'),
                   adresse        TEXT,
                   beneficiaire   TEXT NOT NULL DEFAULT 'admin',
                   CONSTRAINT membres_membertype_chk
@@ -228,10 +228,13 @@ def init_db():
 ####        # DUMP - Prise de backup des tables principales de l'application :
 #            # Utilisez des commentaires SQL (--) à l'intérieur de la chaîne
 #            sql_commands = """
-#            -- DUMP - Création des backups
-#            DROP TABLE IF EXISTS membres_BACKUP_20260409;
-#            CREATE TABLE membres_BACKUP_20260409 AS SELECT * FROM membres;
-#
+#            -- DUMP - Création des 
+            cur.execute(""" 
+                DROP TABLE IF EXISTS membres_BACKUP_20260418;
+                CREATE TABLE membres_BACKUP_20260418 AS SELECT * FROM membres;
+                );
+            """)
+
 #            DROP TABLE IF EXISTS mouvements_BACKUP_20260409;
 #            CREATE TABLE mouvements_BACKUP_20260409 AS SELECT * FROM mouvements;
 #            """
@@ -306,12 +309,11 @@ def init_db():
 #                    WHERE mentor IS NULL OR mentor = '';
 #            """)
 
-#            cur.execute("""
-#                ALTER TABLE membres 
-#                    ALTER COLUMN beneficiaire SET NOT NULL,
-#                    ALTER COLUMN beneficiaire SET DEFAULT 'admin';
-#            """)
-
+            cur.execute("""
+                ALTER TABLE membres
+                  ALTER COLUMN membershipdate SET NOT NULL,
+                  ALTER COLUMN membershipdate SET DEFAULT DATE('2099-12-31');
+            """)
 
 #            cur.execute("""
 #                ALTER TABLE id_data 
@@ -991,27 +993,6 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
                         END
                         WHERE phone IN (%s);
                     """, (from_phone,C,from_phone))
-
-
-                #cur.execute("""
-                #    UPDATE membres
-                #        WHEN phone = %s AND balance > %s AND TIMESTAMPDIFF(MONTH,CURRENT_DATE, membershipdate) < 3 THEN 'probatoire'
-                #        WHEN phone = %s AND TIMESTAMPDIFF(MONTH,CURRENT_DATE, membershipdate) >= 3 AND balance > %s THEN 'actif'
-                #        WHEN phone = %s AND TIMESTAMPDIFF(MONTH,CURRENT_DATE, membershipdate) < 3 AND balance > %s THEN 'probatoire'
-                #        WHEN phone = %s AND TIMESTAMPDIFF(MONTH,CURRENT_DATE, membershipdate) >= 3 AND balance > %s THEN 'actif'
-                #        ELSE 'inactif'
-                #    END
-                #    WHERE phone IN (%s, %s);
-                #""", (to_phone,C,to_phone,C,from_phone,C,from_phone,C,to_phone,from_phone))
-
-                #cur.execute("""
-                #    UPDATE membres
-                #    SET membershipdate = CASE 
-                #        WHEN phone = %s AND balance > %s AND membershipdate = %s THEN CURRENT_DATE
-                #        ELSE membershipdate
-                #    END
-                #    WHERE phone = %s;
-                #""", (to_phone,C,limit_date,to_phone))
         conn.commit()
 
 def fetch_member_by_phone_like(q_phone: str):
