@@ -2727,7 +2727,7 @@ DATAGENERALFOLLOWUP_PAGE = """
                 
                 <!-- DIV DE REGROUPEMENT EN LIGNE -->
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-                    <label style="white-space: nowrap;">Chercher adhérent par identifiant : </label>
+                    <label style="white-space: nowrap;">Chercher par identifiant : </label>
                     <input name="q_phone" placeholder="Exemple: 998886955" value="{{ q_phone or '' }}" style="flex-grow: 1;">
                 </div>
 
@@ -2817,10 +2817,9 @@ DATAGENERALFOLLOWUP_PAGE = """
   {% if edit_row %}
   <div class="card">
 
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
 
-
-    <h18 style="margin-top:0;">Adhérent d'index n° {{ edit_row[0] }}</h18>
+    <!-- <h18 style="margin-top:0;">Adhérent d'index n° {{ edit_row[0] }}</h18> -->
     <form method="post" action="{{ url_for('update', member_id=edit_row[0]) }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <div class="grid">
@@ -2911,7 +2910,7 @@ DATAGENERALFOLLOWUP_PAGE = """
         {% for r in rows %}
         <tr>
           <td>{{ r[0] }}</td>
-          <td>{{ r[2] }}</td>
+          <td>{{ r[1] }}</td>
           <td>{{ r[3] }}</td>
           <td>{{ r[4] }}</td>
           <td>{{ r[5] }}</td>
