@@ -2766,7 +2766,7 @@ DATAGENERALFOLLOWUP_PAGE = """
             </form>
 
       <!-- CADRAN 3 : Contient le BLOC 5 , 6 et 7 -->
-        <div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; display: flex; flex-direction: column; gap: 10px;">
+      <!--  <div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; display: flex; flex-direction: column; gap: 10px;"> -->
             
             <!-- BLOC 5 -->
             <form action="{{ url_for('parametrage') }}" method="POST">
@@ -2816,15 +2816,15 @@ DATAGENERALFOLLOWUP_PAGE = """
 
   {% if edit_row %}
   <div class="card">
-
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
-
     <!-- <h18 style="margin-top:0;">Adhérent d'index n° {{ edit_row[0] }}</h18> -->
     <form method="post" action="{{ url_for('update', member_id=edit_row[0]) }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <div class="grid">
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+
         <div>
-          <label>Identifiant (unique)</label>
+          <label>Identifiant </label>
           <input name="phone" value="{{ edit_row[1] }}" required>
         </div>
 
@@ -2853,7 +2853,7 @@ DATAGENERALFOLLOWUP_PAGE = """
         </div>
 
         <div>
-          <label>Date de naissance (JJ/MM/AAAA)</label>
+          <label>Date de naissance</label>
           <input name="birthdate" value="{{ edit_birthdate }}" required>
         </div>
 
