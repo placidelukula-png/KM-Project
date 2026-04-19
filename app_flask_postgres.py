@@ -2710,7 +2710,7 @@ DATAGENERALFOLLOWUP_PAGE = """
 <body>
   <div class="wrap">
     <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h2 style="margin:0;">KM-Kimya. . . . . . . . . . .Les membres</h2>
+        <h2 style="margin:0;">KM-Kimya. . . . . . . . . . .Suivi des membres et des comptes de gestion</h2>
         <a href="{{ url_for('home') }}">← Retour</a>
     </div>
   </div>  
@@ -2728,7 +2728,7 @@ DATAGENERALFOLLOWUP_PAGE = """
                 <!-- DIV DE REGROUPEMENT EN LIGNE -->
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
                     <label style="white-space: nowrap;">Chercher par identifiant : </label>
-                    <input name="q_phone" placeholder="Exemple: 998886955" value="{{ q_phone or '' }}" style="flex-grow: 1;">
+                    <input name="q_phone" placeholder="Ex.998886955" value="{{ q_phone or '' }}" style="flex-grow: 1;">
                 </div>
 
                 <div style="display: flex; gap: 10px;">
@@ -2764,33 +2764,6 @@ DATAGENERALFOLLOWUP_PAGE = """
                     🔄 Gestion des comptes
                 </button>
             </form>
-
-      <!-- CADRAN 3 : Contient le BLOC 5 , 6 et 7 -->
-      <!--  <div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; display: flex; flex-direction: column; gap: 10px;"> -->
-            
-            <!-- BLOC 5 -->
-            <form action="{{ url_for('parametrage') }}" method="POST">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button type="submit" class="btn btn-primary" style="width: 100%;" onclick="return confirm('...')">
-                    🔄 Actualiser les paramètres
-                </button>
-            </form>
-
-            <!-- BLOC 6 -->
-            <form action="{{ url_for('launch_statutes_update') }}" method="POST">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button type="submit" class="btn btn-primary" style="width: 100%;" onclick="return confirm('...')">
-                    🔄 Actualiser les Statuts
-                </button>
-            </form>
-
-            <!-- BLOC 7 -->
-            <form action="{{ url_for('gestion_comptes') }}" method=["GET","POST"]>
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button type="submit" class="btn btn-primary" style="width: 100%;" onclick="return confirm('...')">
-                    🔄 Gestion des comptes
-                </button>
-            </form>            
 
         </div>
     </div>
