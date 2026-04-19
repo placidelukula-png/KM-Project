@@ -2622,7 +2622,7 @@ CHECK_MVT_PAGE = """
   <td>{{ r[0] }}</td>
   <td>{{ r[1] }}</td>
   <td>{{ r[2] }}</td>
-  <td><input name="mvt_date" value="{{ r[3].strftime('%d/%m/%Y') }}" size="10"></td>
+  <td><input name="mvt_date" value="{{ r[3].strftime('%d/%m/%Y') }}" size="8"></td>
   <td><input name="amount" value="{{ r[4] }}" size="8"></td>
   <td>
     <select name="debitcredit">
@@ -2632,7 +2632,7 @@ CHECK_MVT_PAGE = """
   </td>
   
   <td><input name="libelle" value="{{ r[7] }}" size="20"></td>
-  <td><input name="regie" value="{{ r[10] }}" size="20"></td>
+  <td><input name="regie" value="{{ r[10] }}" size="8"></td>
   <td>
     <button class="btn" type="submit">Save</button>
 </form>
@@ -2826,7 +2826,7 @@ DATAGENERALFOLLOWUP_PAGE = """
         </div>
 
         <div>
-          <label>Date de naissance</label>
+          <label>Date naissance</label>
           <input name="birthdate" value="{{ edit_birthdate }}" required>
         </div>
 
@@ -2836,7 +2836,7 @@ DATAGENERALFOLLOWUP_PAGE = """
         </div>
 
         <div>
-          <label>Date adhésion (JJ/MM/AAAA)</label>
+          <label>Date adhésion</label>
           <input name="membershipdate" value="{{ edit_membershipdate }}" required>
         </div>
 
@@ -3483,6 +3483,15 @@ INFOS_ASSOCIATION_PAGE = """
             <li><strong>+243 891273191</strong> pour Orange-money</li>
             <li><strong>+243 903077077</strong> pour Africell-money</li>
         </ul>
+
+        <p>
+            Après le paiement, la capture d'écran du reçu de paiement émis par le service de mobile-money avec votre nom complet constitue la preuve de paiement et/ou de votre d'adhésion le cas échéant. Cette démarche simple et accessible permet à chacun de rejoindre notre communauté et de bénéficier du soutien mutuel que nous offrons.
+        </p>
+
+        <p>
+            Nous recommandons vivement aux membres residants en dehors de la RDC d'utiliser les services offerts par les réseaux de transfert d'argent internationaux comme REMITLY accessible officiellement sous l'URL www.remitly.com (pas ailleurs). Pour le cas de 'remitly' l'utilisation des destinations mobile-money : +243824807663 pour Mpesa et +243891273191 pour Orange-money sont efficaces ; le transfert est quasi instantané. Dans ce cas, n'oubliez pas d'accompagner votre transfert par un message téléphonique SMS au numéro de destination libellé comme suit : "<i>Pour KM-Kimya à partir de 'NOM DU PAYS D'Où VOUS ENVOYEZ' en faveur de 'IDENTIFIANT KM-KIMYA DU BENEFICAIRE' montant : 'LE MONTANT ENVOYÉ' </i>" pour nous permettre de vous identifier correctement dans notre base de données.
+        </p>
+
 
         <p>
             Notre approche repose sur une organisation rigoureuse divisée en plusieurs piliers : 
