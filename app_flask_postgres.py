@@ -978,7 +978,7 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
                     cur.execute("""
                         UPDATE membres
                         SET currentstatute = CASE
-                            WHEN phone = %s AND balance > %s THEN 'probatoire'
+                            WHEN phone = %s AND balance >= %s THEN 'probatoire'
                             ELSE 'inactif'
                         END
                         WHERE phone in (%s);
@@ -988,7 +988,7 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
                     cur.execute("""
                         UPDATE membres
                         SET currentstatute = CASE
-                            WHEN phone = %s AND balance > %s THEN 'actif'
+                            WHEN phone = %s AND balance >= %s THEN 'actif'
                             ELSE 'inactif'
                         END
                         WHERE phone IN (%s);
@@ -1253,13 +1253,11 @@ def statutes_update():
 
     with get_conn() as conn:
         with conn.cursor() as cur:
-
             cur.execute("""
                 UPDATE membres
-                SET membershipdate = CASE 
-                    WHEN balance >= %s AND membershipdate = %s THEN CURRENT_DATE
-                    ELSE membershipdate
-                END
+                SET membershipdate = CURRENT_DATE,
+                    currentstatute = 'probatoire'
+                WHERE balance >= %s AND (membershipdate = %s OR membershipdate IS NULL)
             """, (C, limit_date))
 
             log.info("Mise à jour des membres avec date d'adhesion autre que la date limite et solde suffisant.")
@@ -2415,9 +2413,9 @@ def parse_date_fr(s: str) -> date:
     mon_txt = m.group(2)
     y = int(m.group(3))
     if y < 100:
-        y += 2000
+       y += 2000
     if mon_txt not in FR_MONTHS:
-        raise ValueError(f"Mois FR inconnu: {mon_txt!r}")
+       raise ValueError(f"Mois FR inconnu: {mon_txt!r}")
     return date(y, FR_MONTHS[mon_txt], d)
 
 
@@ -2534,18 +2532,18 @@ def import_mouvements():
                         if cur.rowcount:
                             flagged_inactif += 1
 
-                        # 4) règle demandée: si phone du mouvement = phone d'un membre ET balance > C (contribution minimale) ET membershipdate = "31/12/2099" alors membershipdate = date du jour (=> activation du membre)
+                        # 4) règle demandée: si phone du mouvement = phone d'un membre ET balance >= C (contribution minimale) ET membershipdate = "31/12/2099" alors membershipdate = date du jour (=> activation du membre)
                         limit_date = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
                         cur.execute("""
                             UPDATE membres
-                            SET membershipdate = CASE 
-                                WHEN phone = %s AND balance >= %s AND membershipdate = %s THEN CURRENT_DATE
-                                ELSE membershipdate
-                            END
-                            WHERE phone = %s;
-                        """, (phone, contribution_minimum, limit_date, phone))
-
-                        # 5) règle demandée: si phone du mouvement = phone d'un membre ET balance > C (contribution minimale) ET membershipdate <> "31/12/2099" alors currentstatute = 'actif' (=> activation du membre)
+                            SET membershipdate = CURRENT_DATE,
+                                currentstatute = 'probatoire',
+                                updatedate = CURRENT_DATE,
+                                updateuser = %s 
+                            WHERE phone = %s AND balance >= %s AND membershipdate = %s 
+                        """, (session.get("user"), phone, contribution_minimum, limit_date))
+#####
+                        # 5) règle demandée: si phone du mouvement = phone d'un membre ET balance >= C (contribution minimale) ET membershipdate <> "31/12/2099" alors currentstatute ='probatoire' ou 'actif' (=> activation du membre)
                         limit_date = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
                         cur.execute("""
                             UPDATE membres
@@ -2556,7 +2554,7 @@ def import_mouvements():
                             WHERE phone = %s;
                         """, (phone, contribution_minimum, limit_date, phone))
 
-                        # 5) règle demandée: si phone du mouvement = phone d'un membre ET balance > C (contribution minimale) ET la durée entre aujourdhui et membershipdate superieure ou egale à 3 mois (=> activation du membre)
+                        # 6) règle demandée: si phone du mouvement = phone d'un membre ET balance >= C (contribution minimale) ET la durée entre aujourdhui et membershipdate superieure ou egale à 3 mois (=> currentstatute='actif')
                         limit_date = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
                         cur.execute("""
                             UPDATE membres
@@ -2569,7 +2567,6 @@ def import_mouvements():
                             END
                             WHERE phone = %s;
                         """, (phone, contribution_minimum, phone))
-
 
                     except Exception:
                         skipped += 1
@@ -3473,7 +3470,7 @@ INFOS_ASSOCIATION_PAGE = """
 
         <h2>Méthodologie de travail</h2>
         <p>
-            Nous utilisons des outils numériques modernes pour faciliter la communication et la gestion des données. Les mises à jour régulières de nos fichiers des membres nous permettent de maintenir une base de données active et dynamique, garantissant ainsi que personne n'est laissé pour compte dans nos initiatives sociales.
+            Nous utilisons des outils numériques modernes pour faciliter la communication et la gestion des données. Les mises à jour régulières de nos fichiers des membres nous permettent de maintenir une base de données active et dynamique, garantissant ainsi que : personne n'est laissé pour compte dans nos initiatives sociales.
         </p>
         <p>Pour adhérer il suffit d'envoyer par mobile-money $5.50 dans un des numéros ci-dessous :</p>
 
@@ -3489,7 +3486,7 @@ INFOS_ASSOCIATION_PAGE = """
         </p>
 
         <p>
-            Nous recommandons vivement aux membres residants en dehors de la RDC d'utiliser les services offerts par les réseaux de transfert d'argent internationaux comme REMITLY accessible officiellement sous l'URL www.remitly.com (pas ailleurs). Pour le cas de 'remitly' l'utilisation des destinations mobile-money : +243824807663 pour Mpesa et +243891273191 pour Orange-money sont efficaces ; le transfert est quasi instantané. Dans ce cas, n'oubliez pas d'accompagner votre transfert par un message téléphonique SMS au numéro de destination libellé comme suit : "<i>Pour KM-Kimya à partir de 'NOM DU PAYS D'Où VOUS ENVOYEZ' en faveur de 'IDENTIFIANT KM-KIMYA DU BENEFICAIRE' montant : 'LE MONTANT ENVOYÉ' </i>" pour nous permettre de vous identifier correctement dans notre base de données.
+            Nous recommandons vivement aux membres residants en dehors de la RDC d'utiliser les services offerts par les réseaux de transfert d'argent internationaux comme REMITLY accessible officiellement sous l'URL www.remitly.com (pas ailleurs). Pour le cas de 'remitly' l'utilisation des destinations mobile-money : +243824807663 pour Mpesa et +243891273191 pour Orange-money sont efficaces ; le transfert est quasi instantané. Dans ce cas, n'oubliez pas d'accompagner votre transfert par un message téléphonique SMS au numéro de destination libellé comme suit : "<i>Pour KM-Kimya à partir de 'NOM DU PAYS D'Où VOUS ENVOYEZ' en faveur de 'IDENTIFIANT KM-KIMYA DU BENEFICAIRE'  Montant: 'LE MONTANT ENVOYÉ' </i>" pour nous permettre de vous identifier correctement dans notre base de données.
         </p>
 
 
