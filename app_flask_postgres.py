@@ -3486,7 +3486,7 @@ INFOS_ASSOCIATION_PAGE = """
         </p>
 
         <p>
-            Nous recommandons vivement aux membres residants en dehors de la RDC d'utiliser les services offerts par les réseaux de transfert d'argent internationaux comme REMITLY accessible officiellement sous l'URL www.remitly.com (pas ailleurs). Pour le cas de 'remitly' l'utilisation des destinations mobile-money : +243824807663 pour Mpesa et +243891273191 pour Orange-money sont efficaces ; le transfert est quasi instantané. Dans ce cas, n'oubliez pas d'accompagner votre transfert par un message téléphonique SMS au numéro de destination libellé comme suit : "<i>Pour KM-Kimya à partir de 'NOM DU PAYS D'Où VOUS ENVOYEZ' en faveur de 'IDENTIFIANT KM-KIMYA DU BENEFICAIRE'  Montant: 'LE MONTANT ENVOYÉ' </i>" pour nous permettre de vous identifier correctement dans notre base de données.
+            Nous recommandons vivement aux membres residants en dehors de la RDC d'utiliser les services offerts par les réseaux de transfert d'argent internationaux comme <strong>REMITLY</strong> accessible officiellement sous l'URL <strong>www.remitly.com</strong> (pas ailleurs). Pour le cas de 'remitly' l'utilisation des destinations mobile-money :<strong> +243824807663 pour Mpesa et +243891273191 pour Orange-money</strong> sont efficaces ; le transfert est quasi instantané. Dans ce cas, n'oubliez pas d'accompagner votre transfert par un message téléphonique SMS au numéro de destination libellé comme suit : "<i>Pour KM-Kimya à partir de '<strong>NOM DU PAYS D'Où VOUS ENVOYEZ</strong>' en faveur de '<strong>IDENTIFIANT KM-KIMYA DU BENEFICAIRE</strong>'  Montant: '<strong>LE MONTANT ENVOYÉ</strong>' </i>" pour nous permettre de vous identifier correctement dans notre base de données.
         </p>
 
 
