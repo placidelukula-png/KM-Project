@@ -2258,7 +2258,7 @@ ADD_MEMBER_PAGE = """
 <form method="post">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   
-  <label>Phone</label>
+  <label>Identifiant du nouveau membre (nº de téléphone sans prefixe)</label>
   <input name="phone" 
        placeholder="Exemple: 998889560" 
        required 
@@ -2269,7 +2269,7 @@ ADD_MEMBER_PAGE = """
   <label>Prénom</label><input name="firstname" required>
   <label>Date naissance (JJ/MM/AAAA)</label><input name="birthdate" required>
   <label>Identifiant du bénéficiaire</label><input name="beneficiaire" placeholder="Exemple: 998889560" size="10" required>
-  <label>Adresse</label><input name="adresse" required>
+  <label>Adresse de domicile</label><input name="adresse" required>
 
   <label>Mot de passe</label><input name="password" type="password" required>
 
