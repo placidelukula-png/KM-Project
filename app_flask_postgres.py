@@ -2268,7 +2268,7 @@ ADD_MEMBER_PAGE = """
   <label>Nom</label><input name="lastname" required>
   <label>Prénom</label><input name="firstname" required>
   <label>Date naissance (JJ/MM/AAAA)</label><input name="birthdate" required>
-  <label>Bénéficiaire</label><input name="beneficiaire" required>
+  <label>Identifiant du bénéficiaire</label><input name="beneficiaire" placeholder="Exemple: 998889560" size="10" required>
   <label>Adresse</label><input name="adresse" required>
 
   <label>Mot de passe</label><input name="password" type="password" required>
