@@ -3472,7 +3472,7 @@ INFOS_ASSOCIATION_PAGE = """
         <p>
             Nous utilisons des outils numériques modernes pour faciliter la communication et la gestion des données. Les mises à jour régulières de nos fichiers des membres nous permettent de maintenir une base de données active et dynamique, garantissant ainsi que : personne n'est laissé pour compte dans nos initiatives sociales.
         </p>
-        <p>Pour adhérer il suffit d'envoyer par mobile-money $5.50 dans un des numéros ci-dessous :</p>
+        <p>Pour adhérer il suffit d'envoyer votre contribution à la première prestation, équivalente à 5.50 $ par mobile-money dans un des numéros ci-dessous :</p>
 
         <ul>
             <li><strong>+243 824807663</strong> pour Mpesa</li>
