@@ -2617,7 +2617,7 @@ CHECK_MVT_PAGE = """
 <form method="post" action="{{ url_for('check_mouvements_update', mvt_id=r[0]) }}">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <td>{{ r[0] }}</td>
-  <td>{{ r[1] }}</td>
+  <td><input name="phone" value="{{ r[1] }}" size="12"></td>
   <td>{{ r[2] }}</td>
   <td><input name="mvt_date" value="{{ r[3].strftime('%d/%m/%Y') }}" size="8"></td>
   <td><input name="amount" value="{{ r[4] }}" size="8"></td>
@@ -3486,7 +3486,7 @@ INFOS_ASSOCIATION_PAGE = """
         </p>
 
         <p>
-            Nous recommandons vivement aux membres residants en dehors de la RDC d'utiliser les services offerts par les réseaux de transfert d'argent internationaux comme <strong>REMITLY</strong> accessible officiellement sous l'URL <strong>www.remitly.com</strong> (pas ailleurs). Pour le cas de 'remitly' l'utilisation des destinations mobile-money :<strong> +243824807663 pour Mpesa et +243891273191 pour Orange-money</strong> sont efficaces ; le transfert est quasi instantané. Dans ce cas, n'oubliez pas d'accompagner votre transfert par un message téléphonique SMS au numéro de destination libellé comme suit : "<i>Pour KM-Kimya à partir de '<strong>NOM DU PAYS D'Où VOUS ENVOYEZ</strong>' en faveur de '<strong>IDENTIFIANT KM-KIMYA DU BENEFICAIRE</strong>'  Montant: '<strong>LE MONTANT ENVOYÉ</strong>' </i>" pour nous permettre de vous identifier correctement dans notre base de données.
+            Nous recommandons vivement aux membres residants en dehors de la RDC d'utiliser les services offerts par les réseaux de transfert d'argent internationaux comme <strong>REMITLY</strong> accessible officiellement sous l'URL <strong>www.remitly.com</strong> (pas ailleurs). Pour le cas de 'remitly' l'utilisation des destinations mobile-money :<strong> +243824807663 pour Mpesa et +243891273191 pour Orange-money</strong> sont efficaces ; le transfert est quasi instantané. Dans ce cas, n'oubliez pas d'accompagner votre transfert par un message téléphonique SMS, au numéro de destination, libellé comme suit : "<i>Pour KM-Kimya à partir de '<strong>NOM DU PAYS D'Où VOUS ENVOYEZ</strong>' en faveur de '<strong>IDENTIFIANT KM-KIMYA DU BENEFICAIRE</strong>'  Montant: '<strong>LE MONTANT ENVOYÉ</strong>' </i>" pour nous permettre de vous identifier correctement dans notre base de données.
         </p>
 
 
