@@ -842,14 +842,14 @@ def list_deces_traites():
             """)
             return cur.fetchall()
 
-def update_mouvement(id: int, mvt_date, amount, debitcredit,  libelle, regie):
+def update_mouvement(id: int, phone: str, mvt_date, amount, debitcredit,  libelle, regie):
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
                 UPDATE mouvements
-                SET mvt_date=%s, amount=%s, debitcredit=%s, libelle=%s, updatedate=%s, updated_by=%s, regie=%s
+                SET phone=%s, mvt_date=%s, amount=%s, debitcredit=%s, libelle=%s, updatedate=%s, updated_by=%s, regie=%s
                 WHERE id=%s
-            """, (mvt_date, amount, debitcredit,  libelle, date.today(), session.get("user"), regie, id))
+            """, (phone, mvt_date, amount, debitcredit,  libelle, date.today(), session.get("user"), regie, id))
         conn.commit()
 
 def update_deces(id: int, statut: str):
@@ -2655,13 +2655,14 @@ def check_mouvements():
 @app.post("/checkmouvements/update/<int:mvt_id>")
 @admin_required
 def check_mouvements_update(mvt_id: int):
+    phone = (request.form.get("phone") or "").strip()
     d = datetime.strptime((request.form.get("mvt_date") or "").strip(), "%d/%m/%Y").date()
     amount = float((request.form.get("amount") or "0").strip())
     dc = (request.form.get("debitcredit") or "D").strip()
     #ref = (request.form.get("reference") or "").strip()
     libelle = (request.form.get("libelle") or ref).strip()  # ou tu peux ajouter un champ libellé dans le form si tu veux
     regie = (request.form.get("regie") or "").strip()
-    update_mouvement(mvt_id, d, amount, dc, libelle, regie)
+    update_mouvement(mvt_id,phone,d, amount, dc, libelle, regie)
     return redirect(url_for("check_mouvements"))
 
 @app.post("/checkmouvements/delete/<int:mvt_id>")
