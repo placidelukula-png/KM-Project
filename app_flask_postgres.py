@@ -1599,8 +1599,8 @@ DASHBOARD_PAGE = """
     <div class="card">
       <div class="icon">🔁</div>
       <div>
-        <p class="t">Transfert cotisations</p>
-        <p class="d">Transférer un montant vers un autre membre.</p>
+        <p class="t">Transfert de crédits</p>
+        <p class="d">Transfert de crédits, cotisations et dons </p>
         <a class="link" href="{{ url_for('transfer') }}">Ouvrir</a>
       </div>
     </div>
@@ -3150,10 +3150,10 @@ TRANSFER_PAGE = """
  .ok{background:#eaffea;border:1px solid #b8ffb8}
  .err{background:#ffe9ea;border:1px solid #ffb3b8}
 </style></head><body><div class="wrap">
-<h2>Transfert de cotisations</h2>
+<h2>Transfert de crédit, cotisations et dons</h2>
 <p><a href="{{ url_for('home') }}">← Retour</a></p>
 
-
+<br>
 <h3>Transfert de crédit à un autre membre : </h3>
 <div class="card">
 <form method="post" style="display: flex; align-items: center; gap: 10px; flex-wrap: nowrap;">
@@ -3178,6 +3178,8 @@ TRANSFER_PAGE = """
 {% endif %}
 </div>
 
+<br>
+<hr>
 <h3>Paiement de cotisation régulière de membre : </h3>
 <div class="card">
 <form method="post" style="display: flex; align-items: center; gap: 10px; flex-wrap: nowrap;">
@@ -3199,8 +3201,9 @@ TRANSFER_PAGE = """
 {% endif %}
 </div>
 
-
-<h3>Donnation à l'Association KM-Kimya : </h3>
+<br>
+<hr>
+<h3>Donation à l'Association KM-Kimya : </h3>
 <div class="card">
 <form method="post" style="display: flex; align-items: center; gap: 10px; flex-wrap: nowrap;">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -3221,7 +3224,7 @@ TRANSFER_PAGE = """
 {% endif %}
 </div>
 
-
+<br>
 
 </div></body></html>
 """
