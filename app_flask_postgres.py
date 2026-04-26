@@ -888,6 +888,24 @@ def create_deces(phone: str, date_deces, declared_by: str, reference: str):
             """, (phone, date_deces, declared_by, reference))
         conn.commit()
 
+def create_cotisation(code: str, description: str, cotisation: float, ref_base: str, today: datetime):
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO comptes_techniques (code, description, amount, reference, mvt_date)
+                VALUES (%s,%s,%s,%s,%s)
+            """, (code, description, cotisation, ref_base, today))
+        conn.commit()
+
+def create_donation(code: str, description: str, donation: float, ref_base: str, today: datetime):
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO comptes_techniques (code, description, amount, reference, mvt_date)
+                VALUES (%s,%s,%s,%s,%s)
+            """, (code, description, donation, ref_base, today))
+        conn.commit()
+
 def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: str,today):
     me = fetch_member_by_phone(from_phone)
     to_member = fetch_member_by_phone(to_phone)
@@ -3146,6 +3164,7 @@ TRANSFER_PAGE = """
  .row{display:flex;gap:10px;margin-top:12px}
  .btn{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#111;color:#fff;cursor:pointer}
  .btn2{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#fff;color:#111;cursor:pointer}
+ .btn3{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#000;color:#fff;cursor:pointer}
  .msg{margin-top:12px;padding:10px;border-radius:12px}
  .ok{background:#eaffea;border:1px solid #b8ffb8}
  .err{background:#ffe9ea;border:1px solid #ffb3b8}
@@ -3160,13 +3179,13 @@ TRANSFER_PAGE = """
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   
   <label>Bénéficiaire:</label>
-  <input name="to_phone" value="{{ to_phone or '' }}" required>
+  <input name="to_phone" placeholder=" numéro de téléphone sans préfixe"  value="{{ to_phone or '' }}" required style="width: 150px;">
   
   <label for="amount">Montant:</label>
   <input id="amount" name="amount" type="number" value="{{ amount or 0 }}" step="0.01" min="0" required style="width: 80px;">
 
   <button class="btn" name="action" value="check" type="submit">Vérifier</button>
-  <button class="btn2" name="action" value="confirm" type="submit">Confirmer</button>
+  <button style="background-color: lightblue; color: black;" class="btn2" name="action" value="confirm" type="submit">Confirmer</button>
 </form>
 
 {# Gardez les messages d'erreur en dessous si nécessaire #}
@@ -3185,20 +3204,11 @@ TRANSFER_PAGE = """
 <form method="post" style="display: flex; align-items: center; gap: 10px; flex-wrap: nowrap;">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   
-  <label for="amount">Montant:</label>
-  <input id="amount" name="amount" type="number" value="{{ amount or 0 }}" step="0.01" min="0" required style="width: 80px;">
+  <label for="cotisation">Montant:</label>
+  <input id="cotisation" name="cotisation" type="number" value="{{ cotisation or 0 }}" step="0.01" min="0" required style="width: 80px;">
 
-  <button class="btn" name="action" value="check" type="submit">Vérifier</button>
-  <button class="btn2" name="action" value="confirm" type="submit">Confirmer</button>
+  < button style="background-color: lightblue; color: black;" class="btn2" name="action" value="confirm" type="submit">Confirmer</button>
 </form>
-
-{# Gardez les messages d'erreur en dessous si nécessaire #}
-{% if found_name or to_phone or message %}
-  <div style="margin-top: 10px;">
-    {% if found_name %}<b style="color: green;">{{ found_name }}</b>{% endif %}
-    {% if message %}<span class="msg">{{ message }}</span>{% endif %}
-  </div>
-{% endif %}
 </div>
 
 <br>
@@ -3208,22 +3218,11 @@ TRANSFER_PAGE = """
 <form method="post" style="display: flex; align-items: center; gap: 10px; flex-wrap: nowrap;">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   
-  <label for="amount">Montant:</label>
-  <input id="amount" name="amount" type="number" value="{{ amount or 0 }}" step="0.01" min="0" required style="width: 80px;">
-
-  <button class="btn" name="action" value="check" type="submit">Vérifier</button>
-  <button class="btn2" name="action" value="confirm" type="submit">Confirmer</button>
+  <label for="donation">Montant:</label>
+  <input id="donation" name="donation" type="number" value="{{ donation or 0 }}" step="0.01" min="0" required style="width: 80px;">
+  <button style="background-color: lightblue; color: black;" class="btn3" name="action" value="confirm" type="submit">Confirmer</button>
 </form>
-
-{# Gardez les messages d'erreur en dessous si nécessaire #}
-{% if found_name or to_phone or message %}
-  <div style="margin-top: 10px;">
-    {% if found_name %}<b style="color: green;">{{ found_name }}</b>{% endif %}
-    {% if message %}<span class="msg">{{ message }}</span>{% endif %}
-  </div>
-{% endif %}
 </div>
-
 <br>
 
 </div></body></html>
@@ -3234,14 +3233,22 @@ TRANSFER_PAGE = """
 @app.route("/transfer", methods=["GET","POST"])
 @login_required
 def transfer():
-    message, is_error = "","" 
+    message, is_error = "",""
+    
     from_phone = session["user"]
-    to_phone = (request.form.get("to_phone") or "").strip() 
-    amount = float((request.form.get("amount") or "0").strip()) 
+    to_phone = (request.form.get("to_phone") or "").strip()
+
+    amount = float((request.form.get("amount") or "0").strip())
+    cotisation = float((request.form.get("cotisation") or "0").strip())
+    donation = float((request.form.get("donation") or "0").strip())
+
     my_balance = 0
     found_name = ""
 
     if request.method == "POST":
+        if amount > 0 and not to_phone:
+            return render_template_string(TRANSFER_PAGE, balance=my_balance, message="Veuillez saisir le numéro de téléphone du bénéficiaire.", is_error=True)
+        
         m = fetch_member_by_phone(to_phone) if to_phone else None
         if not m:
             return render_template_string(TRANSFER_PAGE, balance=my_balance, message="Bénéficiaire introuvable", is_error=True)
@@ -3277,6 +3284,46 @@ def transfer():
             except Exception as e:
                 message, is_error = f"Erreur: {e}", True
                 log.exception("Erreur lors de l'enregistrement du mouvement de transfert: %s", e)
+
+        if cotisation > 0:
+            if action == "confirm":
+                if not m:
+                    return render_template_string(TRANSFER_PAGE, balance=my_balance, message="Données introuvables", is_error=True)
+
+                if cotisation <= 0:
+                    return render_template_string(TRANSFER_PAGE, balance=my_balance, message=" Montant de cotisation invalide.", is_error=True)
+
+                if my_balance < cotisation:
+                    return render_template_string(TRANSFER_PAGE, balance=my_balance, message=f"Solde insuffisant: transfert bloqué. Solde actuel: {my_balance}", is_error=True)
+
+            try:
+                d = datetime.strptime(date.today().strftime("%d/%m/%Y"), "%d/%m/%Y")
+                ref = f"COT-{uuid.uuid4().hex[:10]}"
+                create_cotisation(from_phone, cotisation, ref, d)
+                message, is_error = "Cotisation enregistrée. Merci pour votre soutien !", False
+            except Exception as e:
+                message, is_error = f"Erreur: {e}", True
+                log.exception("Erreur lors de l'enregistrement du mouvement de cotisation: %s", e)
+
+        if donation > 0:
+            if action == "confirm":
+                if not m:
+                    return render_template_string(TRANSFER_PAGE, balance=my_balance, message="Données introuvables", is_error=True)
+
+                if donation <= 0:
+                    return render_template_string(TRANSFER_PAGE, balance=my_balance, message=" Montant de donation invalide.", is_error=True)
+
+                if my_balance < donation:
+                    return render_template_string(TRANSFER_PAGE, balance=my_balance, message=f"Solde insuffisant: transfert bloqué. Solde actuel: {my_balance}", is_error=True)
+
+            try:
+                d = datetime.strptime(date.today().strftime("%d/%m/%Y"), "%d/%m/%Y")
+                ref = f"DON-{uuid.uuid4().hex[:10]}"
+                create_donation(from_phone, donation, ref, d)
+                message, is_error = "Donation enregistrée. Merci pour votre générosité !", False
+            except Exception as e:
+                message, is_error = f"Erreur: {e}", True
+                log.exception("Erreur lors de l'enregistrement du mouvement de donation: %s", e)                
 
     return render_template_string(TRANSFER_PAGE, found_name=found_name, to_phone=to_phone, amount=amount,message=message, is_error=is_error)
 
