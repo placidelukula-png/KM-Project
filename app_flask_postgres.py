@@ -3206,7 +3206,7 @@ TRANSFER_PAGE = """
   
   <label for="cotisation">Montant:</label>
   <input id="cotisation" name="cotisation" type="number" value="{{ cotisation or 0 }}" step="0.01" min="0" required style="width: 80px;">
-  < button style="background-color: lightgreen; color: black;" class="btn2" name="action" value="confirm" type="submit">Confirmer</button>
+  <button style="background-color: lightgreen; color: black;" class="btn2" name="action" value="confirm" type="submit">Confirmer</button>
 </form>
 </div>
 
