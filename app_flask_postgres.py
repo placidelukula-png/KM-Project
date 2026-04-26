@@ -3152,38 +3152,35 @@ TRANSFER_PAGE = """
 </style></head><body><div class="wrap">
 <h2>Transfert de cotisations</h2>
 <p><a href="{{ url_for('home') }}">← Retour</a></p>
+
+
+
 <div class="card">
-<form method="post">
+<form method="post" style="display: flex; align-items: center; gap: 10px; flex-wrap: nowrap;">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <label>Identifiant du bénéficiaire</label>
+  
+  <label>Bénéficiaire</label>
   <input name="to_phone" value="{{ to_phone or '' }}" required>
-  <label for="amount">Montant à transférer (en $)</label>
-    <input 
-        id="amount"
-        name="amount"
-        type="number"
-        value="{{ amount or 0 }}"
-        step="0.01"        
-        min="0"            
-        required
-    >
+  
+  <label for="amount">Montant ($)</label>
+  <input id="amount" name="amount" type="number" value="{{ amount or 0 }}" step="0.01" min="0" required style="width: 80px;">
 
-  {% if found_name %}
-    <div class="msg ok">Membre trouvé: <b>{{ found_name }}</b></div>
-  {% elif to_phone %}
-    <div class="msg err">Phone inconnu (membre non trouvé).</div>
-  {% endif %}
-
-  <div class="row">
-    <button class="btn" name="action" value="check" type="submit">Vérifier</button>
-    <button class="btn2" name="action" value="confirm" type="submit">Confirmer</button>
-  </div>
-
-  {% if message %}
-    <div class="msg {{ 'err' if is_error else 'ok' }}">{{ message }}</div>
-  {% endif %}
+  <button class="btn" name="action" value="check" type="submit">Vérifier</button>
+  <button class="btn2" name="action" value="confirm" type="submit">Confirmer</button>
 </form>
+
+{# Gardez les messages d'erreur en dessous si nécessaire #}
+{% if found_name or to_phone or message %}
+  <div style="margin-top: 10px;">
+    {% if found_name %}<b style="color: green;">{{ found_name }}</b>{% endif %}
+    {% if message %}<span class="msg">{{ message }}</span>{% endif %}
+  </div>
+{% endif %}
 </div>
+
+
+
+
 </div></body></html>
 """
 #
