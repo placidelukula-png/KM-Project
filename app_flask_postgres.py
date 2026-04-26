@@ -3179,13 +3179,13 @@ TRANSFER_PAGE = """
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   
   <label>Bénéficiaire:</label>
-  <input name="to_phone" placeholder=" numéro de téléphone sans préfixe"  value="{{ to_phone or '' }}" required style="width: 150px;">
+  <input name="to_phone" placeholder="nº tél ex. 998243554"  value="{{ to_phone or '' }}" required style="width: 120px;">
   
   <label for="amount">Montant:</label>
   <input id="amount" name="amount" type="number" value="{{ amount or 0 }}" step="0.01" min="0" required style="width: 80px;">
 
   <button class="btn" name="action" value="check" type="submit">Vérifier</button>
-  <button style="background-color: lightblue; color: black;" class="btn2" name="action" value="confirm" type="submit">Confirmer</button>
+  <button style="background-color: lightgreen; color: black;" class="btn2" name="action" value="confirm" type="submit">Confirmer</button>
 </form>
 
 {# Gardez les messages d'erreur en dessous si nécessaire #}
@@ -3206,8 +3206,7 @@ TRANSFER_PAGE = """
   
   <label for="cotisation">Montant:</label>
   <input id="cotisation" name="cotisation" type="number" value="{{ cotisation or 0 }}" step="0.01" min="0" required style="width: 80px;">
-
-  < button style="background-color: lightblue; color: black;" class="btn2" name="action" value="confirm" type="submit">Confirmer</button>
+  < button style="background-color: lightgreen; color: black;" class="btn2" name="action" value="confirm" type="submit">Confirmer</button>
 </form>
 </div>
 
@@ -3220,7 +3219,7 @@ TRANSFER_PAGE = """
   
   <label for="donation">Montant:</label>
   <input id="donation" name="donation" type="number" value="{{ donation or 0 }}" step="0.01" min="0" required style="width: 80px;">
-  <button style="background-color: lightblue; color: black;" class="btn3" name="action" value="confirm" type="submit">Confirmer</button>
+  <button style="background-color: lightgreen; color: black;" class="btn3" name="action" value="confirm" type="submit">Confirmer</button>
 </form>
 </div>
 <br>
