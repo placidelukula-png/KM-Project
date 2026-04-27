@@ -1536,6 +1536,11 @@ def inscription():
 def infos_association():
     return render_template_string(INFOS_ASSOCIATION_PAGE)
 
+# 3. Route pour la page de questions fréquentes
+@app.route('/FAQ_PAGE')
+def FAQ_PAGE():
+    return render_template_string(FAQ_PAGE)
+
 
 # --------------------------------------
 # ENDPOINT #0 HOME PAGE ( ménu général)
@@ -3672,6 +3677,7 @@ INFOS_ASSOCIATION_PAGE = """
 </body>
 </html>
 """
+
 FAQ_PAGE = """
 <!doctype html>
 <html lang="fr">
