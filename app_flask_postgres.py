@@ -3185,8 +3185,6 @@ TRANSFER_PAGE = """
 <br>
 <h3>Transfert de crédit à un autre membre : </h3>
 <div class="card">
-#######<form action="{{ url_for('parametrage') }}" method="POST">
-
 <form action="{{ url_for('transfer') }}" method="post" style="display: flex; align-items: center; gap: 10px; flex-wrap: nowrap;">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   
@@ -3298,7 +3296,8 @@ def transfer():
 
     return render_template_string(TRANSFER_PAGE, found_name=found_name, to_phone=to_phone, amount=amount,message=message, is_error=is_error)
 
-
+@app.route("/cotisation", methods=["GET","POST"])
+@login_required
 def cotisation():
     message, is_error = "",""
     
@@ -3335,7 +3334,8 @@ def cotisation():
 
     return render_template_string(TRANSFER_PAGE, message=message, is_error=is_error)
 
-
+@app.route("/donation", methods=["GET","POST"])
+@login_required
 def donation():
     message, is_error = "",""
     
