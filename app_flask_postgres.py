@@ -890,30 +890,24 @@ def create_deces(phone: str, date_deces, declared_by: str, reference: str):
 
 def create_cotisation(cotisation: float, ref_base: str, today: datetime):
     code=f"COT-{session.get('user')}"
-    balance=balance+cotisation
     description=f"Cotisation de {cotisation} ref : {ref_base}"
-    updatedate=today
-    updateuser=session.get('user')
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                INSERT INTO comptes_techniques (code, description, balance, updatedate, updateduser)
-                VALUES (%s,%s,%s,%s,%s)
-            """, (code, description, balance, updatedate, updateuser))
+                INSERT INTO comptes_techniques (code, description,balance, updatedate, updateduser)
+                VALUES (%s,%s,balance+%s,%s,%s)
+            """, (code, description,cotisation, today, session.get('user')))
         conn.commit()
 
 def create_donation(donation: float, ref_base: str, today: datetime):
     code=f"DON-{session.get('user')}"
-    balance=balance+donation
     description=f"Donation de {donation} ref : {ref_base}"
-    updatedate=today
-    updateuser=session.get('user')
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
                 INSERT INTO comptes_techniques (code, description, balance, updatedate, updateduser)
-                VALUES (%s,%s,%s,%s,%s)
-            """, (code, description, balance, updatedate, updateuser))
+                VALUES (%s,%s,balance+%s,%s,%s)
+            """, (code, description, donation, today, session.get('user')))
         conn.commit()
 
 def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: str,today):
