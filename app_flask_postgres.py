@@ -888,22 +888,32 @@ def create_deces(phone: str, date_deces, declared_by: str, reference: str):
             """, (phone, date_deces, declared_by, reference))
         conn.commit()
 
-def create_cotisation(code: str, description: str, cotisation: float, ref_base: str, today: datetime):
+def create_cotisation(cotisation: float, ref_base: str, today: datetime):
+    code=f"COT-{session.get('user')}"
+    balance=balance+cotisation
+    description=f"Cotisation de {cotisation} ref : {ref_base}"
+    updatedate=today
+    updateuser=session.get('user')
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                INSERT INTO comptes_techniques (code, description, amount, reference, mvt_date)
+                INSERT INTO comptes_techniques (code, description, balance, updatedate, updateduser)
                 VALUES (%s,%s,%s,%s,%s)
-            """, (code, description, cotisation, ref_base, today))
+            """, (code, description, balance, updatedate, updateuser))
         conn.commit()
 
-def create_donation(code: str, description: str, donation: float, ref_base: str, today: datetime):
+def create_donation(donation: float, ref_base: str, today: datetime):
+    code=f"DON-{session.get('user')}"
+    balance=balance+donation
+    description=f"Donation de {donation} ref : {ref_base}"
+    updatedate=today
+    updateuser=session.get('user')
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                INSERT INTO comptes_techniques (code, description, amount, reference, mvt_date)
+                INSERT INTO comptes_techniques (code, description, balance, updatedate, updateduser)
                 VALUES (%s,%s,%s,%s,%s)
-            """, (code, description, donation, ref_base, today))
+            """, (code, description, balance, updatedate, updateuser))
         conn.commit()
 
 def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: str,today):
@@ -3278,7 +3288,7 @@ def transfer():
 
                 create_transfert(from_phone, to_phone, amount, ref,d)
 
-                message, is_error = "contribution transférée.", False
+                message, is_error = "Contribution transférée. merci pour votre sérieux !", False
                 to_phone, amount, found_name = "", 0.0, ""
             except Exception as e:
                 message, is_error = f"Erreur: {e}", True
@@ -3298,7 +3308,7 @@ def transfer():
             try:
                 d = datetime.strptime(date.today().strftime("%d/%m/%Y"), "%d/%m/%Y")
                 ref = f"COT-{uuid.uuid4().hex[:10]}"
-                create_cotisation(from_phone, cotisation, ref, d)
+                create_cotisation(cotisation, ref, d)
                 message, is_error = "Cotisation enregistrée. Merci pour votre soutien !", False
             except Exception as e:
                 message, is_error = f"Erreur: {e}", True
@@ -3318,7 +3328,7 @@ def transfer():
             try:
                 d = datetime.strptime(date.today().strftime("%d/%m/%Y"), "%d/%m/%Y")
                 ref = f"DON-{uuid.uuid4().hex[:10]}"
-                create_donation(from_phone, donation, ref, d)
+                create_donation(donation, ref, d)
                 message, is_error = "Donation enregistrée. Merci pour votre générosité !", False
             except Exception as e:
                 message, is_error = f"Erreur: {e}", True
