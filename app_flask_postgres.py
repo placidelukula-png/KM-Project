@@ -148,6 +148,8 @@ def init_db():
                   membershipdate DATE NOT NULL DEFAULT DATE('2099-12-31'),
                   adresse        TEXT,
                   beneficiaire   TEXT NOT NULL DEFAULT 'admin',
+                  cotisations    DECIMAL(18,2) NOT NULL DEFAULT 0,
+                  donations      DECIMAL(18,2) NOT NULL DEFAULT 0,
                   CONSTRAINT membres_membertype_chk
                     CHECK (membertype IN ('membre','independant','mentor','admin')),
                   CONSTRAINT membres_currentstatute_chk
@@ -315,6 +317,28 @@ def init_db():
 #                  ALTER COLUMN membershipdate SET DEFAULT DATE('2099-12-31');
 #            """)
 
+            cur.execute("""
+                ALTER TABLE membres
+                  ADD COLUMN cotisations DECIMAL(18,2) NOT NULL DEFAULT 0,
+                  ADD COLUMN donations DECIMAL(18,2) NOT NULL DEFAULT 0;
+            """)
+
+            cur.execute("""
+                DELETE FROM comptes_techniques;
+                INSERT INTO comptes_techniques (        
+                  code          ='DON-825707160',  
+                  description   ='Cumul des donations de 825707160',  
+                  balance       = 25,      
+                  updatedate    DATE (2026-03-24),    
+                  updateuser    ='admin';
+                  code          ='DON-999939169',  
+                  description   ='Cumul des donations de 999939169',  
+                  balance       = 5,      
+                  updatedate    DATE (2026-03-24),    
+                  updateuser    ='admin';
+                          );
+            """)
+                       
 #            cur.execute("""
 #                ALTER TABLE id_data 
 #                    ALTER COLUMN created_at SET DATA TYPE DATE,
