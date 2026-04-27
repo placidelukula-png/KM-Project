@@ -894,7 +894,7 @@ def create_cotisation(cotisation: float, ref_base: str, today: datetime):
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                INSERT INTO comptes_techniques (code, description,balance, updatedate, updateduser)
+                INSERT INTO comptes_techniques (code, description,balance, updatedate, updateuser)
                 VALUES (%s,%s,balance+%s,%s,%s)
             """, (code, description,cotisation, today, session.get('user')))
         conn.commit()
@@ -905,7 +905,7 @@ def create_donation(donation: float, ref_base: str, today: datetime):
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                INSERT INTO comptes_techniques (code, description, balance, updatedate, updateduser)
+                INSERT INTO comptes_techniques (code, description, balance, updatedate, updateuser)
                 VALUES (%s,%s,balance+%s,%s,%s)
             """, (code, description, donation, today, session.get('user')))
         conn.commit()
@@ -3166,7 +3166,7 @@ TRANSFER_PAGE = """
  label{display:block;margin:10px 0 4px;font-weight:700}
  input{width:80%;padding:10px;border:1px solid #ddd;border-radius:10px}
  .row{display:flex;gap:10px;margin-top:12px}
- .btn{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#111;color:#fff;cursor:pointer}
+ .btn1{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#111;color:#fff;cursor:pointer}
  .btn2{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#fff;color:#111;cursor:pointer}
  .btn3{padding:10px 14px;border-radius:12px;border:1px solid #111;background:#000;color:#fff;cursor:pointer}
  .msg{margin-top:12px;padding:10px;border-radius:12px}
