@@ -894,9 +894,12 @@ def create_cotisation(cotisation: float, ref_base: str, today: datetime):
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                INSERT INTO comptes_techniques (code, description,balance, updatedate, updateuser)
-                VALUES (%s,%s,balance+%s,%s,%s)
-            """, (code, description,cotisation, today, session.get('user')))
+                INSERT INTO comptes_techniques (code, description,balance, updatedate, updateuser) ON CONFLICT (code) DO UPDATE
+                SET balance = balance + %s,
+                    updatedate = %s,
+                    updateuser = %s
+                VALUES (%s,%s,%s,%s,%s)
+            """, (cotisation, today, session.get('user'), code, description))
         conn.commit()
 
 def create_donation(donation: float, ref_base: str, today: datetime):
@@ -905,9 +908,12 @@ def create_donation(donation: float, ref_base: str, today: datetime):
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                INSERT INTO comptes_techniques (code, description, balance, updatedate, updateuser)
-                VALUES (%s,%s,balance+%s,%s,%s)
-            """, (code, description, donation, today, session.get('user')))
+                INSERT INTO comptes_techniques (code, description, balance, updatedate, updateuser) ON CONFLICT (code) DO UPDATE        
+                SET balance = balance + %s,
+                    updatedate = %s,
+                    updateuser = %s
+                VALUES (%s,%s,%s,%s,%s)
+            """, (donation, today, session.get('user'), code, description))
         conn.commit()
 
 def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: str,today):
@@ -3191,14 +3197,6 @@ TRANSFER_PAGE = """
   <button class="btn" name="action" value="check" type="submit">Vérifier</button>
   <button style="background-color: lightgreen; color: black;" class="btn1" name="action" value="confirm" type="submit">Confirmer</button>
 </form>
-
-{# Gardez les messages d'erreur en dessous si nécessaire #}
-{% if found_name or to_phone or message %}
-  <div style="margin-top: 10px;">
-    {% if found_name %}<b style="color: green;">{{ found_name }}</b>{% endif %}
-    {% if message %}<span class="msg">{{ message }}</span>{% endif %}
-  </div>
-{% endif %}
 </div>
 
 <br>
@@ -3212,7 +3210,6 @@ TRANSFER_PAGE = """
   <input id="cotisation" name="cotisation" type="number" value="{{ cotisation or 0 }}" step="0.01" min="0" required style="width: 80px;">
   <button style="background-color: lightgreen; color: black;" class="btn2" name="action" value="confirm" type="submit">Confirmer</button>
 </form>
-    {% if message %}<span class="msg">{{ message }}</span>{% endif %}
 </div>
 
 <br>
@@ -3226,9 +3223,16 @@ TRANSFER_PAGE = """
   <input id="donation" name="donation" type="number" value="{{ donation or 0 }}" step="0.01" min="0" required style="width: 80px;">
   <button style="background-color: lightgreen; color: black;" class="btn3" name="action" value="confirm" type="submit">Confirmer</button>
 </form>
-    {% if message %}<span class="msg">{{ message }}</span>{% endif %}
 </div>
 <br>
+
+{# Gardez les messages d'erreur en dessous si nécessaire #}
+{% if found_name or to_phone or message %}
+  <div style="margin-top: 10px;">
+    {% if found_name %}<b style="color: green;">{{ found_name }}</b>{% endif %}
+    {% if message %}<span class="msg">{{ message }}</span>{% endif %}
+  </div>
+{% endif %}
 
 </div></body></html>
 """
