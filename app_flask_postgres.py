@@ -899,7 +899,7 @@ def create_cotisation(cotisation: float, ref_base: str, today: datetime):
                     updatedate = %s,
                     updateuser = %s
                 VALUES (%s,%s,%s,%s,%s)
-            """, (cotisation, today, session.get('user'), code, description))
+            """, (cotisation, today, session.get('user'), code, description, cotisation, today, session.get('user')))
         conn.commit()
 
 def create_donation(donation: float, ref_base: str, today: datetime):
@@ -913,7 +913,7 @@ def create_donation(donation: float, ref_base: str, today: datetime):
                     updatedate = %s,
                     updateuser = %s
                 VALUES (%s,%s,%s,%s,%s)
-            """, (donation, today, session.get('user'), code, description))
+            """, (donation, today, session.get('user'), code, description, donation, today, session.get('user')))
         conn.commit()
 
 def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: str,today):
