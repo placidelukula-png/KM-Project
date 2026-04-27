@@ -322,10 +322,9 @@ def init_db():
                 ADD COLUMN IF NOT EXISTS cotisations DECIMAL(18,2) NOT NULL DEFAULT 0,
                 ADD COLUMN IF NOT EXISTS donations DECIMAL(18,2) NOT NULL DEFAULT 0;
                     """)
-
+            
+            cur.execute("DELETE FROM comptes_techniques;")
             cur.execute("""
-                DELETE FROM comptes_techniques;
-
                 INSERT INTO comptes_techniques (code, description, balance, updatedate, updateuser)
                 VALUES
                 ('DON-825707160', 'Cumul des donations de 825707160', 25, DATE '2026-03-24', 'admin'),
