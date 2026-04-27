@@ -317,19 +317,18 @@ def init_db():
 #                  ALTER COLUMN membershipdate SET DEFAULT DATE('2099-12-31');
 #            """)
 
-            cur.execute("""
-                ALTER TABLE membres
-                ADD COLUMN IF NOT EXISTS cotisations DECIMAL(18,2) NOT NULL DEFAULT 0,
-                ADD COLUMN IF NOT EXISTS donations DECIMAL(18,2) NOT NULL DEFAULT 0;
-                    """)
-            
-            cur.execute("DELETE FROM comptes_techniques;")
-            cur.execute("""
-                INSERT INTO comptes_techniques (code, description, balance, updatedate, updateuser)
-                VALUES
-                ('DON-825707160', 'Cumul des donations de 825707160', 25, DATE '2026-03-24', 'admin'),
-                ('DON-999939169', 'Cumul des donations de 999939169', 5, DATE '2026-03-24', 'admin');
-            """)
+#                ALTER TABLE membres
+#                ADD COLUMN IF NOT EXISTS cotisations DECIMAL(18,2) NOT NULL DEFAULT 0,
+#                ADD COLUMN IF NOT EXISTS donations DECIMAL(18,2) NOT NULL DEFAULT 0;
+#                    """)
+#            
+#            cur.execute("DELETE FROM comptes_techniques;")
+#            cur.execute("""
+#                INSERT INTO comptes_techniques (code, description, balance, updatedate, updateuser)
+#                VALUES
+#                ('DON-825707160', 'Cumul des donations de 825707160', 25, DATE '2026-03-24', 'admin'),
+#                ('DON-999939169', 'Cumul des donations de 999939169', 5, DATE '2026-03-24', 'admin');
+#            """)
                        
 #            cur.execute("""
 #                ALTER TABLE id_data 
@@ -3613,9 +3612,19 @@ INFOS_ASSOCIATION_PAGE = """
 </head>
 <body>
     <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+    
         <h1>Notre Association</h1>
+
+        <!-- Bouton FAQ -->
+        <a href="{{ url_for('FAQ_PAGE') }}">
+            <button type="button">Questions fréquentes - consultation rapide</button>
+        </a>
+
+        </div>      
         
         <h2>Notre Mission</h2>
+
         <p>
             Bienvenue au sein de notre communauté. Notre association a pour mission principale de rassembler les forces vives afin de promouvoir le développement et l'entraide entre tous les membres. Fondée sur des valeurs de solidarité, nous travaillons quotidiennement à la création d'un réseau solide où chaque adhérent trouve sa place et contribue à l'essor collectif.
         </p>
@@ -3660,6 +3669,44 @@ INFOS_ASSOCIATION_PAGE = """
             <a href="{{ url_for('login') }}" class="btn-back">← Retour à la connexion</a>
         </div>
     </div>
+</body>
+</html>
+"""
+FAQ_PAGE = """
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>QUESTIONS FREQUENTES</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 20px; background: #f9f9f9; color: #333; }
+        .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { color: #111; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        h2 { color: #444; margin-top: 25px; }
+        p { margin-bottom: 15px; text-align: justify; }
+        .footer { margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; }
+        .btn-back { display: inline-block; padding: 10px 20px; background: #111; color: #fff; text-decoration: none; border-radius: 8px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- 1. LA TABLE DES MATIÈRES -->
+    <h2>Table des matières</h2>
+    <ul>
+    <li><a href="#chapitre1">Aller au Chapitre 1</a></li>
+    <li><a href="#chapitre2">Aller au Chapitre 2</a></li>
+    </ul>
+
+    <hr> <!-- Séparateur visuel -->
+
+    <!-- 2. LE CONTENU DÉTAILLÉ -->
+    <h2 id="chapitre1">Chapitre 1 : Les débuts</h2>
+    <p>Ceci est le texte détaillé du premier chapitre...</p>
+
+    <h2 id="chapitre2">Chapitre 2 : L'aventure continue</h2>
+    <p>Ceci est le texte détaillé du deuxième chapitre...</p>
+</div>
 </body>
 </html>
 """
