@@ -890,7 +890,7 @@ def create_deces(phone: str, date_deces, declared_by: str, reference: str):
 
 def create_cotisation(cotisation: float, ref_base: str, today: datetime):
     code=f"COT-{session.get('user')}"
-    description=f"Cotisation de {cotisation} ref : {ref_base}"
+    description=f"Cumul des Cotisations de {session.get('user')}"
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
@@ -905,7 +905,7 @@ def create_cotisation(cotisation: float, ref_base: str, today: datetime):
 
 def create_donation(donation: float, ref_base: str, today: datetime):
     code=f"DON-{session.get('user')}"
-    description=f"Donation de {donation} ref : {ref_base}"
+    description=f"Cumul des Donations de {session.get('user')}"
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
@@ -3802,7 +3802,7 @@ COMPTES_PAGE = """
         <form method="POST" action="{{ url_for('update_compte') }}">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <td><input type="text" name="code" value="{{ c[0] }}" readonly class="badge"></td>
-          <td><input type="text" name="description" value="{{ c[1] }}" size="30"></td>
+          <td><input type="text" name="description" value="{{ c[1] }}" readonly size="30"></td>
           <td><input type="number" name="balance" value="{{ c[2] }}" step="0.01" style="width:100px"></td>
           <td>{{ c[3] }}</td>
           <td><small>{{ c[4] }}</small></td>
@@ -3838,12 +3838,11 @@ def update_compte():
             with conn.cursor() as cur:
                 cur.execute("""
                     UPDATE comptes_techniques 
-                    SET description = %s, 
-                        balance = %s, 
+                    SET balance = %s, 
                         updatedate = CURRENT_DATE, 
                         updateuser = %s
                     WHERE code = %s
-                """, (description, balance, user, code))
+                """, (balance, user, code))
             conn.commit()
         flash(f"Compte {code} mis à jour avec succès", "success")
     except Exception as e:
