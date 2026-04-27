@@ -319,24 +319,17 @@ def init_db():
 
             cur.execute("""
                 ALTER TABLE membres
-                  ADD COLUMN cotisations DECIMAL(18,2) NOT NULL DEFAULT 0,
-                  ADD COLUMN donations DECIMAL(18,2) NOT NULL DEFAULT 0;
-            """)
+                ADD COLUMN IF NOT EXISTS cotisations DECIMAL(18,2) NOT NULL DEFAULT 0,
+                ADD COLUMN IF NOT EXISTS donations DECIMAL(18,2) NOT NULL DEFAULT 0;
+                    """)
 
             cur.execute("""
                 DELETE FROM comptes_techniques;
-                INSERT INTO comptes_techniques (        
-                  code          ='DON-825707160',  
-                  description   ='Cumul des donations de 825707160',  
-                  balance       = 25,      
-                  updatedate    DATE (2026-03-24),    
-                  updateuser    ='admin';
-                  code          ='DON-999939169',  
-                  description   ='Cumul des donations de 999939169',  
-                  balance       = 5,      
-                  updatedate    DATE (2026-03-24),    
-                  updateuser    ='admin';
-                          );
+
+                INSERT INTO comptes_techniques (code, description, balance, updatedate, updateuser)
+                VALUES
+                ('DON-825707160', 'Cumul des donations de 825707160', 25, DATE '2026-03-24', 'admin'),
+                ('DON-999939169', 'Cumul des donations de 999939169', 5, DATE '2026-03-24', 'admin');
             """)
                        
 #            cur.execute("""
