@@ -3185,7 +3185,9 @@ TRANSFER_PAGE = """
 <br>
 <h3>Transfert de crédit à un autre membre : </h3>
 <div class="card">
-<form method="post" style="display: flex; align-items: center; gap: 10px; flex-wrap: nowrap;">
+#######<form action="{{ url_for('parametrage') }}" method="POST">
+
+<form action="{{ url_for('transfer') }}" method="post" style="display: flex; align-items: center; gap: 10px; flex-wrap: nowrap;">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   
   <label>Bénéficiaire:</label>
@@ -3195,7 +3197,7 @@ TRANSFER_PAGE = """
   <input id="amount" name="amount" type="number" value="{{ amount or 0 }}" step="0.01" min="0" required style="width: 80px;">
 
   <button class="btn" name="action" value="check" type="submit">Vérifier</button>
-  <button style="background-color: lightgreen; color: black;" class="btn2" name="action" value="confirm" type="submit">Confirmer</button>
+  <button style="background-color: lightgreen; color: black;" class="btn1" name="action" value="confirm" type="submit">Confirmer</button>
 </form>
 
 {# Gardez les messages d'erreur en dessous si nécessaire #}
@@ -3211,7 +3213,7 @@ TRANSFER_PAGE = """
 <hr>
 <h3>Paiement de cotisation régulière de membre : </h3>
 <div class="card">
-<form method="post" style="display: flex; align-items: center; gap: 10px; flex-wrap: nowrap;">
+<form action="{{ url_for('cotisation') }}" method="post" style="display: flex; align-items: center; gap: 10px; flex-wrap: nowrap;">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   
   <label for="cotisation">Montant:</label>
@@ -3224,7 +3226,7 @@ TRANSFER_PAGE = """
 <hr>
 <h3>Donation à l'Association KM-Kimya : </h3>
 <div class="card">
-<form method="post" style="display: flex; align-items: center; gap: 10px; flex-wrap: nowrap;">
+<form action="{{ url_for('donation') }}" method="post" style="display: flex; align-items: center; gap: 10px; flex-wrap: nowrap;">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   
   <label for="donation">Montant:</label>
@@ -3294,47 +3296,82 @@ def transfer():
                 message, is_error = f"Erreur: {e}", True
                 log.exception("Erreur lors de l'enregistrement du mouvement de transfert: %s", e)
 
-        if cotisation > 0:
-            if action == "confirm":
-                if not m:
-                    return render_template_string(TRANSFER_PAGE, balance=my_balance, message="Données introuvables", is_error=True)
-
-                if cotisation <= 0:
-                    return render_template_string(TRANSFER_PAGE, balance=my_balance, message=" Montant de cotisation invalide.", is_error=True)
-
-                if my_balance < cotisation:
-                    return render_template_string(TRANSFER_PAGE, balance=my_balance, message=f"Solde insuffisant: transfert bloqué. Solde actuel: {my_balance}", is_error=True)
-
-            try:
-                d = datetime.strptime(date.today().strftime("%d/%m/%Y"), "%d/%m/%Y")
-                ref = f"COT-{uuid.uuid4().hex[:10]}"
-                create_cotisation(cotisation, ref, d)
-                message, is_error = "Cotisation enregistrée. Merci pour votre soutien !", False
-            except Exception as e:
-                message, is_error = f"Erreur: {e}", True
-                log.exception("Erreur lors de l'enregistrement du mouvement de cotisation: %s", e)
-
-        if donation > 0:
-            if action == "confirm":
-                if not m:
-                    return render_template_string(TRANSFER_PAGE, balance=my_balance, message="Données introuvables", is_error=True)
-
-                if donation <= 0:
-                    return render_template_string(TRANSFER_PAGE, balance=my_balance, message=" Montant de donation invalide.", is_error=True)
-
-                if my_balance < donation:
-                    return render_template_string(TRANSFER_PAGE, balance=my_balance, message=f"Solde insuffisant: transfert bloqué. Solde actuel: {my_balance}", is_error=True)
-
-            try:
-                d = datetime.strptime(date.today().strftime("%d/%m/%Y"), "%d/%m/%Y")
-                ref = f"DON-{uuid.uuid4().hex[:10]}"
-                create_donation(donation, ref, d)
-                message, is_error = "Donation enregistrée. Merci pour votre générosité !", False
-            except Exception as e:
-                message, is_error = f"Erreur: {e}", True
-                log.exception("Erreur lors de l'enregistrement du mouvement de donation: %s", e)                
-
     return render_template_string(TRANSFER_PAGE, found_name=found_name, to_phone=to_phone, amount=amount,message=message, is_error=is_error)
+
+
+def cotisation():
+    message, is_error = "",""
+    
+    from_phone = session["user"]
+    cotisation = float((request.form.get("cotisation") or "0").strip())
+
+    my_balance = 0
+
+    if request.method == "POST":
+        m = fetch_member_by_phone(from_phone) if from_phone else None
+        if m:
+            my_balance = m[10] if m else 0
+
+        action = request.form.get("action")
+
+        if action == "confirm":
+            if not m:
+                return render_template_string(TRANSFER_PAGE, balance=my_balance, message="Données introuvables", is_error=True)
+
+            if cotisation <= 0:
+                return render_template_string(TRANSFER_PAGE, balance=my_balance, message=" Montant de cotisation invalide.", is_error=True)
+
+            if my_balance < cotisation:
+                return render_template_string(TRANSFER_PAGE, balance=my_balance, message=f"Solde insuffisant: transfert bloqué. Solde actuel: {my_balance}", is_error=True)
+
+        try:
+            d = datetime.strptime(date.today().strftime("%d/%m/%Y"), "%d/%m/%Y")
+            ref = f"COT-{uuid.uuid4().hex[:10]}"
+            create_cotisation(cotisation, ref, d)
+            message, is_error = "Cotisation enregistrée. Merci pour votre soutien !", False
+        except Exception as e:
+            message, is_error = f"Erreur: {e}", True
+            log.exception("Erreur lors de l'enregistrement du mouvement de cotisation: %s", e)
+
+    return render_template_string(TRANSFER_PAGE, message=message, is_error=is_error)
+
+
+def donation():
+    message, is_error = "",""
+    
+    from_phone = session["user"]
+    donation = float((request.form.get("donation") or "0").strip())
+
+    my_balance = 0
+
+    if request.method == "POST":       
+
+        m = fetch_member_by_phone(from_phone) if from_phone else None
+        if m:
+            my_balance = m[10] if m else 0
+
+        action = request.form.get("action")
+
+        if action == "confirm":
+            if not m:
+                return render_template_string(TRANSFER_PAGE, balance=my_balance, message="Données introuvables", is_error=True)
+
+            if donation <= 0:
+                return render_template_string(TRANSFER_PAGE, balance=my_balance, message=" Montant de donation invalide.", is_error=True)
+
+            if my_balance < donation:
+                return render_template_string(TRANSFER_PAGE, balance=my_balance, message=f"Solde insuffisant: transfert bloqué. Solde actuel: {my_balance}", is_error=True)
+
+        try:
+            d = datetime.strptime(date.today().strftime("%d/%m/%Y"), "%d/%m/%Y")
+            ref = f"DON-{uuid.uuid4().hex[:10]}"
+            create_donation(donation, ref, d)
+            message, is_error = "Donation enregistrée. Merci pour votre générosité !", False
+        except Exception as e:
+            message, is_error = f"Erreur: {e}", True
+            log.exception("Erreur lors de l'enregistrement du mouvement de donation: %s", e)                
+
+    return render_template_string(TRANSFER_PAGE,message=message, is_error=is_error)
 
 
 # ------------------------------------------
