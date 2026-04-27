@@ -2106,7 +2106,7 @@ DECES_PAGE = """
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
   <label>Phone du membre</label>
-  <input name="phone" value="{{ phone_in or '' }}" required>
+  <input name="phone" placeholder="veuillez placer ici le nº tél du défunt ex. 978241444"  value="{{ phone_in or '' }}" required>
 
   <label>Date de décès (JJ/MM/AAAA)</label>
   <input name="date_deces" value="{{ date_in or '' }}" required>
@@ -3801,11 +3801,11 @@ COMPTES_PAGE = """
       <tr>
         <form method="POST" action="{{ url_for('update_compte') }}">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-          <td><input type="text" name="code" value="{{ c[1] }}" readonly class="badge"></td>
-          <td><input type="text" name="description" value="{{ c[2] }}" size="30"></td>
-          <td><input type="number" name="balance" value="{{ c[3] }}" step="0.01" style="width:100px"></td>
-          <td>{{ c[4] }}</td>
-          <td><small>{{ c[5] }}</small></td>
+          <td><input type="text" name="code" value="{{ c[0] }}" readonly class="badge"></td>
+          <td><input type="text" name="description" value="{{ c[1] }}" size="30"></td>
+          <td><input type="number" name="balance" value="{{ c[2] }}" step="0.01" style="width:100px"></td>
+          <td>{{ c[3] }}</td>
+          <td><small>{{ c[4] }}</small></td>
           <td><button type="submit" class="btn-save">Mettre à jour</button></td>
         </form>
       </tr>
