@@ -2792,7 +2792,7 @@ DATAGENERALFOLLOWUP_PAGE = """
             <!-- BLOC 2 -->
             <form action="{{ url_for('parametrage') }}" method="POST">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button type="submit" class="btn btn-primary" style="width: 100%;" onclick="return confirm('...')">
+                <button type="submit" class="btn btn-primary" style="width: 100%;" onclick="return confirm('Voulez-vous vraiment actualiser les paramètres ?')">
                     🔄 Actualiser les paramètres
                 </button>
             </form>
@@ -2800,7 +2800,7 @@ DATAGENERALFOLLOWUP_PAGE = """
             <!-- BLOC 3 -->
             <form action="{{ url_for('launch_statutes_update') }}" method="POST">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button type="submit" class="btn btn-primary" style="width: 100%;" onclick="return confirm('...')">
+                <button type="submit" class="btn btn-primary" style="width: 100%;" onclick="return confirm('Voulez-vous vraiment actualiser les statuts ?')">
                     🔄 Actualiser les Statuts
                 </button>
             </form>
@@ -2808,7 +2808,7 @@ DATAGENERALFOLLOWUP_PAGE = """
             <!-- BLOC 4 -->
             <form action="{{ url_for('gestion_comptes') }}" method=["GET","POST"]>
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button type="submit" class="btn btn-primary" style="width: 100%;" onclick="return confirm('...')">
+                <button type="submit" class="btn btn-primary" style="width: 100%;" onclick="return confirm('Voulez-vous vraiment accéder à la gestion des comptes ?')">
                     🔄 Gestion des comptes
                 </button>
             </form>
@@ -3611,7 +3611,7 @@ INFOS_ASSOCIATION_PAGE = """
         h1 { color: #111; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         h2 { color: #444; margin-top: 25px; }
         p { margin-bottom: 15px; text-align: justify; }
-        .btn { padding: 10px 14px; border-radius: 12px; border: 1px solid #111; background: #fff; color: #111; cursor: pointer; }
+        .btn { padding: 10px 14px; border-radius: 12px; border: 1px solid #111; background: lightgreen; color: red; cursor: pointer; }
         .footer { margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; }
         .btn-back { display: inline-block; padding: 10px 20px; background: #111; color: #fff; text-decoration: none; border-radius: 8px; }
     </style>
