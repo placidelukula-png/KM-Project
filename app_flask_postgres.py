@@ -331,24 +331,29 @@ def init_db():
 #            """)
 #==============================================================================================================================================
 #           # Export des données de la table comptes_techniques vers un fichier CSV (ex: pour analyse externe ou partage avec un comptable)
-            #------------------------------------------------------------------------------------------------------------------------------ 
-            import csv
+#            import csv
+#
+#            # 1. Exécuter la requête
+#            cur.execute("""
+#                SELECT * FROM mouvements
+#                WHERE regie IS NOT NULL
+#            """)
+#
+#            # 2. Récupérer les données et les noms de colonnes
+#            rows = cur.fetchall()
+#            colnames = [desc[0] for desc in cur.description]
+#
+#            # 3. Écrire dans le fichier CSV
+#            with open('export_mouvements.csv', 'w', newline='', encoding='utf-8') as f:
+#                writer = csv.writer(f)
+#                writer.writerow(colnames) # Ajoute l'en-tête
+#                writer.writerows(rows)    # Ajoute les données
 
-            # 1. Exécuter la requête
-            cur.execute("""
-                SELECT * FROM mouvements
-                WHERE regie IS NOT NULL
-            """)
+#           # Export des données de la table 'mouvements' vers un fichier CSV (ex: pour analyse externe ou partage avec un comptable)
+            import pandas as pd
 
-            # 2. Récupérer les données et les noms de colonnes
-            rows = cur.fetchall()
-            colnames = [desc[0] for desc in cur.description]
-
-            # 3. Écrire dans le fichier CSV
-            with open('export_mouvements.csv', 'w', newline='', encoding='utf-8') as f:
-                writer = csv.writer(f)
-                writer.writerow(colnames) # Ajoute l'en-tête
-                writer.writerows(rows)    # Ajoute les données
+            df = pd.read_sql_query("SELECT * FROM mouvements WHERE regie IS NOT NULL", conn)
+            df.to_csv('export_mouvements_pandas.csv', index=False)
 #==============================================================================================================================================
 #            cur.execute("""
 #                ALTER TABLE id_data 
