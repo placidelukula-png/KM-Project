@@ -5,3 +5,4 @@ Werkzeug
 Flask-WTF
 Flask-Limiter
 redis
+pandas
