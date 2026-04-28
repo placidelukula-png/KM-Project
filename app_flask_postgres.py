@@ -329,7 +329,27 @@ def init_db():
 #                ('DON-825707160', 'Cumul des donations de 825707160', 25, DATE '2026-03-24', 'admin'),
 #                ('DON-999939169', 'Cumul des donations de 999939169', 5, DATE '2026-03-24', 'admin');
 #            """)
-                       
+#==============================================================================================================================================
+#           # Export des données de la table comptes_techniques vers un fichier CSV (ex: pour analyse externe ou partage avec un comptable)
+            #------------------------------------------------------------------------------------------------------------------------------ 
+            import csv
+
+            # 1. Exécuter la requête
+            cur.execute("""
+                SELECT * FROM comptes_techniques
+                WHERE regie IS NOT NULL
+            """)
+
+            # 2. Récupérer les données et les noms de colonnes
+            rows = cur.fetchall()
+            colnames = [desc[0] for desc in cur.description]
+
+            # 3. Écrire dans le fichier CSV
+            with open('export_comptes.csv', 'w', newline='', encoding='utf-8') as f:
+                writer = csv.writer(f)
+                writer.writerow(colnames) # Ajoute l'en-tête
+                writer.writerows(rows)    # Ajoute les données
+#==============================================================================================================================================
 #            cur.execute("""
 #                ALTER TABLE id_data 
 #                    ALTER COLUMN created_at SET DATA TYPE DATE,
@@ -3729,7 +3749,9 @@ FAQ_PAGE = """
         <li>De transformer une réaction émotionnelle ponctuelle en un mécanisme organisé, équitable et durable, au service de la dignité des familles et de la cohésion communautaire.</li>
     </ul>
     L’Association est fondée sur des valeurs de solidarité. Nous travaillons quotidiennement à la création d'un réseau solide où chaque adhérent trouve sa place et contribue à l'essor collectif.  Elle structure et sécurise une valeur culturelle existante : la solidarité. 
-    <br>Ainsi, KM-KIMYA est une association solidaire engagée qui se fixe comme objectif
+    <br>
+    <br>
+    Ainsi, KM-KIMYA est une association solidaire engagée qui se fixe comme objectif
     <ul>   
     <li>la réduction du choc économique lié aux funérailles par </li>
     <li>la mutualisation de petites contributions financières et </li>
