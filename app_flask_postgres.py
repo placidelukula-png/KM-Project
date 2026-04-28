@@ -3701,7 +3701,7 @@ FAQ_PAGE = """
 <div class="container">
     <h2>Questions Fréquentes</h2>
     <ul>
-    <li><a href="#chapitre1">Quelle est la mission de l’Association KM-Kimya et son objectif ?</a></li>
+    <li><a href="#chapitre1">Quelle est la mission et l'objectif de l’Association KM-Kimya ?</a></li>
     <li><a href="#chapitre2">Quel est le principe de fonctionnement et les modalités d'adhésion ?</a></li>
     <li><a href="#chapitre3">Quels sont les avantages de l'adhésion ?</a></li>
     </ul>
@@ -3709,10 +3709,18 @@ FAQ_PAGE = """
     <hr> <!-- Séparateur visuel -->
 
     <!-- 2. LE CONTENU DÉTAILLÉ -->
-    <h2 id="chapitre1">Chapitre 1 : Les débuts</h2>
-    <p>Ceci est le texte détaillé du premier chapitre...</p>
+    <h2 id="chapitre1">Mission de KM-Kimya</h2>
+    <p>Notre association a pour mission principale 
+    -	de rassembler les forces vives en association afin de promouvoir le développement et l'entraide entre tous les membres lorsque survient le décès d’un membre.  
+    -	De transformer une réaction émotionnelle ponctuelle en un mécanisme organisé, équitable et durable, au service de la dignité des familles et de la cohésion communautaire.
+    L’Association est fondée sur des valeurs de solidarité. Nous travaillons quotidiennement à la création d'un réseau solide où chaque adhérent trouve sa place et contribue à l'essor collectif.  Elle structure et sécurise une valeur culturelle existante : la solidarité. 
+    Ainsi, KM-KIMYA est une association solidaire engagée qui se fixe comme objectif   
+    - la réduction du choc économique lié aux funérailles par 
+    - la mutualisation de petites contributions financières et 
+    - le versement rapide d'une aide significative à la famille éprouvée. 
+    </p>
 
-    <h2 id="chapitre2">Chapitre 2 : L'aventure continue</h2>
+    <h2 id="chapitre2">Chapitre 2 : Le principe de fonctionnement et les modalités d'adhésion</h2>
     <p>Ceci est le texte détaillé du deuxième chapitre...</p>
 
     <h2 id="chapitre3">Chapitre 3 : Les avantages de l'adhésion</h2>
@@ -3720,6 +3728,10 @@ FAQ_PAGE = """
 
     <h2 id="chapitre4">Chapitre 4 : L'aventure continue</h2>
     <p>Ceci est le texte détaillé du deuxième chapitre...</p>
+
+    <div class="footer">
+        <a href="{{ url_for('infos_association') }}" class="btn-back">← Retour à 'Notre association'</a>
+    </div>
 
 </div>
 </body>
