@@ -3211,30 +3211,27 @@ from flask import Response, make_response
 
 @app.route('/telecharger-csv')
 def download_csv():
-    # 1. Exécuter la requête SQL
     with get_conn() as conn:
         with conn.cursor() as cur:
-
-            cur.execute("""
-                SELECT * FROM mouvements
-                WHERE regie IS NOT NULL
-            """)
-            rows = cur.fetchall()
+            cur.execute("SELECT * FROM mouvements WHERE regie IS NOT NULL")
     
-    # 2. Récupérer les noms des colonnes
-    colnames = [desc[0] for desc in cur.description]
+    # Récupérer les données d'abord
+    rows = cur.fetchall()
+    
+    # Maintenant cur.description ne sera plus None
+    if cur.description is not None:
+        colnames = [desc[0] for desc in cur.description]
+    else:
+        colnames = []
 
-    # 3. Créer le CSV en mémoire (évite les problèmes de fichiers sur Render)
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow(colnames)  # En-tête
-    writer.writerows(rows)     # Données
+    writer.writerow(colnames)
+    writer.writerows(rows)
     
-    # 4. Préparer la réponse pour le navigateur
     response = make_response(output.getvalue())
     response.headers["Content-Disposition"] = "attachment; filename=export_comptes.csv"
     response.headers["Content-type"] = "text/csv"
-    
     return response
 
 
