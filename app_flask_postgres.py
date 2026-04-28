@@ -350,9 +350,9 @@ def init_db():
 #                writer.writerows(rows)    # Ajoute les données
 
 #           # Export des données de la table 'mouvements' vers un fichier CSV (ex: pour analyse externe ou partage avec un comptable)
-            import pandas as pd
-            df = pd.read_sql_query("SELECT * FROM mouvements WHERE regie IS NOT NULL", conn)
-            df.to_csv('export_pandas_mouvements.csv', index=False)
+#            import pandas as pd
+#            df = pd.read_sql_query("SELECT * FROM mouvements WHERE regie IS NOT NULL", conn)
+#            df.to_csv('export_pandas_mouvements.csv', index=False)
 #==============================================================================================================================================
 #            cur.execute("""
 #                ALTER TABLE id_data 
@@ -3205,6 +3205,38 @@ def launch_statutes_update():
 
     return redirect(url_for("datageneralfollowup"))
 
+import csv
+import io
+from flask import Response, make_response
+
+@app.route('/telecharger-csv')
+def download_csv():
+    # 1. Exécuter la requête SQL
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+
+            cur.execute("""
+                SELECT * FROM mouvements
+                WHERE regie IS NOT NULL
+            """)
+            rows = cur.fetchall()
+    
+    # 2. Récupérer les noms des colonnes
+    colnames = [desc[0] for desc in cur.description]
+
+    # 3. Créer le CSV en mémoire (évite les problèmes de fichiers sur Render)
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(colnames)  # En-tête
+    writer.writerows(rows)     # Données
+    
+    # 4. Préparer la réponse pour le navigateur
+    response = make_response(output.getvalue())
+    response.headers["Content-Disposition"] = "attachment; filename=export_comptes.csv"
+    response.headers["Content-type"] = "text/csv"
+    
+    return response
+
 
 # --------------------------------------------------------------------------------------
 # Endpoint #10 — Transfert de cotisations (débit/crédit + blocage si solde insuffisant)
@@ -3927,6 +3959,11 @@ COMPTES_PAGE = """
 </style></head><body><div class="wrap">
   <h2>⚙️ Comptes Techniques</h2>
   <p><a href="{{ url_for('home') }}">← Retour au menu</a></p>
+
+  <a href="{{ url_for('download_csv') }}" class="btn">
+        Télécharger les données (CSV)
+  </a>
+  
   <!-- <p><a href="{{ url_for('debug_view') }}">🔍 Debug View</a></p> -->
 
   <table>
