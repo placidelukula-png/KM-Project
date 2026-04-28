@@ -281,7 +281,22 @@ def init_db():
 #            SELECT * FROM id_data_BACKUP_20260409;
 #                        """)
 #-----------------------------------------------------------------------------------
+            cur.execute("""
+                CREATE TABLE mouvements_regie_20260428 AS
+                SELECT 
+                    regie,
+                    SUM(amount) AS cumul
+                FROM mouvements
+                GROUP BY regie;
+                        """)
+            
+            cur.execute("""
+                INSERT INTO comptes_techniques(code, description, balance, CURRENT_DATE, session_user)
+                SELECT regie, regie, cumul, CURRENT_DATE, session.get('user') OR 'system'
+                FROM mouvements_regie_20260428;
+                        """)
                         
+#-----------------------------------------------------------------------------------
 #           # Correction exceptionnelle sur les données de base d'un adhérent.
 #            cur.execute("""
 #                UPDATE membres
