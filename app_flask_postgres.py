@@ -291,8 +291,8 @@ def init_db():
                         """)
             
             cur.execute("""
-                INSERT INTO comptes_techniques(code, description, balance, CURRENT_DATE, session_user)
-                SELECT regie, regie, cumul, CURRENT_DATE, session.get('user') OR 'system'
+                INSERT INTO comptes_techniques(code, balance, none, CURRENT_DATE, 'admin')
+                SELECT regie, cumul
                 FROM mouvements_regie_20260428;
                         """)
                         
