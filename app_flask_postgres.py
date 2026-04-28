@@ -351,9 +351,8 @@ def init_db():
 
 #           # Export des données de la table 'mouvements' vers un fichier CSV (ex: pour analyse externe ou partage avec un comptable)
             import pandas as pd
-
             df = pd.read_sql_query("SELECT * FROM mouvements WHERE regie IS NOT NULL", conn)
-            df.to_csv('export_mouvements_pandas.csv', index=False)
+            df.to_csv('export_pandas_mouvements.csv', index=False)
 #==============================================================================================================================================
 #            cur.execute("""
 #                ALTER TABLE id_data 
