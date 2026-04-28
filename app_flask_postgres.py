@@ -336,7 +336,7 @@ def init_db():
 
             # 1. Exécuter la requête
             cur.execute("""
-                SELECT * FROM comptes_techniques
+                SELECT * FROM mouvements
                 WHERE regie IS NOT NULL
             """)
 
@@ -345,7 +345,7 @@ def init_db():
             colnames = [desc[0] for desc in cur.description]
 
             # 3. Écrire dans le fichier CSV
-            with open('export_comptes.csv', 'w', newline='', encoding='utf-8') as f:
+            with open('export_mouvements.csv', 'w', newline='', encoding='utf-8') as f:
                 writer = csv.writer(f)
                 writer.writerow(colnames) # Ajoute l'en-tête
                 writer.writerows(rows)    # Ajoute les données
