@@ -3611,6 +3611,7 @@ INFOS_ASSOCIATION_PAGE = """
         h1 { color: #111; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         h2 { color: #444; margin-top: 25px; }
         p { margin-bottom: 15px; text-align: justify; }
+        .btn { padding: 10px 14px; border-radius: 12px; border: 1px solid #111; background: #fff; color: #111; cursor: pointer; }
         .footer { margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; }
         .btn-back { display: inline-block; padding: 10px 20px; background: #111; color: #fff; text-decoration: none; border-radius: 8px; }
     </style>
@@ -3623,7 +3624,7 @@ INFOS_ASSOCIATION_PAGE = """
 
         <!-- Bouton FAQ -->
         <a href="{{ url_for('FAQ_PAGE') }}">
-            <button type="button">Questions fréquentes - consultation rapide</button>
+            <button class="btn" type="button">Questions fréquentes - <small>réponses rapides</small></button>
         </a>
 
         </div>      
@@ -3692,16 +3693,17 @@ FAQ_PAGE = """
         h2 { color: #444; margin-top: 25px; }
         p { margin-bottom: 15px; text-align: justify; }
         .footer { margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; }
+        .btn {padding:10px 14px;border-radius:12px;border:1px solid #111;background:#fff;color:#111;cursor:pointer}
         .btn-back { display: inline-block; padding: 10px 20px; background: #111; color: #fff; text-decoration: none; border-radius: 8px; }
     </style>
 </head>
 <body>
 <div class="container">
-    <!-- 1. LA TABLE DES MATIÈRES -->
-    <h2>Table des matières</h2>
+    <h2>Questions Fréquentes</h2>
     <ul>
-    <li><a href="#chapitre1">Aller au Chapitre 1</a></li>
-    <li><a href="#chapitre2">Aller au Chapitre 2</a></li>
+    <li><a href="#chapitre1">Quelle est la mission de l’Association KM-Kimya et son objectif ?</a></li>
+    <li><a href="#chapitre2">Quel est le principe de fonctionnement et les modalités d'adhésion ?</a></li>
+    <li><a href="#chapitre3">Quels sont les avantages de l'adhésion ?</a></li>
     </ul>
 
     <hr> <!-- Séparateur visuel -->
@@ -3712,6 +3714,13 @@ FAQ_PAGE = """
 
     <h2 id="chapitre2">Chapitre 2 : L'aventure continue</h2>
     <p>Ceci est le texte détaillé du deuxième chapitre...</p>
+
+    <h2 id="chapitre3">Chapitre 3 : Les avantages de l'adhésion</h2>
+    <p>Ceci est le texte détaillé du troisième chapitre...</p>
+
+    <h2 id="chapitre4">Chapitre 4 : L'aventure continue</h2>
+    <p>Ceci est le texte détaillé du deuxième chapitre...</p>
+
 </div>
 </body>
 </html>
