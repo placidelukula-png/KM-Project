@@ -3700,23 +3700,36 @@ FAQ_PAGE = """
 <body>
 <div class="container">
     <h2>Questions Fréquentes</h2>
+    <p><a href="{{ url_for('infos_association') }}">← Retour</a></p>
+
     <ul>
     <li><a href="#chapitre1">Quelle est la mission et l'objectif de l’Association KM-Kimya ?</a></li>
     <li><a href="#chapitre2">Quel est le principe de fonctionnement et les modalités d'adhésion ?</a></li>
-    <li><a href="#chapitre3">Quels sont les avantages de l'adhésion ?</a></li>
+    <li><a href="#chapitre3">Qui peut adhérer à l'Association ?</a></li>
+    <li><a href="#chapitre4">Est ce que le paiement est obligatoire pour être membre de l’Association KM-Kimya ?</a></li>
+    <li><a href="#chapitre5">Un etranger ou un congolais résidant à l'etranger peut il adhérer à l'association ?</a></li>
+    <li><a href="#chapitre6">Comment proceder aux paiements si on réside à l'etranger ?</a></li>
+    <li><a href="#chapitre7">Comment l'association utilise les fonds collectés ?</a></li>
+    <li><a href="#chapitre8">Comment l'association assure la transparence et la responsabilité dans la gestion des fonds ?</a></li>
+    <li><a href="#chapitre9">Comment l'association soutient les familles en deuil ?</a></li>
+    <li><a href="#chapitre10">Comment l'association gère les situations où plusieurs décès surviennent en même temps ?</a></li>
+    <li><a href="#chapitre11">Comment l'association encourage la participation et l'engagement des membres ?</a></li>
+    <li><a href="#chapitre12">Comment l'association collabore avec d'autres organisations ou communautés pour renforcer son impact ?</a></li>
+    <li><a href="#chapitre13">Quels sont les projets futurs ou les initiatives prévues par l'association ?</a></li>
+    </li>   
     </ul>
 
     <hr> <!-- Séparateur visuel -->
 
     <!-- 2. LE CONTENU DÉTAILLÉ -->
-    <h2 id="chapitre1">Mission de KM-Kimya</h2>
+    <h2 id="chapitre1">Mission et objectif de lAssociation KM-Kimya</h2>
     <p>Notre association a pour mission principale 
     <ul>
-        <li>de rassembler les forces vives en association afin de promouvoir le développement et l'entraide entre tous les membres lorsque survient le décès d’un membre.</li>
+        <li>de rassembler les forces vives, en association, afin de promouvoir le développement et l'entraide entre tous les membres lorsque survient le décès d’un membre.</li>
         <li>De transformer une réaction émotionnelle ponctuelle en un mécanisme organisé, équitable et durable, au service de la dignité des familles et de la cohésion communautaire.</li>
     </ul>
     L’Association est fondée sur des valeurs de solidarité. Nous travaillons quotidiennement à la création d'un réseau solide où chaque adhérent trouve sa place et contribue à l'essor collectif.  Elle structure et sécurise une valeur culturelle existante : la solidarité. 
-    Ainsi, KM-KIMYA est une association solidaire engagée qui se fixe comme objectif
+    <br>Ainsi, KM-KIMYA est une association solidaire engagée qui se fixe comme objectif
     <ul>   
     <li>la réduction du choc économique lié aux funérailles par </li>
     <li>la mutualisation de petites contributions financières et </li>
@@ -3724,14 +3737,20 @@ FAQ_PAGE = """
     </ul> 
     </p>
 
-    <h2 id="chapitre2">Chapitre 2 : Le principe de fonctionnement et les modalités d'adhésion</h2>
+    <h2 id="chapitre2">Le principe de fonctionnement et les modalités d'adhésion</h2>
     <p>Ceci est le texte détaillé du deuxième chapitre...</p>
 
-    <h2 id="chapitre3">Chapitre 3 : Les avantages de l'adhésion</h2>
+    <h2 id="chapitre3">Qui peut adhérer à l'Association ?</h2>
     <p>Ceci est le texte détaillé du troisième chapitre...</p>
 
-    <h2 id="chapitre4">Chapitre 4 : L'aventure continue</h2>
+    <h2 id="chapitre4">Est-ce que le paiement est obligatoire pour être membre de l'Association KM-Kimya ?</h2>
     <p>Ceci est le texte détaillé du deuxième chapitre...</p>
+
+    <h2 id="chapitre5">Un etranger ou un congolais résidant à l'etranger peut il adhérer à l'association ?</h2>
+    <p>Ceci est le texte détaillé du deuxième chapitre...</p>
+
+    
+
 
     <div class="footer">
         <a href="{{ url_for('infos_association') }}" class="btn-back">← Retour à 'Notre association'</a>
