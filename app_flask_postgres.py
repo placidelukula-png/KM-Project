@@ -291,11 +291,11 @@ def init_db():
                         """)
             
             cur.execute("""
-                INSERT INTO comptes_techniques(code, balance, none, CURRENT_DATE, 'admin')
+                INSERT INTO comptes_techniques(code, balance)
                 SELECT regie, cumul
                 FROM mouvements_regie_20260428;
                         """)
-                        
+            log.info ("Comptes techniques mis à jour avec les cumuls par régie.")          
 #-----------------------------------------------------------------------------------
 #           # Correction exceptionnelle sur les données de base d'un adhérent.
 #            cur.execute("""
