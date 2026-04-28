@@ -3711,13 +3711,17 @@ FAQ_PAGE = """
     <!-- 2. LE CONTENU DÉTAILLÉ -->
     <h2 id="chapitre1">Mission de KM-Kimya</h2>
     <p>Notre association a pour mission principale 
-    -	de rassembler les forces vives en association afin de promouvoir le développement et l'entraide entre tous les membres lorsque survient le décès d’un membre.  
-    -	De transformer une réaction émotionnelle ponctuelle en un mécanisme organisé, équitable et durable, au service de la dignité des familles et de la cohésion communautaire.
+    <ul>
+        <li>de rassembler les forces vives en association afin de promouvoir le développement et l'entraide entre tous les membres lorsque survient le décès d’un membre.</li>
+        <li>De transformer une réaction émotionnelle ponctuelle en un mécanisme organisé, équitable et durable, au service de la dignité des familles et de la cohésion communautaire.</li>
+    </ul>
     L’Association est fondée sur des valeurs de solidarité. Nous travaillons quotidiennement à la création d'un réseau solide où chaque adhérent trouve sa place et contribue à l'essor collectif.  Elle structure et sécurise une valeur culturelle existante : la solidarité. 
-    Ainsi, KM-KIMYA est une association solidaire engagée qui se fixe comme objectif   
-    - la réduction du choc économique lié aux funérailles par 
-    - la mutualisation de petites contributions financières et 
-    - le versement rapide d'une aide significative à la famille éprouvée. 
+    Ainsi, KM-KIMYA est une association solidaire engagée qui se fixe comme objectif
+    <ul>   
+    <li>la réduction du choc économique lié aux funérailles par </li>
+    <li>la mutualisation de petites contributions financières et </li>
+    <li>le versement rapide d'une aide significative à la famille éprouvée.</li>
+    </ul> 
     </p>
 
     <h2 id="chapitre2">Chapitre 2 : Le principe de fonctionnement et les modalités d'adhésion</h2>
