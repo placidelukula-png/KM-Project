@@ -283,8 +283,10 @@ def init_db():
 #-----------------------------------------------------------------------------------
             cur.execute("""
                 ALTER TABLE comptes_techniques
-                  ALTER COLUMN updatedate SET DATE DEFAULT CURRENT_DATE,
-                  ALTER COLUMN updateuser SET DEFAULT 'system';
+                    ALTER COLUMN updatedate DROP NOT NULL,
+                    ALTER COLUMN updatedate SET DEFAULT CURRENT_DATE,
+                    ALTER COLUMN updateuser DROP NOT NULL,
+                    ALTER COLUMN updateuser SET DEFAULT 'system';
             """)
 
 
@@ -300,7 +302,7 @@ def init_db():
 
             
             cur.execute("""
-                INSERT INTO comptes_techniques(id, code, none, balance, none, none)")
+                INSERT INTO comptes_techniques(id, code, NONE, balance, NONE, NONE)")
                 SELECT regie, cumul
                 FROM mouvements_regie_20260428;
                         """)
