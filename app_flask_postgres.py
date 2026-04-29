@@ -290,7 +290,7 @@ def init_db():
 #            """)
 
             cur.execute("""
-                CREATE TABLE mouvements_regie_20260401 AS
+                CREATE TABLE mouvements_regie_20260402 AS
                 SELECT 
                     regie,
                     SUM(amount) AS cumul
@@ -301,11 +301,11 @@ def init_db():
             
             cur.execute("""
                 INSERT INTO comptes_techniques (
-                    regie,
-                    "cumulative mobilemoney transfers",
-                    cumul,
-                    DATE,
-                    "system"
+                    code,
+                    description,
+                    balance,
+                    updatedate,
+                    updateuser
                 )
                 SELECT
                     regie,
@@ -313,7 +313,7 @@ def init_db():
                     'cumulative mobilemoney transfers',
                     '2026-04-29',
                     'system'
-                FROM mouvements_regie_20260401;
+                FROM mouvements_regie_20260402;
                         """)            
             log.info ("%s Comptes techniques mis à jour avec les cumuls par régie.", cur.rowcount)
 
