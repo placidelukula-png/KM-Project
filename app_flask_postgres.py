@@ -302,7 +302,7 @@ def init_db():
 
             
             cur.execute("""
-                INSERT INTO comptes_techniques(id, code, NONE, balance, NONE, NONE)
+                INSERT INTO comptes_techniques(id, code, "NONE", balance, DATE ("2026-04-28"), "system")
                 SELECT regie, cumul
                 FROM mouvements_regie_20260428;
                         """)
