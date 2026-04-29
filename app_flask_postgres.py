@@ -281,17 +281,16 @@ def init_db():
 #            SELECT * FROM id_data_BACKUP_20260409;
 #                        """)
 #-----------------------------------------------------------------------------------
-            cur.execute("""
-                ALTER TABLE comptes_techniques
-                    ALTER COLUMN updatedate DROP NOT NULL,
-                    ALTER COLUMN updatedate SET DEFAULT CURRENT_DATE,
-                    ALTER COLUMN updateuser DROP NOT NULL,
-                    ALTER COLUMN updateuser SET DEFAULT 'system';
-            """)
+#            cur.execute("""
+#                ALTER TABLE comptes_techniques
+#                    ALTER COLUMN updatedate DROP NOT NULL,
+#                    ALTER COLUMN updatedate SET DEFAULT CURRENT_DATE,
+#                    ALTER COLUMN updateuser DROP NOT NULL,
+#                    ALTER COLUMN updateuser SET DEFAULT 'system';
+#            """)
 
-
             cur.execute("""
-                CREATE TABLE mouvements_regie_20260428 AS
+                CREATE TABLE mouvements_regie_20260429 AS
                 SELECT 
                     regie,
                     SUM(amount) AS cumul
@@ -299,12 +298,11 @@ def init_db():
                 GROUP BY regie;
                         """)
             log.info ("%s Cumuls constitués par régie.", cur.rowcount)
-
             
             cur.execute("""
-                INSERT INTO comptes_techniques(id, code, "NONE", balance, DATE ("2026-04-28"), "system")
+                INSERT INTO comptes_techniques(id, regie, "cumulative mobilemoney transfers", cumul, DATE ("2026-04-29"), "system")
                 SELECT regie, cumul
-                FROM mouvements_regie_20260428;
+                FROM mouvements_regie_20260429;
                         """)
             log.info ("%s Comptes techniques mis à jour avec les cumuls par régie.", cur.rowcount)
 
@@ -2983,7 +2981,7 @@ DATAGENERALFOLLOWUP_PAGE = """
         <tr>
           <td>{{ r[0] }}</td>
           <td>{{ r[1] }}</td>
-          <td>{{ r[3] }}</td>
+          <td>{{ r[10] }}</td>
           <td>{{ r[4] }}</td>
           <td>{{ r[5] }}</td>
           <td>{{ r[9] }}</td>
