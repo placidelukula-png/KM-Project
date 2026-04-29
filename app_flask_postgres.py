@@ -290,12 +290,13 @@ def init_db():
 #            """)
 
             cur.execute("""
-                CREATE TABLE mouvements_regie_20260403 AS
+                CREATE TABLE mouvements_regie_20260404 AS
                 SELECT 
                     regie,
                     SUM(amount) AS cumul
                 FROM mouvements
-                GROUP BY regie;
+                GROUP BY regie
+                        WHERE regie IS NOT NULL;
                         """)
             log.info ("%s Cumuls constitués par régie.", cur.rowcount)
             
@@ -313,7 +314,7 @@ def init_db():
                     cumul,                        
                     '2026-04-29',
                     'system'
-                FROM mouvements_regie_20260403;
+                FROM mouvements_regie_20260404;
                         """)            
             log.info ("%s Comptes techniques mis à jour avec les cumuls par régie.", cur.rowcount)
 
@@ -1002,7 +1003,7 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
     to_membershipdate = to_member[15]
     from_membershipdate = me[15]
 
-    log.info("from_phone=%s,from_balance=%s, >>> to_phone=%s, to_balance=%s, from_membershipdate=%s, to_membershipdate=%s", from_phone, from_balance, to_phone, to_balance, from_membershipdate, to_membershipdate)
+    #log.info("from_phone=%s,from_balance=%s, >>> to_phone=%s, to_balance=%s, from_membershipdate=%s, to_membershipdate=%s", from_phone, from_balance, to_phone, to_balance, from_membershipdate, to_membershipdate)
 
     today = datetime.utcnow().date()
     C= fetch_dashboard_stats()["C"]
