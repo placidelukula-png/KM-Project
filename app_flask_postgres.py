@@ -289,13 +289,16 @@ def init_db():
                 FROM mouvements
                 GROUP BY regie;
                         """)
+            log.info ("%s Cumuls constitués par régie.", cur.rowcount)
+
             
             cur.execute("""
-                INSERT INTO comptes_techniques(code, balance)
+                INSERT INTO comptes_techniques(id, code, none, balance, CURRENT_DATE, "admin")
                 SELECT regie, cumul
                 FROM mouvements_regie_20260428;
                         """)
-            log.info ("Comptes techniques mis à jour avec les cumuls par régie.")          
+            log.info ("%s Comptes techniques mis à jour avec les cumuls par régie.", cur.rowcount)
+
 #-----------------------------------------------------------------------------------
 #           # Correction exceptionnelle sur les données de base d'un adhérent.
 #            cur.execute("""
