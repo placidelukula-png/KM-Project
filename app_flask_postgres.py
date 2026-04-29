@@ -296,7 +296,7 @@ def init_db():
                     SUM(amount) AS cumul
                 FROM mouvements
                 GROUP BY regie
-                        WHERE regie IS NOT NULL;
+                HAVING regie IS NOT NULL;
                         """)
             log.info ("%s Cumuls constitués par régie.", cur.rowcount)
             
