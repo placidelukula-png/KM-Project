@@ -281,6 +281,7 @@ def init_db():
 #            SELECT * FROM id_data_BACKUP_20260409;
 #                        """)
 #-----------------------------------------------------------------------------------
+###           # Correction en haut-volume (ex: régularisation des comptes techniques par régie à partir des données de la table mouvements)
 #            cur.execute("""
 #                ALTER TABLE comptes_techniques
 #                    ALTER COLUMN updatedate DROP NOT NULL,
@@ -288,39 +289,39 @@ def init_db():
 #                    ALTER COLUMN updateuser DROP NOT NULL,
 #                    ALTER COLUMN updateuser SET DEFAULT 'system';
 #            """)
-            cur.execute("""
-                DELETE FROM comptes_techniques WHERE code IN (SELECT regie FROM mouvements_regie_20260404);
-            """)
-
-            cur.execute("""
-                CREATE TABLE mouvements_regie_20260405 AS
-                SELECT 
-                    regie,
-                    SUM(amount) AS cumul
-                FROM mouvements
-                GROUP BY regie
-                HAVING regie IS NOT NULL;
-                        """)
-            log.info ("%s Cumuls constitués par régie.", cur.rowcount)
-            
-            cur.execute("""
-                INSERT INTO comptes_techniques (
-                    code,
-                    description,
-                    balance,
-                    updatedate,
-                    updateuser
-                )
-                SELECT
-                    regie,
-                    'cumulative mobilemoney transfers',
-                    cumul,                        
-                    '2026-04-29',
-                    'system'
-                FROM mouvements_regie_20260405;
-                        """)            
-            log.info ("%s Comptes techniques mis à jour avec les cumuls par régie.", cur.rowcount)
-
+#            cur.execute("""
+#                DELETE FROM comptes_techniques WHERE code IN (SELECT regie FROM mouvements_regie_20260404);
+#            """)
+#
+#            cur.execute("""
+#                CREATE TABLE mouvements_regie_20260405 AS
+#                SELECT 
+#                    regie,
+#                    SUM(amount) AS cumul
+#                FROM mouvements
+#                GROUP BY regie
+#                HAVING regie IS NOT NULL;
+#                        """)
+#            log.info ("%s Cumuls constitués par régie.", cur.rowcount)
+#            
+#            cur.execute("""
+#                INSERT INTO comptes_techniques (
+#                    code,
+#                    description,
+#                    balance,
+#                    updatedate,
+#                    updateuser
+#                )
+#                SELECT
+#                    regie,
+#                    'cumulative mobilemoney transfers',
+#                    cumul,                        
+#                    '2026-04-29',
+#                    'system'
+#                FROM mouvements_regie_20260405;
+#                        """)            
+#            log.info ("%s Comptes techniques mis à jour avec les cumuls par régie.", cur.rowcount)
+###
 #-----------------------------------------------------------------------------------
 #           # Correction exceptionnelle sur les données de base d'un adhérent.
 #            cur.execute("""
@@ -2864,7 +2865,7 @@ DATAGENERALFOLLOWUP_PAGE = """
             <!-- BLOC 3 -->
             <form action="{{ url_for('launch_statutes_update') }}" method="POST">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button type="submit" class="btn btn-primary" style="width: 100%;" onclick="return confirm('Voulez-vous vraiment actualiser les statuts ?')">
+                <button type="submit" class="btn btn-primary" style="width: 100%;" onclick="return confirm('Avez vous vérifié les indicateurs ? (C notamment)données ?\nVoulez-vous vraiment actualiser les statuts ?')">
                     🔄 Actualiser les Statuts
                 </button>
             </form>
@@ -3728,7 +3729,7 @@ INFOS_ASSOCIATION_PAGE = """
             Bienvenue au sein de notre communauté. Notre association a pour mission principale de rassembler les forces vives afin de promouvoir le développement et l'entraide entre tous les membres. Fondée sur des valeurs de solidarité, nous travaillons quotidiennement à la création d'un réseau solide où chaque adhérent trouve sa place et contribue à l'essor collectif.
         </p>
         <p>
-        KM-KIMYA est une association solidaire engagée dans la réduction du choc économique lié aux funérailles par la mutualisation de petites contributions financières et le versement rapide d'une aide significative à la famille éprouvée. KM-Kimya symbolise le départ dans la paix et la sereinité tel que revé dans la tradition bantoue du bassin du Congo KM = Kuenda Mbote - Kuya Mimpe - Kokende Malamu - Kwenda Muzuri.
+        KM-KIMYA est une association solidaire engagée dans la réduction du choc économique lié aux funérailles par la mutualisation de petites contributions financières et le versement rapide d'une aide significative à la famille éprouvée. KM-Kimya symbolise le départ dans la paix et la sereinité tel que revé dans la tradition bantoue du bassin du Congo KM = Kuenda Mbote - Kuya Muditalala - Kokende Malamu - Kwenda Muzuri.
         </p>
 
         <h2>Méthodologie de travail</h2>
