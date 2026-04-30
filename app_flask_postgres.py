@@ -288,9 +288,12 @@ def init_db():
 #                    ALTER COLUMN updateuser DROP NOT NULL,
 #                    ALTER COLUMN updateuser SET DEFAULT 'system';
 #            """)
+            cur.execute("""
+                DELETE FROM comptes_techniques WHERE code IN (SELECT regie FROM mouvements_regie_20260404);
+            """)
 
             cur.execute("""
-                CREATE TABLE mouvements_regie_20260404 AS
+                CREATE TABLE mouvements_regie_20260405 AS
                 SELECT 
                     regie,
                     SUM(amount) AS cumul
@@ -314,7 +317,7 @@ def init_db():
                     cumul,                        
                     '2026-04-29',
                     'system'
-                FROM mouvements_regie_20260404;
+                FROM mouvements_regie_20260405;
                         """)            
             log.info ("%s Comptes techniques mis à jour avec les cumuls par régie.", cur.rowcount)
 
