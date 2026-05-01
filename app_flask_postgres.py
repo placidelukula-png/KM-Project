@@ -969,6 +969,16 @@ def create_deces(phone: str, date_deces, declared_by: str, reference: str):
         conn.commit()
 
 def create_cotisation(cotisation: float, ref_base: str, today: datetime):
+    phone = session.get("user")
+    me = fetch_member_by_phone(phone)
+    z_balance = me[10]   
+    z_membershipdate = me[15]
+    today = datetime.utcnow().date()
+    C= fetch_dashboard_stats()["C"]
+    #C=fetch_dashboard_stats().get("C", "0.00").replace(" ", "")
+    lib=f"Cotisation régulière de {cotisation} par {phone} à KM-Kimya"
+
+    #1) Mise à jour du compte technique du membre qui fait la cotisation (balance + cotisation)
     code=f"COT-{session.get('user')}"
     description=f"Cumul des Cotisations de {session.get('user')}"
     with get_conn() as conn:
@@ -981,9 +991,43 @@ def create_cotisation(cotisation: float, ref_base: str, today: datetime):
                     updatedate = %s,
                     updateuser = %s
             """, (code, description, cotisation, today, session.get('user'), cotisation, today, session.get('user'), ))
+    #2) insert 'mouvement' DEBIT (cotisation)
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO mouvements (phone, firstname,lastname, mvt_date, amount, debitcredit, reference,libelle)
+                VALUES (%s,%s,%s,%s,%s,'D',%s,%s)
+            """, (phone, me[5], me[4], today, cotisation, ref_base + "-COT", lib))    
+    #3) update 'membres' : balance du membre qui fait la cotisation (balance + cotisation)
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("UPDATE membres SET balance = balance - %s, updatedate=CURRENT_DATE, updateuser=%s WHERE phone=%s",
+                        (cotisation, phone, phone))           
+    #4) Update de 'currentstatute' en fonction de la balance (ou solde) du membre qui fait la cotisation :
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+                cur.execute("""
+                    UPDATE membres
+                    SET currentstatute = CASE
+                        WHEN phone = %s AND balance < %s THEN 'inactif'
+                        ELSE currentstatute
+                    END
+                    WHERE phone in (%s);
+                """, (phone,C,phone))
+
         conn.commit()
 
 def create_donation(donation: float, ref_base: str, today: datetime):
+    phone = session.get("user")
+    me = fetch_member_by_phone(phone)
+    z_balance = me[10]   
+    z_membershipdate = me[15]
+    today = datetime.utcnow().date()
+    C= fetch_dashboard_stats()["C"]
+    #C=fetch_dashboard_stats().get("C", "0.00").replace(" ", "")
+    lib=f"Donation de {donation} par {phone} à KM-Kimya"
+
+    #1) Mise à jour du compte technique du membre qui fait la donation (balance + donation)
     code=f"DON-{session.get('user')}"
     description=f"Cumul des Donations de {session.get('user')}"
     with get_conn() as conn:
@@ -996,6 +1040,31 @@ def create_donation(donation: float, ref_base: str, today: datetime):
                     updatedate = %s,
                     updateuser = %s
             """, (code, description, donation, today, session.get('user'), donation, today, session.get('user')))
+
+    #2) insert 'mouvement' DEBIT (donation)
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO mouvements (phone, firstname,lastname, mvt_date, amount, debitcredit, reference,libelle)
+                VALUES (%s,%s,%s,%s,%s,'D',%s,%s)
+            """, (phone, me[5], me[4], today, donation, ref_base + "-DON", lib))    
+    #3) update 'membres' : balance du membre qui fait la donation (balance + donation)
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("UPDATE membres SET balance = balance - %s, updatedate=CURRENT_DATE, updateuser=%s WHERE phone=%s",
+                        (donation, phone, phone))           
+    #4) Update de 'currentstatute' en fonction de la balance (ou solde) du membre qui fait la donation :
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+                cur.execute("""
+                    UPDATE membres
+                    SET currentstatute = CASE
+                        WHEN phone = %s AND balance < %s THEN 'inactif'
+                        ELSE currentstatute
+                    END
+                    WHERE phone in (%s);
+                """, (phone,C,phone))
+
         conn.commit()
 
 def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: str,today):
@@ -2498,7 +2567,7 @@ IMPORT_PAGE = """
 
 #---------------------------------------------------------------
 # Endpoint#07 Importer cotisations (menu card)
-#---
+#---------------------------------------------------------------
 import re
 from datetime import date
 
@@ -2509,7 +2578,7 @@ FR_MONTHS = {
     "avr": 4, "avril": 4, "apr": 4,
     "mai": 5, "may": 5, 
     "juin": 6, "jun": 6,
-    "juil": 7, "juillet": 7,"jul": 7, "juil": 7, "july"
+    "juil": 7, "juillet": 7,"jul": 7, "juil": 7, "july": 7,
     "aout": 8, "août": 8, "aug": 8,
     "sept": 9,
     "oct": 10,
@@ -2865,7 +2934,7 @@ DATAGENERALFOLLOWUP_PAGE = """
             <!-- BLOC 3 -->
             <form action="{{ url_for('launch_statutes_update') }}" method="POST">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button type="submit" class="btn btn-primary" style="width: 100%;" onclick="return confirm('Avez vous vérifié les indicateurs ? (C notamment)données ?\nVoulez-vous vraiment actualiser les statuts ?')">
+                <button type="submit" class="btn btn-primary" style="width: 100%;" onclick="return confirm('Avez vous vérifié les indicateurs ? (C notamment)')">
                     🔄 Actualiser les Statuts
                 </button>
             </form>
