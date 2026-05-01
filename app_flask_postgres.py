@@ -282,6 +282,27 @@ def init_db():
 #                        """)
 #-----------------------------------------------------------------------------------
 ###           # Correction en haut-volume (ex: régularisation des comptes techniques par régie à partir des données de la table mouvements)
+            cur.execute("""
+                UPDATE comptes_techniques
+                SET code ='MOBILEMONEY-airtel',
+                    description = 'Transferts mobile money - airtel',
+                WHERE code = 'airtel';
+            """)
+
+            cur.execute("""
+                UPDATE comptes_techniques
+                SET code ='MOBILEMONEY-vodacom',
+                    description = 'Transferts mobile money - vodacom',
+                WHERE code = 'vodacom';
+            """)
+
+            cur.execute("""
+                UPDATE comptes_techniques
+                SET code ='MOBILEMONEY-orange',
+                    description = 'Transferts mobile money - orange',
+                WHERE code = 'orange';
+            """)
+
 #            cur.execute("""
 #                ALTER TABLE comptes_techniques
 #                    ALTER COLUMN updatedate DROP NOT NULL,
@@ -2752,6 +2773,19 @@ def import_mouvements():
                             WHERE phone = %s;
                         """, (phone, contribution_minimum, phone))
 
+##
+                        # 7) Mise à jour comptes_techniques
+                        code="MOBILEMONEY-" + regie if regie else "Autres"
+                        description="Transferts Mobile Money - " + regie if regie else "Transferts Mobile Money - Autres"
+                        cur.execute("""
+                            INSERT INTO comptes_techniques (id, code, description, balance, updatedate, updateuser)
+                            VALUES (id,%s, %s, %s, CURRENT_DATE, %s)
+                            ON DUPLICATE KEY UPDATE
+                                balance = balance+%s,
+                                updatedate = CURRENT_DATE,
+                                updateuser = %s
+                        """, (code, description, amount, session.get("user"), amount, session.get("user")))
+##
                     except Exception:
                         skipped += 1
                         log.exception("Ligne ignorée - Erreur traitement ligne: %s", row)
