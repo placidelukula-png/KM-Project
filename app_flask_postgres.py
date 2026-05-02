@@ -285,21 +285,21 @@ def init_db():
             cur.execute("""
                 UPDATE comptes_techniques
                 SET code ='MOBILEMONEY-airtel',
-                    description = 'Transferts mobile money - airtel',
+                    description = 'Transferts mobile money - airtel'
                 WHERE code = 'airtel';
             """)
 
             cur.execute("""
                 UPDATE comptes_techniques
                 SET code ='MOBILEMONEY-vodacom',
-                    description = 'Transferts mobile money - vodacom',
+                    description = 'Transferts mobile money - vodacom'
                 WHERE code = 'vodacom';
             """)
 
             cur.execute("""
                 UPDATE comptes_techniques
                 SET code ='MOBILEMONEY-orange',
-                    description = 'Transferts mobile money - orange',
+                    description = 'Transferts mobile money - orange'
                 WHERE code = 'orange';
             """)
 
