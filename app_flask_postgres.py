@@ -3359,14 +3359,14 @@ def download_csv():
     with get_conn() as conn:
         with conn.cursor() as cur:
             output = io.StringIO()
-            cur.copy_expert(
-                """
+
+            with cur.copy("""
                 COPY (
                     SELECT * FROM mouvements WHERE regie IS NOT NULL
                 ) TO STDOUT WITH CSV HEADER
-                """,
-                output
-            )
+            """) as copy:
+                for data in copy:
+                    output.write(data)
 
     response = make_response(output.getvalue())
     response.headers["Content-Disposition"] = "attachment; filename=export_mouvements.csv"
