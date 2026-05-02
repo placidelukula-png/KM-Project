@@ -3358,7 +3358,7 @@ from flask import Response, make_response
 def download_csv():
     with get_conn() as conn:
         with conn.cursor() as cur:
-            output = io.StringIO()
+            output = io.BytesIO()
 
             with cur.copy("""
                 COPY (
@@ -3368,7 +3368,9 @@ def download_csv():
                 for data in copy:
                     output.write(data)
 
-    response = make_response(output.getvalue())
+    csv_text = output.getvalue().decode("utf-8")
+
+    response = make_response(csv_text)
     response.headers["Content-Disposition"] = "attachment; filename=export_mouvements.csv"
     response.headers["Content-type"] = "text/csv"
     return response
