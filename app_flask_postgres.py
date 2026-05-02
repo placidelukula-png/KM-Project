@@ -2780,10 +2780,11 @@ def import_mouvements():
                         cur.execute("""
                             INSERT INTO comptes_techniques (code, description, balance, updatedate, updateuser)
                             VALUES (%s, %s, %s, CURRENT_DATE, %s)
-                            ON DUPLICATE KEY UPDATE
-                                balance = balance + %s,
+                            ON CONFLICT (code)
+                            DO UPDATE SET
+                                balance = comptes_techniques.balance + %s,
                                 updatedate = CURRENT_DATE,
-                                updateuser = %s
+                                updateuser = %s;
                         """, (code, description, amount, session.get("user"), amount, session.get("user")))
 ##
                     except Exception:
