@@ -3358,26 +3358,21 @@ from flask import Response, make_response
 def download_csv():
     with get_conn() as conn:
         with conn.cursor() as cur:
-            cur.execute("SELECT * FROM mouvements WHERE regie IS NOT NULL")
-    
-    # Récupérer les données d'abord
-    rows = cur.fetchall()
-    
-    # Maintenant cur.description ne sera plus None
-    if cur.description is not None:
-        colnames = [desc[0] for desc in cur.description]
-    else:
-        colnames = []
+            output = io.StringIO()
+            cur.copy_expert(
+                """
+                COPY (
+                    SELECT * FROM mouvements WHERE regie IS NOT NULL
+                ) TO STDOUT WITH CSV HEADER
+                """,
+                output
+            )
 
-    output = io.StringIO()
-    writer = csv.writer(output)
-    writer.writerow(colnames)
-    writer.writerows(rows)
-    
     response = make_response(output.getvalue())
-    response.headers["Content-Disposition"] = "attachment; filename=export_comptes.csv"
+    response.headers["Content-Disposition"] = "attachment; filename=export_mouvements.csv"
     response.headers["Content-type"] = "text/csv"
     return response
+
 
 
 # --------------------------------------------------------------------------------------
