@@ -2115,7 +2115,7 @@ ACCOUNT_PAGE = """"
         <div><b>Total donations versées :</b> {{ m[12] }}</div> 
     </div>
 </div>
-
+<br>
 <!-- PASSWORD -->
 <div>
 <label>Nouveau mot de passe</label>
