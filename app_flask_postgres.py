@@ -1987,7 +1987,7 @@ ACCOUNT_PAGE = """
 .grid-2 {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+    gap: 16px;
 }
 
 /* --- CARTES --- */
@@ -2023,7 +2023,7 @@ ACCOUNT_PAGE = """
 .actions {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 16px;
 }
 
 /* --- RESPONSIVE --- */
@@ -2142,13 +2142,11 @@ ACCOUNT_PAGE = """
     <div class="card">
         <label>Mentor</label>
         <input name="mentor" value="{{ m[3] }}">
-        {{ mentor_info or m[3] }}
     </div>
 
     <div class="card">
         <label>Bénéficiaire</label>
         <input name="beneficiaire" value="{{ m[14] }}">
-        {{ beneficiaire_info or m[14] }}
     </div>
 
     <div class="card">
@@ -2167,7 +2165,7 @@ ACCOUNT_PAGE = """
 
     <div class="card">
         <label>Nouveau mot de passe</label>
-        <input name="new_password" type="password">
+        <input name="new_password" placeholder="Veuillez laisser blanc pour ne pas changer de mot de passe" type="password">
     </div>
 
     <div class="actions">
