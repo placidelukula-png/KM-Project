@@ -2146,7 +2146,7 @@ ACCOUNT_PAGE = """
     <label>Adresse</label>
     <input name="adresse" value="{{ m[13] }}">
     </div>
-
+<br>
 <!-- SECTION MENTOR / BENEFICIAIRE / COTISATIONS -->
 <div class="grid-3">
     
@@ -2193,7 +2193,7 @@ ACCOUNT_PAGE = """
     </div>
 
 </div>
-
+<br>
 
 <!-- SECTION PASSWORD + ACTIONS -->
 <div class="grid-2">
