@@ -1949,7 +1949,7 @@ def logout():
 # ---------------------------------------------------------------
 #   Endpoint #1 — Mon compte (lecture + mot de passe modifiable)
 # ---------------------------------------------------------------
-ACCOUNT_PAGE = """"
+ACCOUNT_PAGE = """
 <!doctype html>
 <html>
 <head>
@@ -2116,7 +2116,8 @@ ACCOUNT_PAGE = """"
         </div>
     </div>
 
-    <div class="flex-row">    
+    <!-- PASSWORD + ACTIONS -->    
+    <div class="flex-wrapper" style="margin-top:20px;">    
         <!-- PASSWORD -->
         <div>
         <label>Nouveau mot de passe</label>
@@ -3949,13 +3950,11 @@ FAQ_PAGE = """
     <p>Ceci est le texte détaillé du troisième chapitre...</p>
 
     <h2 id="chapitre4">Est-ce que le paiement est obligatoire pour être membre de l'Association KM-Kimya ?</h2>
-    <p>Ceci est le texte détaillé du deuxième chapitre...</p>
+    <p>Oui, le paiement de votre première contribution à la prestation de KM-Kimya lors du prochain décès dans le groupe est obligatoire. L'exigence du paiement préalable de la contribution permet d'intervenir rapidement (délai de moins de 72 heures) auprès de la famille et des proches du membre défunt.
+    </p>
 
     <h2 id="chapitre5">Un etranger ou un congolais résidant à l'etranger peut il adhérer à l'association ?</h2>
-    <p>Ceci est le texte détaillé du deuxième chapitre...</p>
-
-    
-
+    <p>Oui, absolument, un étranger ou un congolais résidant à l'etranger peut adhérer à l'association. Ceci est conforme à la loi qui régit les associations en République Démocratique du Congo. Il va de soi que n'ayant pas acces aux régies Mobile-Money locales en RDC, ceux qui sont membres résidant à l'etranger doivent s'acquitter de leurs obligations financières par la voie des transferts internationaux, nous recommandons vivement www.remitly.com</p>
 
     <div class="footer">
         <a href="{{ url_for('infos_association') }}" class="btn-back">← Retour à 'Notre association'</a>
