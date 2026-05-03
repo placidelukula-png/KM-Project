@@ -2068,72 +2068,50 @@ ACCOUNT_PAGE = """
     <input name="adresse" value="{{ m[13] }}">
     </div>
 
-    <!-- MENTOR + BENEFICIAIRE -->
-    <div class="flex-row">
-
-        <div>
+<!-- SECTION MENTOR / BENEFICIAIRE / COTISATIONS -->
+<div class="grid-3">
+    
+    <div class="card">
         <label>Mentor</label>
         <input name="mentor" value="{{ m[3] }}">
+        {{ mentor_info or m[3] }}
+    </div>
 
-        {% if mentor_info %}
-        <div class="mentor-box">
-            <div><b>Mentor :</b> {{ mentor_info[1] }}</div>
-            <div><b>Nom :</b> {{ mentor_info[5] }} {{ mentor_info[4] }}</div>
-            <div><b>Type & Statut :</b> {{ mentor_info[2] }} {{ mentor_info[9] }}</div>
-        </div>
-        {% elif m[3] %}
-        <div class="mentor-box mentor-warn">
-            <div><b>Mentor :</b> {{ m[3] }}</div>
-            <div>Profil mentor non trouvé.</div>
-        </div>
-        {% endif %}
-        </div>
-
-        <div>
+    <div class="card">
         <label>Bénéficiaire</label>
         <input name="beneficiaire" value="{{ m[14] }}">
+        {{ beneficiaire_info or m[14] }}
+    </div>
 
-        {% if beneficiaire_info %}
-        <div class="mentor-box">
-            <div><b>Bénéficiaire :</b> {{ beneficiaire_info[1] }}</div>
-            <div><b>Nom :</b> {{ beneficiaire_info[5] }} {{ beneficiaire_info[4] }}</div>
-            <div><b>Type & Statut :</b> {{ beneficiaire_info[2] }} {{ beneficiaire_info[9] }}</div>
-        </div>
-        {% elif m[14] %}
-        <div class="beneficiaire-box beneficiaire-warn">
-            <div><b>Bénéficiaire :</b> {{ m[14] }}</div>
-            <div>Profil bénéficiaire non trouvé.</div>
-        </div>
-        {% endif %}
-        </div>
-
-        
-        <div>
+    <div class="card">
         <label>Cotisations statutaires & donations :</label>
-        <div style="color:green;font-size:13px;">
-            <div><b>Total des cotisations statutaires versées :</b> {{ m[11] }}</div>
-            <div><b>Total des donations généreuses versées :</b> {{ m[12] }}</div> 
+        <div class="stats">
+            <div><b>Total cotisations :</b> {{ m[11] }}</div>
+            <div><b>Total donations :</b> {{ m[12] }}</div>
         </div>
     </div>
 
-    <!-- PASSWORD + ACTIONS -->    
-    <div class="flex-wrapper" style="margin-top:20px;">    
-        <!-- PASSWORD -->
-        <div>
+</div>
+
+
+<!-- SECTION PASSWORD + ACTIONS -->
+<div class="grid-2">
+
+    <div class="card">
         <label>Nouveau mot de passe</label>
         <input name="new_password" type="password">
-        </div>
+    </div>
 
-        <!-- ACTIONS -->
-        <div class="row">
+    <div class="actions">
         <button class="btn" type="submit">Enregistrer</button>
         <a class="btn2" href="{{ url_for('home') }}">Annuler</a>
-        </div>
-
-        {% if message %}
-        <div class="msg {{ 'err' if is_error else 'ok' }}">{{ message }}</div>
-        {% endif %}
     </div>
+
+    {% if message %}
+    <div class="msg {{ 'err' if is_error else 'ok' }}">{{ message }}</div>
+    {% endif %}
+
+</div>
 </form>
 
 </div>
