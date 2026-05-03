@@ -1975,6 +1975,74 @@ ACCOUNT_PAGE = """
  .ok{background:#eaffea;border:1px solid #b8ffb8}
  .err{background:#ffe9ea;border:1px solid #ffb3b8}
 
+
+ 
+/* --- GRID PRINCIPALE --- */
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+/* --- CARTES --- */
+.card {
+    background: #fff;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+}
+
+/* --- INPUTS --- */
+.card label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.card input {
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #aaa;
+}
+
+/* --- STATS --- */
+.stats {
+    margin-top: 10px;
+    color: green;
+    font-size: 14px;
+}
+
+/* --- ACTIONS --- */
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 900px) {
+    .grid-3 {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .grid-3,
+    .grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+
+
  .mentor-box{
   margin-top:8px;
   padding:10px 12px;
