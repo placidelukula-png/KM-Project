@@ -2102,17 +2102,17 @@ ACCOUNT_PAGE = """
 
     <div>
     <label>Identifiant</label>
-    <input value="{{ m[1] }}" readonly>
+    <input value="{{ m[1] }}" size="10" readonly>
     </div>
 
     <div>
     <label>Statut</label>
-    <input value="{{ m[9] }}" readonly>
+    <input value="{{ m[9] }}" size="10" readonly>
     </div>
 
     <div>
     <label>Solde</label>
-    <input value="{{ m[10] }}" readonly>
+    <input value="{{ m[10] }}" size="10" readonly>
     </div>
 
     </div>
@@ -2174,10 +2174,10 @@ ACCOUNT_PAGE = """
     </div>
 
     <div class="card">
-        <label>Cotisations statutaires & donations :</label>
+        <label>Cotisations & Donations :</label>
         <div class="stats">
-            <div><b>Total cotisations :</b> {{ m[11] }}</div>
-            <div><b>Total donations :</b> {{ m[12] }}</div>
+            <div><b>Total  cotisations :</b> {{ m[11] }}</div>
+            <div><b>Total des donations :</b> {{ m[12] }}</div>
         </div>
     </div>
 
