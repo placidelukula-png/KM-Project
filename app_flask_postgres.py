@@ -1987,7 +1987,7 @@ ACCOUNT_PAGE = """
 .grid-2 {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
+    gap: 20px;
 }
 
 /* --- CARTES --- */
@@ -2023,7 +2023,7 @@ ACCOUNT_PAGE = """
 .actions {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 10px;
 }
 
 /* --- RESPONSIVE --- */
@@ -2142,11 +2142,35 @@ ACCOUNT_PAGE = """
     <div class="card">
         <label>Mentor</label>
         <input name="mentor" value="{{ m[3] }}">
+        {% if mentor_info %}
+        <div class="mentor-box">
+            <div><b>Mentor :</b> {{ mentor_info[1] }}</div>
+            <div><b>Nom :</b> {{ mentor_info[5] }} {{ mentor_info[4] }}</div>
+            <div><b>Type & Statut :</b> {{ mentor_info[2] }} {{ mentor_info[9] }}</div>
+        </div>
+        {% elif m[3] %}
+        <div class="mentor-box mentor-warn">
+            <div><b>Mentor :</b> {{ m[3] }}</div>
+            <div>Profil mentor non trouvé.</div>
+        </div>
+        {% endif %}
     </div>
 
     <div class="card">
         <label>Bénéficiaire</label>
         <input name="beneficiaire" value="{{ m[14] }}">
+        {% if beneficiaire_info %}
+        <div class="mentor-box">
+            <div><b>Bénéficiaire :</b> {{ beneficiaire_info[1] }}</div>
+            <div><b>Nom :</b> {{ beneficiaire_info[5] }} {{ beneficiaire_info[4] }}</div>
+            <div><b>Type & Statut :</b> {{ beneficiaire_info[2] }} {{ beneficiaire_info[9] }}</div>
+        </div>
+        {% elif m[14] %}
+        <div class="mentor-box mentor-warn">
+            <div><b>Bénéficiaire :</b> {{ m[14] }}</div>
+            <div>Profil bénéficiaire non trouvé.</div>
+        </div>
+        {% endif %}
     </div>
 
     <div class="card">
