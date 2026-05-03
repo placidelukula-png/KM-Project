@@ -2098,7 +2098,7 @@ ACCOUNT_PAGE = """
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
     <!-- SECTION INFO -->
-    <div class="card" style="color:blue;" class="inline-3">
+    <div style="color:blue;" gap:20px; class="inline-3">
 
     <div>
     <label>Identifiant</label>
