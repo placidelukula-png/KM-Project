@@ -2027,111 +2027,112 @@ ACCOUNT_PAGE = """"
 <div class="card">
 
 <form method="post">
-<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-<!-- SECTION INFO -->
-<div style="color:blue;" class="inline-3">
-
-<div>
-<label>Identifiant</label>
-<input value="{{ m[1] }}" readonly>
-</div>
-
-<div>
-<label>Statut</label>
-<input value="{{ m[9] }}" readonly>
-</div>
-
-<div>
-<label>Solde</label>
-<input value="{{ m[10] }}" readonly>
-</div>
-
-</div>
-
-<!-- SECTION NOM -->
-<div style="color:black;" class="inline-2">
-<div>
-<label>Nom</label>
-<input name="lastname" value="{{ m[4] }}">
-</div>
-
-<div>
-<label>Prénom</label>
-<input name="firstname" value="{{ m[5] }}">
-</div>
-</div>
-
-<!-- ADRESSE -->
-<div>
-<label>Adresse</label>
-<input name="adresse" value="{{ m[13] }}">
-</div>
-
-<!-- MENTOR + BENEFICIAIRE -->
-<div class="flex-row">
+    <!-- SECTION INFO -->
+    <div style="color:blue;" class="inline-3">
 
     <div>
-    <label>Mentor</label>
-    <input name="mentor" value="{{ m[3] }}">
-
-    {% if mentor_info %}
-    <div class="mentor-box">
-        <div><b>Mentor :</b> {{ mentor_info[1] }}</div>
-        <div><b>Nom :</b> {{ mentor_info[5] }} {{ mentor_info[4] }}</div>
-        <div><b>Type & Statut :</b> {{ mentor_info[2] }} {{ mentor_info[9] }}</div>
-    </div>
-    {% elif m[3] %}
-    <div class="mentor-box mentor-warn">
-        <div><b>Mentor :</b> {{ m[3] }}</div>
-        <div>Profil mentor non trouvé.</div>
-    </div>
-    {% endif %}
+    <label>Identifiant</label>
+    <input value="{{ m[1] }}" readonly>
     </div>
 
     <div>
-    <label>Bénéficiaire</label>
-    <input name="beneficiaire" value="{{ m[14] }}">
-
-    {% if beneficiaire_info %}
-    <div class="mentor-box">
-        <div><b>Bénéficiaire :</b> {{ beneficiaire_info[1] }}</div>
-        <div><b>Nom :</b> {{ beneficiaire_info[5] }} {{ beneficiaire_info[4] }}</div>
-        <div><b>Type & Statut :</b> {{ beneficiaire_info[2] }} {{ beneficiaire_info[9] }}</div>
-    </div>
-    {% elif m[14] %}
-    <div class="beneficiaire-box beneficiaire-warn">
-        <div><b>Bénéficiaire :</b> {{ m[14] }}</div>
-        <div>Profil bénéficiaire non trouvé.</div>
-    </div>
-    {% endif %}
+    <label>Statut</label>
+    <input value="{{ m[9] }}" readonly>
     </div>
 
-    
     <div>
-    <label>Cotisations statutaires & donations :</label>
-    <div style="color:green;font-size:13px;">
-        <div><b>Total cotisations statutaires versées :</b> {{ m[11] }}</div>
-        <div><b>Total donations versées :</b> {{ m[12] }}</div> 
+    <label>Solde</label>
+    <input value="{{ m[10] }}" readonly>
     </div>
-</div>
-<hr>
-<!-- PASSWORD -->
-<div>
-<label>Nouveau mot de passe</label>
-<input name="new_password" type="password">
-</div>
 
-<!-- ACTIONS -->
-<div class="row">
-<button class="btn" type="submit">Enregistrer</button>
-<a class="btn2" href="{{ url_for('home') }}">Annuler</a>
-</div>
+    </div>
 
-{% if message %}
-<div class="msg {{ 'err' if is_error else 'ok' }}">{{ message }}</div>
-{% endif %}
+    <!-- SECTION NOM -->
+    <div style="color:black;" class="inline-2">
+    <div>
+    <label>Nom</label>
+    <input name="lastname" value="{{ m[4] }}">
+    </div>
 
+    <div>
+    <label>Prénom</label>
+    <input name="firstname" value="{{ m[5] }}">
+    </div>
+    </div>
+
+    <!-- ADRESSE -->
+    <div>
+    <label>Adresse</label>
+    <input name="adresse" value="{{ m[13] }}">
+    </div>
+
+    <!-- MENTOR + BENEFICIAIRE -->
+    <div class="flex-row">
+
+        <div>
+        <label>Mentor</label>
+        <input name="mentor" value="{{ m[3] }}">
+
+        {% if mentor_info %}
+        <div class="mentor-box">
+            <div><b>Mentor :</b> {{ mentor_info[1] }}</div>
+            <div><b>Nom :</b> {{ mentor_info[5] }} {{ mentor_info[4] }}</div>
+            <div><b>Type & Statut :</b> {{ mentor_info[2] }} {{ mentor_info[9] }}</div>
+        </div>
+        {% elif m[3] %}
+        <div class="mentor-box mentor-warn">
+            <div><b>Mentor :</b> {{ m[3] }}</div>
+            <div>Profil mentor non trouvé.</div>
+        </div>
+        {% endif %}
+        </div>
+
+        <div>
+        <label>Bénéficiaire</label>
+        <input name="beneficiaire" value="{{ m[14] }}">
+
+        {% if beneficiaire_info %}
+        <div class="mentor-box">
+            <div><b>Bénéficiaire :</b> {{ beneficiaire_info[1] }}</div>
+            <div><b>Nom :</b> {{ beneficiaire_info[5] }} {{ beneficiaire_info[4] }}</div>
+            <div><b>Type & Statut :</b> {{ beneficiaire_info[2] }} {{ beneficiaire_info[9] }}</div>
+        </div>
+        {% elif m[14] %}
+        <div class="beneficiaire-box beneficiaire-warn">
+            <div><b>Bénéficiaire :</b> {{ m[14] }}</div>
+            <div>Profil bénéficiaire non trouvé.</div>
+        </div>
+        {% endif %}
+        </div>
+
+        
+        <div>
+        <label>Cotisations statutaires & donations :</label>
+        <div style="color:green;font-size:13px;">
+            <div><b>Total des cotisations statutaires versées :</b> {{ m[11] }}</div>
+            <div><b>Total des donations généreuses versées :</b> {{ m[12] }}</div> 
+        </div>
+    </div>
+
+    <div class="flex-row">    
+        <!-- PASSWORD -->
+        <div>
+        <label>Nouveau mot de passe</label>
+        <input name="new_password" type="password">
+        </div>
+
+        <!-- ACTIONS -->
+        <div class="row">
+        <button class="btn" type="submit">Enregistrer</button>
+        <a class="btn2" href="{{ url_for('home') }}">Annuler</a>
+        </div>
+
+        {% if message %}
+        <div class="msg {{ 'err' if is_error else 'ok' }}">{{ message }}</div>
+        {% endif %}
+    </div>
 </form>
 
 </div>
