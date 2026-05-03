@@ -2098,21 +2098,21 @@ ACCOUNT_PAGE = """
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
     <!-- SECTION INFO -->
-    <div style="color:blue;" width="100%"; max-width:900px;" class="inline-3">
+    <div style="color:blue;" " class="inline-3">
 
     <div>
     <label>Identifiant</label>
-    <input value="{{ m[1] }}" size="10" readonly>
+    <input value="{{ m[1] }}" size="10" width="100%"; max-width:100%; readonly>
     </div>
 
     <div>
     <label>Statut</label>
-    <input value="{{ m[9] }}" size="10" readonly>
+    <input value="{{ m[9] }}" size="10" width="100%"; max-width:100%; readonly>
     </div>
 
     <div>
     <label>Solde</label>
-    <input value="{{ m[10] }}" size="10" readonly>
+    <input value="{{ m[10] }}" size="10" width="100%"; max-width:100%; readonly>
     </div>
 
     </div>
