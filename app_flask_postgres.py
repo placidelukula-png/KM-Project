@@ -1978,6 +1978,15 @@ ACCOUNT_PAGE = """
 
  
 /* --- GRID PRINCIPALE --- */
+.input {
+    width: 100%;
+    max-width: 100%;
+}
+
+* {
+    box-sizing: border-box;
+}
+
 .grid-3 {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -2082,6 +2091,8 @@ ACCOUNT_PAGE = """
 </style>
 </head>
 
+
+
 <body>
 
 <div class="wrap">
@@ -2102,17 +2113,17 @@ ACCOUNT_PAGE = """
 
     <div>
     <label>Identifiant</label>
-    <input value="{{ m[1] }}" size="10" width="100%"; max-width:100%; readonly>
+    <input value="{{ m[1] }}" size="10" readonly>
     </div>
 
     <div>
     <label>Statut</label>
-    <input value="{{ m[9] }}" size="10" width="100%"; max-width:100%; readonly>
+    <input value="{{ m[9] }}" size="10" readonly>
     </div>
 
     <div>
     <label>Solde</label>
-    <input value="{{ m[10] }}" size="10" width="100%"; max-width:100%; readonly>
+    <input value="{{ m[10] }}" size="10" readonly>
     </div>
 
     </div>
