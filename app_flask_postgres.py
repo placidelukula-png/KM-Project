@@ -889,6 +889,26 @@ def fetch_member_by_phone(phone: str):
             """, (phone,))
             return cur.fetchone()
 
+def fetch_ct_cotisations(cot_cotisations: str):
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT code, balance
+                FROM comptes_techniques
+                WHERE code=%s
+            """, (cot_cotisations,))
+            return cur.fetchone()
+
+def fetch_ct_donations(don_donations: str):
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT code, balance
+                FROM comptes_techniques
+                WHERE code=%s
+            """, (don_donations,))
+            return cur.fetchone()
+
 def update_member_password(phone: str, new_password_plain: str, updateuser: str):
     pwd_hash = generate_password_hash(new_password_plain)
     with get_conn() as conn:
@@ -2187,8 +2207,8 @@ ACCOUNT_PAGE = """
     <div class="card">
         <label>Cotisations & Donations :</label>
         <div class="stats">
-            <div><b>Total  cotisations :</b> {{ m[11] }}</div>
-            <div><b>Total des donations :</b> {{ m[12] }}</div>
+            <div><b>Total  cotisations :</b> {{ cotisations }}</div>
+            <div><b>Total des donations :</b> {{ donations }}</div>
         </div>
     </div>
 
@@ -2232,6 +2252,14 @@ def account():
     m = fetch_member_by_phone(phone)
     mentor_info = fetch_member_by_phone(m[3]) if m and m[3] else None
     beneficiaire_info = fetch_member_by_phone(m[14]) if m and m[14] else None
+
+    ct_cotisations = "COT" + phone
+    cotisation = fetch_ct_cotisations(ct_cotisations)
+    cotisations = cotisation[2] if cotisation else 0
+
+    ct_donations = "DON" + phone
+    donation = fetch_ct_donations(ct_donations)
+    donations = donation[2] if donation else 0
 
     if request.method == "POST":
         try:
@@ -2297,7 +2325,7 @@ def account():
             beneficiaire_info = fetch_member_by_phone(m[14]) if m and m[14] else None
             return render_template_string(ACCOUNT_PAGE, m=m, mentor_info=mentor_info, beneficiaire_info=beneficiaire_info, message=f"Erreur: {e}", is_error=True)
 
-    return render_template_string(ACCOUNT_PAGE, m=m, mentor_info=mentor_info,beneficiaire_info=beneficiaire_info, message="", is_error=False)
+    return render_template_string(ACCOUNT_PAGE, m=m, mentor_info=mentor_info,beneficiaire_info=beneficiaire_info,donations=donations,cotisations=cotisations, message="", is_error=False)
 
 
 # ---------------------------------------------------------------
