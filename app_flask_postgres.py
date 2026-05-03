@@ -2071,42 +2071,49 @@ ACCOUNT_PAGE = """"
 <!-- MENTOR + BENEFICIAIRE -->
 <div class="flex-row">
 
-<div>
-<label>Mentor</label>
-<input name="mentor" value="{{ m[3] }}">
+    <div>
+    <label>Mentor</label>
+    <input name="mentor" value="{{ m[3] }}">
 
-{% if mentor_info %}
-  <div class="mentor-box">
-    <div><b>Mentor :</b> {{ mentor_info[1] }}</div>
-    <div><b>Nom :</b> {{ mentor_info[5] }} {{ mentor_info[4] }}</div>
-    <div><b>Type & Statut :</b> {{ mentor_info[2] }} {{ mentor_info[9] }}</div>
-  </div>
-{% elif m[3] %}
-  <div class="mentor-box mentor-warn">
-    <div><b>Mentor :</b> {{ m[3] }}</div>
-    <div>Profil mentor non trouvé.</div>
-  </div>
-{% endif %}
-</div>
+    {% if mentor_info %}
+    <div class="mentor-box">
+        <div><b>Mentor :</b> {{ mentor_info[1] }}</div>
+        <div><b>Nom :</b> {{ mentor_info[5] }} {{ mentor_info[4] }}</div>
+        <div><b>Type & Statut :</b> {{ mentor_info[2] }} {{ mentor_info[9] }}</div>
+    </div>
+    {% elif m[3] %}
+    <div class="mentor-box mentor-warn">
+        <div><b>Mentor :</b> {{ m[3] }}</div>
+        <div>Profil mentor non trouvé.</div>
+    </div>
+    {% endif %}
+    </div>
 
-<div>
-<label>Bénéficiaire</label>
-<input name="beneficiaire" value="{{ m[14] }}">
+    <div>
+    <label>Bénéficiaire</label>
+    <input name="beneficiaire" value="{{ m[14] }}">
 
-{% if beneficiaire_info %}
-  <div class="mentor-box">
-    <div><b>Bénéficiaire :</b> {{ beneficiaire_info[1] }}</div>
-    <div><b>Nom :</b> {{ beneficiaire_info[5] }} {{ beneficiaire_info[4] }}</div>
-    <div><b>Type & Statut :</b> {{ beneficiaire_info[2] }} {{ beneficiaire_info[9] }}</div>
-  </div>
-{% elif m[14] %}
-  <div class="beneficiaire-box beneficiaire-warn">
-    <div><b>Bénéficiaire :</b> {{ m[14] }}</div>
-    <div>Profil bénéficiaire non trouvé.</div>
-  </div>
-{% endif %}
-</div>
+    {% if beneficiaire_info %}
+    <div class="mentor-box">
+        <div><b>Bénéficiaire :</b> {{ beneficiaire_info[1] }}</div>
+        <div><b>Nom :</b> {{ beneficiaire_info[5] }} {{ beneficiaire_info[4] }}</div>
+        <div><b>Type & Statut :</b> {{ beneficiaire_info[2] }} {{ beneficiaire_info[9] }}</div>
+    </div>
+    {% elif m[14] %}
+    <div class="beneficiaire-box beneficiaire-warn">
+        <div><b>Bénéficiaire :</b> {{ m[14] }}</div>
+        <div>Profil bénéficiaire non trouvé.</div>
+    </div>
+    {% endif %}
+    </div>
 
+    
+    <div>
+    <label>Cotisations statutaires & donations :</label>
+    <div style="color:green;font-size:13px;">
+        <div><b>Total cotisations statutaires versées :</b> {{ m[11] }}</div>
+        <div><b>Total donations versées :</b> {{ m[12] }}</div> 
+    </div>
 </div>
 
 <!-- PASSWORD -->
@@ -3851,7 +3858,7 @@ INFOS_ASSOCIATION_PAGE = """
         </p>
 
         <p>
-            Nous recommandons vivement aux membres residants en dehors de la RDC d'utiliser les services offerts par les réseaux de transfert d'argent internationaux comme <strong>REMITLY</strong> accessible officiellement sous l'URL <strong>www.remitly.com</strong> (pas ailleurs). Pour le cas de 'remitly' l'utilisation des destinations mobile-money :<strong> +243824807663 pour Mpesa et +243891273191 pour Orange-money</strong> sont efficaces ; le transfert est quasi instantané. Dans ce cas, n'oubliez pas d'accompagner votre transfert par un message téléphonique SMS, au numéro de destination, libellé comme suit : "<i><P style="color: blue;">Pour KM-Kimya à partir de '<strong>NOM DU PAYS D'Où VOUS ENVOYEZ</strong>' en faveur de '<strong>IDENTIFIANT KM-KIMYA DU BENEFICAIRE</strong>'  Montant: '<strong>LE MONTANT ENVOYÉ</strong>' </P></i>" pour nous permettre de vous identifier correctement dans notre base de données.
+            Nous recommandons vivement aux membres residants en dehors de la RDC d'utiliser les services offerts par les réseaux de transfert d'argent internationaux comme <strong>REMITLY</strong> accessible officiellement sous l'URL <strong>www.remitly.com</strong> (pas ailleurs). Pour le cas de 'remitly' l'utilisation des destinations mobile-money :<strong> +243824807663 pour Mpesa et +243891273191 pour Orange-money</strong> sont efficaces ; le transfert est quasi instantané. Dans ce cas, n'oubliez pas d'accompagner votre transfert par un message téléphonique SMS, au numéro de destination, libellé comme suit : <i><P style="color: blue;">"Pour KM-Kimya à partir de '<strong>NOM DU PAYS D'Où VOUS ENVOYEZ</strong>' en faveur de '<strong>IDENTIFIANT KM-KIMYA DU BENEFICAIRE</strong>'  Montant: '<strong>LE MONTANT ENVOYÉ</strong>'"</P></i> pour nous permettre de vous identifier correctement dans notre base de données.
         </p>
 
 
