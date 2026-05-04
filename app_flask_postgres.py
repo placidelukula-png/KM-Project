@@ -2253,11 +2253,11 @@ def account():
     mentor_info = fetch_member_by_phone(m[3]) if m and m[3] else None
     beneficiaire_info = fetch_member_by_phone(m[14]) if m and m[14] else None
 
-    ct_cotisations = "COT" + phone
+    ct_cotisations = "COT-" + phone
     cotisation = fetch_ct_cotisations(ct_cotisations)
     cotisations = cotisation[2] if cotisation else 0
 
-    ct_donations = "DON" + phone
+    ct_donations = "DON-" + phone
     donation = fetch_ct_donations(ct_donations)
     donations = donation[2] if donation else 0
 
