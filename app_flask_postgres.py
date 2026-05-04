@@ -3970,7 +3970,6 @@ INFOS_ASSOCIATION_PAGE = """
             Nous recommandons vivement aux membres residants en dehors de la RDC d'utiliser les services offerts par les réseaux de transfert d'argent internationaux comme <strong>REMITLY</strong> accessible officiellement sous l'URL <strong>www.remitly.com</strong> (pas ailleurs). Pour le cas de 'remitly' l'utilisation des destinations mobile-money :<strong> +243824807663 pour Mpesa et +243891273191 pour Orange-money</strong> sont efficaces ; le transfert est quasi instantané. Dans ce cas, n'oubliez pas d'accompagner votre transfert par un message téléphonique SMS, au numéro de destination, libellé comme suit : <i><P style="color: blue;">"Pour KM-Kimya à partir de '<strong>NOM DU PAYS D'Où VOUS ENVOYEZ</strong>' en faveur de '<strong>IDENTIFIANT KM-KIMYA DU BENEFICAIRE</strong>'  Montant: '<strong>LE MONTANT ENVOYÉ</strong>'"</P></i> pour nous permettre de vous identifier correctement dans notre base de données.
         </p>
 
-
         <p>
             Notre approche repose sur une organisation rigoureuse divisée en plusieurs piliers : 
             l'identification, l'accompagnement et le suivi. Chaque nouveau membre est intégré 
@@ -4018,8 +4017,10 @@ FAQ_PAGE = """
     <li><a href="#chapitre2">Qui peut adhérer à l'Association ?</a></li>
     <li><a href="#chapitre3">Quel est le principe de fonctionnement et les modalités d'adhésion ?</a></li>
     <li><a href="#chapitre4">Est ce que le paiement est obligatoire pour être membre de l’Association KM-Kimya ?</a></li>
-    <li><a href="#chapitre5">Un etranger ou un congolais résidant à l'etranger peut il adhérer à l'association ?</a></li>
-    <li><a href="#chapitre6">Comment proceder aux paiements si on réside à l'etranger ?</a></li>
+    <li><a href="#chapitre5">Un etranger ou un congolais résidant à l'etranger peut il adhérer à l'association qui opère sur terrain au Congo (RDC) ?</a></li>
+    <li><a href="#chapitre6">Comment proceder aux paiements sur terrain au Congo (RDC)?</a></li>
+    <li><a href="#chapitre7">Comment proceder aux paiements si on réside à l'etranger ?</a></li>
+
     <li><a href="#chapitre7">Comment l'association utilise t-elle les fonds collectés ?</a></li>
     <li><a href="#chapitre8">Comment l'association assure la transparence et la responsabilité dans la gestion des fonds ?</a></li>
     <li><a href="#chapitre9">Comment l'association soutient les familles en deuil ?</a></li>
@@ -4029,7 +4030,10 @@ FAQ_PAGE = """
     <li><a href="#chapitre13">Quels sont les projets futurs ou les initiatives prévues par l'association ?</a></li>
     </li>   
     </ul>
-    <br> <br>Note importante:</b> Les réponses à ces questions sont basées sur les informations disponibles à ce jour et peuvent être sujettes à des mises à jour ou des modifications en fonction de l'évolution de l'association et de ses activités.</bf>
+    <br>
+    <br> 
+    <hr>
+    <br><small> Note importante:</b> Les réponses à ces questions sont basées sur les informations disponibles à ce jour et peuvent être sujettes à des mises à jour ou des modifications en fonction de l'évolution de l'association et de ses activités.</small>
     <hr> <!-- Séparateur visuel -->
 
     <!-- 2. LE CONTENU DÉTAILLÉ -->
@@ -4067,8 +4071,25 @@ FAQ_PAGE = """
     <p>Oui ; à l'adhésion le paiement de votre première contribution à la prestation de KM-Kimya lors du prochain décès dans le groupe est obligatoire. L'exigence du paiement préalable de la contribution permet d'intervenir rapidement (délai de moins de 72 heures) auprès de la famille et des proches du membre défunt.
     </p>
 
-    <h2 id="chapitre5">Un etranger ou un congolais résidant à l'etranger peut il adhérer à l'association ?</h2>
-    <p>Oui, absolument, un étranger ou un congolais résidant à l'etranger peut adhérer à l'association. Ceci est conforme à la loi qui régit les associations en République Démocratique du Congo. Il va de soi que n'ayant pas acces aux régies Mobile-Money locales en RDC, ceux qui sont membres résidant à l'etranger doivent s'acquitter de leurs obligations financières par la voie des transferts internationaux, nous recommandons vivement www.remitly.com</p>
+    <h2 id="chapitre5">Un etranger ou un congolais résidant à l'etranger peut il adhérer à une association qui opère sur terrain au Congo (RDC) ?</h2>
+    <p>Oui, absolument, un étranger ou un congolais résidant à l'etranger peut adhérer à l'association congolaise. Ceci est conforme à la loi qui régit les associations en République Démocratique du Congo. Il va de soi que n'ayant pas acces aux régies Mobile-Money locales en RDC, ceux qui sont membres résidant à l'etranger doivent s'acquitter de leurs obligations financières par la voie des transferts internationaux, nous recommandons vivement www.remitly.com</p>
+
+    <h2 id="chapitre6">Comment proceder aux paiements sur terrain au Congo (RDC) ?</h2>
+    <p>
+    Pour les membres résidant en RDC, le paiement de la contribution se fait exclusivement par mobile-money via les numéros suivants :
+        <ul>
+            <li><strong>+243 824807663</strong> pour Mpesa</li>
+            <li><strong>+243 999944459</strong> pour Airtel-money</li>
+            <li><strong>+243 891273191</strong> pour Orange-money</li>
+            <li><strong>+243 903077077</strong> pour Africell-money</li>
+        </ul>
+
+    </p>
+    <h2 id="chapitre7">Comment proceder aux paiements pour les membres résidant en dehors de la RDC ?</h2>
+    <p>
+    Nous recommandons vivement aux membres residants en dehors de la RDC d'utiliser les services offerts par les réseaux de transfert d'argent internationaux comme <strong>REMITLY</strong> accessible officiellement sous l'URL <strong>www.remitly.com</strong> (pas ailleurs). Pour le cas de 'remitly' l'utilisation des destinations mobile-money :<strong> +243824807663 pour Mpesa et +243891273191 pour Orange-money</strong> sont efficaces ; le transfert est quasi instantané. Dans ce cas, n'oubliez pas d'accompagner votre transfert par un message téléphonique SMS, au numéro de destination, libellé comme suit : <i><P style="color: blue;">"Pour KM-Kimya à partir de '<strong>NOM DU PAYS D'Où VOUS ENVOYEZ</strong>' en faveur de '<strong>IDENTIFIANT KM-KIMYA DU BENEFICAIRE</strong>'  Montant: '<strong>LE MONTANT ENVOYÉ</strong>'"</P></i> pour nous permettre de vous identifier correctement dans notre base de données.
+    </p>
+
 
     <div class="footer">
         <a href="{{ url_for('infos_association') }}" class="btn-back">← Retour à 'Notre association'</a>
