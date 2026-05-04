@@ -2255,11 +2255,11 @@ def account():
 
     ct_cotisations = "COT-" + phone
     cotisation = fetch_ct_cotisations(ct_cotisations)
-    cotisations = cotisation[2] if cotisation else 0
+    cotisations = cotisation[1] if cotisation else 0
 
     ct_donations = "DON-" + phone
     donation = fetch_ct_donations(ct_donations)
-    donations = donation[2] if donation else 0
+    donations = donation[1] if donation else 0
 
     if request.method == "POST":
         try:
