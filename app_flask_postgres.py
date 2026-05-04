@@ -4033,7 +4033,7 @@ FAQ_PAGE = """
     <br>
     <br> 
     <hr>
-    <br><small> Note importante:</b> Les réponses à ces questions sont basées sur les informations disponibles à ce jour et peuvent être sujettes à des mises à jour ou des modifications en fonction de l'évolution de l'association et de ses activités.</small>
+    <small><b><u>Note importante:</u></b> Les réponses à ces questions sont basées sur les informations disponibles à ce jour et peuvent être sujettes à des mises à jour ou des modifications en fonction de l'évolution de l'association et de ses activités.</small>
     <hr> <!-- Séparateur visuel -->
 
     <!-- 2. LE CONTENU DÉTAILLÉ -->
@@ -4064,7 +4064,7 @@ FAQ_PAGE = """
     <ul>
     <li> 1.	S’inscrire sur ce site Internet www.km-kimya.org par le bouton ‘inscription libre’ </li>
     <li> 2.	Payer par mobile-money 5.5$ (avec le téléphone dont le numéro sans préfixes est l’ identifiant choisi lors de l’inscription) à l’un des comptes suivants : <b>+243 999 944 459 , +243 824 807 663, +243 891 273 191 ou +243 903 077 077.</b></li>
-      
+    </ul>      
     </p>
 
     <h2 id="chapitre4">Est-ce que le paiement est obligatoire pour être membre de l'Association KM-Kimya ?</h2>
