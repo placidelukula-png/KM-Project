@@ -2207,8 +2207,8 @@ ACCOUNT_PAGE = """
     <div class="card">
         <label>Cotisations & Donations :</label>
         <div class="stats">
-            <div><b>Total  cotisations :</b> {{ cotisations }}</div>
-            <div><b>Total des donations :</b> {{ donations }}</div>
+            <div><b>Total Cotisations statutaires :</b> {{ cotisations }}</div>
+            <div><b>Total Donations généreuses :</b> {{ donations }}</div>
         </div>
     </div>
 
@@ -4033,7 +4033,7 @@ FAQ_PAGE = """
     <hr> <!-- Séparateur visuel -->
 
     <!-- 2. LE CONTENU DÉTAILLÉ -->
-    <h2 id="chapitre1">Mission et objectif de lAssociation KM-Kimya</h2>
+    <h2 id="chapitre1">Mission et objectif de l'Association KM-Kimya</h2>
     <p>Notre association a pour mission principale 
     <ul>
         <li>de rassembler les forces vives, en association, afin de promouvoir le développement et l'entraide entre tous les membres lorsque survient le décès d’un membre.</li>
@@ -4054,10 +4054,17 @@ FAQ_PAGE = """
     <p>Ceci est le texte détaillé du deuxième chapitre...</p>
 
     <h2 id="chapitre3">Qui peut adhérer à l'Association ?</h2>
-    <p>Ceci est le texte détaillé du troisième chapitre...</p>
+    <p>L’association regroupe des membres qui s’engagent à verser une contribution financière en cas de décès d’un autre membre (contribution uniquement en cas de décès d’un membre du groupe) à condition que celui-ci soit en règle avec les procédures de l’association. En contrepartie, l’Association KM-Kimya assure le maximum d’efficience et de transparence dans la gestion des opérations pour garantir l’équité dans les attentes de tous. 
+    <br> Les modalités d’adhésion sont très simples
+    <br>
+    <ul>
+    <li> 1.	S’inscrire sur ce site Internet www.km-kimya.org par le bouton ‘inscription libre’ </li>
+    <li> 2.	Payer par mobile-money 5.5$ (avec le téléphone dont le numéro sans préfixes est l’ identifiant choisi lors de l’inscription) à l’un des comptes suivants : +243 999 944 459 , +243 824 807 663, +243 891 273 191 ou +243 903 077 077.</li>
+      
+</p>
 
     <h2 id="chapitre4">Est-ce que le paiement est obligatoire pour être membre de l'Association KM-Kimya ?</h2>
-    <p>Oui, le paiement de votre première contribution à la prestation de KM-Kimya lors du prochain décès dans le groupe est obligatoire. L'exigence du paiement préalable de la contribution permet d'intervenir rapidement (délai de moins de 72 heures) auprès de la famille et des proches du membre défunt.
+    <p>Oui ; à l'adhésion le paiement de votre première contribution à la prestation de KM-Kimya lors du prochain décès dans le groupe est obligatoire. L'exigence du paiement préalable de la contribution permet d'intervenir rapidement (délai de moins de 72 heures) auprès de la famille et des proches du membre défunt.
     </p>
 
     <h2 id="chapitre5">Un etranger ou un congolais résidant à l'etranger peut il adhérer à l'association ?</h2>
