@@ -4005,6 +4005,7 @@ FAQ_PAGE = """
         .footer { margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; }
         .btn {padding:10px 14px;border-radius:12px;border:1px solid #111;background:#fff;color:#111;cursor:pointer}
         .btn-back { display: inline-block; padding: 10px 20px; background: #111; color: #fff; text-decoration: none; border-radius: 8px; }
+        .saut-de-page { page-break-after: always; }
     </style>
 </head>
 <body>
@@ -4017,15 +4018,12 @@ FAQ_PAGE = """
     <li><a href="#chapitre2">Qui peut adhérer à l'Association ?</a></li>
     <li><a href="#chapitre3">Quel est le principe de fonctionnement et les modalités d'adhésion ?</a></li>
     <li><a href="#chapitre4">Est ce que le paiement est obligatoire pour être membre de l’Association KM-Kimya ?</a></li>
-    <li><a href="#chapitre5">Un etranger ou un congolais résidant à l'etranger peut il adhérer à l'association qui opère sur terrain au Congo (RDC) ?</a></li>
+    <li><a href="#chapitre5">Un etranger ou un congolais résidant à l'etranger peut il adhérer à une association congolaise (RDC) ?</a></li>
     <li><a href="#chapitre6">Comment proceder aux paiements sur terrain au Congo (RDC)?</a></li>
     <li><a href="#chapitre7">Comment proceder aux paiements si on réside à l'etranger ?</a></li>
     <li><a href="#chapitre8">Qui perçoit les contributions des membres ?</a></li>
     <li><a href="#chapitre9">Quelles sont les objectifs immediat, à court terme et moyen terme de l'Association actuellement ?</a></li>
-    <li><a href="#chapitre10">Comment l'association soutient les familles en deuil ?</a></li>
-    <li><a href="#chapitre11">Comment l'association gère les situations où plusieurs décès surviennent en même temps ?</a></li>
-    <li><a href="#chapitre12">Comment l'association encourage la participation et l'engagement des membres ?</a></li>
-    <li><a href="#chapitre13">Quels sont les projets futurs ou les initiatives prévues par l'association ?</a></li>
+    <li><a href="#chapitre10">Quand commence la couverture pour un membre actif?</a></li>
     </li>   
     </ul>
     <br>
@@ -4033,6 +4031,8 @@ FAQ_PAGE = """
     <hr>
     <small><b><u>Note importante:</u></b> Les réponses à ces questions sont basées sur les informations disponibles à ce jour et peuvent être sujettes à des mises à jour ou des modifications en fonction de l'évolution de l'association et de ses activités.</small>
     <hr> <!-- Séparateur visuel -->
+    <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
+    
 
     <!-- 2. LE CONTENU DÉTAILLÉ -->
     <h2 id="chapitre1">Mission et objectif de l'Association KM-Kimya</h2>
@@ -4051,9 +4051,12 @@ FAQ_PAGE = """
     <li>le versement rapide d'une aide significative à la famille éprouvée.</li>
     </ul> 
     </p>
+    <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
 
+    
     <h2 id="chapitre2">Qui peut adhérer à l'Association ?</h2>
-    <p>L'Association accueille toute personne qui adhère à ses objectifs sans distinction de nationalité, de religion ou autre. Elle interesse principalement les personnes résidant au Congo (RDC). Toutefois, les ressortissants congolais ou toute autre personne de nationalité étrangère peut adhérer pour assister des proches restés au pays.</p>
+    <p>L'Association accueille toute personne qui adhère à ses objectifs sans distinction de nationalité, de religion ou autre. Elle interesse principalement les personnes résidant au Congo (RDC). Toutefois, les ressortissants congolais ou toute autre personne de nationalité étrangère peut adhérer pour assister des proches résidants au pays.</p>
+    <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
 
     <h2 id="chapitre3">Le principe de fonctionnement et les modalités d'adhésion</h2>
     <p>L’association regroupe des membres qui s’engagent à verser une contribution financière en cas de décès d’un autre membre (contribution uniquement en cas de décès d’un membre du groupe) à condition que celui-ci soit en règle avec les procédures de l’association. En contrepartie, l’Association KM-Kimya assure le maximum d’efficience et de transparence dans la gestion des opérations pour garantir l’équité dans les attentes de tous. 
@@ -4064,6 +4067,7 @@ FAQ_PAGE = """
     <li> 2.	Payer par mobile-money 5.5$ (avec le téléphone dont le numéro sans préfixes est l’ identifiant choisi lors de l’inscription) à l’un des comptes suivants : <b>+243 999 944 459 , +243 824 807 663, +243 891 273 191 ou +243 903 077 077.</b></li>
     </ul>      
     </p>
+    <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
 
     <h2 id="chapitre4">Est-ce que le paiement est obligatoire pour être membre de l'Association KM-Kimya ?</h2>
     <p>Oui ; à l'adhésion le paiement de votre première contribution à la prestation de KM-Kimya lors du prochain décès dans le groupe est obligatoire. L'exigence du paiement préalable de la contribution permet d'intervenir rapidement (délai de moins de 72 heures) auprès de la famille et des proches du membre défunt.
@@ -4096,9 +4100,23 @@ FAQ_PAGE = """
     
     <h2 id="chapitre9">Quels sont les objectifs immediat, à court terme et moyen terme de l'Association actuellement ?</h2>
     <p>
-    Dans l'immediat, KM-Kimya souhaite demarrer ses activités avec un groupe pilote de 100 membres pour tester et ajuster son modèle de fonctionnement. Durant cette phase la contribution individuelle est de 5.5$ dont 5 pour la prestation KM-Kimya en cas de décès et 0.5 pour les frais administratifs. A court terme, l'objectif est d'atteindre 500 membres actifs et de stabiliser les processus opérationnels. A moyen terme, KM-Kimya vise à atteindre son envol avec une prestation de +/- 5000$ capable de couvrir les besoins d'un enterrement à Kinshasa et ailleurs et ainsi renforcer son impact social en soutenant un nombre croissant de familles en deuil sur tout le trritoire national.
+    Dans l'immediat, KM-Kimya souhaite demarrer ses activités avec un groupe pilote de 100 membres pour tester et ajuster son modèle de fonctionnement. Durant cette phase la contribution individuelle est de 5.5$ dont 5 pour la prestation KM-Kimya en cas de décès et 0.5 pour les frais administratifs.
+    </p> 
+    <br>
+    <p> 
+    A court terme, l'objectif est d'atteindre 500 membres actifs et de stabiliser les processus opérationnels.
     </p>
+    <br>
+    <p>
+    A moyen terme, KM-Kimya vise à atteindre son envol avec une prestation de +/- 5000$ capable de couvrir les besoins d'un enterrement à Kinshasa et ailleurs et ainsi renforcer son impact social en soutenant un nombre croissant de familles en deuil sur tout le trritoire national.
+    </p>
+    <br>
 
+    <h2 id="chapitre10">Quand commence la couverture pour le membre actif ?</h2>
+    <p>
+    Une exception est faite pour les nouveaux membres inscrits durant la periode pionnière qui précède l'adoption officielle des Statuts et ROI en Assemblée Générale ; ce premier groupe n'aura pas de temps de probation (délai de carence). Mais comme prescrit dans le projet des Statuts et de ROI, le délai de carence est fixé à six (6) mois. 
+    </p> 
+    <br>
 
     <div class="footer">
         <a href="{{ url_for('infos_association') }}" class="btn-back">← Retour à 'Notre association'</a>
