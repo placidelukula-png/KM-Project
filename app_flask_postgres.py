@@ -4005,7 +4005,7 @@ FAQ_PAGE = """
         .footer { margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; }
         .btn {padding:10px 14px;border-radius:12px;border:1px solid #111;background:#fff;color:#111;cursor:pointer}
         .btn-back { display: inline-block; padding: 10px 20px; background: #111; color: #fff; text-decoration: none; border-radius: 8px; }
-        .saut-de-page { page-break-after: always; }
+        .saut-de-page { margin-top: 100px; }
     </style>
 </head>
 <body>
@@ -4102,11 +4102,9 @@ FAQ_PAGE = """
     <p>
     Dans l'immediat, KM-Kimya souhaite demarrer ses activités avec un groupe pilote de 100 membres pour tester et ajuster son modèle de fonctionnement. Durant cette phase la contribution individuelle est de 5.5$ dont 5 pour la prestation KM-Kimya en cas de décès et 0.5 pour les frais administratifs.
     </p> 
-    <br>
     <p> 
     A court terme, l'objectif est d'atteindre 500 membres actifs et de stabiliser les processus opérationnels.
     </p>
-    <br>
     <p>
     A moyen terme, KM-Kimya vise à atteindre son envol avec une prestation de +/- 5000$ capable de couvrir les besoins d'un enterrement à Kinshasa et ailleurs et ainsi renforcer son impact social en soutenant un nombre croissant de familles en deuil sur tout le trritoire national.
     </p>
