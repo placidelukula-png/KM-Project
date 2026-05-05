@@ -4024,7 +4024,9 @@ FAQ_PAGE = """
     <li><a href="#chapitre8">Qui perçoit les contributions des membres ?</a></li>
     <li><a href="#chapitre9">Quelles sont les objectifs immediat, à court terme et moyen terme de l'Association actuellement ?</a></li>
     <li><a href="#chapitre10">Quand commence la couverture pour un membre actif?</a></li>
-    </li>   
+    <li><a href="#chapitre11">Comment proceder si la personne à inscrire n'a pas de téléphone ?</a></li>
+    <li><a href="#chapitre12">Si je quitte l'Association, serai-je remboursé ?</a></li>
+    <li><a href="#chapitre13">Comment puis-je aider si j'ai les moyens?</a></li>
     </ul>
     <br>
     <br> 
@@ -4055,26 +4057,35 @@ FAQ_PAGE = """
 
     
     <h2 id="chapitre2">Qui peut adhérer à l'Association ?</h2>
-    <p>L'Association accueille toute personne qui adhère à ses objectifs sans distinction de nationalité, de religion ou autre. Elle interesse principalement les personnes résidant au Congo (RDC). Toutefois, les ressortissants congolais ou toute autre personne de nationalité étrangère peut adhérer pour assister des proches résidants au pays.</p>
+    <p>
+    L'Association accueille toute personne, qui adhère à ses objectifs et accepte ses règles et procédures, sans distinction de nationalité, religion ou autre. Elle interesse principalement les personnes résidant au Congo (RDC). Toutefois, les ressortissants congolais ou toute autre personne de nationalité étrangère vivant hors de la RDC peut adhérer pour assister des proches résidants au pays.
+    </p>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
 
     <h2 id="chapitre3">Le principe de fonctionnement et les modalités d'adhésion</h2>
-    <p>L’association regroupe des membres qui s’engagent à verser une contribution financière en cas de décès d’un autre membre (contribution uniquement en cas de décès d’un membre du groupe) à condition que celui-ci soit en règle avec les procédures de l’association. En contrepartie, l’Association KM-Kimya assure le maximum d’efficience et de transparence dans la gestion des opérations pour garantir l’équité dans les attentes de tous. 
-    <br> Les modalités d’adhésion sont très simples
+    <p>
+    L’association regroupe des membres qui s’engagent à verser une contribution financière en cas de décès d’un autre membre (contribution uniquement en cas de décès d’un membre du groupe) à condition que celui-ci soit en règle avec les procédures de l’association. En contrepartie, l’Association KM-Kimya assure le maximum d’efficience et de transparence dans la gestion des opérations pour garantir l’équité dans les attentes de tous. 
+    <br> 
+    Les modalités d’adhésion sont très simples
     <br>
     <ul>
     <li> 1.	S’inscrire sur ce site Internet www.km-kimya.org par le bouton ‘inscription libre’ </li>
-    <li> 2.	Payer par mobile-money 5.5$ (avec le téléphone dont le numéro sans préfixes est l’ identifiant choisi lors de l’inscription) à l’un des comptes suivants : <b>+243 999 944 459 , +243 824 807 663, +243 891 273 191 ou +243 903 077 077.</b></li>
+    <li> 2.	Payer par mobile-money 5.5$ (avec le téléphone dont le numéro sans préfixes est l’ identifiant choisi lors de l’inscription) à l’un des 4 comptes mobile-money suivants : (1)<b>+243 999 944 459</b> , (2)<b>+243 824 807 663</b>, (3)<b>+243 891 273 191</b> ou (4)<b>+243 903 077 077</b>.</li>
     </ul>      
     </p>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
 
     <h2 id="chapitre4">Est-ce que le paiement est obligatoire pour être membre de l'Association KM-Kimya ?</h2>
-    <p>Oui ; à l'adhésion le paiement de votre première contribution à la prestation de KM-Kimya lors du prochain décès dans le groupe est obligatoire. L'exigence du paiement préalable de la contribution permet d'intervenir rapidement (délai de moins de 72 heures) auprès de la famille et des proches du membre défunt.
+    <p>
+    Oui ; à l'adhésion le paiement de votre première contribution à la prestation de KM-Kimya lors du prochain décès dans le groupe est obligatoire. L'exigence du paiement préalable de la contribution permet d'intervenir rapidement (délai de moins de 72 heures) auprès de la famille et des proches du membre défunt.
     </p>
+    <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
 
     <h2 id="chapitre5">Un etranger ou un congolais résidant à l'etranger peut il adhérer à une association qui opère sur terrain au Congo (RDC) ?</h2>
-    <p>Oui, absolument, un étranger ou un congolais résidant à l'etranger peut adhérer à l'association congolaise. Ceci est conforme à la loi qui régit les associations en République Démocratique du Congo. Il va de soi que n'ayant pas acces aux régies Mobile-Money locales en RDC, ceux qui sont membres résidant à l'etranger doivent s'acquitter de leurs obligations financières par la voie des transferts internationaux, nous recommandons vivement www.remitly.com</p>
+    <p>
+    Oui, absolument, un étranger ou un congolais résidant à l'etranger peut adhérer à l'association congolaise. Ceci est conforme à la loi qui régit les associations en République Démocratique du Congo. Il va de soi que n'ayant pas acces aux régies Mobile-Money locales en RDC, ceux qui sont membres résidant à l'etranger doivent s'acquitter de leurs obligations financières par la voie des transferts internationaux, nous recommandons vivement www.remitly.com
+    </p>
+    <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
 
     <h2 id="chapitre6">Comment procéder aux paiements sur terrain au Congo (RDC) ?</h2>
     <p>
@@ -4087,17 +4098,20 @@ FAQ_PAGE = """
         </ul>
     Après le paiement, la capture d'écran du reçu de paiement émis par le service de mobile-money avec votre nom complet constitue la preuve de paiement et/ou de votre d'adhésion le cas échéant. Cette démarche simple et accessible permet à chacun de rejoindre notre communauté et de bénéficier du soutien mutuel que nous offrons.:
     </p>
+    <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
 
     <h2 id="chapitre7">Comment procéder aux paiements pour les membres résidant en dehors de la RDC ?</h2>
     <p>
     Nous recommandons vivement aux membres residants en dehors de la RDC d'utiliser les services offerts par les réseaux de transfert d'argent internationaux comme <strong>REMITLY</strong> accessible officiellement sous l'URL <strong>www.remitly.com</strong> (pas ailleurs). Pour le cas de 'remitly' l'utilisation des destinations mobile-money :<strong> +243824807663 pour Mpesa et +243891273191 pour Orange-money</strong> sont efficaces ; le transfert est quasi instantané. Dans ce cas, n'oubliez pas d'accompagner votre transfert par un message téléphonique SMS, au numéro de destination, libellé comme suit : <i><P style="color: blue;">"Pour KM-Kimya à partir de '<strong>NOM DU PAYS D'Où VOUS ENVOYEZ</strong>' en faveur de '<strong>IDENTIFIANT KM-KIMYA DU BENEFICAIRE</strong>'  Montant: '<strong>LE MONTANT ENVOYÉ</strong>'"</P></i> pour nous permettre de vous identifier correctement (ainsi que le destinataire beneficiaire du transfert) dans notre base de données.
     </p>
-    
+    <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
+
     <h2 id="chapitre8">Qui perçoit les contributions des membres ?</h2>
     <p>
     Les contributions des membres sont perçues par la tresorerie de l'Association dans 4 comptes mobile-money (les quatres numeros de telephone) qui provisoirement sont au nom de M. Emmanuel Kalume Burhama (Membre de km-kimya qui s'occupe actuellemnet de la trésorerie de l'Association en attendant que l'Association obtienne la peronnalité juridique et un compte officiel), Cet argent est utilisé pour financer les prestations de KM-Kimya (90%) quand survient un décès dans le groupe et une fraction de 10% pour les frais administratifs et autres imprevus.
     </p>
-    
+    <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
+
     <h2 id="chapitre9">Quels sont les objectifs immediat, à court terme et moyen terme de l'Association actuellement ?</h2>
     <p>
     Dans l'immediat, KM-Kimya souhaite demarrer ses activités avec un groupe pilote de 100 membres pour tester et ajuster son modèle de fonctionnement. Durant cette phase la contribution individuelle est de 5.5$ dont 5 pour la prestation KM-Kimya en cas de décès et 0.5 pour les frais administratifs.
@@ -4108,12 +4122,40 @@ FAQ_PAGE = """
     <p>
     A moyen terme, KM-Kimya vise à atteindre son envol avec une prestation de +/- 5000$ capable de couvrir les besoins d'un enterrement à Kinshasa et ailleurs et ainsi renforcer son impact social en soutenant un nombre croissant de familles en deuil sur tout le trritoire national.
     </p>
-    <br>
+    <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
 
     <h2 id="chapitre10">Quand commence la couverture pour le membre actif ?</h2>
     <p>
-    Une exception est faite pour les nouveaux membres inscrits durant la periode pionnière qui précède l'adoption officielle des Statuts et ROI en Assemblée Générale ; ce premier groupe n'aura pas de temps de probation (délai de carence). Mais comme prescrit dans le projet des Statuts et de ROI, le délai de carence est fixé à six (6) mois. 
-    </p> 
+    Comme prescrit dans le projet de Statuts et de ROI, un nouveau membre n'est couvert que après une periode de probation (ou délai de carence) fixée à six (6) mois. Cette période est cruciale pour l'Association ; elle la met à l'abris d'une tricherie courante appelée "asymetrie d'information" ou "selection adverse" qui consiste à faire adhérer à l'association un malade grave (en phase finale) juste avant son décès afin de lui faire bénéficier de l'aide financière sans avoir contribué au groupe. 
+    </p>
+    
+    <p>
+    Toutefois, une exception est faite pour les nouveaux membres inscrits durant la période 'pionnière' qui précède l'adoption officielle des Statuts et ROI en Assemblée Générale ; ce premier groupe n'aura pas de temps de probation (délai de carence).  
+    </p>
+    <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
+
+    
+    <h2 id="chapitre11">Comment proceder si la personne à inscrire n'a pas de téléphone ?</h2>
+    <p>
+    Cette situation est prevue dans les Statuts et ROI. Etant donné que les transactions financières sont numeriques par mobile-money, un membre sans téléphone doit absolument etre sous la dependance d'un autre membre appelé 'mentor' qui l'accompagnera dans sa discipline financière par rapport aux procedures. Son identifiant son nom (ou une partie de son nom) en veillant toutefois de ne pas donner un nom déjà attribué. 
+    </p>
+    <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
+
+
+    <h2 id="chapitre12">Si je quitte l'Association, serai-je remboursé ?</h2>
+    <p>
+    Si vous quittez l'Association, le solde de votre compte vous sera retourné par le réseau mobile-money que vous aviez utilisé pour les paiements.
+    Par solde de votre compte, entendez les fonds destinés à couvrir les prestations km-kimya, car les cotisations et la portion destinée aux frais administratifs ne sont pas remboursables.
+    </p>
+    <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
+
+    <h2 id="chapitre13">Comment puis-je aider si j'ai les moyens?</h2>
+    <p>
+    Plusieurs voies sont offertes pour aider l'Association. Vous pouvez faire un don direct, participer aux événements de sensibilisation, ou proposer votre temps et compétences pour soutenir nos activités.
+    Plus pratiquement, nous pouvons citer des exemples concrets d'aide précieuse : (1) aider à faire connaitre l'Association autour de vous pour nous aider à atteindre plus de personnes, (2) nous aider à faire le suivi des paiements sur terrain en RDC pour nous assurer que les contributions sont bien enregistrées et attribuées aux bons membres, (3) nous aider à organiser des campagnes de collecte de fonds.
+    </p>
+    <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
+
     <br>
 
     <div class="footer">
