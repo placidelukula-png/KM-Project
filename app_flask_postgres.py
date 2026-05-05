@@ -4020,13 +4020,11 @@ FAQ_PAGE = """
     <li><a href="#chapitre5">Un etranger ou un congolais résidant à l'etranger peut il adhérer à l'association qui opère sur terrain au Congo (RDC) ?</a></li>
     <li><a href="#chapitre6">Comment proceder aux paiements sur terrain au Congo (RDC)?</a></li>
     <li><a href="#chapitre7">Comment proceder aux paiements si on réside à l'etranger ?</a></li>
-
-    <li><a href="#chapitre7">Comment l'association utilise t-elle les fonds collectés ?</a></li>
-    <li><a href="#chapitre8">Comment l'association assure la transparence et la responsabilité dans la gestion des fonds ?</a></li>
-    <li><a href="#chapitre9">Comment l'association soutient les familles en deuil ?</a></li>
-    <li><a href="#chapitre10">Comment l'association gère les situations où plusieurs décès surviennent en même temps ?</a></li>
-    <li><a href="#chapitre11">Comment l'association encourage la participation et l'engagement des membres ?</a></li>
-    <li><a href="#chapitre12">Comment l'association collabore avec d'autres organisations ou communautés pour renforcer son impact ?</a></li>
+    <li><a href="#chapitre8">Qui perçoit les contributions des membres ?</a></li>
+    <li><a href="#chapitre9">Quelles sont les objectifs immediat, à court terme et moyen terme de l'Association actuellement ?</a></li>
+    <li><a href="#chapitre10">Comment l'association soutient les familles en deuil ?</a></li>
+    <li><a href="#chapitre11">Comment l'association gère les situations où plusieurs décès surviennent en même temps ?</a></li>
+    <li><a href="#chapitre12">Comment l'association encourage la participation et l'engagement des membres ?</a></li>
     <li><a href="#chapitre13">Quels sont les projets futurs ou les initiatives prévues par l'association ?</a></li>
     </li>   
     </ul>
@@ -4074,20 +4072,31 @@ FAQ_PAGE = """
     <h2 id="chapitre5">Un etranger ou un congolais résidant à l'etranger peut il adhérer à une association qui opère sur terrain au Congo (RDC) ?</h2>
     <p>Oui, absolument, un étranger ou un congolais résidant à l'etranger peut adhérer à l'association congolaise. Ceci est conforme à la loi qui régit les associations en République Démocratique du Congo. Il va de soi que n'ayant pas acces aux régies Mobile-Money locales en RDC, ceux qui sont membres résidant à l'etranger doivent s'acquitter de leurs obligations financières par la voie des transferts internationaux, nous recommandons vivement www.remitly.com</p>
 
-    <h2 id="chapitre6">Comment proceder aux paiements sur terrain au Congo (RDC) ?</h2>
+    <h2 id="chapitre6">Comment procéder aux paiements sur terrain au Congo (RDC) ?</h2>
     <p>
-    Pour les membres résidant en RDC, le paiement de la contribution se fait exclusivement par mobile-money via les numéros suivants :
+    Pour les membres résidant en RDC, le paiement de la contribution se fait exclusivement par mobile-money via l'un des quatre numéros ci-dessous par le téléphone dont le numéro sans préfixes est l’ identifiant choisi lors de l’inscription. 
         <ul>
             <li><strong>+243 824807663</strong> pour Mpesa</li>
             <li><strong>+243 999944459</strong> pour Airtel-money</li>
             <li><strong>+243 891273191</strong> pour Orange-money</li>
-            <li><strong>+243 903077077</strong> pour Africell-money</li>
+            <li><strong>+243 903077077</strong> pour Afri-money</li>
         </ul>
-
+    Après le paiement, la capture d'écran du reçu de paiement émis par le service de mobile-money avec votre nom complet constitue la preuve de paiement et/ou de votre d'adhésion le cas échéant. Cette démarche simple et accessible permet à chacun de rejoindre notre communauté et de bénéficier du soutien mutuel que nous offrons.:
     </p>
-    <h2 id="chapitre7">Comment proceder aux paiements pour les membres résidant en dehors de la RDC ?</h2>
+
+    <h2 id="chapitre7">Comment procéder aux paiements pour les membres résidant en dehors de la RDC ?</h2>
     <p>
-    Nous recommandons vivement aux membres residants en dehors de la RDC d'utiliser les services offerts par les réseaux de transfert d'argent internationaux comme <strong>REMITLY</strong> accessible officiellement sous l'URL <strong>www.remitly.com</strong> (pas ailleurs). Pour le cas de 'remitly' l'utilisation des destinations mobile-money :<strong> +243824807663 pour Mpesa et +243891273191 pour Orange-money</strong> sont efficaces ; le transfert est quasi instantané. Dans ce cas, n'oubliez pas d'accompagner votre transfert par un message téléphonique SMS, au numéro de destination, libellé comme suit : <i><P style="color: blue;">"Pour KM-Kimya à partir de '<strong>NOM DU PAYS D'Où VOUS ENVOYEZ</strong>' en faveur de '<strong>IDENTIFIANT KM-KIMYA DU BENEFICAIRE</strong>'  Montant: '<strong>LE MONTANT ENVOYÉ</strong>'"</P></i> pour nous permettre de vous identifier correctement dans notre base de données.
+    Nous recommandons vivement aux membres residants en dehors de la RDC d'utiliser les services offerts par les réseaux de transfert d'argent internationaux comme <strong>REMITLY</strong> accessible officiellement sous l'URL <strong>www.remitly.com</strong> (pas ailleurs). Pour le cas de 'remitly' l'utilisation des destinations mobile-money :<strong> +243824807663 pour Mpesa et +243891273191 pour Orange-money</strong> sont efficaces ; le transfert est quasi instantané. Dans ce cas, n'oubliez pas d'accompagner votre transfert par un message téléphonique SMS, au numéro de destination, libellé comme suit : <i><P style="color: blue;">"Pour KM-Kimya à partir de '<strong>NOM DU PAYS D'Où VOUS ENVOYEZ</strong>' en faveur de '<strong>IDENTIFIANT KM-KIMYA DU BENEFICAIRE</strong>'  Montant: '<strong>LE MONTANT ENVOYÉ</strong>'"</P></i> pour nous permettre de vous identifier correctement (ainsi que le destinataire beneficiaire du transfert) dans notre base de données.
+    </p>
+    
+    <h2 id="chapitre8">Qui perçoit les contributions des membres ?</h2>
+    <p>
+    Les contributions des membres sont perçues par la tresorerie de l'Association dans 4 comptes mobile-money (les quatres numeros de telephone) qui provisoirement sont au nom de M. Emmanuel Kalume Burhama (Membre de km-kimya qui s'occupe actuellemnet de la trésorerie de l'Association en attendant que l'Association obtienne la peronnalité juridique et un compte officiel), Cet argent est utilisé pour financer les prestations de KM-Kimya (90%) quand survient un décès dans le groupe et une fraction de 10% pour les frais administratifs et autres imprevus.
+    </p>
+    
+    <h2 id="chapitre9">Quels sont les objectifs immediat, à court terme et moyen terme de l'Association actuellement ?</h2>
+    <p>
+    Dans l'immediat, KM-Kimya souhaite demarrer ses activités avec un groupe pilote de 100 membres pour tester et ajuster son modèle de fonctionnement. Durant cette phase la contribution individuelle est de 5.5$ dont 5 pour la prestation KM-Kimya en cas de décès et 0.5 pour les frais administratifs. A court terme, l'objectif est d'atteindre 500 membres actifs et de stabiliser les processus opérationnels. A moyen terme, KM-Kimya vise à atteindre son envol avec une prestation de +/- 5000$ capable de couvrir les besoins d'un enterrement à Kinshasa et ailleurs et ainsi renforcer son impact social en soutenant un nombre croissant de familles en deuil sur tout le trritoire national.
     </p>
 
 
