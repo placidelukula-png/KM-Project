@@ -2607,9 +2607,13 @@ ADD_MEMBER_PAGE = """
 <div class="footer">
     <a href="{{ url_for('login') }}" class="btn-back">← Retour à la connexion</a>
 </div>
+else
+<div class="footer">
+    <a href="{{ url_for('home') }}" class="btn-back">← Retour au menu principal</a>
+</div>    
 {% endif %}
 
-<a href="{{ url_for('add_member') }}" class="btn-back">← Passage au suivant</a>
+
 
 </div></body></html>
 """
@@ -4162,14 +4166,14 @@ FAQ_PAGE = """
 
     <h2 id="chapitre13">Comment puis-je aider si j'ai les moyens?</h2>
     <p>
-    Plusieurs voies sont offertes pour aider l'Association. (1)Vous pouvez faire un don direct(par un des 4 comptes mobile-money publiés) avec un message sms explicatif au meme numero, (2)participer aux événements de sensibilisation, ou proposer votre temps et compétences pour soutenir les activités.
-    Plus pratiquement, nous pouvons citer des exemples concrets d'aide précieuse : (3) aider à faire connaitre l'Association autour de vous pour nous aider à atteindre plus de personnes, (4) nous aider à faire le suivi des paiements des prestations sur terrain en RDC pour nous assurer que les contributions sont bien arrivées et attribuées aux bons destinataires, (3) nous aider à organiser des campagnes de collecte de fonds pour l'appui au fonctionnement administratif et technique de KM-Kimya.
+    Plusieurs voies sont offertes pour aider l'Association. (1) Vous pouvez faire un don direct (par un des 4 comptes mobile-money publiés) avec, au besoin, un message sms explicatif adressé au même numéro, (2) participer aux événements de sensibilisation, ou proposer votre temps et compétences pour soutenir les activités.
+    Plus pratiquement, nous pouvons citer des exemples concrets d'aide précieuse : (3) aider à faire connaitre l'Association autour de vous pour nous aider à atteindre plus de personnes, (4) nous aider à faire le suivi des paiements des prestations sur terrain en RDC pour nous assurer que les contributions sont bien arrivées et attribuées aux bons destinataires, (5) nous aider à organiser des campagnes de collecte de fonds pour l'appui au fonctionnement administratif et technique de KM-Kimya.
     </p>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
 
     <h2 id="chapitre14">Pourquoi payer seulement 5.5$ mais pas plus pour une  plus impactante ?</h2>
     <p>
-    Les personnes capables de contribuer de manière consistente ont généralement d'autres couvertures, particulierement des assurances-vie robustes; il n'ont pas besoin d'une organisation comme KM-Kimya. Pour notre public cible même les 5.5$ sont elevés. Notre objectif est de rendre l'adhésion accessible au plus grand nombre, en particulier à ceux qui sont les plus vulnérables et qui n'ont pas accès à d'autres formes de protection financière. En fixant une contribution modeste, nous espérons encourager une large participation et créer un impact significatif au sein de notre communauté.
+    Les personnes capables de contribuer de manière consistente ont généralement d'autres couvertures, notamment des assurances-vie robustes; il n'ont pas besoin d'une organisation comme KM-Kimya. Pour le public cible de KM-Kimya, même les 5.5$ sont elevés. L'objectif est de rendre l'adhésion accessible au plus grand nombre, en particulier à ceux qui sont les plus vulnérables et qui n'ont pas accès à d'autres formes de protection financière. En fixant une contribution modeste, nous espérons encourager une large participation et créer un impact significatif au sein de notre communauté.
     </p>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
 
