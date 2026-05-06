@@ -2655,6 +2655,8 @@ def add_member():
                 updateuser = session.get("user")
                 externe = False
 
+            log.info(f"nom de la session = {session.get('user')}")
+
             membertype = "independant"
             statut = "inactif"
             membershipdate = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
@@ -4015,7 +4017,7 @@ FAQ_PAGE = """
         .footer { margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; }
         .btn {padding:10px 14px;border-radius:12px;border:1px solid #111;background:#fff;color:#111;cursor:pointer}
         .btn-back { display: inline-block; padding: 10px 20px; background: #111; color: #fff; text-decoration: none; border-radius: 8px; }
-        .saut-de-page { margin-top: 100px; }
+        .saut-de-page { margin-top: 300px; }
     </style>
 </head>
 <body>
@@ -4037,7 +4039,9 @@ FAQ_PAGE = """
     <li><a href="#chapitre11">Comment proceder si la personne à inscrire n'a pas de téléphone ?</a></li>
     <li><a href="#chapitre12">Si je quitte l'Association, serai-je remboursé ?</a></li>
     <li><a href="#chapitre13">Comment puis-je aider si j'ai les moyens?</a></li>
-    <li><a href="#chapitre14">Pourquoi payer seulement 5.5$ mais pas plus pour une  plus impactante ?</a></li>
+    <li><a href="#chapitre14">Pourquoi payer seulement 5.5$ mais pas plus pour une prestation plus impactante ?</a></li>
+    <li><a href="#chapitre15">Pourquoi doit on mettre un mot de passe sur le compte ?</a></li>
+
 
     </ul>
     <br>
@@ -4174,6 +4178,12 @@ FAQ_PAGE = """
     <h2 id="chapitre14">Pourquoi payer seulement 5.5$ mais pas plus pour une  plus impactante ?</h2>
     <p>
     Les personnes capables de contribuer de manière consistente ont généralement d'autres couvertures, notamment des assurances-vie robustes; il n'ont pas besoin d'une organisation comme KM-Kimya. Pour le public cible de KM-Kimya, même les 5.5$ sont elevés. L'objectif est de rendre l'adhésion accessible au plus grand nombre, en particulier à ceux qui sont les plus vulnérables et qui n'ont pas accès à d'autres formes de protection financière. En fixant une contribution modeste, nous espérons encourager une large participation et créer un impact significatif au sein de notre communauté.
+    </p>
+    <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
+
+    <h2 id="chapitre15">Pourquoi doit on mettre un mot de passe sur le compte ?</h2>
+    <p>
+    Le compte du membre est sécurisé par un mot de passe pour garantir la confidentialité et la sécurité des informations financières et personnelles. Les donnees personnelles sont protégées pour assurer la vie privée des membres. Une personne de mauvaise foi pourrait tenter d'accéder à ces informations sans autorisation. Par exemple, une personne malveillante peut, par la fonctionnalité 'transfert de crédit', deverser tout ou partie de votre solde dans le compte d'un autre membre.    
     </p>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
 
