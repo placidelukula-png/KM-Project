@@ -2172,7 +2172,7 @@ ACCOUNT_PAGE = """
     
     <div class="card">
         <label>Mentor</label>
-        <input name="mentor" value="{{ m[3] }}">
+        <input name="mentor" placeholder="Identifiant ex. 998123001" value="{{ m[3] }}">
         {% if mentor_info %}
         <div class="mentor-box">
             <div><b>Mentor :</b> {{ mentor_info[1] }}</div>
@@ -2189,7 +2189,7 @@ ACCOUNT_PAGE = """
 
     <div class="card">
         <label>Bénéficiaire</label>
-        <input name="beneficiaire" value="{{ m[14] }}">
+        <input name="beneficiaire" placeholder="Identifiant ex. 812304501" value="{{ m[14] }}">
         {% if beneficiaire_info %}
         <div class="mentor-box">
             <div><b>Bénéficiaire :</b> {{ beneficiaire_info[1] }}</div>
@@ -2590,9 +2590,9 @@ ADD_MEMBER_PAGE = """
   <label>Prénom</label><input name="firstname" required>
   <label>Date naissance (JJ/MM/AAAA)</label><input name="birthdate" required>
   <label>Identifiant du bénéficiaire</label><input name="beneficiaire" placeholder="Exemple: 998889560" size="10" required>
-  <label>Adresse de domicile</label><input name="adresse" required>
+  <label>Adresse de domicile</label><input name="adresse" placeholder="    mentionnant aussi la ville et la province  " required>
 
-  <label>Mot de passe</label><input name="password" type="password" required>
+  <label>Mot de passe</label><input name="password"  placeholder="   doit être saisi  "  type="password" required>
 
   <div class="row">
     <button class="btn" type="submit">Créer</button>
@@ -2603,9 +2603,13 @@ ADD_MEMBER_PAGE = """
 
 </div>
 
+{% if externe %}
 <div class="footer">
     <a href="{{ url_for('login') }}" class="btn-back">← Retour à la connexion</a>
 </div>
+{% endif %}
+
+<a href="{{ url_for('add_member') }}" class="btn-back">← Passage au suivant</a>
 
 </div></body></html>
 """
@@ -2641,9 +2645,11 @@ def add_member():
             if not session.get("user"):
                 mentor = 'admin'
                 updateuser = 'admin'
+                externe = True
             else:
                 mentor = session.get("user")
                 updateuser = session.get("user")
+                externe = False
 
             membertype = "independant"
             statut = "inactif"
@@ -2663,7 +2669,7 @@ def add_member():
                 is_error=True)
 
     # Affichage normal de la page (GET)
-    return render_template_string(ADD_MEMBER_PAGE, message="", is_error=False)
+    return render_template_string(ADD_MEMBER_PAGE, externe=externe, message="", is_error=False)
 
 
 #----------------------------------------------------------------------------
@@ -4027,6 +4033,8 @@ FAQ_PAGE = """
     <li><a href="#chapitre11">Comment proceder si la personne à inscrire n'a pas de téléphone ?</a></li>
     <li><a href="#chapitre12">Si je quitte l'Association, serai-je remboursé ?</a></li>
     <li><a href="#chapitre13">Comment puis-je aider si j'ai les moyens?</a></li>
+    <li><a href="#chapitre14">Pourquoi payer seulement 5.5$ mais pas plus pour une  plus impactante ?</a></li>
+
     </ul>
     <br>
     <br> 
@@ -4108,19 +4116,22 @@ FAQ_PAGE = """
 
     <h2 id="chapitre8">Qui perçoit les contributions des membres ?</h2>
     <p>
-    Les contributions des membres sont perçues par la tresorerie de l'Association dans 4 comptes mobile-money (les quatres numeros de telephone) qui provisoirement sont au nom de M. Emmanuel Kalume Burhama (Membre de km-kimya qui s'occupe actuellemnet de la trésorerie de l'Association en attendant que l'Association obtienne la peronnalité juridique et un compte officiel), Cet argent est utilisé pour financer les prestations de KM-Kimya (90%) quand survient un décès dans le groupe et une fraction de 10% pour les frais administratifs et autres imprevus.
+    Les contributions des membres sont perçues par la trésorerie de l'Association dans 4 comptes mobile-money (les quatres numeros de telephone) qui provisoirement sont au nom de M. Emmanuel Kalume Burhama, qui est le membre de km-kimya responsable de la trésorerie de l'Association en attendant que l'Association obtienne la peronnalité juridique et un compte officiel.
+    </p> 
+    <p> 
+    Cet argent est utilisé pour financer les prestations de KM-Kimya (90%) quand survient un décès dans le groupe et une fraction de 10% pour les frais administratifs et autres imprevus.
     </p>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
 
     <h2 id="chapitre9">Quels sont les objectifs immediat, à court terme et moyen terme de l'Association actuellement ?</h2>
     <p>
-    Dans l'immediat, KM-Kimya souhaite demarrer ses activités avec un groupe pilote de 100 membres pour tester et ajuster son modèle de fonctionnement. Durant cette phase la contribution individuelle est de 5.5$ dont 5 pour la prestation KM-Kimya en cas de décès et 0.5 pour les frais administratifs.
+    Dans l'immediat, KM-Kimya souhaite demarrer ses activités avec un groupe pilote de 100 membres pour tester et ajuster son modèle de fonctionnement. Durant cette phase la contribution individuelle est de 5.5$ dont 5 pour la prestation KM-Kimya en cas de décès et 0.5 pour les frais administratifs. A ce stade la prestation est donc de 500$ en cas de décès d'un membre du groupe.
     </p> 
     <p> 
-    A court terme, l'objectif est d'atteindre 500 membres actifs et de stabiliser les processus opérationnels.
+    A court terme, l'objectif est d'atteindre 500 membres actifs et de stabiliser les processus opérationnels. La prestation passera alors à 2500$ en cas de décès d'un membre du groupe, ce qui permettra de couvrir tant soit peu une bonne partie des besoins d'un enterrement.
     </p>
     <p>
-    A moyen terme, KM-Kimya vise à atteindre son envol avec une prestation de +/- 5000$ capable de couvrir les besoins d'un enterrement à Kinshasa et ailleurs et ainsi renforcer son impact social en soutenant un nombre croissant de familles en deuil sur tout le trritoire national.
+    A moyen terme, KM-Kimya vise à atteindre son envol avec une prestation de +/- 5000$ capable de couvrir les besoins d'un enterrement à Kinshasa et ailleurs et ainsi renforcer l'impact social de en soutenant un nombre croissant de familles en deuil sur tout le territoire national.
     </p>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
 
@@ -4135,26 +4146,33 @@ FAQ_PAGE = """
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
 
     
-    <h2 id="chapitre11">Comment proceder si la personne à inscrire n'a pas de téléphone ?</h2>
+    <h2 id="chapitre11">Comment procéder si la personne à inscrire n'a pas de téléphone ?</h2>
     <p>
-    Cette situation est prevue dans les Statuts et ROI. Etant donné que les transactions financières sont numeriques par mobile-money, un membre sans téléphone doit absolument etre sous la dependance d'un autre membre appelé 'mentor' qui l'accompagnera dans sa discipline financière par rapport aux procedures. Son identifiant son nom (ou une partie de son nom) en veillant toutefois de ne pas donner un nom déjà attribué. 
+    Cette situation est prevue dans les Statuts et ROI. Etant donné que les transactions financières sont numériques par mobile-money, un membre sans téléphone doit absolument etre sous la dependance d'un autre membre appelé 'mentor' qui l'accompagnera dans sa discipline financière par rapport aux procedures. Son identifiant son nom (ou une partie de son nom) en veillant toutefois de ne pas donner un nom déjà attribué. 
     </p>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
 
 
     <h2 id="chapitre12">Si je quitte l'Association, serai-je remboursé ?</h2>
     <p>
-    Si vous quittez l'Association, le solde de votre compte vous sera retourné par le réseau mobile-money que vous aviez utilisé pour les paiements.
-    Par solde de votre compte, entendez les fonds destinés à couvrir les prestations km-kimya, car les cotisations et la portion destinée aux frais administratifs ne sont pas remboursables.
+    Si vous quittez l'Association, le solde de votre compte vous sera retourné par le réseau mobile-money que vous utilisiez couramment pour les paiements.
+    Par solde de votre compte, entendez les fonds destinés à couvrir les prestations km-kimya futures, car les contributions déjà versées en prestations, la portion destinée aux frais administratifs et les cotisations statutaires en tant que membre ne sont pas remboursables.
     </p>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
 
     <h2 id="chapitre13">Comment puis-je aider si j'ai les moyens?</h2>
     <p>
-    Plusieurs voies sont offertes pour aider l'Association. Vous pouvez faire un don direct, participer aux événements de sensibilisation, ou proposer votre temps et compétences pour soutenir nos activités.
-    Plus pratiquement, nous pouvons citer des exemples concrets d'aide précieuse : (1) aider à faire connaitre l'Association autour de vous pour nous aider à atteindre plus de personnes, (2) nous aider à faire le suivi des paiements sur terrain en RDC pour nous assurer que les contributions sont bien enregistrées et attribuées aux bons membres, (3) nous aider à organiser des campagnes de collecte de fonds.
+    Plusieurs voies sont offertes pour aider l'Association. (1)Vous pouvez faire un don direct(par un des 4 comptes mobile-money publiés) avec un message sms explicatif au meme numero, (2)participer aux événements de sensibilisation, ou proposer votre temps et compétences pour soutenir les activités.
+    Plus pratiquement, nous pouvons citer des exemples concrets d'aide précieuse : (3) aider à faire connaitre l'Association autour de vous pour nous aider à atteindre plus de personnes, (4) nous aider à faire le suivi des paiements des prestations sur terrain en RDC pour nous assurer que les contributions sont bien arrivées et attribuées aux bons destinataires, (3) nous aider à organiser des campagnes de collecte de fonds pour l'appui au fonctionnement administratif et technique de KM-Kimya.
     </p>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
+
+    <h2 id="chapitre14">Pourquoi payer seulement 5.5$ mais pas plus pour une  plus impactante ?</h2>
+    <p>
+    Les personnes capables de contribuer de manière consistente ont généralement d'autres couvertures, particulierement des assurances-vie robustes; il n'ont pas besoin d'une organisation comme KM-Kimya. Pour notre public cible même les 5.5$ sont elevés. Notre objectif est de rendre l'adhésion accessible au plus grand nombre, en particulier à ceux qui sont les plus vulnérables et qui n'ont pas accès à d'autres formes de protection financière. En fixant une contribution modeste, nous espérons encourager une large participation et créer un impact significatif au sein de notre communauté.
+    </p>
+    <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
+
 
     <br>
 
