@@ -3941,13 +3941,12 @@ INFOS_ASSOCIATION_PAGE = """
 </head>
 <body>
     <div class="container">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-
+        <div style="display: flex; justify-content: space-between; align-items: right;">
             <a href="{{ url_for('FAQ_PAGE') }}"> <button class="btn" type="button">Questions fréquentes - <small>réponses rapides</small></button> </a>
-            <a href="{{ url_for('login') }}" class="btn-back">← <small>Retour à l'accueil</small></a>
-
+            <a href="{{ url_for('login') }}" class="btn">← <small>Retour à l'accueil</small></a>
+        </div>    
+        <div style="display: flex; justify-content: space-between; align-items: left;">
             <h1>Notre Association</h1>
-
         </div>      
         
         <h2>Notre Mission</h2>
