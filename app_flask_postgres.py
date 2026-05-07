@@ -3942,13 +3942,11 @@ INFOS_ASSOCIATION_PAGE = """
 <body>
     <div class="container">
         <div style="display: flex; justify-content: space-between; align-items: center;">
-    
-        <h1>Notre Association</h1>
 
-        <!-- Bouton FAQ -->
-        <a href="{{ url_for('FAQ_PAGE') }}">
-            <button class="btn" type="button">Questions fréquentes - <small>réponses rapides</small></button>
-        </a>
+            <a href="{{ url_for('FAQ_PAGE') }}"> <button class="btn" type="button">Questions fréquentes - <small>réponses rapides</small></button> </a>
+            <a href="{{ url_for('login') }}" class="btn-back">← <small>Retour à l'accueil</small></a>
+
+            <h1>Notre Association</h1>
 
         </div>      
         
@@ -4130,7 +4128,7 @@ FAQ_PAGE = """
                 <li><strong>+243 891273191</strong> pour Orange-money</li>
                 <li><strong>+243 903077077</strong> pour Afri-money</li>
             </ul>
-        Après le paiement, la capture d'écran du reçu de paiement émis par le service de mobile-money avec votre nom complet constitue la preuve de paiement et/ou de votre d'adhésion le cas échéant. Cette démarche simple et accessible permet à chacun de rejoindre notre communauté et de bénéficier du soutien mutuel que nous offrons.:
+        Après le paiement, la capture d'écran du reçu de paiement émis par le service de mobile-money avec votre nom complet constitue la preuve de paiement et/ou de votre d'adhésion le cas échéant. Cette démarche simple et accessible permet à chacun de rejoindre notre communauté et de bénéficier du soutien mutuel que nous offrons.
         </p>
     </div>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
@@ -4143,6 +4141,7 @@ FAQ_PAGE = """
         </p>
     </div>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
+    <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
     <h2 id="chapitre8">Qui perçoit les contributions des membres ?</h2>
     <div class="pge">
@@ -4211,7 +4210,7 @@ FAQ_PAGE = """
     <h2 id="chapitre13">Comment puis-je aider si j'ai les moyens?</h2>
     <div class="pge">
         <p>
-        Plusieurs voies sont offertes pour aider l'Association. (1) Vous pouvez faire un don direct (par un des 4 comptes mobile-money publiés) avec, au besoin, un message sms explicatif adressé au même numéro, (2) participer aux événements de sensibilisation, ou proposer votre temps et compétences pour soutenir les activités.
+        Plusieurs voies sont offertes pour aider l'Association. (1) Vous pouvez faire un don direct (par un des 4 comptes mobile-money publiés, paiement accompagné au besoin d'un message sms explicatif adressé au même numéro), (2) participer aux événements de sensibilisation, ou proposer votre temps et compétences pour soutenir les activités.
         Plus pratiquement, nous pouvons citer des exemples concrets d'aide précieuse : (3) aider à faire connaitre l'Association autour de vous pour nous aider à atteindre plus de personnes, (4) nous aider à faire le suivi des paiements des prestations sur terrain en RDC pour nous assurer que les contributions sont bien arrivées et attribuées aux bons destinataires, (5) nous aider à organiser des campagnes de collecte de fonds pour l'appui au fonctionnement administratif et technique de KM-Kimya.
         </p>
     </div>
