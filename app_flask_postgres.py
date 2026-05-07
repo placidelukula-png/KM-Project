@@ -4017,7 +4017,7 @@ FAQ_PAGE = """
         .footer { margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; }
         .btn {padding:10px 14px;border-radius:12px;border:1px solid #111;background:#fff;color:#111;cursor:pointer}
         .btn-back { display: inline-block; padding: 10px 20px; background: #111; color: #fff; text-decoration: none; border-radius: 8px; }
-        .saut-de-page { margin-top: 300px; }
+        .saut-de-page { margin-top: 700px; }
     </style>
 </head>
 <body>
@@ -4139,13 +4139,13 @@ FAQ_PAGE = """
     A court terme, l'objectif est d'atteindre 500 membres actifs et de stabiliser les processus opérationnels. La prestation passera alors à 2500$ en cas de décès d'un membre du groupe, ce qui permettra de couvrir tant soit peu une bonne partie des besoins d'un enterrement.
     </p>
     <p>
-    A moyen terme, KM-Kimya vise à atteindre son envol avec une prestation de +/- 5000$ capable de couvrir les besoins d'un enterrement à Kinshasa et ailleurs et ainsi renforcer l'impact social de en soutenant un nombre croissant de familles en deuil sur tout le territoire national.
+    A moyen terme, KM-Kimya vise à atteindre son envol avec une prestation de +/- 5000$ capable de couvrir les besoins d'un enterrement à Kinshasa et ailleurs et ainsi renforcer l'impact social de en soutenant un nombre croissant de familles en deuil sur tout le territoire national. Cet objectif suppose une croissance significative du nombre de membres actifs (au moins 1000), une gestion rigoureuse des fonds et une communication efficace pour sensibiliser davantage de personnes à rejoindre l'association.
     </p>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
 
     <h2 id="chapitre10">Quand commence la couverture pour le membre actif ?</h2>
     <p>
-    Comme prescrit dans le projet de Statuts et de ROI, un nouveau membre n'est couvert que après une periode de probation (ou délai de carence) fixée à six (6) mois. Cette période est cruciale pour l'Association ; elle la met à l'abris d'une tricherie courante appelée "asymetrie d'information" ou "selection adverse" qui consiste à faire adhérer à l'association un malade grave (en phase finale) juste avant son décès afin de lui faire bénéficier de l'aide financière sans avoir contribué au groupe. 
+    Comme prescrit dans le projet de Statuts et de ROI, la couverture d' un nouveau membre demarre seulement après une periode de probation (ou délai de carence) fixée à six (6) mois. Cette période est cruciale pour l'Association ; elle la met à l'abris d'une tricherie courante appelée "asymetrie d'information" ou "selection adverse" qui, dans le contexte de KM-Kimya, consisterait à faire adhérer à l'Association un malade grave (en phase finale) juste avant son décès afin de lui faire bénéficier de l'aide financière sans avoir contribué au groupe. 
     </p>
     
     <p>
@@ -4181,9 +4181,9 @@ FAQ_PAGE = """
     </p>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
 
-    <h2 id="chapitre15">Pourquoi doit on mettre un mot de passe sur le compte ?</h2>
+    <h2 id="chapitre15">Pourquoi doit-on mettre un mot de passe sur le compte ?</h2>
     <p>
-    Le compte du membre est sécurisé par un mot de passe pour garantir la confidentialité et la sécurité des informations financières et personnelles. Les donnees personnelles sont protégées pour assurer la vie privée des membres. Une personne de mauvaise foi pourrait tenter d'accéder à ces informations sans autorisation. Par exemple, une personne malveillante peut, par la fonctionnalité 'transfert de crédit', deverser tout ou partie de votre solde dans le compte d'un autre membre.    
+    Le compte du membre est sécurisé par un mot de passe pour garantir la confidentialité et la sécurité des informations financières et personnelles. Les données personnelles sont protégées pour assurer la vie privée des membres. Une personne de mauvaise foi pourrait tenter d'accéder à ces informations sans autorisation. Par exemple, une personne malveillante peut, par la fonctionnalité 'transfert de crédit', déverser tout ou partie de votre solde dans le compte d'un autre membre.    
     </p>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
 
