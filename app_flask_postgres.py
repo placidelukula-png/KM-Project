@@ -3936,14 +3936,14 @@ INFOS_ASSOCIATION_PAGE = """
         p { margin-bottom: 15px; text-align: justify; }
         .btn { padding: 10px 14px; border-radius: 12px; border: 1px solid #111; background: lightgreen; color: blue; cursor: pointer; }
         .footer { margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; }
-        .btn-back { display: inline-block; padding: 10px 20px; background: #111; color: #fff; text-decoration: none; border-radius: 8px; }
+        .btn-back { display: inline-block; padding: 10px 14px; background: #111; color: #fff; text-decoration: none; border-radius: 12px; }
     </style>
 </head>
 <body>
     <div class="container">
         <div style="display: flex; justify-content: space-between; align-items: right;">
             <a href="{{ url_for('FAQ_PAGE') }}"> <button class="btn" type="button">Questions fréquentes - <small>réponses rapides</small></button> </a>
-            <a href="{{ url_for('login') }}" class="btn">← <small>Retour à l'accueil</small></a>
+            <a href="{{ url_for('login') }}" class="btn-back">← <small>Retour à l'accueil</small></a>
         </div>    
         <div style="display: flex; justify-content: space-between; align-items: left;">
             <h1>Notre Association</h1>
