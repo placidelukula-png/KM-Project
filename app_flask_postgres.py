@@ -4164,9 +4164,10 @@ FAQ_PAGE = """
     <h2 id="chapitre12">Si je quitte l'Association, serai-je remboursé ?</h2>
     <p>
     Si vous quittez l'Association, le solde de votre compte vous sera retourné par le réseau mobile-money que vous utilisiez couramment pour les paiements.
-    Par solde de votre compte, entendez les fonds destinés à couvrir les prestations km-kimya futures, car les contributions déjà versées en prestations, la portion destinée aux frais administratifs et les cotisations statutaires en tant que membre ne sont pas remboursables.
+    Par solde de votre compte, entendez les fonds destinés à couvrir les prestations km-kimya futures, car les contributions déjà versées en prestations, la portion destinée aux frais administratifs et les cotisations statutaires en tant que membre ne sont pas remboursables. Enfin, n'oubliez pas que les frais de transfert seront à votre charge.   
     </p>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
+    <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
     <h2 id="chapitre13">Comment puis-je aider si j'ai les moyens?</h2>
     <p>
