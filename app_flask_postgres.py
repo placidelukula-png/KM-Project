@@ -4018,7 +4018,7 @@ FAQ_PAGE = """
         .btn {padding:10px 14px;border-radius:12px;border:1px solid #111;background:#fff;color:#111;cursor:pointer}
         .btn-back { display: inline-block; padding: 10px 20px; background: #111; color: #fff; text-decoration: none; border-radius: 8px; }
         .pge { padding: 10px 14px; border-radius: 12px; border: 1px solid #111; background: lightblue; color: black; cursor: pointer; }
-        .saut-de-page { margin-top: 700px; }
+        .saut-de-page { margin-top: 450px; }
     </style>
 </head>
 <body>
@@ -4055,22 +4055,24 @@ FAQ_PAGE = """
 
     <!-- 2. LE CONTENU DÉTAILLÉ -->
     <h2 id="chapitre1">Mission et objectif de l'Association KM-Kimya</h2>
-    <p class="pge">
-    Notre association a pour mission principale 
-    <ul>
-        <li>de rassembler les forces vives, en association, afin de promouvoir le développement et l'entraide entre tous les membres lorsque survient le décès d’un membre.</li>
-        <li>de transformer une réaction émotionnelle ponctuelle en un mécanisme organisé, équitable et durable, au service de la dignité des familles et de la cohésion communautaire.</li>
-    </ul>
-    L’Association est fondée sur des valeurs de solidarité. Nous travaillons quotidiennement à la création d'un réseau solide où chaque adhérent trouve sa place et contribue à l'essor collectif.  Elle structure et sécurise une valeur culturelle existante : la solidarité. 
-    <br>
-    <br>
-    Ainsi, KM-KIMYA est une association solidaire engagée qui se fixe comme objectif
-    <ul>   
-    <li>la réduction du choc économique lié aux funérailles par </li>
-    <li>la mutualisation de petites contributions financières et </li>
-    <li>le versement rapide d'une aide significative à la famille éprouvée.</li>
-    </ul> 
-    </p>
+    <div class="pge">
+        <p>
+        Notre association a pour mission principale 
+        <ul>
+            <li>de rassembler les forces vives, en association, afin de promouvoir le développement et l'entraide entre tous les membres lorsque survient le décès d’un membre.</li>
+            <li>de transformer une réaction émotionnelle ponctuelle en un mécanisme organisé, équitable et durable, au service de la dignité des familles et de la cohésion communautaire.</li>
+        </ul>
+        L’Association est fondée sur des valeurs de solidarité. Nous travaillons quotidiennement à la création d'un réseau solide où chaque adhérent trouve sa place et contribue à l'essor collectif.  Elle structure et sécurise une valeur culturelle existante : la solidarité. 
+        <br>
+        <br>
+        Ainsi, KM-KIMYA est une association solidaire engagée qui se fixe comme objectif
+        <ul>   
+        <li>la réduction du choc économique lié aux funérailles par </li>
+        <li>la mutualisation de petites contributions financières et </li>
+        <li>le versement rapide d'une aide significative à la famille éprouvée.</li>
+        </ul> 
+        </p>
+    </div>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
     <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
     
