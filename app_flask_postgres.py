@@ -4017,6 +4017,7 @@ FAQ_PAGE = """
         .footer { margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; }
         .btn {padding:10px 14px;border-radius:12px;border:1px solid #111;background:#fff;color:#111;cursor:pointer}
         .btn-back { display: inline-block; padding: 10px 20px; background: #111; color: #fff; text-decoration: none; border-radius: 8px; }
+        .pge { padding: 10px 14px; border-radius: 12px; border: 1px solid #111; background: lightblue; color: black; cursor: pointer; }
         .saut-de-page { margin-top: 700px; }
     </style>
 </head>
@@ -4054,7 +4055,8 @@ FAQ_PAGE = """
 
     <!-- 2. LE CONTENU DÉTAILLÉ -->
     <h2 id="chapitre1">Mission et objectif de l'Association KM-Kimya</h2>
-    <p>Notre association a pour mission principale 
+    <p class="pge">
+    Notre association a pour mission principale 
     <ul>
         <li>de rassembler les forces vives, en association, afin de promouvoir le développement et l'entraide entre tous les membres lorsque survient le décès d’un membre.</li>
         <li>de transformer une réaction émotionnelle ponctuelle en un mécanisme organisé, équitable et durable, au service de la dignité des familles et de la cohésion communautaire.</li>
@@ -4070,13 +4072,14 @@ FAQ_PAGE = """
     </ul> 
     </p>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
-
+    <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
     
     <h2 id="chapitre2">Qui peut adhérer à l'Association ?</h2>
     <p>
     L'Association accueille toute personne, qui adhère à ses objectifs et accepte ses règles et procédures, sans distinction de nationalité, religion ou autre. Elle interesse principalement les personnes résidant au Congo (RDC). Toutefois, les ressortissants congolais ou toute autre personne de nationalité étrangère vivant hors de la RDC peut adhérer pour assister des proches résidants au pays.
     </p>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
+    <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
     <h2 id="chapitre3">Le principe de fonctionnement et les modalités d'adhésion</h2>
     <p>
@@ -4090,18 +4093,22 @@ FAQ_PAGE = """
     </ul>      
     </p>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
+    <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
     <h2 id="chapitre4">Est-ce que le paiement est obligatoire pour être membre de l'Association KM-Kimya ?</h2>
     <p>
-    Oui ; à l'adhésion le paiement de votre première contribution à la prestation de KM-Kimya lors du prochain décès dans le groupe est obligatoire. L'exigence du paiement préalable de la contribution permet d'intervenir rapidement (délai de moins de 72 heures) auprès de la famille et des proches du membre défunt.
+    Oui ; à l'adhésion le paiement de votre première contribution à la prestation de KM-Kimya lors du prochain décès dans le groupe est obligatoire. L'exigence du paiement préalable de la contribution permet à km-kimya d'intervenir rapidement (délai de moins de 72 heures) auprès de la famille et des proches du membre défunt.
     </p>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
+    <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
+
 
     <h2 id="chapitre5">Un etranger ou un congolais résidant à l'etranger peut il adhérer à une association qui opère sur terrain au Congo (RDC) ?</h2>
     <p>
     Oui, absolument, un étranger ou un congolais résidant à l'etranger peut adhérer à l'association congolaise. Ceci est conforme à la loi qui régit les associations en République Démocratique du Congo. Il va de soi que n'ayant pas acces aux régies Mobile-Money locales en RDC, ceux qui sont membres résidant à l'etranger doivent s'acquitter de leurs obligations financières par la voie des transferts internationaux, nous recommandons vivement www.remitly.com
     </p>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
+    <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
     <h2 id="chapitre6">Comment procéder aux paiements sur terrain au Congo (RDC) ?</h2>
     <p>
@@ -4115,6 +4122,7 @@ FAQ_PAGE = """
     Après le paiement, la capture d'écran du reçu de paiement émis par le service de mobile-money avec votre nom complet constitue la preuve de paiement et/ou de votre d'adhésion le cas échéant. Cette démarche simple et accessible permet à chacun de rejoindre notre communauté et de bénéficier du soutien mutuel que nous offrons.:
     </p>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
+    <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
     <h2 id="chapitre7">Comment procéder aux paiements pour les membres résidant en dehors de la RDC ?</h2>
     <p>
@@ -4130,6 +4138,7 @@ FAQ_PAGE = """
     Cet argent est utilisé pour financer les prestations de KM-Kimya (90%) quand survient un décès dans le groupe et une fraction de 10% pour les frais administratifs et autres imprevus.
     </p>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
+    <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
     <h2 id="chapitre9">Quels sont les objectifs immediat, à court terme et moyen terme de l'Association actuellement ?</h2>
     <p>
@@ -4142,6 +4151,7 @@ FAQ_PAGE = """
     A moyen terme, KM-Kimya vise à atteindre son envol avec une prestation de +/- 5000$ capable de couvrir les besoins d'un enterrement à Kinshasa et ailleurs et ainsi renforcer l'impact social de en soutenant un nombre croissant de familles en deuil sur tout le territoire national. Cet objectif suppose une croissance significative du nombre de membres actifs (au moins 1000), une gestion rigoureuse des fonds et une communication efficace pour sensibiliser davantage de personnes à rejoindre l'association.
     </p>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
+    <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
     <h2 id="chapitre10">Quand commence la couverture pour le membre actif ?</h2>
     <p>
@@ -4152,6 +4162,7 @@ FAQ_PAGE = """
     Toutefois, une exception est faite pour les nouveaux membres inscrits durant la période 'pionnière' qui précède l'adoption officielle des Statuts et ROI en Assemblée Générale ; ce premier groupe n'aura pas de temps de probation (délai de carence).  
     </p>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
+    <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
     
     <h2 id="chapitre11">Comment procéder si la personne à inscrire n'a pas de téléphone ?</h2>
@@ -4159,6 +4170,7 @@ FAQ_PAGE = """
     Cette situation est prevue dans les Statuts et ROI. Etant donné que les transactions financières sont numériques par mobile-money, un membre sans téléphone doit absolument etre sous la dependance d'un autre membre appelé 'mentor' qui l'accompagnera dans sa discipline financière par rapport aux procedures. Son identifiant son nom (ou une partie de son nom) en veillant toutefois de ne pas donner un nom déjà attribué. 
     </p>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
+     <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>   
 
 
     <h2 id="chapitre12">Si je quitte l'Association, serai-je remboursé ?</h2>
@@ -4169,18 +4181,23 @@ FAQ_PAGE = """
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
     <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
+    
     <h2 id="chapitre13">Comment puis-je aider si j'ai les moyens?</h2>
     <p>
     Plusieurs voies sont offertes pour aider l'Association. (1) Vous pouvez faire un don direct (par un des 4 comptes mobile-money publiés) avec, au besoin, un message sms explicatif adressé au même numéro, (2) participer aux événements de sensibilisation, ou proposer votre temps et compétences pour soutenir les activités.
     Plus pratiquement, nous pouvons citer des exemples concrets d'aide précieuse : (3) aider à faire connaitre l'Association autour de vous pour nous aider à atteindre plus de personnes, (4) nous aider à faire le suivi des paiements des prestations sur terrain en RDC pour nous assurer que les contributions sont bien arrivées et attribuées aux bons destinataires, (5) nous aider à organiser des campagnes de collecte de fonds pour l'appui au fonctionnement administratif et technique de KM-Kimya.
     </p>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
+    <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
+    
     <h2 id="chapitre14">Pourquoi payer seulement 5.5$ mais pas plus pour une  plus impactante ?</h2>
     <p>
     Les personnes capables de contribuer de manière consistente ont généralement d'autres couvertures, notamment des assurances-vie robustes; il n'ont pas besoin d'une organisation comme KM-Kimya. Pour le public cible de KM-Kimya, même les 5.5$ sont elevés. L'objectif est de rendre l'adhésion accessible au plus grand nombre, en particulier à ceux qui sont les plus vulnérables et qui n'ont pas accès à d'autres formes de protection financière. En fixant une contribution modeste, nous espérons encourager une large participation et créer un impact significatif au sein de notre communauté.
     </p>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
+    <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
+
 
     <h2 id="chapitre15">Pourquoi doit-on mettre un mot de passe sur le compte ?</h2>
     <p>
