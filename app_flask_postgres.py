@@ -4049,6 +4049,7 @@ FAQ_PAGE = """
     <p><a href="{{ url_for('infos_association') }}" class="btn-back">← Retour</a></p>
 
     <ul>
+    <li><a href="#chapitre0">Comment faire pour adhérer le plus simplement possible à l’Association KM-Kimya ?</a></li>  
     <li><a href="#chapitre1">Quelle est la mission et l'objectif de l’Association KM-Kimya ?</a></li>
     <li><a href="#chapitre2">Qui peut adhérer à l'Association ?</a></li>
     <li><a href="#chapitre3">Quel est le principe de fonctionnement et les modalités d'adhésion ?</a></li>
@@ -4064,6 +4065,7 @@ FAQ_PAGE = """
     <li><a href="#chapitre13">Comment puis-je aider si j'ai les moyens?</a></li>
     <li><a href="#chapitre14">Pourquoi payer seulement 5.5$ mais pas plus pour une prestation plus impactante ?</a></li>
     <li><a href="#chapitre15">Pourquoi doit on mettre un mot de passe sur le compte ?</a></li>
+    <li><a href="#chapitre16">Comment ouvre t-on un lien ou un URL à partir d'un téléphone android?</a></li>
 
 
     </ul>
@@ -4076,6 +4078,22 @@ FAQ_PAGE = """
     
 
     <!-- 2. LE CONTENU DÉTAILLÉ -->
+    <h2 id="chapitre0">Comment faire pour adhérer le plus simplement possible à l’Association KM-Kimya ?</h2>
+    <div class="pge">
+        <p>
+        La procédure d'adhésion la plus simple à l'Association passe par 2 étapes (1)INSCRIPTION et (2)PAIEMENT(de la première contribution).:
+        <ul>
+            <li>INSCRIPTION : ouvrir le lien www.km-kimya.org sur votre téléphone. Cliquer sur le bouton "Inscription libre". Rempir le formulaire et l'enregitrer. </li>
+            <li>PAIEMENT : transférer 5.5$ par mobile-money au compte de km-kimya (par le téléphone dont vous avez tiré votre identifiant à la regie mobile-money de votre téléphone). </li>
+        </ul>
+        C'est si simple! Apres ces deux étapes simples; vous êtes membre à part entière de l'Association. 
+        <br>
+        Pour plus de détails sur les modalités d'adhésion, veuillez consulter la section suivante "Quel est le principe de fonctionnement et les modalités d'adhésion ?".
+        </p>
+    </div>
+    <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
+    <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
+
     <h2 id="chapitre1">Mission et objectif de l'Association KM-Kimya</h2>
     <div class="pge">
         <p>
@@ -4097,7 +4115,7 @@ FAQ_PAGE = """
     </div>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
     <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
-    
+       
     <h2 id="chapitre2">Qui peut adhérer à l'Association ?</h2>
     <div class="pge">
         <p>
@@ -4136,7 +4154,10 @@ FAQ_PAGE = """
     <h2 id="chapitre5">Un etranger ou un congolais résidant à l'etranger peut il adhérer à une association qui opère sur terrain au Congo (RDC) ?</h2>
     <div class="pge">
         <p>
-        Oui, absolument, un étranger ou un congolais résidant à l'etranger peut adhérer à l'association congolaise. Ceci est conforme à la loi qui régit les associations en République Démocratique du Congo. Il va de soi que n'ayant pas acces aux régies Mobile-Money locales en RDC, ceux qui sont membres résidant à l'etranger doivent s'acquitter de leurs obligations financières par la voie des transferts internationaux, nous recommandons vivement www.remitly.com
+        Oui, absolument, un étranger ou un congolais résidant à l'etranger peut adhérer à une association congolaise. Ceci est conforme à la loi 004/2001 qui régit les associations en République Démocratique du Congo.</p>
+        <p>
+        <p>
+        Il va de soi que n'ayant pas acces aux régies Mobile-Money locales en RDC, ceux qui sont membres résidant à l'etranger doivent s'acquitter de leurs obligations financières par la voie des transferts internationaux, nous recommandons vivement www.remitly.com
         </p>
     </div>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
@@ -4256,6 +4277,28 @@ FAQ_PAGE = """
     <div class="pge">
         <p>
         Le compte du membre est sécurisé par un mot de passe pour garantir la confidentialité et la sécurité des informations financières et personnelles. Les données personnelles sont protégées pour assurer la vie privée des membres. Une personne de mauvaise foi pourrait tenter d'accéder à ces informations sans autorisation. Par exemple, une personne malveillante peut, par la fonctionnalité 'transfert de crédit', déverser tout ou partie de votre solde dans le compte d'un autre membre.
+        </p>
+    </div>
+    <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
+
+    <h2 id="chapitre16">Comment ouvre t-on un lien ou un URL à partir d'un téléphone android?</h2>
+    <div class="pge">
+        <p>
+        Cette question élémentaire est fréquente chez les utilisateurs de smartphones Android. Autant elle est elementaire, autant il n'est pas aisé d'y répondre.
+        </P> 
+        Sur un téléphone Android, la méthode la plus simple pour ouvrir un lien (URL) est de taper brièvement dessus dans une application (SMS, email, navigateur, messagerie) pour l'ouvrir dans le navigateur par défaut (Chrome). Vous pouvez également copier le lien et le coller dans la barre d'adresse de Chrome.
+        </P>
+        <p>
+        Voici les différentes méthodes détaillées :
+        <ul>
+            <li>Taper directement : Appuyez simplement sur le texte en bleu ou souligné (lien hypertexte) dans une application.</li>
+            <li>Copier-Coller : Faites un appui long sur le lien > "Copier l'adresse du lien", puis collez-le dans la barre d'adresse de votre navigateur.</li>
+            <li>Ouvrir dans un nouvel onglet : Dans le navigateur, faites un appui long sur un lien, puis sélectionnez "Ouvrir dans un nouvel onglet".</li>
+            <li>Applications spécifiques : Certains téléphones (Samsung) permettent d'ouvrir des liens dans une vue scindée ou dans une nouvelle fenêtre par-dessus la page actuelle via un appui long.</li>
+            <li>Raccourci sur l'écran d'accueil : Sur Chrome, allez sur le site > Menu (3 points) > "[Ajouter à l'écran d'accueil]" pour ouvrir le site comme une application.</li>
+        </ul>
+        <p>
+        Si un lien s'ouvre systématiquement dans la mauvaise application, allez dans Paramètres > Applications > Ouverture des liens (ou "Applications par défaut") pour configurer les préférences.
         </p>
     </div>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
