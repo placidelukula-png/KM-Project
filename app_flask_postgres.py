@@ -1266,6 +1266,20 @@ def update_member_adresse(phone: str, adresse: str, updateuser: str, lastname: s
             """, (adresse, updateuser, lastname, firstname, phone))
         conn.commit()
 
+def update_member_birthdate(phone: str, birthdate: str, updateuser: str, lastname: str, firstname: str):
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                UPDATE membres
+                SET birthdate=%s,
+                    updatedate=CURRENT_DATE,
+                    updateuser=%s,
+                    lastname=%s,
+                    firstname=%s
+                WHERE phone=%s
+            """, (birthdate, updateuser, lastname, firstname, phone))
+        conn.commit()
+
 def update_id_data(keydata: str, quantity: Decimal, decript: str, note: str):
     # Récupérer l'utilisateur actuel ou définir une valeur par défaut
     current_user = session.get("user", "système")
@@ -2161,10 +2175,16 @@ ACCOUNT_PAGE = """
     </div>
     </div>
 
-    <!-- ADRESSE -->
+    <!-- DATE DE NAISSANCE & ADRESSE -->
+    <div style="color:black;" class="inline-2">
+    <div>
+    <label>Date de naissance</label>
+    <input name="birthdate" value="{{ m[6] }}" type="date">
+    </div>
     <div>
     <label>Adresse</label>
     <input name="adresse" value="{{ m[13] }}">
+    </div>
     </div>
 <br>
 <!-- SECTION MENTOR / BENEFICIAIRE / COTISATIONS -->
@@ -2273,7 +2293,8 @@ def account():
 
             beneficiaire_new = (request.form.get("beneficiaire") or "").strip()
             adresse_new = (request.form.get("adresse") or "").strip()
-            
+            birthday_new = (request.form.get("birthdate") or "").strip()
+
             changed = []
 
             # 0) changement nom/prénom, bénéficiaire ou adresse (si modifié)
@@ -2281,6 +2302,10 @@ def account():
                 nom_prenom=1 
             else:
                 nom_prenom=0
+
+            if birthday_new != (m[6] or ""):
+                update_member_birthdate(phone, birthday_new, updateuser=phone, lastname=ln, firstname=fn)
+                changed.append("Date de naissance")
 
             if adresse_new != (m[13] or ""):
                 update_member_adresse(phone, adresse_new, updateuser=phone, lastname=ln, firstname=fn)
