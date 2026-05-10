@@ -1881,7 +1881,7 @@ DASHBOARD_PAGE = """
 
     <!-- ✅ Cadran statistiques (coin supérieur droit) -->
     <div class="statsbox">
-      <div class="stats-title">Indicateurs clés :                  Mode: {{ Mode }}</div>
+      <div class="stats-title"><span>Indicateurs clés :_______________________________Mode: {{ Mode }}</span></div>
       <div class="stats-row"><span>Prestation disponible . . . . . . . . . . . . . .</span><b>{{ P }}</b></div>
       <div class="stats-row"><span>Adhérents actifs. . . . . . . . . . . . . . . . . .</span><b>{{ N }}</b></div>
       <div class="stats-row"><span>Adhérents (brut). . . . . . . . . . . . . . . . . .</span><b>{{ B }}</b></div>
@@ -2053,6 +2053,7 @@ def home():
         N=stats["N"],
         B=stats["B"],
         C=stats["C"],
+        Mode=stats["Mode"],
         # vos autres variables si nécessaires
         edit_row=None,
         edit_birthdate="",
