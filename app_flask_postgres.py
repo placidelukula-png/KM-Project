@@ -514,7 +514,7 @@ def fetch_dashboard_stats():
             cur.execute("""
                 SELECT COALESCE(quantity, 0)
                 FROM id_data
-                WHERE keydata = 'id-data01'  -- clé fixée pour la prestation ciblée
+                WHERE keydata = 'id-data01'  -- clé fixée pour la prestation  (Prestation ciblée (P) : montant que la communauté vise à verser pour chaque prestation)
                 ORDER BY id DESC
                 LIMIT 1
             """)
@@ -525,7 +525,7 @@ def fetch_dashboard_stats():
             cur.execute("""
                 SELECT COALESCE(quantity, 0)
                 FROM id_data
-                WHERE keydata = 'id-data03'  -- clé fixée pour la contribution fixée (si tu veux fixer une contribution spécifique au lieu de la calculer à partir de P, S et N)
+                WHERE keydata = 'id-data03'  -- clé fixée pour la contribution fixée (contribution spécifique au lieu de la calculer à partir de P, S et N)
                 ORDER BY id DESC
                 LIMIT 1
             """)
@@ -556,18 +556,32 @@ def fetch_dashboard_stats():
             """)
             B = cur.fetchone()[0] or 0
 
+
+
+            # M = Mode de travail (CF = Contributions fixes, PF = Prestations fixes)
+            cur.execute("""
+                SELECT description
+                FROM id_data
+                WHERE keydata = 'id-data04'  -- clé fixée pour le mode de travail
+                ORDER BY id DESC
+                LIMIT 1
+            """)
+            M = cur.fetchone()
+            Mode = M[0] if M else "PF"  # par défaut, on est en mode Prestations fixes (calcul de C à partir de P, S et N)
+
+        if Mode == "CF" :
             P = C * N / (1+S) 
             P = Decimal(P)
-    # C = (1+S) * P / N (si N=0 => 0)   ===> P = C * N / (1+S)   
-    #try:
-    #    if N > 0:
-    #        C = (Decimal(1+S) * Decimal(P)) / Decimal(N)        # S = marge de sécurité (en %) modifiable pour couvrir les frais et les imprévus.  
-    #        C = C.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
-    #    else:
-    #        C = Decimal("0.00")
-    #except (InvalidOperation, ZeroDivisionError):
-    #    C = Decimal("0.00")
-
+        else :
+            # C = 1.2 * P / N (si N=0 => 0)
+            try:
+                if N > 0:
+                    C = (Decimal(1+S) * Decimal(P)) / Decimal(N)        # S = marge de sécurité (en %) modifiable pour couvrir les frais et les imprévus.  
+                    C = C.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+                else:
+                    C = Decimal("0.00")
+            except (InvalidOperation, ZeroDivisionError):
+                C = Decimal("0.00")
 
     # Optionnel: format affichage (USD)
     def fmt_money(x: Decimal) -> str:
@@ -579,6 +593,7 @@ def fetch_dashboard_stats():
         "N": N,
         "B": B,
         "C": fmt_money(C),
+        "Mode": Mode
     }
 
 def fetch_dashboard_stats_ANCIEN():
@@ -1866,7 +1881,7 @@ DASHBOARD_PAGE = """
 
     <!-- ✅ Cadran statistiques (coin supérieur droit) -->
     <div class="statsbox">
-      <div class="stats-title">Indicateurs clés : </div>
+      <div class="stats-title">Indicateurs clés :                  Mode: {{ Mode }}</div>
       <div class="stats-row"><span>Prestation disponible . . . . . . . . . . . . . .</span><b>{{ P }}</b></div>
       <div class="stats-row"><span>Adhérents actifs. . . . . . . . . . . . . . . . . .</span><b>{{ N }}</b></div>
       <div class="stats-row"><span>Adhérents (brut). . . . . . . . . . . . . . . . . .</span><b>{{ B }}</b></div>
