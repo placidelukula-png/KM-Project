@@ -560,7 +560,7 @@ def fetch_dashboard_stats():
 
             # M = Mode de travail (CF = Contributions fixes, PF = Prestations fixes)
             cur.execute("""
-                SELECT description
+                SELECT decript
                 FROM id_data
                 WHERE keydata = 'id-data04'  -- clé fixée pour le mode de travail
                 ORDER BY id DESC
