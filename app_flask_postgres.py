@@ -520,6 +520,80 @@ def fetch_dashboard_stats():
             """)
             P = cur.fetchone()
             P = P[0] if P else Decimal("0")
+
+            # C = Contribution pour la prestation ciblée
+            cur.execute("""
+                SELECT COALESCE(quantity, 0)
+                FROM id_data
+                WHERE keydata = 'id-data03'  -- clé fixée pour la contribution fixée (si tu veux fixer une contribution spécifique au lieu de la calculer à partir de P, S et N)
+                ORDER BY id DESC
+                LIMIT 1
+            """)
+            C = cur.fetchone()
+            C = C[0] if C else Decimal("0")
+
+            
+            # S = Marge de securité fixée pour couvrir les frais et imprevues
+            cur.execute("""
+                SELECT COALESCE(quantity, 0)
+                FROM id_data
+                WHERE keydata = 'id-data02'  -- clé fixée pour la marge de sécurité
+                ORDER BY id DESC
+                LIMIT 1
+            """)
+            S = cur.fetchone()
+            S = S[0] if S else Decimal("0")
+
+            # N = actifs
+            cur.execute("SELECT COUNT(*) FROM membres WHERE currentstatute = 'actif' or currentstatute = 'probatoire'")
+            N = cur.fetchone()[0] or 0
+
+            # B = brut (non radié et non suspendu)
+            cur.execute("""
+                SELECT COUNT(*)
+                FROM membres
+                WHERE currentstatute NOT IN ('radié', 'suspendu')
+            """)
+            B = cur.fetchone()[0] or 0
+
+            P = C * N / (1+S) 
+            P = Decimal(P)
+    # C = (1+S) * P / N (si N=0 => 0)   ===> P = C * N / (1+S)   
+    #try:
+    #    if N > 0:
+    #        C = (Decimal(1+S) * Decimal(P)) / Decimal(N)        # S = marge de sécurité (en %) modifiable pour couvrir les frais et les imprévus.  
+    #        C = C.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+    #    else:
+    #        C = Decimal("0.00")
+    #except (InvalidOperation, ZeroDivisionError):
+    #    C = Decimal("0.00")
+
+
+    # Optionnel: format affichage (USD)
+    def fmt_money(x: Decimal) -> str:
+        # 1 234.56
+        return f"{x:,.2f}".replace(",", " ")
+
+    return {
+        "P": fmt_money(Decimal(P)),
+        "N": N,
+        "B": B,
+        "C": fmt_money(C),
+    }
+
+def fetch_dashboard_stats_ANCIEN():
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            # P = prestation ciblée
+            cur.execute("""
+                SELECT COALESCE(quantity, 0)
+                FROM id_data
+                WHERE keydata = 'id-data01'  -- clé fixée pour la prestation ciblée
+                ORDER BY id DESC
+                LIMIT 1
+            """)
+            P = cur.fetchone()
+            P = P[0] if P else Decimal("0")
             
             # S = Marge de securité fixée pour couvrir les frais et imprevues
             cur.execute("""
@@ -1794,9 +1868,9 @@ DASHBOARD_PAGE = """
     <div class="statsbox">
       <div class="stats-title">Indicateurs clés : </div>
       <div class="stats-row"><span>Prestation disponible . . . . . . . . . . . . . .</span><b>{{ P }}</b></div>
-      <div class="stats-row"><span>Adhérents actifs. . . . . . . . . . . . . . . . .</span><b>{{ N }}</b></div>
-      <div class="stats-row"><span>Adhérents (brut). . . . . . . . . . . . . . . . .</span><b>{{ B }}</b></div>
-      <div class="stats-row"><span>Contribution individuelle attendue. . . .</span><b>{{ C }}</b></div>
+      <div class="stats-row"><span>Adhérents actifs. . . . . . . . . . . . . . . . . .</span><b>{{ N }}</b></div>
+      <div class="stats-row"><span>Adhérents (brut). . . . . . . . . . . . . . . . . .</span><b>{{ B }}</b></div>
+      <div class="stats-row"><span>Contribution individuelle attendue. . . . .</span><b>{{ C }}</b></div>
     </div>
     <!-- ✅ FIN Cadran statistiques (coin supérieur droit) -->
 
@@ -4083,12 +4157,12 @@ FAQ_PAGE = """
         <p>
         La procédure d'adhésion la plus simple à l'Association passe par 2 étapes (1)INSCRIPTION et (2)PAIEMENT(de la première contribution).:
         <ul>
-            <li>INSCRIPTION : ouvrir le lien www.km-kimya.org sur votre téléphone. Cliquer sur le bouton "Inscription libre". Rempir le formulaire et l'enregitrer. </li>
-            <li>PAIEMENT : transférer 5.5$ par mobile-money au compte de km-kimya (par le téléphone dont vous avez tiré votre identifiant à la regie mobile-money de votre téléphone). </li>
+            <li>INSCRIPTION : ouvrir le lien www.km-kimya.org sur votre téléphone. Cliquer sur le bouton "Inscription libre". Remplir le formulaire et l'enregitrer. </li>
+            <li>PAIEMENT : transférer 5.5$ par mobile-money au compte de km-kimya (par le téléphone dont vous avez tiré votre identifiant, à la régie mobile-money du même numéro de téléphone). </li>
         </ul>
-        C'est si simple! Apres ces deux étapes simples; vous êtes membre à part entière de l'Association. 
+        C'est si simple! Après ces deux étapes simples; vous êtes membre à part entière de l'Association. 
         <br>
-        Pour plus de détails sur les modalités d'adhésion, veuillez consulter la section suivante "Quel est le principe de fonctionnement et les modalités d'adhésion ?".
+        Pour plus de détails sur les modalités d'adhésion, veuillez consulter la section "Quel est le principe de fonctionnement et les modalités d'adhésion ?".
         </p>
     </div>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
