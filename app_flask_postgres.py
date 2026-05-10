@@ -4156,6 +4156,7 @@ FAQ_PAGE = """
     <li><a href="#chapitre14">Pourquoi payer seulement 5.5$ mais pas plus pour une prestation plus impactante ?</a></li>
     <li><a href="#chapitre15">Pourquoi doit on mettre un mot de passe sur le compte ?</a></li>
     <li><a href="#chapitre16">Comment ouvre t-on un lien ou un URL à partir d'un téléphone android?</a></li>
+    <li><a href="#chapitre17">Pourquoi une campagne de recrutement, la sensibilisation est-elle nécessaire ?</a></li>
 
 
     </ul>
@@ -4365,7 +4366,6 @@ FAQ_PAGE = """
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
     <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
-
     <h2 id="chapitre15">Pourquoi doit-on mettre un mot de passe sur le compte ?</h2>
     <div class="pge">
         <p>
@@ -4373,6 +4373,7 @@ FAQ_PAGE = """
         </p>
     </div>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
+    <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
     <h2 id="chapitre16">Comment ouvre t-on un lien ou un URL à partir d'un téléphone android?</h2>
     <div class="pge">
@@ -4396,6 +4397,14 @@ FAQ_PAGE = """
     </div>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
 
+    <h2 id="chapitre17">Pourquoi une campagne de recrutement, la sensibilisation est-elle nécessaire ?</h2>
+    <div class="pge">
+        <p>
+        L'action de KM-Kimya est communautaire; elle basée sur la collaboration et l'engagement d'un grand nombre de membres. Une entrée massive donne le pouvoir de remettre un montant conséquent afin de permettre d’absorber les frais des funérailles (plus il y a des membres, plus le montant à verser à la famille est élevé). Une campagne de recrutement et de sensibilisation est nécessaire pour attirer de nouveaux membres et informer le public sur les activités de l'Association. Elle permet de renforcer la visibilité de l'organisation et de mobiliser plus de personnes autour de ses valeurs et objectifs.
+        </p>
+    </div>
+    <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
+    <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
     <br>
 
