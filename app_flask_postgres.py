@@ -4219,10 +4219,10 @@ FAQ_PAGE = """
     <h2 id="chapitre3">Le principe de fonctionnement et les modalités d'adhésion</h2>
     <div class="pge">
         <p>
-        L’association regroupe des membres qui s’engagent à verser une contribution financière en cas de décès d’un autre membre (contribution uniquement en cas de décès d’un membre du groupe) à condition que celui-ci soit en règle avec les procédures de l’association. En contrepartie, l’Association KM-Kimya assure le maximum d’efficience et de transparence dans la gestion des opérations pour garantir l’équité dans les attentes de tous. 
-        <br> 
-        Les modalités d’adhésion sont très simples
-        <br>
+        L’association regroupe des personnes qui s’engagent à verser une contribution financière en cas de décès d’un autre membre  du groupe(contribution uniquement en cas de décès d’un membre du groupe à condition que celui-ci soit en règle avec les procédures de l’association). En contrepartie, l’Association KM-Kimya assure le maximum d’efficience et de transparence dans la gestion des opérations pour garantir l’équité conformément aux attentes de tous. 
+        </p> 
+        <p>
+        Les modalités d’adhésion sont très simples et accessibles à tous, elles se résument en deux étapes simples :
         <ul>
         <li> 1.	S’inscrire sur ce site Internet www.km-kimya.org par le bouton ‘inscription libre’ </li>
         <li> 2.	Payer par mobile-money 5.5$ (avec le téléphone dont le numéro sans préfixes est l’ identifiant choisi lors de l’inscription) à l’un des 4 comptes mobile-money suivants : (1)<b>+243 999 944 459</b> , (2)<b>+243 824 807 663</b>, (3)<b>+243 891 273 191</b> ou (4)<b>+243 903 077 077</b>.</li>
@@ -4353,10 +4353,10 @@ FAQ_PAGE = """
         Pour des missions spécifiques (de gestion de l'information, de communication, d'administaration numérique etc.) dont la charge et la complexité excèdent le cadre habituel du volontariat, l'Association s'engage par dette. Pour ces cas, l'Association est ouverte à toutes les formes d'aide pour éponger les coûts, nous encourageons les membres à s'impliquer activement en terme de donations ou d'appui à la recherche de partenariats pour aider KM-Kimya à tenir le coup.
         </p>
         <p>
-        Les cas de créances difficiles sont notamment ; les travaux de conception et d'implémentation de la plateforme km-kmya.org sur l'Internet et dans un futur proche (quand le nombre d’adhérents augmente, le travail d’administration augmente, le bénévolat ne peut y arriver efficacement) la nécessité d'installer au moins une personne (un secrétariat) en permanence pour garantir la pérennité de l'Association et la continuité de son impact social.
+        Les cas de créances difficiles sont notamment ; les travaux de conception et d'implémentation de la plateforme km-kimya.org sur l'Internet et dans un futur proche (quand le nombre d’adhérents augmente, le travail d’administration augmente, le bénévolat ne peut y arriver efficacement) la nécessité d'installer au moins une personne (un secrétariat) en permanence pour garantir la pérennité de l'Association et la continuité de son impact social.
         </p>
         <p>
-        Nous sommes ouverts à toute forme d'aide pour éponger les coûts, nous encourageons les membres à s'impliquer activement en terme de donations ou d'appui à la recherche de partenariats pour aider KM-Kimya à tenir le coup ; il s'agit notamment des travaux de conception et d'implementation de la plateforme km-kmya.org sur l'Internet et dans un futur proche la necessité d'installer au moins une personne (un secrétariat) en permanence pour garantir la pérennité de l'Association et la continuité de son impact social.
+        Nous sommes ouverts à toute forme d'aide pour éponger ces coûts, nous encourageons les membres à s'impliquer activement en terme de donations ou d'appui à la recherche de partenariats pour aider KM-Kimya à tenir le coup ; il s'agit notamment des travaux de conception et d'implementation de la plateforme km-kimya.org sur l'Internet et dans un futur proche la necessité d'installer au moins une personne (un secrétariat) en permanence pour garantir la pérennité de l'Association et la continuité de son impact social.
         </p>
     </div>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
