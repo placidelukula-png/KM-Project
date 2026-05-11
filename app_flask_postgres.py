@@ -1881,9 +1881,9 @@ DASHBOARD_PAGE = """
 
     <!-- ✅ Cadran statistiques (coin supérieur droit) -->
     <div class="statsbox">
-      <div class="stats-title"><span>Indicateurs clés :   .    .    .    .    .    .    .    .    .    .    .    . Mode {{ Mode }}</span></div>
-      <div class="stats-row"><span>Prestation disponible . . . . . . . . . . . . . . . . . .</span><b>{{ P }}</b></div>
-      <div class="stats-row"><span>Membres effectifs . . . . . . . . . . . . . . . . . . . . .</span><b>{{ N }}</b></div>
+      <div class="stats-title"><span>Indicateurs clés ; sous le mode : {{ Mode }}</span></div>
+      <div class="stats-row"><span>Prestation disponible. . . . . . . . . . . . . . . . . .</span><b>{{ P }}</b></div>
+      <div class="stats-row"><span>Membres effectifs . . . . . . . . . . . . . . . . . . . .</span><b>{{ N }}</b></div>
       <div class="stats-row"><span>Adhérents (potentiels). . . . . . . . . . . . . . . . .</span><b>{{ B }}</b></div>
       <div class="stats-row"><span>Contribution individuelle attendue. . . . . . . .</span><b>{{ C }}</b></div>
     </div>
@@ -3662,7 +3662,7 @@ TRANSFER_PAGE = """
 
 <br>
 <hr>
-<h3>Paiement de cotisation régulière de membre : </h3>
+<h3>Paiement de votre cotisation régulière de membre : </h3>
 <div class="card">
 <form action="{{ url_for('cotisation') }}" method="post" style="display: flex; align-items: center; gap: 10px; flex-wrap: nowrap;">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -4355,9 +4355,6 @@ FAQ_PAGE = """
         </p>
         <p>
         Les cas de créances difficiles sont notamment ; les travaux de conception et d'implémentation de la plateforme km-kimya.org sur l'Internet et dans un futur proche (quand le nombre d’adhérents augmente, le travail d’administration augmente, le bénévolat ne peut y arriver efficacement) la nécessité d'installer au moins une personne (un secrétariat) en permanence pour garantir la pérennité de l'Association et la continuité de son impact social.
-        </p>
-        <p>
-        Nous sommes ouverts à toute forme d'aide pour éponger ces coûts, nous encourageons les membres à s'impliquer activement en terme de donations ou d'appui à la recherche de partenariats pour aider KM-Kimya à tenir le coup ; il s'agit notamment des travaux de conception et d'implementation de la plateforme km-kimya.org sur l'Internet et dans un futur proche la necessité d'installer au moins une personne (un secrétariat) en permanence pour garantir la pérennité de l'Association et la continuité de son impact social.
         </p>
     </div>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
