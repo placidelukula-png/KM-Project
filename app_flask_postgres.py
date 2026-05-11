@@ -1881,11 +1881,11 @@ DASHBOARD_PAGE = """
 
     <!-- ✅ Cadran statistiques (coin supérieur droit) -->
     <div class="statsbox">
-      <div class="stats-title"><span>Indicateurs clés :.   .   .   .   .   .   .   .   .   .   .   .   .   .   Mode {{ Mode }}</span></div>
-      <div class="stats-row"><span>Prestation disponible . . . . . . . . . . . . . . . . . . . . . . . .</span><b>{{ P }}</b></div>
-      <div class="stats-row"><span>Membres . . . . . . . . . . . . . . . . . . . . . . . . . . . . .</span><b>{{ N }}</b></div>
-      <div class="stats-row"><span>Adhérents (potentiels). . . . . . . . . . . . . . . . . . . . . . . . .</span><b>{{ B }}</b></div>
-      <div class="stats-row"><span>Contribution individuelle attendue. . . . . . . . . . . . . .</span><b>{{ C }}</b></div>
+      <div class="stats-title"><span>Indicateurs clés :   .    .    .    .    .    .    .    .    .    .    .    . Mode {{ Mode }}</span></div>
+      <div class="stats-row"><span>Prestation disponible . . . . . . . . . . . . . . . . . .</span><b>{{ P }}</b></div>
+      <div class="stats-row"><span>Membres effectifs . . . . . . . . . . . . . . . . . . . . .</span><b>{{ N }}</b></div>
+      <div class="stats-row"><span>Adhérents (potentiels). . . . . . . . . . . . . . . . .</span><b>{{ B }}</b></div>
+      <div class="stats-row"><span>Contribution individuelle attendue. . . . . . . .</span><b>{{ C }}</b></div>
     </div>
     <!-- ✅ FIN Cadran statistiques (coin supérieur droit) -->
 
@@ -4172,13 +4172,14 @@ FAQ_PAGE = """
     <h2 id="chapitre0">Comment faire pour adhérer le plus simplement possible à l’Association KM-Kimya ?</h2>
     <div class="pge">
         <p>
-        La procédure d'adhésion la plus simple à l'Association passe par 2 étapes (1)INSCRIPTION et (2)PAIEMENT(de la première contribution).:
+        La procédure d'adhésion à KM-Kimya la plus simple passe par 2 étapes (1) INSCRIPTION et (2) PAIEMENT(de la première contribution) :
         <ul>
             <li>INSCRIPTION : ouvrir le lien www.km-kimya.org sur votre téléphone. Cliquer sur le bouton "Inscription libre". Remplir le formulaire et l'enregitrer. </li>
-            <li>PAIEMENT : transférer 5.5$ par mobile-money au compte de km-kimya (par le téléphone dont vous avez tiré votre identifiant, à la régie mobile-money du même numéro de téléphone). </li>
+            <li>PAIEMENT : transférer 5.5$ par mobile-money au compte de km-kimya (par le téléphone dont vous avez tiré votre identifiant) au sein de la régie mobile-money du même numéro de téléphone. </li>
         </ul>
-        C'est si simple! Après ces deux étapes simples; vous êtes membre à part entière de l'Association. 
-        <br>
+        C'est si facile! Après ces deux étapes simples; vous êtes membre à part entière de l'Association. 
+        </p>
+        <p>
         Pour plus de détails sur les modalités d'adhésion, veuillez consulter la section "Quel est le principe de fonctionnement et les modalités d'adhésion ?".
         </p>
     </div>
@@ -4301,7 +4302,7 @@ FAQ_PAGE = """
         A court terme, l'objectif est d'atteindre 500 membres actifs et de stabiliser les processus opérationnels. La prestation passera alors à 2500$ en cas de décès d'un membre du groupe, ce qui permettra de couvrir tant soit peu une bonne partie des besoins d'un enterrement.
         </p>
         <p>
-        A moyen terme, KM-Kimya vise à atteindre son envol avec une prestation de +/- 5000$ capable de couvrir les besoins d'un enterrement à Kinshasa et ailleurs et ainsi renforcer l'impact social de en soutenant un nombre croissant de familles en deuil sur tout le territoire national. Cet objectif suppose une croissance significative du nombre de membres actifs (au moins 1000), une gestion rigoureuse des fonds et une communication efficace pour sensibiliser davantage de personnes à rejoindre l'association.
+        A moyen terme, KM-Kimya vise à atteindre son envol avec une prestation de +/- 5000$ capable de couvrir les besoins d'un enterrement à Kinshasa et ailleurs et ainsi renforcer l'impact social de son action en soutenant un nombre croissant de familles en deuil sur tout le territoire national. Cet objectif suppose une croissance significative du nombre de membres actifs (au moins 1000), une gestion rigoureuse des fonds et une communication efficace pour sensibiliser davantage de personnes à rejoindre l'association.
         </p>
     </div>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
@@ -4325,7 +4326,7 @@ FAQ_PAGE = """
     <h2 id="chapitre11">Comment procéder si la personne à inscrire n'a pas de téléphone ?</h2>
     <div class="pge">
         <p>
-        Cette situation est prevue dans les Statuts et ROI. Etant donné que les transactions financières sont numériques par mobile-money, un membre sans téléphone doit absolument etre sous la dependance d'un autre membre appelé 'mentor' qui l'accompagnera dans sa discipline financière par rapport aux procedures. Son identifiant son nom (ou une partie de son nom) en veillant toutefois de ne pas donner un nom déjà attribué. 
+        Cette situation est prevue dans les Statuts et ROI. Etant donné que les transactions financières sont numériques par mobile-money, un membre sans téléphone doit absolument être sous la dépendance d'un autre membre appelé 'mentor' qui l'accompagnera dans sa discipline financière par rapport aux procédures. Son identifiant sera son nom (ou une partie de son nom) en veillant toutefois de ne pas donner un nom déjà attribué. En outre, dans ce cas, il faut veiller à ce que l'identifiant soit en un seul mot et en majuscule pour éviter les confusions et les erreurs de saisie. Le mentor est responsable de la gestion du compte du membre sans téléphone, y compris le suivi des paiements et la communication avec l'Association. Cette approche garantit que même les personnes sans accès direct à la technologie peuvent bénéficier du soutien de l'Association tout en assurant une gestion efficace et sécurisée de leurs contributions. 
         </p>
     </div>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
