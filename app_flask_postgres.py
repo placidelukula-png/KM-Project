@@ -1787,6 +1787,8 @@ def login():
         phone = request.form.get("phone")
         password = request.form.get("password")
 
+        session["idempotency_time"] = datetime.now()  # Exemple de variable persistante
+
         if verify_user(phone, password):
             member = fetch_member_by_phone(phone)  # ✅ ici phone existe
             session["user"] = phone
@@ -3704,6 +3706,16 @@ TRANSFER_PAGE = """
 @app.route("/transfer", methods=["GET","POST"])
 @login_required
 def transfer():
+###
+    log.info("Accès à la page de transfert. heure precise : %s", datetime.now())
+    log.info("Heure d'idempotence : %s", session["idempotency_time"] if "idempotency_time" in session else "N/A")
+    difference = (datetime.now() - session["idempotency_time"]).total_seconds() if "idempotency_time" in session else None
+    session["idempotency_time"] = datetime.now()
+    log.info("Différence en secondes depuis le dernier transfert : %s", difference if difference else "N/A")
+    if difference is not None and difference < 5:  # seuil de 5 secondes pour éviter les doubles clics rapides
+        log.warning("Transfert bloqué en raison d'une tentative de double clic rapide. Différence: %s secondes", difference)
+        return render_template_string(TRANSFER_PAGE, balance=0, message="Double clic bloqué! Veuillez patienter quelques secondes avant de réessayer.", is_error=True)
+###
     message, is_error = "",""
     
     from_phone = session["user"]
@@ -3761,6 +3773,17 @@ def transfer():
 @app.route("/cotisation", methods=["GET","POST"])
 @login_required
 def cotisation():
+###
+    log.info("Accès à la page de transfert. heure precise : %s", datetime.now())
+    log.info("Heure d'idempotence : %s", session["idempotency_time"] if "idempotency_time" in session else "N/A")
+    difference = (datetime.now() - session["idempotency_time"]).total_seconds() if "idempotency_time" in session else None
+    session["idempotency_time"] = datetime.now()
+    log.info("Différence en secondes depuis le dernier transfert : %s", difference if difference else "N/A")
+    if difference is not None and difference < 5:  # seuil de 5 secondes pour éviter les doubles clics rapides
+        log.warning("Transfert bloqué en raison d'une tentative de double clic rapide. Différence: %s secondes", difference)
+        return render_template_string(TRANSFER_PAGE, balance=0, message="Double clic bloqué! Veuillez patienter quelques secondes avant de réessayer.", is_error=True)
+###
+
     message, is_error = "",""
     
     from_phone = session["user"]
@@ -3799,6 +3822,17 @@ def cotisation():
 @app.route("/donation", methods=["GET","POST"])
 @login_required
 def donation():
+###
+    log.info("Accès à la page de transfert. heure precise : %s", datetime.now())
+    log.info("Heure d'idempotence : %s", session["idempotency_time"] if "idempotency_time" in session else "N/A")
+    difference = (datetime.now() - session["idempotency_time"]).total_seconds() if "idempotency_time" in session else None
+    session["idempotency_time"] = datetime.now()
+    log.info("Différence en secondes depuis le dernier transfert : %s", difference if difference else "N/A")
+    if difference is not None and difference < 5:  # seuil de 5 secondes pour éviter les doubles clics rapides
+        log.warning("Transfert bloqué en raison d'une tentative de double clic rapide. Différence: %s secondes", difference)
+        return render_template_string(TRANSFER_PAGE, balance=0, message="Double clic bloqué! Veuillez patienter quelques secondes avant de réessayer.", is_error=True)
+###
+
     message, is_error = "",""
     
     from_phone = session["user"]
