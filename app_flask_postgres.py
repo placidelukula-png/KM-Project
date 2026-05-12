@@ -3605,7 +3605,8 @@ def download_csv():
 
             with cur.copy("""
                 COPY (
-                    SELECT * FROM mouvements WHERE regie IS NOT NULL
+/*                    SELECT * FROM mouvements WHERE regie IS NOT NULL*/
+                    SELECT phone, firstname, lastname, adresse FROM membres WHERE statute IN ('probatoire', 'actif')
                 ) TO STDOUT WITH CSV HEADER
             """) as copy:
                 for data in copy:
@@ -4361,7 +4362,7 @@ FAQ_PAGE = """
     <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
     
-    <h2 id="chapitre14">Pourquoi payer seulement 5.5$ mais pas plus pour une  plus impactante ?</h2>
+    <h2 id="chapitre14">Pourquoi payer seulement 5.5$ mais pas plus pour une action plus impactante ?</h2>
     <div class="pge">
         <p>
         Les personnes capables de contribuer de manière consistente ont généralement d'autres couvertures, notamment des assurances-vie robustes; il n'ont pas besoin d'une organisation comme KM-Kimya. Pour le public cible de KM-Kimya, même les 5.5$ sont elevés. L'objectif est de rendre l'adhésion accessible au plus grand nombre, en particulier à ceux qui sont les plus vulnérables et qui n'ont pas accès à d'autres formes de protection financière. En fixant une contribution modeste, nous espérons encourager une large participation et créer un impact significatif au sein de notre communauté.
