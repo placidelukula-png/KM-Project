@@ -1881,7 +1881,7 @@ DASHBOARD_PAGE = """
 
     <!-- ✅ Cadran statistiques (coin supérieur droit) -->
     <div class="statsbox">
-      <div class="stats-title"><span>Indicateurs clés ; sous le mode : {{ Mode }}</span></div>
+      <div class="stats-title"><span>INDICATEURS CLEFS ;               sous le mode : {{ Mode }}</span></div>
       <div class="stats-row"><span>Prestation disponible. . . . . . . . . . . . . . . . . .</span><b>{{ P }}</b></div>
       <div class="stats-row"><span>Membres effectifs . . . . . . . . . . . . . . . . . . . .</span><b>{{ N }}</b></div>
       <div class="stats-row"><span>Adhérents (potentiels). . . . . . . . . . . . . . . . .</span><b>{{ B }}</b></div>
@@ -3606,7 +3606,7 @@ def download_csv():
             with cur.copy("""
                 COPY (
 /*                    SELECT * FROM mouvements WHERE regie IS NOT NULL*/
-                    SELECT phone, firstname, lastname, adresse FROM membres WHERE statute IN ('probatoire', 'actif')
+                    SELECT phone, firstname, lastname, adresse FROM membres WHERE currentstatute IN ('probatoire', 'actif')
                 ) TO STDOUT WITH CSV HEADER
             """) as copy:
                 for data in copy:
