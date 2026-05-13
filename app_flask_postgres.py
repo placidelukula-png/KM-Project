@@ -3747,8 +3747,8 @@ def transfer():
     session["idempotency_time"] = datetime.now(timezone.utc)
     #log.info("Différence en secondes depuis le dernier transfert : %s", difference if difference else "N/A")
     if difference is not None and difference < 5:  # seuil de 5 secondes pour éviter les doubles clics rapides
-        log.warning("Transfert bloqué en raison d'une tentative de double clic rapide. Différence: %s secondes", difference)
-        return render_template_string(TRANSFER_PAGE, balance=0, message="Double clic bloqué! Veuillez patienter quelques secondes avant de réessayer.", is_error=True)
+       flash("Transfert bloqué en raison d'une tentative de double clic rapide", "danger")
+       return render_template_string(TRANSFER_PAGE, balance=0, message="Double clic bloqué! Veuillez patienter quelques secondes avant de réessayer.", is_error=True)
 
     message, is_error = "",""
     
@@ -3796,7 +3796,7 @@ def transfer():
 
                 create_transfert(from_phone, to_phone, amount, ref,d)
 
-                message, is_error = "Contribution transférée. merci pour votre sérieux !", False
+                message, is_error = "Contribution transférée. félicitation pour le généreux partage !", False
                 to_phone, amount, found_name = "", 0.0, ""
             except Exception as e:
                 message, is_error = f"Erreur: {e}", True
@@ -3813,7 +3813,7 @@ def cotisation():
     session["idempotency_time"] = datetime.now(timezone.utc)
     #log.info("Différence en secondes depuis le dernier transfert : %s", difference if difference else "N/A")
     if difference is not None and difference < 5:  # seuil de 5 secondes pour éviter les doubles clics rapides
-        log.warning("Transfert bloqué en raison d'une tentative de double clic rapide. Différence: %s secondes", difference)
+        flash("Transfert bloqué en raison d'une tentative de double clic rapide", "danger")
         return render_template_string(TRANSFER_PAGE, balance=0, message="Double clic bloqué! Veuillez patienter quelques secondes avant de réessayer.", is_error=True)
 
     message, is_error = "",""
@@ -3860,7 +3860,7 @@ def donation():
     session["idempotency_time"] = datetime.now(timezone.utc)
     #log.info("Différence en secondes depuis le dernier transfert : %s", difference if difference else "N/A")
     if difference is not None and difference < 5:  # seuil de 5 secondes pour éviter les doubles clics rapides
-        log.warning("Transfert bloqué en raison d'une tentative de double clic rapide. Différence: %s secondes", difference)
+        flash("Transfert bloqué en raison d'une tentative de double clic rapide", "danger")
         return render_template_string(TRANSFER_PAGE, balance=0, message="Double clic bloqué! Veuillez patienter quelques secondes avant de réessayer.", is_error=True)
 
     message, is_error = "",""
