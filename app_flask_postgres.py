@@ -61,12 +61,12 @@ class ColoredFormatter(logging.Formatter):
         return formatter.format(record)
 
 # Configuration du logger
-logger = logging.getLogger("IO_Logger")
-logger.setLevel(logging.DEBUG)
+log = logging.getLogger("IO_Logger")
+log.setLevel(logging.DEBUG)
 
 handler = logging.StreamHandler(sys.stdout)
 handler.setFormatter(ColoredFormatter())
-logger.addHandler(handler)
+log.addHandler(handler)
 
 ###
 
@@ -124,7 +124,7 @@ def inject_logged_user_label():
             # ex: "8324940214 — Clarisse Lukula"
             return dict(logged_user_label=f"{phone} — {firstname} {lastname}")
     except Exception:
-        logger.exception("Impossible de récupérer firstname/lastname pour phone=%s", phone)
+        log.exception("Impossible de récupérer firstname/lastname pour phone=%s", phone)
 
     # fallback si pas trouvé
     return dict(logged_user_label=f"{phone}")
