@@ -35,27 +35,38 @@ from flask_limiter.util import get_remote_address
 #log = logging.getLogger(__name__)
 ###
 import logging
-from colorlog import ColoredFormatter
+import sys
 
-handler = logging.StreamHandler()
-handler.setFormatter(ColoredFormatter(
-    "%(log_color)s%(levelname)s:%(name)s:%(message)s",
-    log_colors={
-        'DEBUG':    'cyan',
-        'INFO':     'green',
-        'WARNING':  'yellow',
-        'ERROR':    'red',
-        'CRITICAL': 'bold_red',
+class ColoredFormatter(logging.Formatter):
+    # Codes couleur ANSI
+    GRIS = "\033[90m"
+    BLEU = "\033[94m"
+    JAUNE = "\033[93m"
+    ROUGE = "\033[91m"
+    ROUGE_FLASH = "\033[1;41m"
+    RESET = "\033[0m"
+
+    # Association des niveaux de log aux couleurs
+    FORMATS = {
+        logging.DEBUG: GRIS + "%(levelname)s: %(message)s" + RESET,
+        logging.INFO: BLEU + "%(levelname)s: %(message)s" + RESET,
+        logging.WARNING: JAUNE + "⚠️ %(levelname)s: %(message)s" + RESET,
+        logging.ERROR: ROUGE + "❌ %(levelname)s: %(message)s" + RESET,
+        logging.CRITICAL: ROUGE_FLASH + "💥 %(levelname)s: %(message)s" + RESET
     }
-))
 
+    def format(self, record):
+        log_fmt = self.FORMATS.get(record.levelno)
+        formatter = logging.Formatter(log_fmt)
+        return formatter.format(record)
+
+# Configuration du logger
 logger = logging.getLogger("IO_Logger")
-logger.addHandler(handler)
 logger.setLevel(logging.DEBUG)
 
-# Utilisation
-logger.warning("Fichier de session presque plein !")
-logger.error("Impossible d'écrire dans la base de données PostgreSQL.")
+handler = logging.StreamHandler(sys.stdout)
+handler.setFormatter(ColoredFormatter())
+logger.addHandler(handler)
 
 ###
 
