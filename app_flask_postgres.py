@@ -3677,7 +3677,28 @@ TRANSFER_PAGE = """
  .msg{margin-top:12px;padding:10px;border-radius:12px}
  .ok{background:#eaffea;border:1px solid #b8ffb8}
  .err{background:#ffe9ea;border:1px solid #ffb3b8}
-</style></head><body><div class="wrap">
+
+ .mon-alert { padding: 12px; margin: 10px 0; border-radius: 4px; font-weight: bold; }
+ .mon-alert-danger { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+ .mon-alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+ .mon-alert-warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+
+</style>
+</head>
+
+<body>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="mon-alert mon-alert-{{ category }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<div class="wrap">
 <h2>Transfert de crédit, cotisations et dons</h2>
 <p><a href="{{ url_for('home') }}">← Retour</a></p>
 
