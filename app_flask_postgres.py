@@ -10,7 +10,7 @@ from enum import member
 from enum import member
 import os
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from functools import wraps
 import select
 from weakref import ref
@@ -1787,7 +1787,7 @@ def login():
         phone = request.form.get("phone")
         password = request.form.get("password")
 
-        session["idempotency_time"] = datetime.now()  # Exemple de variable persistante
+        session["idempotency_time"] = datetime.now(timezone.utc)  # Exemple de variable persistante
 
         if verify_user(phone, password):
             member = fetch_member_by_phone(phone)  # ✅ ici phone existe
@@ -3823,10 +3823,10 @@ def cotisation():
 @login_required
 def donation():
 ###
-    log.info("Accès à la page de transfert. heure precise : %s", datetime.now())
+    log.info("Accès à la page de transfert. heure precise : %s", datetime.now(timezone.utc))
     log.info("Heure d'idempotence : %s", session["idempotency_time"] if "idempotency_time" in session else "N/A")
-    difference = (datetime.now() - session["idempotency_time"]).total_seconds() if "idempotency_time" in session else None
-    session["idempotency_time"] = datetime.now()
+    difference = (datetime.now(timezone.utc) - session["idempotency_time"]).total_seconds() if "idempotency_time" in session else None
+    session["idempotency_time"] = datetime.now(timezone.utc)
     log.info("Différence en secondes depuis le dernier transfert : %s", difference if difference else "N/A")
     if difference is not None and difference < 5:  # seuil de 5 secondes pour éviter les doubles clics rapides
         log.warning("Transfert bloqué en raison d'une tentative de double clic rapide. Différence: %s secondes", difference)
