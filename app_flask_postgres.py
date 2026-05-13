@@ -31,9 +31,33 @@ from flask_limiter.util import get_remote_address
 # ----------------------------
 # Logging
 # ----------------------------
-logging.basicConfig(level=logging.INFO)
-log = logging.getLogger(__name__)
+#logging.basicConfig(level=logging.INFO)
+#log = logging.getLogger(__name__)
+###
+import logging
+from colorlog import ColoredFormatter
 
+handler = logging.StreamHandler()
+handler.setFormatter(ColoredFormatter(
+    "%(log_color)s%(levelname)s:%(name)s:%(message)s",
+    log_colors={
+        'DEBUG':    'cyan',
+        'INFO':     'green',
+        'WARNING':  'yellow',
+        'ERROR':    'red',
+        'CRITICAL': 'bold_red',
+    }
+))
+
+logger = logging.getLogger("IO_Logger")
+logger.addHandler(handler)
+logger.setLevel(logging.DEBUG)
+
+# Utilisation
+logger.warning("Fichier de session presque plein !")
+logger.error("Impossible d'écrire dans la base de données PostgreSQL.")
+
+###
 
 # ----------------------------
 # Config
@@ -89,7 +113,7 @@ def inject_logged_user_label():
             # ex: "8324940214 — Clarisse Lukula"
             return dict(logged_user_label=f"{phone} — {firstname} {lastname}")
     except Exception:
-        log.exception("Impossible de récupérer firstname/lastname pour phone=%s", phone)
+        logger.exception("Impossible de récupérer firstname/lastname pour phone=%s", phone)
 
     # fallback si pas trouvé
     return dict(logged_user_label=f"{phone}")
@@ -3706,16 +3730,15 @@ TRANSFER_PAGE = """
 @app.route("/transfer", methods=["GET","POST"])
 @login_required
 def transfer():
-###
-    log.info("Accès à la page de transfert. heure precise : %s", datetime.now(timezone.utc).astimezone())  # Affiche l'heure locale précise avec fuseau horaire
-    log.info("Heure d'idempotence : %s", session["idempotency_time"] if "idempotency_time" in session else "N/A")
+    #log.info("Accès à la page de transfert. heure precise : %s", datetime.now(timezone.utc).astimezone())  # Affiche l'heure locale précise avec fuseau horaire
+    #log.info("Heure d'idempotence : %s", session["idempotency_time"] if "idempotency_time" in session else "N/A")
     difference = (datetime.now(timezone.utc) - session["idempotency_time"]).total_seconds() if "idempotency_time" in session else None
     session["idempotency_time"] = datetime.now(timezone.utc)
-    log.info("Différence en secondes depuis le dernier transfert : %s", difference if difference else "N/A")
+    #log.info("Différence en secondes depuis le dernier transfert : %s", difference if difference else "N/A")
     if difference is not None and difference < 5:  # seuil de 5 secondes pour éviter les doubles clics rapides
         log.warning("Transfert bloqué en raison d'une tentative de double clic rapide. Différence: %s secondes", difference)
         return render_template_string(TRANSFER_PAGE, balance=0, message="Double clic bloqué! Veuillez patienter quelques secondes avant de réessayer.", is_error=True)
-###
+
     message, is_error = "",""
     
     from_phone = session["user"]
@@ -3773,16 +3796,14 @@ def transfer():
 @app.route("/cotisation", methods=["GET","POST"])
 @login_required
 def cotisation():
-###
-    log.info("Accès à la page de transfert. heure precise : %s", datetime.now(timezone.utc).astimezone())
-    log.info("Heure d'idempotence : %s", session["idempotency_time"] if "idempotency_time" in session else "N/A")
+    #log.info("Accès à la page de transfert. heure precise : %s", datetime.now(timezone.utc).astimezone())
+    #log.info("Heure d'idempotence : %s", session["idempotency_time"] if "idempotency_time" in session else "N/A")
     difference = (datetime.now(timezone.utc) - session["idempotency_time"]).total_seconds() if "idempotency_time" in session else None
     session["idempotency_time"] = datetime.now(timezone.utc)
-    log.info("Différence en secondes depuis le dernier transfert : %s", difference if difference else "N/A")
+    #log.info("Différence en secondes depuis le dernier transfert : %s", difference if difference else "N/A")
     if difference is not None and difference < 5:  # seuil de 5 secondes pour éviter les doubles clics rapides
         log.warning("Transfert bloqué en raison d'une tentative de double clic rapide. Différence: %s secondes", difference)
         return render_template_string(TRANSFER_PAGE, balance=0, message="Double clic bloqué! Veuillez patienter quelques secondes avant de réessayer.", is_error=True)
-###
 
     message, is_error = "",""
     
@@ -3822,16 +3843,14 @@ def cotisation():
 @app.route("/donation", methods=["GET","POST"])
 @login_required
 def donation():
-###
-    log.info("Accès à la page de transfert. heure precise : %s", datetime.now(timezone.utc))
-    log.info("Heure d'idempotence : %s", session["idempotency_time"] if "idempotency_time" in session else "N/A")
+    #log.info("Accès à la page de transfert. heure precise : %s", datetime.now(timezone.utc))
+    #log.info("Heure d'idempotence : %s", session["idempotency_time"] if "idempotency_time" in session else "N/A")
     difference = (datetime.now(timezone.utc) - session["idempotency_time"]).total_seconds() if "idempotency_time" in session else None
     session["idempotency_time"] = datetime.now(timezone.utc)
-    log.info("Différence en secondes depuis le dernier transfert : %s", difference if difference else "N/A")
+    #log.info("Différence en secondes depuis le dernier transfert : %s", difference if difference else "N/A")
     if difference is not None and difference < 5:  # seuil de 5 secondes pour éviter les doubles clics rapides
         log.warning("Transfert bloqué en raison d'une tentative de double clic rapide. Différence: %s secondes", difference)
         return render_template_string(TRANSFER_PAGE, balance=0, message="Double clic bloqué! Veuillez patienter quelques secondes avant de réessayer.", is_error=True)
-###
 
     message, is_error = "",""
     
