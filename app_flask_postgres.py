@@ -3707,10 +3707,10 @@ TRANSFER_PAGE = """
 @login_required
 def transfer():
 ###
-    log.info("Accès à la page de transfert. heure precise : %s", datetime.now())
+    log.info("Accès à la page de transfert. heure precise : %s", datetime.now(timezone.utc).astimezone())  # Affiche l'heure locale précise avec fuseau horaire
     log.info("Heure d'idempotence : %s", session["idempotency_time"] if "idempotency_time" in session else "N/A")
-    difference = (datetime.now() - session["idempotency_time"]).total_seconds() if "idempotency_time" in session else None
-    session["idempotency_time"] = datetime.now()
+    difference = (datetime.now(timezone.utc) - session["idempotency_time"]).total_seconds() if "idempotency_time" in session else None
+    session["idempotency_time"] = datetime.now(timezone.utc)
     log.info("Différence en secondes depuis le dernier transfert : %s", difference if difference else "N/A")
     if difference is not None and difference < 5:  # seuil de 5 secondes pour éviter les doubles clics rapides
         log.warning("Transfert bloqué en raison d'une tentative de double clic rapide. Différence: %s secondes", difference)
@@ -3774,10 +3774,10 @@ def transfer():
 @login_required
 def cotisation():
 ###
-    log.info("Accès à la page de transfert. heure precise : %s", datetime.now())
+    log.info("Accès à la page de transfert. heure precise : %s", datetime.now(timezone.utc).astimezone())
     log.info("Heure d'idempotence : %s", session["idempotency_time"] if "idempotency_time" in session else "N/A")
-    difference = (datetime.now() - session["idempotency_time"]).total_seconds() if "idempotency_time" in session else None
-    session["idempotency_time"] = datetime.now()
+    difference = (datetime.now(timezone.utc) - session["idempotency_time"]).total_seconds() if "idempotency_time" in session else None
+    session["idempotency_time"] = datetime.now(timezone.utc)
     log.info("Différence en secondes depuis le dernier transfert : %s", difference if difference else "N/A")
     if difference is not None and difference < 5:  # seuil de 5 secondes pour éviter les doubles clics rapides
         log.warning("Transfert bloqué en raison d'une tentative de double clic rapide. Différence: %s secondes", difference)
