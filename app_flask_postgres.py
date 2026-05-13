@@ -33,7 +33,7 @@ from flask_limiter.util import get_remote_address
 # ----------------------------
 #logging.basicConfig(level=logging.INFO)
 #log = logging.getLogger(__name__)
-###
+#
 import logging
 import sys
 
@@ -147,7 +147,7 @@ limiter = Limiter(
 #        raise RuntimeError("DATABASE_URL manquant (Render > KM-Project > Environment).")
 #    # tuple_row => on garde des tuples (r[0], r[1]...) cohérents avec ton HTML
 #    return psycopg.connect(DATABASE_URL, row_factory=tuple_row)
-#####
+## pour dev local, on peut aussi utiliser une URL de connexion locale (ex: postgresql://postgres:1234@localhost:5432/kmkimya)
 import os
 
 def get_conn():
@@ -158,7 +158,7 @@ def get_conn():
         DATABASE_URL = "postgresql://postgres:1234@localhost:5432/kmkimya"
 
     return psycopg.connect(DATABASE_URL)
-#####
+##
 
 def init_db():
     with get_conn() as conn:
@@ -2019,7 +2019,7 @@ DASHBOARD_PAGE = """
     <div class="card">
       <div class="icon">⬇️</div>
       <div>
-        <p class="t">Importer cotisations</p>
+        <p class="t">Importer contributions</p>
         <p class="d">Lancer l'importation des mouvements</p>
         <a class="link" href="{{ url_for('import_mouvements') }}">Ouvrir</a>
       </div>
@@ -2911,8 +2911,15 @@ import csv
 @app.route("/import-mouvements", methods=["GET", "POST"])
 @admin_required
 def import_mouvements():
+###
+    difference = (datetime.now(timezone.utc) - session["idempotency_time"]).total_seconds() if "idempotency_time" in session else None
+    session["idempotency_time"] = datetime.now(timezone.utc)
+    if difference is not None and difference < 5:  # seuil de 5 secondes pour éviter les doubles clics rapides
+       flash("Transfert bloqué en raison d'une tentative de double clic rapide", "danger")
+       return render_template_string(IMPORT_PAGE, message="Transfert bloqué : Veuillez attendre quelques secondes avant de réessayer.", is_error=True, stats="")
+###    
     if request.method == "GET":
-        return render_template_string(IMPORT_PAGE, message="", is_error=False, stats="")
+       return render_template_string(IMPORT_PAGE, message="", is_error=False, stats="")
     
     # CONTRIBUTION ATTENDUE ACTUELLE: à partir de la table id_data et du champ "C" (contribution minimale) pour appliquer la règle d'inactivité
     stats=fetch_dashboard_stats()
@@ -4246,7 +4253,7 @@ FAQ_PAGE = """
     <li><a href="#chapitre15">Pourquoi doit on mettre un mot de passe sur le compte ?</a></li>
     <li><a href="#chapitre16">Comment ouvre t-on un lien ou un URL à partir d'un téléphone android?</a></li>
     <li><a href="#chapitre17">Pourquoi une campagne de recrutement, la sensibilisation est-elle nécessaire ?</a></li>
-
+    <li><a href="#chapitre18">Pourquoi est-il imprudent et improductif de n'avoir que le minimum de 5.5$ dans le compte sur la plateforme ?</a></li>
 
     </ul>
     <br>
@@ -4309,10 +4316,10 @@ FAQ_PAGE = """
     <h2 id="chapitre3">Le principe de fonctionnement et les modalités d'adhésion</h2>
     <div class="pge">
         <p>
-        L’association regroupe des personnes qui s’engagent à verser une contribution financière en cas de décès d’un autre membre  du groupe(contribution uniquement en cas de décès d’un membre du groupe à condition que celui-ci soit en règle avec les procédures de l’association). En contrepartie, l’Association KM-Kimya assure le maximum d’efficience et de transparence dans la gestion des opérations pour garantir l’équité conformément aux attentes de tous. 
+        L’association regroupe des personnes qui s’engagent à verser une contribution financière en cas de décès d’un autre membre  du groupe (contribution uniquement en cas de décès d’un membre du groupe à condition que celui-ci soit en règle avec les procédures de l’association). En contrepartie, l’Association KM-Kimya assure le maximum d’efficience et de transparence dans la gestion des opérations pour garantir l’équité conformément aux attentes de tous. 
         </p> 
         <p>
-        Les modalités d’adhésion sont très simples et accessibles à tous, elles se résument en deux étapes simples :
+        Les modalités d’adhésion sont très faciles et accessibles à tous, elles se résument en deux étapes simples :
         <ul>
         <li> 1.	S’inscrire sur ce site Internet www.km-kimya.org par le bouton ‘inscription libre’ </li>
         <li> 2.	Payer par mobile-money 5.5$ (avec le téléphone dont le numéro sans préfixes est l’ identifiant choisi lors de l’inscription) à l’un des 4 comptes mobile-money suivants : (1)<b>+243 999 944 459</b> , (2)<b>+243 824 807 663</b>, (3)<b>+243 891 273 191</b> ou (4)<b>+243 903 077 077</b>.</li>
@@ -4498,6 +4505,22 @@ FAQ_PAGE = """
     </div>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
     <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
+
+    <h2 id="chapitre18">Pourquoi est-il imprudent et improductif de n'avoir que le minimum de 5.5$ dans le compte sur la plateforme ?</h2>
+    <div class="pge">
+        <p>
+        Toute analyse previsionnelle montre que le plus grand risque qu'encourt l'Association est la survenue accidentelle de deux ou trois décès successsifs de membres éligibles à la prestation dans un laps de temps donné. Dans ce cas, l'obligation promise d'intervention dans les 72 heures (auprès de la famille éprouvée) sera mise à mal par le délai de renflouement du trésor de l'Association par la collecte de fonds auprès des membres.
+        </p>
+        <p>
+        Maintenir un solde minimal dans le compte est ainsi très imprudent vis-a-vis des objectifs que s'était assignée l'Association et improductif car cela limite la capacité de l'organisation à maintenir haut son niveau d'engagement. 
+        </p>
+        <p>
+        Garder constamment un solde minimal de 2 à 4 participations (11 à 22$) aux prestations km-kimya est hautement recommandé pour assurer la continuité de l'activité de l'Association dans les conditions difficiles. 
+        </p>
+    </div>
+    <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
+    <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
+
 
     <br>
 
