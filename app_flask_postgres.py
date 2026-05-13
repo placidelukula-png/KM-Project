@@ -3688,16 +3688,6 @@ TRANSFER_PAGE = """
 
 <body>
 
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    {% for category, message in messages %}
-      <div class="mon-alert mon-alert-{{ category }}">
-        {{ message }}
-      </div>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
-
 <div class="wrap">
 <h2>Transfert de crédit, cotisations et dons</h2>
 <p><a href="{{ url_for('home') }}">← Retour</a></p>
@@ -3747,6 +3737,7 @@ TRANSFER_PAGE = """
 <br>
 
 {# Gardez les messages d'erreur en dessous si nécessaire #}
+
 {% if found_name or to_phone or message %}
   <div style="margin-top: 10px;">
     {% if found_name %}<b style="color: green;">{{ found_name }}</b>{% endif %}
@@ -3754,7 +3745,19 @@ TRANSFER_PAGE = """
   </div>
 {% endif %}
 
-</div></body></html>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="mon-alert mon-alert-{{ category }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+</div>
+
+</body></html>
 """
 #
 # Endpoint#10 Transfert de cotisations (menu card)
