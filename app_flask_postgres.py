@@ -1918,7 +1918,7 @@ DASHBOARD_PAGE = """
 
     <!-- ✅ Cadran statistiques (coin supérieur droit) -->
     <div class="statsbox">
-      <div class="stats-title"><span>INDICATEURS CLEFS .   .   .   .   .   sous le mode : {{ Mode }}</span></div>
+      <div class="stats-title"><span>INDICATEURS CLEFS .    .    .    .    .    . sous le mode : {{ Mode }}</span></div>
       <div class="stats-row"><span>Prestation disponible. . . . . . . . . . . . . . . . . .</span><b>{{ P }}</b></div>
       <div class="stats-row"><span>Membres effectifs . . . . . . . . . . . . . . . . . . . .</span><b>{{ N }}</b></div>
       <div class="stats-row"><span>Adhérents (potentiels). . . . . . . . . . . . . . . . .</span><b>{{ B }}</b></div>
@@ -2914,7 +2914,7 @@ def import_mouvements():
 ###
     difference = (datetime.now(timezone.utc) - session["idempotency_time"]).total_seconds() if "idempotency_time" in session else None
     session["idempotency_time"] = datetime.now(timezone.utc)
-    if difference is not None and difference < 15:  # seuil de 15 secondes pour éviter les doubles clics rapides
+    if difference is not None and difference < 30:  # seuil de 30 secondes pour éviter les doubles clics rapides
        flash("Transfert bloqué en raison d'une tentative de double clic rapide", "danger")
        return render_template_string(IMPORT_PAGE, message="Transfert bloqué : Veuillez attendre quelques secondes avant de réessayer.", is_error=True, stats="")
 ###    
@@ -3778,7 +3778,7 @@ def transfer():
     difference = (datetime.now(timezone.utc) - session["idempotency_time"]).total_seconds() if "idempotency_time" in session else None
     session["idempotency_time"] = datetime.now(timezone.utc)
     #log.info("Différence en secondes depuis le dernier transfert : %s", difference if difference else "N/A")
-    if difference is not None and difference < 5:  # seuil de 5 secondes pour éviter les doubles clics rapides
+    if difference is not None and difference < 30:  # seuil de 30 secondes pour éviter les doubles clics rapides
        flash("Transfert bloqué en raison d'une tentative de double clic rapide", "danger")
        return render_template_string(TRANSFER_PAGE, balance=0, message="Double clic bloqué! Veuillez patienter quelques secondes avant de réessayer.", is_error=True)
 
@@ -3844,7 +3844,7 @@ def cotisation():
     difference = (datetime.now(timezone.utc) - session["idempotency_time"]).total_seconds() if "idempotency_time" in session else None
     session["idempotency_time"] = datetime.now(timezone.utc)
     #log.info("Différence en secondes depuis le dernier transfert : %s", difference if difference else "N/A")
-    if difference is not None and difference < 5:  # seuil de 5 secondes pour éviter les doubles clics rapides
+    if difference is not None and difference < 30:  # seuil de 30 secondes pour éviter les doubles clics rapides
         flash("Transfert bloqué en raison d'une tentative de double clic rapide", "danger")
         return render_template_string(TRANSFER_PAGE, balance=0, message="Double clic bloqué! Veuillez patienter quelques secondes avant de réessayer.", is_error=True)
 
@@ -3891,7 +3891,7 @@ def donation():
     difference = (datetime.now(timezone.utc) - session["idempotency_time"]).total_seconds() if "idempotency_time" in session else None
     session["idempotency_time"] = datetime.now(timezone.utc)
     #log.info("Différence en secondes depuis le dernier transfert : %s", difference if difference else "N/A")
-    if difference is not None and difference < 5:  # seuil de 5 secondes pour éviter les doubles clics rapides
+    if difference is not None and difference < 30:  # seuil de 30 secondes pour éviter les doubles clics rapides
         flash("Transfert bloqué en raison d'une tentative de double clic rapide", "danger")
         return render_template_string(TRANSFER_PAGE, balance=0, message="Double clic bloqué! Veuillez patienter quelques secondes avant de réessayer.", is_error=True)
 
