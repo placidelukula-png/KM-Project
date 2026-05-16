@@ -1141,7 +1141,7 @@ def create_cotisation(cotisation: float, ref_base: str, today: datetime):
     today = datetime.utcnow().date()
     C= fetch_dashboard_stats()["C"]
     #C=fetch_dashboard_stats().get("C", "0.00").replace(" ", "")
-    lib=f"Cotisation régulière de {cotisation} par {phone} à KM-Kimya"
+    lib=f"Cotisation trimestrielle de {cotisation} par {phone} à KM-Kimya"
 
     #1) Mise à jour du compte technique du membre qui fait la cotisation (balance + cotisation)
     code=f"COT-{session.get('user')}"
@@ -1918,7 +1918,7 @@ DASHBOARD_PAGE = """
 
     <!-- ✅ Cadran statistiques (coin supérieur droit) -->
     <div class="statsbox">
-      <div class="stats-title"><span>INDICATEURS CLEFS.  _  .  _  .  _  .  _  .  _  .sous le mode : {{ Mode }}</span></div>
+      <div class="stats-title"><span>INDICATEURS CLEFS.  _  .  _  .  _  .  _  .  _  .sous le mode  {{ Mode }}</span></div>
       <div class="stats-row"><span>Prestation disponible. . . . . . . . . . . . . . . . . .</span><b>{{ P }}</b></div>
       <div class="stats-row"><span>Membres effectifs . . . . . . . . . . . . . . . . . . . .</span><b>{{ N }}</b></div>
       <div class="stats-row"><span>Adhérents (potentiels). . . . . . . . . . . . . . . . .</span><b>{{ B }}</b></div>
@@ -2916,7 +2916,7 @@ def import_mouvements():
     session["idempotency_time"] = datetime.now(timezone.utc)
     if difference is not None and difference < 15:  # seuil de 15 secondes pour éviter les doubles clics rapides
        flash("Transfert bloqué en raison d'une tentative de double clic rapide", "danger")
-       return render_template_string(IMPORT_PAGE, message="Transfert bloqué : Veuillez attendre quelques secondes avant de réessayer.", is_error=True, stats="")
+       return render_template_string(IMPORT_PAGE, message="Transfert bloqué : Veuillez attendre 30 secondes avant de réessayer.", is_error=True, stats="")
 ###    
     if request.method == "GET":
        return render_template_string(IMPORT_PAGE, message="", is_error=False, stats="")
@@ -3719,7 +3719,7 @@ TRANSFER_PAGE = """
 
 <br>
 <hr>
-<h3>Paiement de votre cotisation régulière de membre : </h3>
+<h3>Paiement de votre cotisation trimestrielle de membre : </h3>
 <div class="card">
 <form action="{{ url_for('cotisation') }}" method="post" style="display: flex; align-items: center; gap: 10px; flex-wrap: nowrap;">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -3778,7 +3778,7 @@ def transfer():
        session["idempotency_time"] = datetime.now(timezone.utc)
        if difference is not None and difference < 15:  # seuil de 15 secondes pour éviter les doubles clics rapides
           flash("Transfert bloqué en raison d'une tentative de double clic rapide", "danger")
-          return render_template_string(TRANSFER_PAGE, balance=0, message="Double clic bloqué! Veuillez patienter quelques secondes avant de réessayer.", is_error=True)
+          return render_template_string(TRANSFER_PAGE, balance=0, message="Double clic bloqué! Veuillez patienter 30 secondes avant de réessayer.", is_error=True)
 
     message, is_error = "",""
     
@@ -3844,7 +3844,7 @@ def cotisation():
     #log.info("Différence en secondes depuis le dernier transfert : %s", difference if difference else "N/A")
     if difference is not None and difference < 15:  # seuil de 15 secondes pour éviter les doubles clics rapides
         flash("Transfert bloqué en raison d'une tentative de double clic rapide", "danger")
-        return render_template_string(TRANSFER_PAGE, balance=0, message="Double clic bloqué! Veuillez patienter quelques secondes avant de réessayer.", is_error=True)
+        return render_template_string(TRANSFER_PAGE, balance=0, message="Double clic bloqué! Veuillez patienter 30 secondes avant de réessayer.", is_error=True)
 
     message, is_error = "",""
     
@@ -3891,7 +3891,7 @@ def donation():
     #log.info("Différence en secondes depuis le dernier transfert : %s", difference if difference else "N/A")
     if difference is not None and difference < 15:  # seuil de 15 secondes pour éviter les doubles clics rapides
         flash("Transfert bloqué en raison d'une tentative de double clic rapide", "danger")
-        return render_template_string(TRANSFER_PAGE, balance=0, message="Double clic bloqué! Veuillez patienter quelques secondes avant de réessayer.", is_error=True)
+        return render_template_string(TRANSFER_PAGE, balance=0, message="Double clic bloqué! Veuillez patienter 30 secondes avant de réessayer.", is_error=True)
 
     message, is_error = "",""
     
