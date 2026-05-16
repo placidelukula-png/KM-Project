@@ -2914,7 +2914,7 @@ def import_mouvements():
 ###
     difference = (datetime.now(timezone.utc) - session["idempotency_time"]).total_seconds() if "idempotency_time" in session else None
     session["idempotency_time"] = datetime.now(timezone.utc)
-    if difference is not None and difference < 15:  # seuil de 15 secondes pour éviter les doubles clics rapides
+    if difference is not None and difference < 10:  # seuil de 10 secondes pour éviter les doubles clics rapides
        flash("Transfert bloqué en raison d'une tentative de double clic rapide", "danger")
        return render_template_string(IMPORT_PAGE, message="Transfert bloqué : Veuillez attendre 30 secondes avant de réessayer.", is_error=True, stats="")
 ###    
@@ -3776,7 +3776,7 @@ def transfer():
     if request.method == "POST":
        difference = (datetime.now(timezone.utc) - session["idempotency_time"]).total_seconds() if "idempotency_time" in session else None
        session["idempotency_time"] = datetime.now(timezone.utc)
-       if difference is not None and difference < 15:  # seuil de 15 secondes pour éviter les doubles clics rapides
+       if difference is not None and difference < 10:  # seuil de 10 secondes pour éviter les doubles clics rapides
           flash("Transfert bloqué en raison d'une tentative de double clic rapide", "danger")
           return render_template_string(TRANSFER_PAGE, balance=0, message="Double clic bloqué! Veuillez patienter 30 secondes avant de réessayer.", is_error=True)
 
@@ -3842,7 +3842,7 @@ def cotisation():
     difference = (datetime.now(timezone.utc) - session["idempotency_time"]).total_seconds() if "idempotency_time" in session else None
     session["idempotency_time"] = datetime.now(timezone.utc)
     #log.info("Différence en secondes depuis le dernier transfert : %s", difference if difference else "N/A")
-    if difference is not None and difference < 15:  # seuil de 15 secondes pour éviter les doubles clics rapides
+    if difference is not None and difference < 10:  # seuil de 15 secondes pour éviter les doubles clics rapides
         flash("Transfert bloqué en raison d'une tentative de double clic rapide", "danger")
         return render_template_string(TRANSFER_PAGE, balance=0, message="Double clic bloqué! Veuillez patienter 30 secondes avant de réessayer.", is_error=True)
 
@@ -3889,7 +3889,7 @@ def donation():
     difference = (datetime.now(timezone.utc) - session["idempotency_time"]).total_seconds() if "idempotency_time" in session else None
     session["idempotency_time"] = datetime.now(timezone.utc)
     #log.info("Différence en secondes depuis le dernier transfert : %s", difference if difference else "N/A")
-    if difference is not None and difference < 15:  # seuil de 15 secondes pour éviter les doubles clics rapides
+    if difference is not None and difference < 10:  # seuil de 10 secondes pour éviter les doubles clics rapides
         flash("Transfert bloqué en raison d'une tentative de double clic rapide", "danger")
         return render_template_string(TRANSFER_PAGE, balance=0, message="Double clic bloqué! Veuillez patienter 30 secondes avant de réessayer.", is_error=True)
 
@@ -4178,7 +4178,7 @@ INFOS_ASSOCIATION_PAGE = """
             <li><strong>+243 824807663</strong> pour Mpesa</li>
             <li><strong>+243 999944459</strong> pour Airtel-money</li>
             <li><strong>+243 891273191</strong> pour Orange-money</li>
-            <li><strong>+243 903077077</strong> pour Africell-money</li>
+            <li><strong>+243 903077077</strong> pour Afri-money</li>
         </ul>
 
         <p>
