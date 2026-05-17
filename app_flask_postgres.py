@@ -4368,7 +4368,7 @@ FAQ_PAGE = """
     <h2 id="chapitre7">Comment procéder aux paiements pour les membres résidant en dehors de la RDC ?</h2>
     <div class="pge">
         <p>
-        Nous recommandons vivement aux membres residants en dehors de la RDC d'utiliser les services offerts par les réseaux de transfert d'argent internationaux comme <strong>REMITLY</strong> accessible officiellement sous l'URL <strong>www.remitly.com</strong> (pas ailleurs). Pour le cas de 'remitly' l'utilisation des destinations mobile-money :<strong> +243824807663 pour Mpesa et +243891273191 pour Orange-money</strong> sont efficaces ; le transfert est quasi instantané. Dans ce cas, n'oubliez pas d'accompagner votre transfert par un message téléphonique SMS, au numéro de destination, libellé comme suit : <i><P style="color: blue;">"Pour KM-Kimya à partir de '<strong>NOM DU PAYS D'Où VOUS ENVOYEZ</strong>' en faveur de '<strong>IDENTIFIANT KM-KIMYA DU BENEFICAIRE</strong>'  Montant: '<strong>LE MONTANT ENVOYÉ</strong>'"</P></i> pour nous permettre de vous identifier correctement (ainsi que le destinataire beneficiaire du transfert) dans notre base de données.
+        Nous recommandons vivement aux membres résidants en dehors de la RDC d'utiliser les services offerts par les réseaux de transfert d'argent internationaux comme <strong>REMITLY</strong> accessible officiellement sous l'URL <strong>www.remitly.com</strong> (pas ailleurs). Pour le cas de 'remitly' l'utilisation des destinations mobile-money :<strong> +243824807663 pour Mpesa et +243891273191 pour Orange-money</strong> sont efficaces ; le transfert est quasi instantané. Dans ce cas, n'oubliez pas d'accompagner votre transfert par un message téléphonique SMS, au numéro de destination, libellé comme suit : <i><P style="color: blue;">"Pour KM-Kimya à partir de '<strong>NOM DU PAYS D'Où VOUS ENVOYEZ</strong>' en faveur de '<strong>IDENTIFIANT KM-KIMYA DU BENEFICAIRE</strong>'  Montant: '<strong>LE MONTANT ENVOYÉ</strong>'"</P></i> pour nous permettre de vous identifier correctement (ainsi que le destinataire beneficiaire du transfert) dans notre base de données.
         </p>
     </div>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
@@ -4390,7 +4390,7 @@ FAQ_PAGE = """
     <h2 id="chapitre9">Quels sont les objectifs immediat, à court terme et moyen terme de l'Association actuellement ?</h2>
     <div class="pge">
         <p>
-        Dans l'immediat, KM-Kimya souhaite demarrer ses activités avec un groupe pilote de 100 membres pour tester et ajuster son modèle de fonctionnement. Durant cette phase la contribution individuelle est de 5.5$ dont 5 pour la prestation KM-Kimya en cas de décès et 0.5 pour les frais administratifs. A ce stade la prestation est donc de 500$ en cas de décès d'un membre du groupe.
+        Dans l'immediat, KM-Kimya souhaite démarrer ses activités avec un groupe pilote de 100 membres pour tester et ajuster son modèle de fonctionnement. Durant cette phase la contribution individuelle est de 5.5$ dont 5 pour la prestation KM-Kimya en cas de décès et 0.5 pour les frais administratifs. A ce stade la prestation est donc de 500$ en cas de décès d'un membre du groupe.
         </p> 
         <p> 
         A court terme, l'objectif est d'atteindre 500 membres actifs et de stabiliser les processus opérationnels. La prestation passera alors à 2500$ en cas de décès d'un membre du groupe, ce qui permettra de couvrir tant soit peu une bonne partie des besoins d'un enterrement.
