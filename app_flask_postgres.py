@@ -4476,7 +4476,7 @@ FAQ_PAGE = """
     <h2 id="chapitre16">Comment ouvre t-on un lien ou un URL à partir d'un téléphone android?</h2>
     <div class="pge">
         <p>
-        Cette question élémentaire est fréquente chez les utilisateurs de smartphones Android. Autant elle est elementaire, autant il n'est pas aisé d'y répondre.
+        Cette question élémentaire est fréquente chez les utilisateurs de smartphones Android. Autant elle est élémentaire, autant il n'est pas aisé d'y répondre.
         </P> 
         Sur un téléphone Android, la méthode la plus simple pour ouvrir un lien (URL) est de taper brièvement dessus dans une application (SMS, email, navigateur, messagerie) pour l'ouvrir dans le navigateur par défaut (Chrome). Vous pouvez également copier le lien et le coller dans la barre d'adresse de Chrome.
         </P>
