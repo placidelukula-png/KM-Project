@@ -3773,12 +3773,11 @@ TRANSFER_PAGE = """
 @app.route("/transfer", methods=["GET","POST"])
 @login_required
 def transfer():
-    if request.method == "POST":
-       difference = (datetime.now(timezone.utc) - session["idempotency_time"]).total_seconds() if "idempotency_time" in session else None
-       session["idempotency_time"] = datetime.now(timezone.utc)
-       if difference is not None and difference < 10:  # seuil de 10 secondes pour éviter les doubles clics rapides
-          flash("Transfert bloqué en raison d'une tentative de double clic rapide", "danger")
-          return render_template_string(TRANSFER_PAGE, balance=0, message="Double clic bloqué! Veuillez patienter 30 secondes avant de réessayer.", is_error=True)
+    difference = (datetime.now(timezone.utc) - session["idempotency_time"]).total_seconds() if "idempotency_time" in session else None
+    session["idempotency_time"] = datetime.now(timezone.utc)
+    if difference is not None and difference < 10:  # seuil de 10 secondes pour éviter les doubles clics rapides
+        flash("Transfert bloqué en raison d'une tentative de double clic rapide", "danger")
+        return render_template_string(TRANSFER_PAGE, balance=0, message="Double clic bloqué! Veuillez patienter 30 secondes avant de réessayer.", is_error=True)
 
     message, is_error = "",""
     
