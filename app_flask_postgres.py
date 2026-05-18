@@ -3700,9 +3700,7 @@ TRANSFER_PAGE = """
 <h2>Transfert de crédit, cotisations et dons</h2>
 <p><a href="{{ url_for('home') }}">← Retour</a></p>
 
-
-<label class="mon-alert-warning">Pour la sécurité de vos transactions financières, veuillez patienter 30 secondes entre chaque clic de souris.</label>
-
+<form class="mon-alert-warning"><small>Pour la sécurité de vos transactions financières, veuillez patienter 30 secondes entre deux clics de souris.</small></form>
 
 <br>
 <h3>Transfert de crédit à un autre membre : </h3>
