@@ -3649,9 +3649,9 @@ def download_csv():
 
             with cur.copy("""
                 COPY (
-/*                    SELECT * FROM mouvements WHERE regie IS NOT NULL*/
-/*                    SELECT phone, firstname, lastname, adresse FROM membres WHERE currentstatute IN ('probatoire', 'actif') */
-                      SELECT phone, firstname, lastname, balance, adresse FROM membres WHERE mentor = '818329793' OR phone = '818329793' 
+/*                      SELECT * FROM mouvements WHERE regie IS NOT NULL*/
+                      SELECT phone, firstname, lastname, adresse FROM membres WHERE currentstatute IN ('probatoire', 'actif') 
+/*                      SELECT phone, firstname, lastname, balance, adresse FROM membres WHERE mentor = '818329793' OR phone = '818329793' */
                 ) TO STDOUT WITH CSV HEADER
             """) as copy:
                 for data in copy:
