@@ -3691,6 +3691,8 @@ TRANSFER_PAGE = """
  .mon-alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
  .mon-alert-warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
 
+ .mon-financial-warning { margin-top:12px;padding:10px;border-radius:12px;background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+ 
 </style>
 </head>
 
@@ -3700,11 +3702,9 @@ TRANSFER_PAGE = """
 <h2>Transfert de crédit, cotisations et dons</h2>
 <p><a href="{{ url_for('home') }}">← Retour</a></p>
 
-<form class="mon-alert-warning">
-<small>Pour la sécurité de vos transactions financières, veuillez patienter 30 secondes entre deux clics de souris.
-<div class="compteur">
-  <span id="secondes">0</span> secondes
-</div>
+<form class="mon-financial-warning">
+<small>
+Pour la sécurité de vos transactions financières, veuillez patienter 30 secondes entre deux clics de souris.
 </small>
 </form>
 
