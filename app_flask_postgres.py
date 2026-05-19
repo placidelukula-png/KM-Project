@@ -3704,7 +3704,8 @@ TRANSFER_PAGE = """
 <p><a href="{{ url_for('home') }}">← Retour</a></p>
 </div>
 
-<form action="{{ url_for('clock_db') }}" method="get" class="mon-financial-warning" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+<form action="{{ url_for('clock_db') }}" method="get" class="mon-financial-warning" 
+style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;top:0; margin-bottom: 20px;right:0; left:0; position:sticky;">
     <small>
     Pour la sécurité de vos transactions financières, veuillez patienter 30 secondes entre deux clics de souris.
     </small>
