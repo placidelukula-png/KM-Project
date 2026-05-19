@@ -3707,7 +3707,8 @@ TRANSFER_PAGE = """
 <form action="{{ url_for('clock_db') }}" method="get" class="mon-financial-warning" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
     <small>
     Pour la sécurité de vos transactions financières, veuillez patienter 30 secondes entre deux clics de souris.
-
+    </small>
+    <small>
         <label>Heure du serveur :</label>
         <!-- On affiche la variable transmise par Python -->
         <div id="horloge" style="font-size: 30px;">{{ heure_initiale }}</div>
