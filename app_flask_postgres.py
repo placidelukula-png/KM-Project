@@ -3691,7 +3691,7 @@ TRANSFER_PAGE = """
  .mon-alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
  .mon-alert-warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
 
- .mon-financial-warning { margin-top:12px;padding:10px;border-radius:12px;background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+ .mon-financial-warning { margin-top:2px;padding:10px;border-radius:12px;background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
  
 </style>
 </head>
@@ -3705,7 +3705,7 @@ TRANSFER_PAGE = """
 </div>
 
 <form action="{{ url_for('clock_db') }}" method="get" class="mon-financial-warning" 
-style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px;">
+style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
     <small style="color:#856404;">
     Pour la sécurité de vos transactions financières, veuillez patienter 30 secondes entre deux clics de souris.
     </small>
@@ -3729,7 +3729,7 @@ style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px;">
 </form>
 
 <br>
-<h3>Transfert de crédit à un autre membre : </h3>
+<h3>1. Transfert de crédit à un autre membre : </h3>
 <div class="card">
 <form action="{{ url_for('transfer') }}" method="post" style="display: flex; align-items: center; gap: 10px; flex-wrap: nowrap;">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -3747,7 +3747,7 @@ style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px;">
 
 <br>
 <hr>
-<h3>Paiement de votre cotisation trimestrielle de membre : </h3>
+<h3>2. Paiement de votre cotisation trimestrielle de membre : </h3>
 <div class="card">
 <form action="{{ url_for('cotisation') }}" method="post" style="display: flex; align-items: center; gap: 10px; flex-wrap: nowrap;">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -3760,7 +3760,7 @@ style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px;">
 
 <br>
 <hr>
-<h3>Donation à l'Association KM-Kimya : </h3>
+<h3>3. Donation à l'Association KM-Kimya : </h3>
 <div class="card">
 <form action="{{ url_for('donation') }}" method="post" style="display: flex; align-items: center; gap: 10px; flex-wrap: nowrap;">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
