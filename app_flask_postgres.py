@@ -3705,11 +3705,11 @@ TRANSFER_PAGE = """
 </div>
 
 <form action="{{ url_for('clock_db') }}" method="get" class="mon-financial-warning" 
-style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;top:0; margin-bottom: 20px;right:0; left:0; position:sticky;">
-    <small>
+style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+    <small style="color:#856404;">
     Pour la sécurité de vos transactions financières, veuillez patienter 30 secondes entre deux clics de souris.
     </small>
-    <small>
+    <small style="text-align:right; top:0; right:0; left:0; position:sticky;">
         <label>Heure du serveur :</label>
         <!-- On affiche la variable transmise par Python -->
         <div id="horloge" style="font-size: 30px;">{{ heure_initiale }}</div>
