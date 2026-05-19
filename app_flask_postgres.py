@@ -3702,7 +3702,7 @@ TRANSFER_PAGE = """
 <h2>Transfert de crédit, cotisations et dons</h2>
 <p><a href="{{ url_for('home') }}">← Retour</a></p>
 
-<form action="{{ url_for('db') }}" method="get"class="mon-financial-warning">
+<form action="{{ url_for('clock_db') }}" method="get"class="mon-financial-warning">
     <small>
     Pour la sécurité de vos transactions financières, veuillez patienter 30 secondes entre deux clics de souris.
 
