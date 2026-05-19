@@ -3699,8 +3699,10 @@ TRANSFER_PAGE = """
 <body>
 
 <div class="wrap">
+<div style="display:flex; justify-content:space-between; align-items:center;">
 <h2>Transfert de crédit, cotisations et dons</h2>
 <p><a href="{{ url_for('home') }}">← Retour</a></p>
+</div>
 
 <form action="{{ url_for('clock_db') }}" method="get"class="mon-financial-warning">
     <small>
