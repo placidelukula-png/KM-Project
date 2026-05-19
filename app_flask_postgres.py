@@ -3964,7 +3964,7 @@ def get_db_time():
     conn.close()
     return heure_db
 
-@app.route('/db')
+@app.route('/clock_db')
 def clock_db():
     heure = get_db_time()
     return render_template('index.html', heure_initiale=heure)
