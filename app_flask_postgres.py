@@ -3650,8 +3650,8 @@ def download_csv():
             with cur.copy("""
                 COPY (
 /*                      SELECT * FROM mouvements WHERE regie IS NOT NULL*/
-                      SELECT phone, firstname, lastname, adresse FROM membres WHERE currentstatute IN ('probatoire', 'actif') 
-/*                      SELECT phone, firstname, lastname, balance, adresse FROM membres WHERE mentor = '818329793' OR phone = '818329793' */
+/*                      SELECT phone, firstname, lastname, adresse FROM membres WHERE currentstatute IN ('probatoire', 'actif') */
+                      SELECT phone, firstname, lastname, balance, adresse FROM membres WHERE mentor = '8329030855' OR phone = '8329030855' 
                 ) TO STDOUT WITH CSV HEADER
             """) as copy:
                 for data in copy:
@@ -3702,10 +3702,26 @@ TRANSFER_PAGE = """
 <h2>Transfert de crédit, cotisations et dons</h2>
 <p><a href="{{ url_for('home') }}">← Retour</a></p>
 
-<form class="mon-financial-warning">
-<small>
-Pour la sécurité de vos transactions financières, veuillez patienter 30 secondes entre deux clics de souris.
-</small>
+<form action="{{ url_for('db') }}" method="get"class="mon-financial-warning">
+    <small>
+    Pour la sécurité de vos transactions financières, veuillez patienter 30 secondes entre deux clics de souris.
+
+        <label>Heure du serveur :</label>
+        <!-- On affiche la variable transmise par Python -->
+        <div id="horloge" style="font-size: 30px;">{{ heure_initiale }}</div>
+
+        <script>
+            function updateClock() {
+                const now = new Date();
+                const h = now.getHours().toString().padStart(2, '0');
+                const m = now.getMinutes().toString().padStart(2, '0');
+                const s = now.getSeconds().toString().padStart(2, '0');
+                document.getElementById('horloge').textContent = `${h}.${m}.${s}`;
+            }
+            // Le JS prend le relais pour l'animation
+            setInterval(updateClock, 1000);
+        </script>
+    </small>
 </form>
 
 <br>
@@ -3781,12 +3797,6 @@ Pour la sécurité de vos transactions financières, veuillez patienter 30 secon
 @app.route("/transfer", methods=["GET","POST"])
 @login_required
 def transfer():
-    difference = (datetime.now(timezone.utc) - session["idempotency_time"]).total_seconds() if "idempotency_time" in session else None
-    session["idempotency_time"] = datetime.now(timezone.utc)
-    if difference is not None and difference < 30:  # seuil de 30 secondes pour éviter les doubles clics rapides
-        flash("Transfert bloqué en raison d'une tentative de double clic rapide", "danger")
-        return render_template_string(TRANSFER_PAGE, balance=0, message="Double clic bloqué! Veuillez patienter 30 secondes avant de réessayer.", is_error=True)
-
     message, is_error = "",""
     
     from_phone = session["user"]
@@ -3800,6 +3810,12 @@ def transfer():
     found_name = ""
 
     if request.method == "POST":
+        difference = (datetime.now(timezone.utc) - session["idempotency_time"]).total_seconds() if "idempotency_time" in session else None
+        session["idempotency_time"] = datetime.now(timezone.utc)
+        if difference is not None and difference < 30:  # seuil de 30 secondes pour éviter les multiples clics rapides
+            flash("Transfert bloqué en raison d'une tentative de multiples clics rapides", "danger")
+            return render_template_string(TRANSFER_PAGE, balance=0, message="Double clic bloqué! Veuillez patienter 30 secondes avant de réessayer.", is_error=True)
+
         if amount > 0 and not to_phone:
             return render_template_string(TRANSFER_PAGE, balance=my_balance, message="Veuillez saisir le numéro de téléphone du bénéficiaire.", is_error=True)
         
@@ -3935,6 +3951,23 @@ def donation():
             log.exception("Erreur lors de l'enregistrement du mouvement de donation: %s", e)                
 
     return render_template_string(TRANSFER_PAGE,message=message, is_error=is_error)
+
+import psycopg2 # Driver pour Postgres
+
+def get_db_time():
+    conn = psycopg2.connect(dsn="dbname=test user=postgres password=secret")
+    cur = conn.cursor()
+    # On demande l'heure actuelle directement à Postgres
+    cur.execute("SELECT TO_CHAR(NOW(), 'HH24.MI.SS');")
+    heure_db = cur.fetchone()[0]
+    cur.close()
+    conn.close()
+    return heure_db
+
+@app.route('/db')
+def clock_db():
+    heure = get_db_time()
+    return render_template('index.html', heure_initiale=heure)
 
 
 # ------------------------------------------
