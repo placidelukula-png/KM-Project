@@ -4384,7 +4384,7 @@ FAQ_PAGE = """
     <h2 id="chapitre5">Qu'est ce qui garantit que l'Organisation puisse être informée du décès d'un membre éligible ?</h2>
     <div class="pge">
         <p>
-        Sur la plateforme km-kimya.org, il existe un trio sacré que l'adhérent est tenu de garder à jour; il s'agit de 'Adhérent<>Mentor<>Bénéficiaire'. Bien entretenu, ce trio assure que le décès d'un membre éligible soit porté à la connaissance de l'Organisation de façon appropriée, rapide et efficace par son Mentor ou par le Bénéficiaire.</p>
+        Sur la plateforme km-kimya.org, il existe un trio sacré que l'adhérent est tenu de garder à jour, de son vivant ; il s'agit de 'Adhérent<>Mentor<>Bénéficiaire'. Bien entretenu, ce trio assure que le décès d'un membre éligible soit porté à la connaissance de l'Organisation de façon appropriée, rapide et efficace par son Mentor ou par le Bénéficiaire.</p>
         <p>
         <p>
         Toutefois, la déclaration d'un décès de membre est un devoir pour tout membre qui est au courant d'une manière ou d'une autre. La voie appropriée pour signaler un décès est le bouton 'Déclarer un décès' du Menu principal sur le site internet https://www.km-kimya.org, en utilisant l'identifiant (nº tél sans prefixes) du défunt.
