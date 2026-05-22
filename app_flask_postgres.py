@@ -4283,10 +4283,10 @@ FAQ_PAGE = """
     <li><a href="#chapitre2">Qui peut adhérer à l'Association ?</a></li>
     <li><a href="#chapitre3">Quel est le principe de fonctionnement et les modalités d'adhésion ?</a></li>
     <li><a href="#chapitre4">Est ce que le paiement est obligatoire pour être membre de l’Association KM-Kimya ?</a></li>
-    <li><a href="#chapitre5">Qu'est ce qui garantit que le deces d'un membre eligible sera porté à la connaissance de l'Organisation ?</a></li>
-    <li><a href="#chapitre6">Un etranger ou un congolais résidant à l'etranger peut il adhérer à une association congolaise (RDC) ?</a></li>
+    <li><a href="#chapitre5">Qu'est ce qui garantit que le décès d'un membre éligible sera porté à la connaissance de l'Organisation ?</a></li>
+    <li><a href="#chapitre6">Un étranger ou un congolais résidant à l'étranger peut il adhérer à une association congolaise (RDC) ?</a></li>
     <li><a href="#chapitre7">Comment proceder aux paiements sur terrain au Congo (RDC)?</a></li>
-    <li><a href="#chapitre8">Comment proceder aux paiements si on réside à l'etranger ?</a></li>
+    <li><a href="#chapitre8">Comment proceder aux paiements si on réside à l'étranger ?</a></li>
     <li><a href="#chapitre9">Qui perçoit les contributions des membres ?</a></li>
     <li><a href="#chapitre10">Quand commence la couverture pour un membre actif?</a></li>
     <li><a href="#chapitre11">Comment proceder si la personne à inscrire n'a pas de téléphone ?</a></li>
@@ -4384,17 +4384,17 @@ FAQ_PAGE = """
     <h2 id="chapitre5">Qu'est ce qui garantit que l'Organisation puisse être informée du décès d'un membre éligible ?</h2>
     <div class="pge">
         <p>
-        Sur la plateforme km-kimya.org, il existe un trio sacré que l'adhérent est tenu de garder à jour; il s'agit de 'Adhérent<>Mentor<>Bénéficiaire' bien entretenu, ce trio assure que le décès d'un membre éligible soit porté à la connaissance de l'Organisation.</p>
+        Sur la plateforme km-kimya.org, il existe un trio sacré que l'adhérent est tenu de garder à jour; il s'agit de 'Adhérent<>Mentor<>Bénéficiaire'. Bien entretenu, ce trio assure que le décès d'un membre éligible soit porté à la connaissance de l'Organisation de façon appropriée, rapide et efficace par son Mentor ou par le Bénéficiaire.</p>
         <p>
         <p>
-        Toutefois, la déclaration d'un décès de membre est un devoir pour tout membre qui est au courant d'une maniere ou d'une autre.
+        Toutefois, la déclaration d'un décès de membre est un devoir pour tout membre qui est au courant d'une manière ou d'une autre. La voie appropriée pour signaler un décès est le bouton 'Déclarer un décès' du Menu principal sur le site internet https://www.km-kimya.org, en utilisant l'identifiant (nº tél sans prefixes) du défunt.
         </p>
     </div>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
     <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
 
-    <h2 id="chapitre6">Un etranger ou un congolais résidant à l'etranger peut il adhérer à une association qui opère sur terrain au Congo (RDC) ?</h2>
+    <h2 id="chapitre6">Un étranger ou un congolais résidant à l'étranger peut il adhérer à une association qui opère sur terrain au Congo (RDC) ?</h2>
     <div class="pge">
         <p>
         Oui, absolument, un étranger ou un congolais résidant à l'etranger peut adhérer à une association congolaise. Ceci est conforme à la loi 004/2001 qui régit les associations en République Démocratique du Congo.</p>
