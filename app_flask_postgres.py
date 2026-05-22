@@ -4381,7 +4381,7 @@ FAQ_PAGE = """
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
     <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
-    <h2 id="chapitre5">Qu'est ce qui garantit que l'Organisation puisse être informée du décès d'un membre éligible ?</h2>
+    <h2 id="chapitre5">Qu'est ce qui garantit que le décès d'un membre éligible sera porté à la connaissance de l'Organisation rapidement et efficacement ?</h2>
     <div class="pge">
         <p>
         Sur la plateforme km-kimya.org, il existe un trio sacré que l'adhérent est tenu de garder à jour, de son vivant ; il s'agit de 'Adhérent<>Mentor<>Bénéficiaire'. Bien entretenu, ce trio assure que le décès d'un membre éligible soit porté à la connaissance de l'Organisation de façon appropriée, rapide et efficace par son Mentor ou par le Bénéficiaire.</p>
