@@ -2911,13 +2911,6 @@ import csv
 @app.route("/import-mouvements", methods=["GET", "POST"])
 @admin_required
 def import_mouvements():
-###
-    difference = (datetime.now(timezone.utc) - session["idempotency_time"]).total_seconds() if "idempotency_time" in session else None
-    session["idempotency_time"] = datetime.now(timezone.utc)
-    if difference is not None and difference < 30:  # seuil de 30 secondes pour éviter les doubles clics rapides
-       flash("Transfert bloqué en raison d'une tentative de double clic rapide", "danger")
-       return render_template_string(IMPORT_PAGE, message="Transfert bloqué : Veuillez attendre 30 secondes avant de réessayer.", is_error=True, stats="")
-###    
     if request.method == "GET":
        return render_template_string(IMPORT_PAGE, message="", is_error=False, stats="")
     
@@ -2929,7 +2922,13 @@ def import_mouvements():
     f = request.files.get("mobilemoneyfile")
     if not f or not f.filename:
         return render_template_string(IMPORT_PAGE, message="Aucun fichier reçu.", is_error=True, stats="")
-
+###
+    difference = (datetime.now(timezone.utc) - session["idempotency_time"]).total_seconds() if "idempotency_time" in session else None
+    session["idempotency_time"] = datetime.now(timezone.utc)
+    if difference is not None and difference < 30:  # seuil de 30 secondes pour éviter les doubles clics rapides
+       flash("Transfert bloqué en raison d'une tentative de double clic rapide", "danger")
+       return render_template_string(IMPORT_PAGE, message="Transfert bloqué : Veuillez attendre 30 secondes avant de réessayer.", is_error=True, stats="")
+###    
     try:
         content = f.read().decode("utf-8-sig", errors="replace")
         reader = csv.DictReader(StringIO(content))
