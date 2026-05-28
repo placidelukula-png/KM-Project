@@ -496,6 +496,12 @@ def init_db():
 #                    updateuser = 'System'
 #            """)
 #
+            cur.execute("""
+                UPDATE membres 
+                SET membershipdate = date '2024-05-16' 
+                WHERE membershipdate <= date '2026-05-16' AND (currentstatute = 'probatoire' OR currentstatute = 'actif')
+            """)
+#
 #            # Fixation de la prestation visée.
 #            cur.execute("""
 #                UPDATE id_data
@@ -3651,8 +3657,7 @@ def download_csv():
 /*                      SELECT * FROM mouvements WHERE regie IS NOT NULL*/
 /*                      SELECT phone, firstname, lastname, adresse FROM membres WHERE currentstatute IN ('probatoire', 'actif') */
 /*                      SELECT phone, firstname, lastname, balance, adresse FROM membres WHERE mentor = '8329030855' OR phone = '8329030855' */
-/*                      SELECT phone, firstname, lastname, balance, adresse FROM membres WHERE membershipdate <= date '2026-05-16' AND (currentstatute = 'probatoire' OR currentstatute = 'actif')*/
-                      UPDATE membres SET membershipdate = date '2024-05-16' WHERE membershipdate <= date '2026-05-16' AND (currentstatute = 'probatoire' OR currentstatute = 'actif')
+                      SELECT phone, firstname, lastname, balance, adresse FROM membres WHERE membershipdate > date '2026-05-16' AND (currentstatute = 'probatoire' OR currentstatute = 'actif')
                        ) TO STDOUT WITH CSV HEADER
             """) as copy:
                 for data in copy:
