@@ -81,6 +81,7 @@ ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "Melissa@1991")
 DEFAULT_PASSWORD_HASH = os.getenv("DEFAULT_PASSWORD_HASH", "123456789")  # à utiliser si tu ne veux pas créer de comptes login automatiques pour les membres créés via create_member_minimal() (ex: import depuis Excel)
 # pour create_member_minimal(), si tu ne veux pas créer de comptes login automatiques, tu peux laisser DEFAULT_PASSWORD_HASH vide et la fonction mettra une chaîne fixe "NO_LOGIN_CREATED" (ou tu peux aussi définir DEFAULT_PASSWORD_HASH à une chaîne spécifique de ton choix).
 MEMBER_TYPES = ("membre", "independant", "mentor", "admin")
+CARENCE_MOIS = 6  # durée de carence pour passer de 'probatoire' à 'actif' (en mois)
 STATUTES = ("probatoire","actif", "inactif", "suspendu", "radié")
 DECES_STATUTES = ("déclaré", "validé", "comptabilisé", "non-éligible")
 
@@ -496,11 +497,12 @@ def init_db():
 #                    updateuser = 'System'
 #            """)
 #
-            cur.execute("""
-                UPDATE membres 
-                SET membershipdate = date '2024-05-16' 
-                WHERE membershipdate <= date '2026-05-16' AND (currentstatute = 'probatoire' OR currentstatute = 'actif')
-            """)
+#            # Correction en haut-volume (explication: fixation d'une date d'adhésion au 2024-05-16 pour tous les membres pionniers càd membres 'actif' le 16 mai 2026).
+#            cur.execute("""
+#                UPDATE membres 
+#                SET membershipdate = date '2024-05-16' 
+#                WHERE membershipdate <= date '2026-05-16' AND (currentstatute = 'probatoire' OR currentstatute = 'actif')
+#            """)
 #
 #            # Fixation de la prestation visée.
 #            cur.execute("""
@@ -1303,7 +1305,7 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
                 log.info("from_phone=%s,from_balance=%s, >>> to_phone=%s, to_balance=%s", from_phone, from_balance, to_phone, to_balance)
     #####
                 #pour celui qui reçoit : 
-                if  to_month < 3 :
+                if  to_month < CARENCE_MOIS :
                     cur.execute("""
                         UPDATE membres
                         SET currentstatute = CASE
@@ -1313,7 +1315,7 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
                         WHERE phone in (%s);
                     """, (to_phone,C,to_phone))
 
-                if  to_month >= 3:
+                if  to_month >= CARENCE_MOIS:
                     cur.execute("""
                         UPDATE membres
                         SET currentstatute = CASE
@@ -1324,7 +1326,7 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
                     """, (to_phone,C,to_phone))
 
                 #pour celui qui donne: 
-                if  from_month < 3 :
+                if  from_month < CARENCE_MOIS :
                     cur.execute("""
                         UPDATE membres
                         SET currentstatute = CASE
@@ -1334,7 +1336,7 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
                         WHERE phone in (%s);
                     """, (from_phone,C,from_phone))
 
-                if  from_month >= 3:
+                if  from_month >= CARENCE_MOIS:
                     cur.execute("""
                         UPDATE membres
                         SET currentstatute = CASE
@@ -1633,12 +1635,12 @@ def statutes_update():
                     WHEN (
                         EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12 +
                         EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))
-                    ) < 3 AND balance >= %s THEN 'probatoire'
+                    ) < CARENCE_MOIS AND balance >= %s THEN 'probatoire'
                     
                     WHEN (
                         EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12 +
                         EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))
-                    ) >= 3 AND balance >= %s THEN 'actif'
+                    ) >= CARENCE_MOIS AND balance >= %s THEN 'actif'
                     
                     ELSE 'inactif'
                   END
@@ -3051,7 +3053,7 @@ def import_mouvements():
                             WHERE phone = %s;
                         """, (phone, contribution_minimum, limit_date, phone))
 
-                        # 6) règle demandée: si phone du mouvement = phone d'un membre ET balance >= C (contribution minimale) ET la durée entre aujourdhui et membershipdate superieure ou egale à 3 mois (=> currentstatute='actif')
+                        # 6) règle demandée: si phone du mouvement = phone d'un membre ET balance >= C (contribution minimale) ET la durée entre aujourdhui et membershipdate superieure ou egale à 6 mois (=> currentstatute='actif')
                         limit_date = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
                         cur.execute("""
                             UPDATE membres
@@ -3059,7 +3061,7 @@ def import_mouvements():
                                 WHEN phone = %s AND balance >= %s AND (
                                 EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12 +
                                 EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))
-                            ) >= 3 THEN 'actif'
+                            ) >=CARENCE_MOIS THEN 'actif'
                                 ELSE currentstatute
                             END
                             WHERE phone = %s;
@@ -3657,7 +3659,7 @@ def download_csv():
 /*                      SELECT * FROM mouvements WHERE regie IS NOT NULL*/
 /*                      SELECT phone, firstname, lastname, adresse FROM membres WHERE currentstatute IN ('probatoire', 'actif') */
 /*                      SELECT phone, firstname, lastname, balance, adresse FROM membres WHERE mentor = '8329030855' OR phone = '8329030855' */
-                      SELECT phone, firstname, lastname, balance, adresse FROM membres WHERE membershipdate > date '2026-05-16' AND (currentstatute = 'probatoire' OR currentstatute = 'actif')
+                      SELECT phone, firstname, lastname, balance, adresse FROM membres WHERE membershipdate <= date '2026-05-16' AND (currentstatute = 'probatoire' OR currentstatute = 'actif')
                        ) TO STDOUT WITH CSV HEADER
             """) as copy:
                 for data in copy:
