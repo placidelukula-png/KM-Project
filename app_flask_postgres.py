@@ -1315,7 +1315,7 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
                         WHERE phone in (%s);
                     """, (to_phone,C,to_phone))
 
-                if  to_month >= CARENCE_MOIS:
+                if  to_month >=  CARENCE_MOIS :
                     cur.execute("""
                         UPDATE membres
                         SET currentstatute = CASE
@@ -1635,17 +1635,17 @@ def statutes_update():
                     WHEN (
                         EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12 +
                         EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))
-                    ) < CARENCE_MOIS AND balance >= %s THEN 'probatoire'
+                    ) < %s AND balance >= %s THEN 'probatoire'
                     
                     WHEN (
                         EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12 +
                         EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))
-                    ) >= CARENCE_MOIS AND balance >= %s THEN 'actif'
+                    ) >= %s AND balance >= %s THEN 'actif'
                     
                     ELSE 'inactif'
                   END
                 WHERE membershipdate <> %s
-            """, (C,C, limit_date))
+            """, (CARENCE_MOIS, C, CARENCE_MOIS, C, limit_date))
             rows_updated = cur.rowcount
 
         conn.commit()
@@ -3061,11 +3061,11 @@ def import_mouvements():
                                 WHEN phone = %s AND balance >= %s AND (
                                 EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12 +
                                 EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))
-                            ) >=CARENCE_MOIS THEN 'actif'
+                            ) >=%s THEN 'actif'
                                 ELSE currentstatute
                             END
                             WHERE phone = %s;
-                        """, (phone, contribution_minimum, phone))
+                        """, (phone, contribution_minimum, CARENCE_MOIS, phone))
 
 ##
                         # 7) Mise à jour comptes_techniques
