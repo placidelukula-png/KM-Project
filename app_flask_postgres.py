@@ -2749,7 +2749,11 @@ ADD_MEMBER_PAGE = """
   <label>Nom</label><input name="lastname" required>
   <label>Prénom</label><input name="firstname" required>
   <label>Date naissance (JJ/MM/AAAA)</label><input name="birthdate" required>
+
+{% if utilisateur <> "externe" %}  
   <label>Identifiant du bénéficiaire</label><input name="beneficiaire" placeholder="Exemple: 998889560" size="10" required>
+{% endif %}
+
   <label>Adresse de domicile</label><input name="adresse" placeholder="    mentionnant aussi la ville et la province  " required>
 
   <label>Mot de passe</label><input name="password"  placeholder="   doit être saisi  "  type="password" required>
@@ -2763,7 +2767,7 @@ ADD_MEMBER_PAGE = """
 
 </div>
 
-{% if externe %}
+{% if utilisateur == "externe" %}
 <div class="footer">
     <a href="{{ url_for('login') }}" class="btn-back">← Retour à la connexion</a>
 </div>
@@ -2836,7 +2840,7 @@ def add_member():
                 is_error=True)
 
     # Affichage normal de la page (GET)
-    return render_template_string(ADD_MEMBER_PAGE, externe=externe, message="", is_error=False)
+    return render_template_string(ADD_MEMBER_PAGE, utilisateur=utilisateur, message="", is_error=False)
 
 
 #----------------------------------------------------------------------------
