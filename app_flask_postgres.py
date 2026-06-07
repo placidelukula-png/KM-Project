@@ -2791,13 +2791,11 @@ import psycopg # ou psycopg2 selon ta config
 def add_member():
     # 0. Fixation du mode d'appel ; externe ou interne (par rapport à la session)
     if not session.get("user"):
-        mentor = 'admin'
-        updateuser = 'admin'
         externe = True
     else:
-        mentor = session.get("user")
-        updateuser = session.get("user")
         externe = False
+
+    log.info(f"Accès à /add_member (externe={externe})")  # log pour debug
 
     if request.method == "POST":
         try:
@@ -2813,13 +2811,20 @@ def add_member():
             # 2. Validation du numéro de téléphone (Sécurité Python)
             if phone.startswith("0") or phone.startswith("+"):
                 return render_template_string(ADD_MEMBER_PAGE, 
-                    message="Erreur : Le numéro ne doit pas commencer par 0 ou +243 ou +1 ou +33 etc.", 
+                    message="Erreur : Le numéro ne doit pas commencer par 0 ou +243 ou +1 ou +33 etc.",externe=externe, 
                     is_error=True)
 
             # 3. Conversion de la date
             birthdate = datetime.strptime(birthdate_str, "%d/%m/%Y").date()
 
             # 4. Préparation des variables automatiques
+            if not session.get("user"):
+                mentor = 'admin'
+                updateuser = 'admin'
+            else:
+                mentor = session.get("user")
+                updateuser = session.get("user")
+
             membertype = "independant"
             statut = "inactif"
             membershipdate = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
@@ -2834,7 +2839,7 @@ def add_member():
 
         except Exception as e:
             return render_template_string(ADD_MEMBER_PAGE, 
-                message=f"Erreur d'enregistrement : {e}",
+                message=f"Erreur d'enregistrement : {e}",externe=externe,
                 is_error=True)
 
     # Affichage normal de la page (GET)
