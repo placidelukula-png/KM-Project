@@ -2750,9 +2750,7 @@ ADD_MEMBER_PAGE = """
   <label>Prénom</label><input name="firstname" required>
   <label>Date naissance (JJ/MM/AAAA)</label><input name="birthdate" required>
 
-  {% if utilisateur == "externe" %}
-    <label><small> Inscription libre à la plate-forme, l'adhésion formelle à l'Association suivra </small> </label>
-  {% else %}
+  {% if utilisateur %}
     <label>Identifiant du bénéficiaire</label><input name="beneficiaire" placeholder="Exemple: 998889560" size="10" required>
   {% endif %}
 
@@ -2769,17 +2767,15 @@ ADD_MEMBER_PAGE = """
 
 </div>
 
-{% if utilisateur == "externe" %}
+{% if utilisateur %}
 <div class="footer">
-    <a href="{{ url_for('login') }}" class="btn-back">← Retour à la connexion</a>
+    <a href="{{ url_for('home') }}" class="btn-back">← Retour au menu principal</a>
 </div>
 {% else %}
 <div class="footer">
-    <a href="{{ url_for('home') }}" class="btn-back">← Retour au menu principal</a>
+    <a href="{{ url_for('login') }}" class="btn-back">← Retour à la connexion</a>
 </div>    
 {% endif %}
-
-
 
 </div></body></html>
 """
@@ -2821,7 +2817,7 @@ def add_member():
                 updateuser = session.get("user")
                 externe = False
 
-            utilisateur = session.get("user", "externe")
+            utilisateur = session.get("user")
             log.info(f"nom de la session = {utilisateur}")
 
             membertype = "independant"
