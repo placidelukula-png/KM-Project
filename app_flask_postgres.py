@@ -1806,7 +1806,7 @@ LOGIN_PAGE = """
 
         <div class="navigation-buttons" style="margin-top: 20px; display: flex; gap: 10px;border-radius: 20px;background: rgba(100,255,255,0.95);justify-content: center; align-items: center;">
             <!-- Bouton Inscription -->
-            <a href="{{ url_for('add_member') }}">
+            <a href="{{ url_for('add_member_route') }}">
                 <button type="button">Inscription libre</button>
             </a>
 
@@ -1849,7 +1849,7 @@ def login():
 from flask import render_template
 
 # 1. Route pour le formulaire d'inscription
-@app.route('/add_member')
+@app.route('/add_member_route', methods=['GET', 'POST'])
 def inscription():
     # Ici, tu renverras vers ton formulaire d'ajout à la table 'membres'
     return render_template_string(ADD_MEMBER_PAGE)
@@ -2013,7 +2013,7 @@ DASHBOARD_PAGE = """
       <div>
         <p class="t">Créer un membre</p>
         <p class="d">Enregistrer un nouveau membre.</p>
-        <a class="link" href="{{ url_for('add_member') }}">Ouvrir</a>
+        <a class="link" href="{{ url_for('add_member_route') }}">Ouvrir</a>
       </div>
     </div>
 
@@ -2786,10 +2786,9 @@ from flask import request, session, render_template_string
 from datetime import datetime
 import psycopg # ou psycopg2 selon ta config
 
-@app.route("/add_member", methods=["GET", "POST"])
+@app.route("/add_member_route", methods=["GET", "POST"])
 #@mentor_required
-def add_member():
-    # 0. Fixation du mode de travail ; externe ou interne (par rapport à la session)
+def add_member_route():
     if not session.get("user"):
         externe = True
     else:
@@ -2797,6 +2796,12 @@ def add_member():
 
     log.info(f"Accès à /add_member (externe={externe})")  # log pour debug
 
+    return render_template_string(ADD_MEMBER_PAGE, message="",externe=externe, is_error=False)
+
+
+@app.route("/add_member", methods=["GET", "POST"])
+#@mentor_required
+def add_member():
     if request.method == "POST":
         try:
             # 1. Récupération des données du formulaire
@@ -2811,8 +2816,7 @@ def add_member():
             # 2. Validation du numéro de téléphone (Sécurité Python)
             if phone.startswith("0") or phone.startswith("+"):
                 return render_template_string(ADD_MEMBER_PAGE, 
-                    message="Erreur : Le numéro ne doit pas commencer par 0 ou +243 ou +1 ou +33 etc.",externe=externe, 
-                    is_error=True)
+                    message="Erreur : Le numéro ne doit pas commencer par 0 ou +243 ou +1 ou +33 etc.", is_error=True)
 
             # 3. Conversion de la date
             birthdate = datetime.strptime(birthdate_str, "%d/%m/%Y").date()
@@ -2834,16 +2838,14 @@ def add_member():
                           None, statut, updateuser,beneficiaire, adressse, password, membershipdate)
             
             return render_template_string(ADD_MEMBER_PAGE, 
-                message=f"Succès : {firstname} {lastname} a été créé.",externe=externe, 
-                is_error=False)
+                message=f"Succès : {firstname} {lastname} a été créé.", is_error=False)
 
         except Exception as e:
             return render_template_string(ADD_MEMBER_PAGE, 
-                message=f"Erreur d'enregistrement : {e}",externe=externe,
-                is_error=True)
+                message=f"Erreur d'enregistrement : {e}", is_error=True)
 
     # Affichage normal de la page (GET)
-    return render_template_string(ADD_MEMBER_PAGE, externe=externe, message="", is_error=False)
+    return render_template_string(ADD_MEMBER_PAGE, message="", is_error=False)
 
 
 #----------------------------------------------------------------------------
