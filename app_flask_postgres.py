@@ -2750,19 +2750,19 @@ ADD_MEMBER_PAGE = """
   <label>Prénom</label><input name="firstname" required>
   <label>Date naissance (JJ/MM/AAAA)</label><input name="birthdate" required>
 
-{% if utilisateur == "externe" %}
-  <label><small> Inscription libre à la plate-forme, l'adhésion formelle à l'Association suivra </small> </label>
-else  
-  <label>Identifiant du bénéficiaire</label><input name="beneficiaire" placeholder="Exemple: 998889560" size="10" required>
-{% endif %}
+  {% if utilisateur == "externe" %}
+    <label><small> Inscription libre à la plate-forme, l'adhésion formelle à l'Association suivra </small> </label>
+  {% else %}
+    <label>Identifiant du bénéficiaire</label><input name="beneficiaire" placeholder="Exemple: 998889560" size="10" required>
+  {% endif %}
 
   <label>Adresse de domicile</label><input name="adresse" placeholder="    mentionnant aussi la ville et la province  " required>
 
   <label>Mot de passe</label><input name="password"  placeholder="   doit être saisi  "  type="password" required>
 
   <div class="row">
-    <button class="btn" type="submit">Créer</button>
-    <a class="btn2" href="{{ url_for('home') }}">Annuler</a>
+        <button class="btn" type="submit">Créer</button>
+        <a class="btn2" href="{{ url_for('home') }}">Annuler</a>
   </div>
   {% if message %}<div class="msg {{ 'err' if is_error else 'ok' }}">{{ message }}</div>{% endif %}
 </form>
@@ -2773,7 +2773,7 @@ else
 <div class="footer">
     <a href="{{ url_for('login') }}" class="btn-back">← Retour à la connexion</a>
 </div>
-else
+{% else %}
 <div class="footer">
     <a href="{{ url_for('home') }}" class="btn-back">← Retour au menu principal</a>
 </div>    
@@ -2833,12 +2833,12 @@ def add_member():
                           None, statut, updateuser,beneficiaire, adressse, password, membershipdate)
             
             return render_template_string(ADD_MEMBER_PAGE, 
-                message=f"Succès : {firstname} {lastname} a été créé.", 
+                message=f"Succès : {firstname} {lastname} a été créé.",utilisateur=utilisateur, 
                 is_error=False)
 
         except Exception as e:
             return render_template_string(ADD_MEMBER_PAGE, 
-                message=f"Erreur d'enregistrement : {e}", 
+                message=f"Erreur d'enregistrement : {e}",utilisateur=utilisateur,
                 is_error=True)
 
     # Affichage normal de la page (GET)
