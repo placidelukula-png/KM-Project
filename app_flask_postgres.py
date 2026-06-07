@@ -2750,8 +2750,9 @@ ADD_MEMBER_PAGE = """
   <label>Prénom</label><input name="firstname" required>
   <label>Date naissance (JJ/MM/AAAA)</label><input name="birthdate" required>
 
-  <p>Utilisateur : {{ utilisateur }}</p>
-  {% if utilisateur %}
+  {% if externe %}
+    <label><small style="color:blue;">(Inscription libre, l'adhésion formelle à l'Association suivra)</small></label>
+    {% else %}
     <label>Identifiant du bénéficiaire</label><input name="beneficiaire" placeholder="Exemple: 998889560" size="10" required>
   {% endif %}
 
@@ -2768,15 +2769,13 @@ ADD_MEMBER_PAGE = """
 
 </div>
 
-
-<p>Utilisateur : {{ utilisateur }}</p>
-{% if utilisateur %}
+{% if externe %}
 <div class="footer">
-    <a href="{{ url_for('home') }}" class="btn-back">← Retour au menu principal</a>
+    <a href="{{ url_for('login') }}" class="btn-back">← Retour à la connexion</a>
 </div>
 {% else %}
 <div class="footer">
-    <a href="{{ url_for('login') }}" class="btn-back">← Retour à la connexion</a>
+    <a href="{{ url_for('home') }}" class="btn-back">← Retour au menu principal</a>
 </div>    
 {% endif %}
 
@@ -2790,6 +2789,16 @@ import psycopg # ou psycopg2 selon ta config
 @app.route("/add_member", methods=["GET", "POST"])
 #@mentor_required
 def add_member():
+    # 0. Fixation du mode d'appel ; externe ou interne (par rapport à la session)
+    if not session.get("user"):
+        mentor = 'admin'
+        updateuser = 'admin'
+        externe = True
+    else:
+        mentor = session.get("user")
+        updateuser = session.get("user")
+        externe = False
+
     if request.method == "POST":
         try:
             # 1. Récupération des données du formulaire
@@ -2811,18 +2820,6 @@ def add_member():
             birthdate = datetime.strptime(birthdate_str, "%d/%m/%Y").date()
 
             # 4. Préparation des variables automatiques
-            if not session.get("user"):
-                mentor = 'admin'
-                updateuser = 'admin'
-                externe = True
-            else:
-                mentor = session.get("user")
-                updateuser = session.get("user")
-                externe = False
-
-            utilisateur = session.get("user")
-            log.info(f"nom de la session = {utilisateur}")
-
             membertype = "independant"
             statut = "inactif"
             membershipdate = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
@@ -2832,16 +2829,16 @@ def add_member():
                           None, statut, updateuser,beneficiaire, adressse, password, membershipdate)
             
             return render_template_string(ADD_MEMBER_PAGE, 
-                message=f"Succès : {firstname} {lastname} a été créé.",utilisateur=utilisateur, 
+                message=f"Succès : {firstname} {lastname} a été créé.",externe=externe, 
                 is_error=False)
 
         except Exception as e:
             return render_template_string(ADD_MEMBER_PAGE, 
-                message=f"Erreur d'enregistrement : {e}",utilisateur=utilisateur,
+                message=f"Erreur d'enregistrement : {e}",
                 is_error=True)
 
     # Affichage normal de la page (GET)
-    return render_template_string(ADD_MEMBER_PAGE, utilisateur=utilisateur, message="", is_error=False)
+    return render_template_string(ADD_MEMBER_PAGE, externe=externe, message="", is_error=False)
 
 
 #----------------------------------------------------------------------------
