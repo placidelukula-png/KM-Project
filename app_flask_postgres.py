@@ -2744,13 +2744,15 @@ ADD_MEMBER_PAGE = """
        placeholder="Exemple: 998889560" 
        required 
        pattern="^[^0\\+].*" 
-       title="Le numéro ne doit pas commencer par 0 ou +">
+       title="Le numéro ne doit pas commencer par 0 ou +243 ou +1 ou +33 etc.">
   
   <label>Nom</label><input name="lastname" required>
   <label>Prénom</label><input name="firstname" required>
   <label>Date naissance (JJ/MM/AAAA)</label><input name="birthdate" required>
 
-{% if utilisateur <> "externe" %}  
+{% if utilisateur == "externe" %}
+  <label><small> Inscription libre à la plate-forme, l'adhésion formelle à l'Association suivra </small> </label>
+else  
   <label>Identifiant du bénéficiaire</label><input name="beneficiaire" placeholder="Exemple: 998889560" size="10" required>
 {% endif %}
 
