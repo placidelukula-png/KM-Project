@@ -1851,8 +1851,14 @@ from flask import render_template
 # 1. Route pour le formulaire d'inscription
 @app.route('/add_member_route', methods=['GET', 'POST'])
 def inscription():
-    # Ici, tu renverras vers ton formulaire d'ajout à la table 'membres'
-    return render_template_string(ADD_MEMBER_PAGE)
+    if not session.get("user"):
+        externe = True
+    else:
+        externe = False
+
+    log.info(f"Accès à /add_member (externe={externe})")  # log pour debug
+
+    return render_template_string(ADD_MEMBER_PAGE, message="",externe=externe, is_error=False)
 
 # 2. Route pour la page d'informations
 @app.route('/infos_association')
