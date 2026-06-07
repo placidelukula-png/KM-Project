@@ -1804,7 +1804,7 @@ LOGIN_PAGE = """
             Accès refusé aux suspendus et aux radiés
         </div>
 
-        <div class="navigation-buttons" style="margin-top: 20px; display: flex; gap: 10px;justify-content: center; align-items: center;">
+        <div class="navigation-buttons" style="margin-top: 20px; display: flex; gap: 10px;border-radius: 10px;background: rgba(255,255,255,0.95);justify-content: center; align-items: center;">
             <!-- Bouton Inscription -->
             <a href="{{ url_for('add_member') }}">
                 <button type="button">Inscription libre</button>
@@ -2751,7 +2751,7 @@ ADD_MEMBER_PAGE = """
   <label>Date naissance (JJ/MM/AAAA)</label><input name="birthdate" required>
 
   {% if externe %}
-    <label><small style="color:blue;">(Inscription libre, l'adhésion formelle à l'Association suivra)</small></label>
+    <label><small style="color:blue;">(Inscription libre, l'adhésion formelle à l'Association suivra. VEUILLEZ CONTINUER)</small></label>
     {% else %}
     <label>Identifiant du bénéficiaire</label><input name="beneficiaire" placeholder="Exemple: 998889560" size="10" required>
   {% endif %}
@@ -2789,7 +2789,7 @@ import psycopg # ou psycopg2 selon ta config
 @app.route("/add_member", methods=["GET", "POST"])
 #@mentor_required
 def add_member():
-    # 0. Fixation du mode d'appel ; externe ou interne (par rapport à la session)
+    # 0. Fixation du mode de travail ; externe ou interne (par rapport à la session)
     if not session.get("user"):
         externe = True
     else:
