@@ -2799,7 +2799,7 @@ def add_member():
             # 2. Validation du numéro de téléphone (Sécurité Python)
             if phone.startswith("0") or phone.startswith("+"):
                 return render_template_string(ADD_MEMBER_PAGE, 
-                    message="Erreur : Le numéro ne doit pas commencer par 0 ou +243.", 
+                    message="Erreur : Le numéro ne doit pas commencer par 0 ou +243 ou +1 ou +33 etc.", 
                     is_error=True)
 
             # 3. Conversion de la date
@@ -2815,7 +2815,8 @@ def add_member():
                 updateuser = session.get("user")
                 externe = False
 
-            log.info(f"nom de la session = {session.get('user')}")
+            utilisateur = session.get("user", "externe")
+            log.info(f"nom de la session = {utilisateur}")
 
             membertype = "independant"
             statut = "inactif"
