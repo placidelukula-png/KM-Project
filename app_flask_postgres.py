@@ -1804,13 +1804,13 @@ LOGIN_PAGE = """
             Accès refusé aux suspendus et aux radiés
         </div>
 
-        <div class="navigation-buttons" style="margin-top: 20px; display: flex; gap: 10px;border-radius: 20px;background: rgba(25,25,112,1);justify-content: center; align-items: center;">
+        <div class="navigation-buttons" style="margin-top: 20px; display: flex; gap: 10px;border-radius: 20px;background: rgba(0,0,128,1);justify-content: center; align-items: center;">
             <!-- Bouton Inscription -->
             <a href="{{ url_for('add_member_route') }}">
                 <button type="button">Inscription libre</button>
             </a>
 
-            <!-- Bouton Infos Association -->
+            <!-- Bouton Infos Association rgba(25,25,112,1)-->
             <a href="{{ url_for('infos_association') }}">
                 <button type="button">Notre association</button>
             </a>
