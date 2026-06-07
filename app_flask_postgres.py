@@ -1804,7 +1804,7 @@ LOGIN_PAGE = """
             Accès refusé aux suspendus et aux radiés
         </div>
 
-        <div class="navigation-buttons" style="margin-top: 20px; display: flex; gap: 10px;border-radius: 10px;background: rgba(255,255,255,0.95);justify-content: center; align-items: center;">
+        <div class="navigation-buttons" style="margin-top: 20px; display: flex; gap: 10px;border-radius: 20px;background: rgba(100,255,255,0.95);justify-content: center; align-items: center;">
             <!-- Bouton Inscription -->
             <a href="{{ url_for('add_member') }}">
                 <button type="button">Inscription libre</button>
