@@ -2750,6 +2750,7 @@ ADD_MEMBER_PAGE = """
   <label>Prénom</label><input name="firstname" required>
   <label>Date naissance (JJ/MM/AAAA)</label><input name="birthdate" required>
 
+  {% if utilisateur %}<p>Utilisateur : {{ utilisateur }}</p>{% endif %}
   {% if utilisateur %}
     <label>Identifiant du bénéficiaire</label><input name="beneficiaire" placeholder="Exemple: 998889560" size="10" required>
   {% endif %}
@@ -2767,6 +2768,8 @@ ADD_MEMBER_PAGE = """
 
 </div>
 
+
+{% if utilisateur %}<p>Utilisateur : {{ utilisateur }}</p>{% endif %}
 {% if utilisateur %}
 <div class="footer">
     <a href="{{ url_for('home') }}" class="btn-back">← Retour au menu principal</a>
