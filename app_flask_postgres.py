@@ -2742,7 +2742,7 @@ ADD_MEMBER_PAGE = """
 <!-- <p><a href="{{ url_for('home') }}">← Retour</a></p> -->
 
 <div class="card">
-<form method="post">
+<form method="post" action="{{ url_for('add_member') }}">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   
   <label>Identifiant du nouveau membre (nº de téléphone sans prefixe)</label>
@@ -2818,11 +2818,11 @@ def add_member():
             beneficiaire = (request.form.get("beneficiaire") or "").strip()
             adressse = (request.form.get("adresse") or "").strip()
             password = (request.form.get("password") or "").strip()
+            log.info("Taquet0")  # log pour debug   
 
             # 2. Validation du numéro de téléphone (Sécurité Python)
             if phone.startswith("0") or phone.startswith("+"):
-                return render_template_string(ADD_MEMBER_PAGE, 
-                    message="Erreur : Le numéro ne doit pas commencer par 0 ou +243 ou +1 ou +33 etc.", is_error=True)
+                return render_template_string(ADD_MEMBER_PAGE,message="Erreur : Le numéro ne doit pas commencer par 0 ou +243 ou +1 ou +33 etc.", is_error=True)
             log.info("Taquet1")  # log pour debug   
 
             # 3. Conversion de la date
@@ -2848,7 +2848,7 @@ def add_member():
             log.info(f"Tentative d'insertion du membre: phone={phone}, lastname={lastname}, firstname={firstname}, birthdate={birthdate}, beneficiaire={beneficiaire}, adresse={adressse}")
             insert_member(phone, membertype, mentor, lastname, firstname, birthdate, 
                           None, statut, updateuser,beneficiaire, adressse, password, membershipdate)
-            
+            log.info("Taquet5")  # log pour debug
             return render_template_string(ADD_MEMBER_PAGE, 
                 message=f"Succès : {firstname} {lastname} a été créé.", is_error=False)
 
