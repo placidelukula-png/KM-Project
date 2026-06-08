@@ -2823,9 +2823,12 @@ def add_member():
             if phone.startswith("0") or phone.startswith("+"):
                 return render_template_string(ADD_MEMBER_PAGE, 
                     message="Erreur : Le numéro ne doit pas commencer par 0 ou +243 ou +1 ou +33 etc.", is_error=True)
+            log.info("Taquet1")  # log pour debug   
 
             # 3. Conversion de la date
             birthdate = datetime.strptime(birthdate_str, "%d/%m/%Y").date()
+            log.info("Taquet2")  # log pour debug   
+            
 
             # 4. Préparation des variables automatiques
             if not session.get("user"):
@@ -2834,10 +2837,12 @@ def add_member():
             else:
                 mentor = session.get("user")
                 updateuser = session.get("user")
+            log.info("Taquet3")  # log pour debug   
 
             membertype = "independant"
             statut = "inactif"
             membershipdate = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
+            log.info("Taquet4")  # log pour debug   
 
             # 5. Appel de ta fonction d'insertion (assure-toi qu'elle utilise %s)
             log.info(f"Tentative d'insertion du membre: phone={phone}, lastname={lastname}, firstname={firstname}, birthdate={birthdate}, beneficiaire={beneficiaire}, adresse={adressse}")
