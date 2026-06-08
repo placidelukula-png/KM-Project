@@ -2757,7 +2757,7 @@ ADD_MEMBER_PAGE = """
   <label>Date naissance (JJ/MM/AAAA)</label><input name="birthdate" required>
 
   {% if externe %}
-    <label><small style="color:blue;">(Inscription libre, l'adhésion formelle à l'Association suivra. VEUILLEZ CONTINUER)</small></label>
+    <label><small style="color:light gray;">(Inscription libre à la plate-forme, l'adhésion formelle à l'Association suivra. Bienvenue, veuillez continuer)</small></label>
     {% else %}
     <label>Identifiant du bénéficiaire</label><input name="beneficiaire" placeholder="Exemple: 998889560" size="10" required>
   {% endif %}
