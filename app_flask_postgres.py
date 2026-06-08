@@ -2840,6 +2840,7 @@ def add_member():
             membershipdate = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
 
             # 5. Appel de ta fonction d'insertion (assure-toi qu'elle utilise %s)
+            log.info(f"Tentative d'insertion du membre: phone={phone}, lastname={lastname}, firstname={firstname}, birthdate={birthdate}, beneficiaire={beneficiaire}, adresse={adressse}")
             insert_member(phone, membertype, mentor, lastname, firstname, birthdate, 
                           None, statut, updateuser,beneficiaire, adressse, password, membershipdate)
             
