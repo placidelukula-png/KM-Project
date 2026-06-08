@@ -1804,7 +1804,7 @@ LOGIN_PAGE = """
             Accès refusé aux suspendus et aux radiés
         </div>
 
-        <div class="navigation-buttons" style="margin-top: 20px; display: flex; gap: 10px;border-radius: 20px;background: rgba(255,255,255,0.95);justify-content: center; align-items: center;">
+        <div class="navigation-buttons" style="margin-top: 20px; display: flex; gap: 10px;border-radius: 20px;background: rgba(220,220,220,1);justify-content: center; align-items: center;">
             <!-- Bouton Inscription -->
             <a href="{{ url_for('add_member_route') }}">
                 <button type="button">Inscription libre</button>
@@ -2757,7 +2757,7 @@ ADD_MEMBER_PAGE = """
   <label>Date naissance (JJ/MM/AAAA)</label><input name="birthdate" required>
 
   {% if externe %}
-    <label><small style="color:light gray;">(Inscription libre à la plate-forme, l'adhésion formelle à l'Association suivra. Bienvenue, veuillez continuer)</small></label>
+    <label><small style="color:rgba(220,220,220,1);">(Inscription libre à la plate-forme, l'adhésion formelle à l'Association suivra. Bienvenue, veuillez continuer)</small></label>
     {% else %}
     <label>Identifiant du bénéficiaire</label><input name="beneficiaire" placeholder="Exemple: 998889560" size="10" required>
   {% endif %}
