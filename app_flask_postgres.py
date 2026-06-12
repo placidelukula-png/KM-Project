@@ -4304,13 +4304,13 @@ FAQ_PAGE = """
     <li><a href="#chapitre2">Qui peut adhérer à l'Association ?</a></li>
     <li><a href="#chapitre3">Quel est le principe de fonctionnement et les modalités d'adhésion ?</a></li>
     <li><a href="#chapitre4">Est ce que le paiement est obligatoire pour être membre de l’Association KM-Kimya ?</a></li>
-    <li><a href="#chapitre5">Qu'est ce qui garantit que le décès d'un membre éligible sera porté à la connaissance de l'Organisation ?</a></li>
+    <li><a href="#chapitre5">Qu'est ce qui garantit que l'information sur le décès d'un membre éligible sera portée à la connaissance de l'Organisation ?</a></li>
     <li><a href="#chapitre6">Un étranger ou un congolais résidant à l'étranger peut il adhérer à une association congolaise (RDC) ?</a></li>
-    <li><a href="#chapitre7">Comment proceder aux paiements sur terrain au Congo (RDC)?</a></li>
-    <li><a href="#chapitre8">Comment proceder aux paiements si on réside à l'étranger ?</a></li>
+    <li><a href="#chapitre7">Comment procéder aux paiements sur terrain au Congo (RDC)?</a></li>
+    <li><a href="#chapitre8">Comment procéder aux paiements si on réside à l'étranger ?</a></li>
     <li><a href="#chapitre9">Qui perçoit les contributions des membres ?</a></li>
     <li><a href="#chapitre10">Quand commence la couverture pour un membre actif?</a></li>
-    <li><a href="#chapitre11">Comment proceder si la personne à inscrire n'a pas de téléphone ?</a></li>
+    <li><a href="#chapitre11">Comment procéder si la personne à inscrire n'a pas de téléphone ?</a></li>
     <li><a href="#chapitre12">Si je quitte l'Association, serai-je remboursé ?</a></li>
     <li><a href="#chapitre13">Comment puis-je aider si j'ai les moyens?</a></li>
     <li><a href="#chapitre14">Pourquoi payer seulement 5.5$ mais pas plus pour une prestation plus impactante ?</a></li>
@@ -4386,7 +4386,8 @@ FAQ_PAGE = """
         Les modalités d’adhésion sont très faciles et accessibles à tous, elles se résument en deux étapes simples :
         <ul>
         <li> 1.	S’inscrire sur ce site Internet www.km-kimya.org par le bouton ‘inscription libre’ </li>
-        <li> 2.	Payer par mobile-money 5.5$ (avec le téléphone dont le numéro sans préfixes est l’ identifiant choisi lors de l’inscription) à l’un des 4 comptes mobile-money suivants : (1)<b>+243 999 944 459</b> , (2)<b>+243 824 807 663</b>, (3)<b>+243 891 273 191</b> ou (4)<b>+243 903 077 077</b>.</li>
+        <li> 2.	Payer par mobile-money 5.5$ (avec le téléphone dont le numéro sans préfixes est l’ identifiant choisi lors de l’inscription) à l’un des 4 comptes mobile-money suivants : (1)<b>+243 999 944 459</b> , (2)<b>+243 824 807 663</b>, (3)<b>+243 891 273 191</b> ou (4)<b>+243 903 077 077</b>. </li>
+        <li> 3.	Dès l'adhésion, le nouveau membre doit envoyer une copie scannée de sa pièce d'identité (avec photo) valide à l'adresse e-mail contact@km-kimya.org en précisant dans le message son identifiant km-kimya (en l'occurence n° de téléphone sans préfixes).</li>
         </ul>      
         </p>
     </div>
@@ -4402,13 +4403,13 @@ FAQ_PAGE = """
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
     <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
-    <h2 id="chapitre5">Qu'est ce qui garantit que le décès d'un membre éligible sera porté à la connaissance de l'Organisation rapidement et efficacement ?</h2>
+    <h2 id="chapitre5">Qu'est ce qui garantit que l'information sur le décès d'un membre éligible sera portée à la connaissance de l'Organisation rapidement et efficacement ?</h2>
     <div class="pge">
         <p>
-        Sur la plateforme km-kimya.org, il existe un trio sacré que l'adhérent est tenu de garder à jour, de son vivant ; il s'agit de 'Adhérent<>Mentor<>Bénéficiaire'. Bien entretenu, ce trio assure que le décès d'un membre éligible soit porté à la connaissance de l'Organisation de façon appropriée, rapide et efficace par son Mentor ou par le Bénéficiaire.</p>
+        Ce risque est en effet considerable pour un membre de l'Association indépendant isolé. A cet effet, veuillez noter que sur la plateforme km-kimya.org, il existe un trio sacré que l'adhérent est tenu de garder à jour, de son vivant. Il s'agit du trio 'Adhérent<>Mentor<>Bénéficiaire'. Bien entretenu, ce trio assure qu'il soit quasi impossible que le décès d'un membre éligible ne puisse être porté à la connaissance de l'Organisation de façon appropriée, rapide et efficace par son Mentor ou par le Bénéficiaire.</p>
         <p>
         <p>
-        Toutefois, la déclaration d'un décès de membre est un devoir pour tout membre qui est au courant d'une manière ou d'une autre. La voie appropriée pour signaler un décès est le bouton 'Déclarer un décès' du Menu principal sur le site internet https://www.km-kimya.org, en utilisant l'identifiant (nº tél sans prefixes) du défunt.
+        Toutefois, la déclaration d'un décès de membre est un devoir pour tout membre qui est au courant de l'information. La voie appropriée pour signaler un décès est le bouton 'Déclarer un décès' du Menu principal sur le site internet https://www.km-kimya.org, en utilisant l'identifiant (nº tél sans prefixes) du défunt.
         </p>
     </div>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
