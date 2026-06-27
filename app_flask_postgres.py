@@ -4552,7 +4552,7 @@ FAQ_PAGE = """
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
     <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
-    <h2 id="chapitre17">Comment ouvre t-on un lien ou un URL à partir d'un téléphone android?</h2>
+    <h2 id="chapitre16">Comment ouvre t-on un lien ou un URL à partir d'un téléphone android?</h2>
     <div class="pge">
         <p>
         Cette question élémentaire est fréquente chez les utilisateurs de smartphones Android. Autant elle est élémentaire, autant il n'est pas aisé d'y répondre.
@@ -4574,7 +4574,7 @@ FAQ_PAGE = """
     </div>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
 
-    <h2 id="chapitre18">Pourquoi une campagne de recrutement, la sensibilisation est-elle nécessaire ?</h2>
+    <h2 id="chapitre17">Pourquoi une campagne de recrutement, la sensibilisation est-elle nécessaire ?</h2>
     <div class="pge">
         <p>
         L'action de KM-Kimya est communautaire; elle est basée sur la collaboration et l'engagement d'un grand nombre de membres. Une entrée massive augmente le nombre de contributions et donne le pouvoir de remettre un montant conséquent afin de permettre d’absorber les frais des funérailles (plus il y a des membres, plus le montant à verser à la famille éprouvée est élevé). Une campagne de recrutement et de sensibilisation est nécessaire pour attirer de nouveaux membres et informer le public sur les activités de l'Association. Elle permet de renforcer la visibilité de l'organisation et de mobiliser plus de personnes autour de ses valeurs et objectifs.
@@ -4583,13 +4583,13 @@ FAQ_PAGE = """
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
     <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
-    <h2 id="chapitre19">Pourquoi est-il imprudent et improductif de n'avoir que le minimum de 5.5$ dans le compte sur la plateforme ?</h2>
+    <h2 id="chapitre18">Pourquoi est-il imprudent et improductif de n'avoir que le minimum de 5.5$ dans le compte sur la plateforme ?</h2>
     <div class="pge">
         <p>
-        Toute analyse previsionnelle montre que le plus grand risque qu'encourt l'Association est la survenue accidentelle de deux ou trois décès successsifs de membres éligibles à la prestation dans un laps de temps donné. Dans ce cas, l'obligation promise d'intervention dans les 72 heures (auprès de la famille éprouvée) sera mise à mal par le délai de renflouement du trésor de l'Association par la collecte de fonds auprès des membres.
+        Toute analyse previsionnelle montre que le plus grand risque qu'encourt l'Association est la survenue accidentelle de deux ou trois décès successsifs de membres éligibles à la prestation dans un laps de temps limité. Dans ce cas, l'obligation promise d'intervention dans les 72 heures (auprès de la famille éprouvée) sera mise à mal par le délai de renflouement du trésor de l'Association par la collecte de fonds auprès des membres.
         </p>
         <p>
-        Maintenir un solde minimal dans le compte est ainsi très imprudent vis-a-vis des objectifs que s'était assignée l'Association et improductif car cela limite la capacité de l'organisation à maintenir haut son niveau d'engagement. 
+        Maintenir un solde minimal (5.5$) dans le compte est ainsi très imprudent vis-a-vis des objectifs que s'était assignée l'Association et improductif car cela limite la capacité de l'organisation à maintenir haut son niveau d'engagement. 
         </p>
         <p>
         Garder constamment un solde minimal de 2 à 4 participations (11 à 22$) aux prestations km-kimya est hautement recommandé pour assurer la continuité de l'activité de l'Association dans les conditions difficiles. 
