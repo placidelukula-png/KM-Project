@@ -3671,8 +3671,8 @@ def download_csv():
                 COPY (
 /*                      SELECT * FROM mouvements WHERE regie IS NOT NULL*/
 /*                      SELECT phone, firstname, lastname, adresse FROM membres WHERE currentstatute IN ('probatoire', 'actif') */
-/*                      SELECT phone, firstname, lastname, balance, adresse FROM membres WHERE mentor = '8329030855' OR phone = '8329030855' */
-                      SELECT phone, firstname, lastname, balance, adresse FROM membres WHERE membershipdate <= date '2026-05-16' AND (currentstatute = 'probatoire' OR currentstatute = 'actif')
+                      SELECT phone, firstname, lastname, balance, adresse FROM membres WHERE mentor = '818329793' OR phone = '818329793' 
+/*                      SELECT phone, firstname, lastname, balance, adresse FROM membres WHERE membershipdate <= date '2026-05-16' AND (currentstatute = 'probatoire' OR currentstatute = 'actif') */
                        ) TO STDOUT WITH CSV HEADER
             """) as copy:
                 for data in copy:
