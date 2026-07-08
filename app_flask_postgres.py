@@ -192,6 +192,8 @@ def init_db():
                     CHECK (currentstatute IN ('probatoire','actif','inactif','suspendu','radié'))
                 );
             """)
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_membres_lastname ON membres(lastname);")
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_membres_firstname ON membres(firstname);")
 
             # mouvements
             cur.execute("""
@@ -918,13 +920,17 @@ def create_member_minimal(cur, phone: str, firstname: str, lastname: str):
     ))
     #log.info("Nouveau membre créé automatiquement: %s (%s %s)", phone, firstname, lastname)
 
-
-def fetch_all_membres():
+def fetch_all_members_id():
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute(SELECT_membres + " ORDER BY id DESC")
             return cur.fetchall()
 
+def fetch_all_members_name():
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute(SELECT_membres + " ORDER BY lastname, firstname")
+            return cur.fetchall()
 
 def fetch_one(member_id: int):
     with get_conn() as conn:
@@ -2077,7 +2083,7 @@ DASHBOARD_PAGE = """
 @app.get("/")
 @login_required
 def home():
-    rows = fetch_all_membres()
+    rows = fetch_all_members_id()
 
     phone = session.get("user")
     member = fetch_member_by_phone(phone) if phone else None
@@ -3255,6 +3261,11 @@ DATAGENERALFOLLOWUP_PAGE = """
                     <input name="q_phone" placeholder="Ex.998886955" value="{{ q_phone or '' }}" style="flex-grow: 1;">
                 </div>
 
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                    <label style="white-space: nowrap;">Chercher par nom : </label>
+                    <input name="name_id" placeholder="Ex. Jean Ilunga" value="{{ name_id or '' }}" style="flex-grow: 1;">
+                </div>
+                
                 <div style="display: flex; gap: 10px;">
                     <button class="btn" type="submit">Vérifier</button>
                     <a class="btn secondary" href="{{ url_for('datageneralfollowup') }}">Réinitialiser</a>
@@ -3444,7 +3455,11 @@ DATAGENERALFOLLOWUP_PAGE = """
 @app.get("/datageneralfollowup")
 @admin_required
 def datageneralfollowup():
-    rows = fetch_all_membres()
+    name_id = request.args.get("name_id")
+    if name_id:
+        rows = fetch_all_members_name()
+    else:
+        rows = fetch_all_members_id()
     return render_template_string(DATAGENERALFOLLOWUP_PAGE, rows=rows, edit_row=None, edit_birthdate="",edit_membershipdate="", edit_balance=0.0,
                                   message="", is_error=False, member_types=MEMBER_TYPES, statutes=STATUTES)
 
@@ -3452,7 +3467,7 @@ def datageneralfollowup():
 @login_required
 def edit(member_id: int):
     row = fetch_one(member_id)
-    rows = fetch_all_membres()
+    rows = fetch_all_members_id()
     phone = session.get("user")
     prof = get_user_profile_by_phone(phone) if phone else None
     firstname, lastname, membertype = (prof or ("", "", "membre"))
@@ -3539,7 +3554,7 @@ def update(member_id: int):
         return redirect(url_for("datageneralfollowup"))
 
     except Exception as e:
-        rows = fetch_all_membres()
+        rows = fetch_all_members_id()
         row = fetch_one(member_id)
         edit_birthdate = row[6].strftime("%d/%m/%Y") if row and row[6] else ""
         edit_membershipdate = row[14].strftime("%d/%m/%Y") if row and row[14] else ""
@@ -3587,7 +3602,7 @@ def search_member():
 
     # si champ vide -> retour page normale
     if not q_phone:
-        rows = fetch_all_membres()
+        rows = fetch_all_members_id()
         return render_template_string(
             DATAGENERALFOLLOWUP_PAGE,
             rows=rows,
@@ -3606,7 +3621,7 @@ def search_member():
 
     # 0 résultat
     if not rows:
-        all_rows = fetch_all_membres()
+        all_rows = fetch_all_members_id()
         return render_template_string(
             DATAGENERALFOLLOWUP_PAGE,
             rows=all_rows,
