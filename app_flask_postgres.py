@@ -3608,10 +3608,10 @@ def add_security_headers(resp):
 @admin_required
 def search_member():
     q_phone = (request.args.get("q_phone") or "").strip()
+    name_id = (request.args.get("name_id") or "").strip()
 
     # si champ vide -> retour page normale
-    if not q_phone:
-        name_id = (request.args.get("name_id") or "").strip()
+    if not q_phone and not name_id:
         if name_id:
             rows = fetch_all_members_name()
         else:
@@ -3623,14 +3623,14 @@ def search_member():
             edit_birthdate="",
             edit_membershipdate="",
             edit_balance=0.0,
-            message="Veuillez saisir un phone.",
+            message="Veuillez saisir un identifiant ou un nom.",
             is_error=True,
             member_types=MEMBER_TYPES,
             statutes=STATUTES,
             q_phone=q_phone,
+            name_id=name_id,
         )
 
-    name_id = (request.args.get("name_id") or "").strip()
     if name_id :
         rows = fetch_member_by_name_like(name_id)
     else:
@@ -3638,7 +3638,6 @@ def search_member():
 
     # 0 résultat
     if not rows:
-        name_id = (request.args.get("name_id") or "").strip()
         if name_id:
             all_rows = fetch_all_members_name()
         else:
@@ -3656,6 +3655,7 @@ def search_member():
             member_types=MEMBER_TYPES,
             statutes=STATUTES,
             q_phone=q_phone,
+            name_id=name_id,
         )
 
     # 1 seul résultat -> ouvrir directement l'écran Edit (optionnel mais pratique)
@@ -3675,6 +3675,7 @@ def search_member():
         member_types=MEMBER_TYPES,
         statutes=STATUTES,
         q_phone=q_phone,
+        name_id=name_id,
     )
 
 @app.post("/statutes_update")
