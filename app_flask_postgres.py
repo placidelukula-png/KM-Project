@@ -3262,8 +3262,8 @@ DATAGENERALFOLLOWUP_PAGE = """
                 </div>
 
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-                    <label style="white-space: nowrap;">Chercher par nom : </label>
-                    <input name="name_id" placeholder="Ex. Jean Ilunga" value="{{ name_id or '' }}" style="flex-grow: 1;">
+                    <label style="white-space: nowrap; color: #D0E0F5;">Chercher par nom : </label>
+                    <input name="name_id" placeholder="Ex. Jean Ilunga" value="{{ name_id or '' }}" style="flex-grow: 1; color: #D0E0F5;">
                 </div>
                 
                 <div style="display: flex; gap: 10px;">
@@ -3459,7 +3459,7 @@ def datageneralfollowup():
     if name_id:
         rows = fetch_all_members_name()
     else:
-        rows = fetch_all_members_id()
+        rows = fetch_all_members_name()
     return render_template_string(DATAGENERALFOLLOWUP_PAGE, rows=rows, edit_row=None, edit_birthdate="",edit_membershipdate="", edit_balance=0.0,
                                   message="", is_error=False, member_types=MEMBER_TYPES, statutes=STATUTES)
 
