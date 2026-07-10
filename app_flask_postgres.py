@@ -1361,6 +1361,15 @@ def fetch_member_by_phone_like(q_phone: str):
         with conn.cursor() as cur:
             cur.execute(SELECT_membres + " WHERE phone ILIKE %s ORDER BY id DESC", (f"%{q}%",))
             return cur.fetchall()
+        
+def fetch_member_by_name_like(name_id: str):
+    q = (name_id or "").strip()
+    if not q:
+        return []
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute(SELECT_membres + " WHERE lastname ILIKE %s OR firstname ILIKE %s ORDER BY id DESC", (f"%{q}%", f"%{q}%"))
+            return cur.fetchall()
 
 def update_member_mentor(phone: str, mentor: str, updateuser: str, lastname: str, firstname: str):
     with get_conn() as conn:
@@ -3404,10 +3413,10 @@ DATAGENERALFOLLOWUP_PAGE = """
       <thead>
         <tr>
           <th style="width:70px;">ID</th>
-          <th>Phone</th>
+          <th>Identifiant</th>
           <th>Mentor</th>
-          <th>Lastname</th>
-          <th>Firstname</th>
+          <th>Nom de famille</th>
+          <th>Prénom</th>
           <th>Statut</th>
           <th>Update</th>
           <th>Update by</th>
@@ -3459,7 +3468,7 @@ def datageneralfollowup():
     if name_id:
         rows = fetch_all_members_name()
     else:
-        rows = fetch_all_members_name()
+        rows = fetch_all_members_id()
     return render_template_string(DATAGENERALFOLLOWUP_PAGE, rows=rows, edit_row=None, edit_birthdate="",edit_membershipdate="", edit_balance=0.0,
                                   message="", is_error=False, member_types=MEMBER_TYPES, statutes=STATUTES)
 
@@ -3602,7 +3611,11 @@ def search_member():
 
     # si champ vide -> retour page normale
     if not q_phone:
-        rows = fetch_all_members_id()
+        name_id = (request.args.get("name_id") or "").strip()
+        if name_id:
+            rows = fetch_all_members_name()
+        else:
+            rows = fetch_all_members_id()
         return render_template_string(
             DATAGENERALFOLLOWUP_PAGE,
             rows=rows,
@@ -3617,11 +3630,18 @@ def search_member():
             q_phone=q_phone,
         )
 
-    rows = fetch_member_by_phone_like(q_phone)
+    if name_id :
+        rows = fetch_member_by_name_like(name_id)
+    else:
+        rows = fetch_member_by_phone_like(q_phone)
 
     # 0 résultat
     if not rows:
-        all_rows = fetch_all_members_id()
+        if name_id:
+            all_rows = fetch_all_members_name()
+        else:
+            all_rows = fetch_all_members_id()
+#        all_rows = fetch_all_members_id()
         return render_template_string(
             DATAGENERALFOLLOWUP_PAGE,
             rows=all_rows,
