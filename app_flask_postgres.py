@@ -3630,6 +3630,7 @@ def search_member():
             q_phone=q_phone,
         )
 
+    name_id = (request.args.get("name_id") or "").strip()
     if name_id :
         rows = fetch_member_by_name_like(name_id)
     else:
@@ -3637,6 +3638,7 @@ def search_member():
 
     # 0 résultat
     if not rows:
+        name_id = (request.args.get("name_id") or "").strip()
         if name_id:
             all_rows = fetch_all_members_name()
         else:
