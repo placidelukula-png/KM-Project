@@ -4807,7 +4807,7 @@ COMPTES_PAGE = """
         <form method="POST" action="{{ url_for('update_compte') }}">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <td><input type="text" name="code" value="{{ c[0] }}" readonly size="19" class="badge"></td>
-          <td><input type="text" name="description" value="{{ c[1] }}" size="46"></td>
+          <td><input type="text" name="description" value="{{ c[1] }}" size="48"></td>
           <td><input type="number" name="balance" value="{{ c[2] }}" step="0.01" style="width:100px"></td>
           <td><small>{{ c[3] }}</small></td>
           <td><small>{{ c[4] }}</small></td>
