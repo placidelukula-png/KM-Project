@@ -1159,7 +1159,7 @@ def create_cotisation(cotisation: float, ref_base: str, today: datetime):
 
     #1) Mise à jour du compte technique du membre qui fait la cotisation (balance + cotisation)
     code=f"COT-{session.get('user')}"
-    description=f"Cumul des Cotisations de {session.get('user')}"
+    description=f"Cumul des Cotisations de {session.get('user')} {me[5]} {me[4]}"
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
@@ -1208,7 +1208,7 @@ def create_donation(donation: float, ref_base: str, today: datetime):
 
     #1) Mise à jour du compte technique du membre qui fait la donation (balance + donation)
     code=f"DON-{session.get('user')}"
-    description=f"Cumul des Donations de {session.get('user')}"
+    description=f"Cumul des Donations de {session.get('user')} {me[5]} {me[4]}"
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
