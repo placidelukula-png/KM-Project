@@ -3,6 +3,7 @@
 # ---------------------------------
 from __future__ import annotations
 
+from ast import If
 from decimal import Decimal
 import code
 from email import message
@@ -3038,11 +3039,11 @@ def import_mouvements():
                         # 2) update balance membre
                         delta = -amount if debitcredit == "D" else amount
                         cur.execute("""
-                          UPDATE membres
-                          SET balance = balance + %s,
-                              updatedate = CURRENT_DATE,
-                              updateuser = %s
-                          WHERE phone = %s
+                        UPDATE membres
+                        SET balance = balance + %s,
+                            updatedate = CURRENT_DATE,
+                            updateuser = %s
+                        WHERE phone = %s
                         """, (delta, session.get("user"), phone))
 
                         if cur.rowcount:
@@ -3096,9 +3097,10 @@ def import_mouvements():
                         """, (phone, contribution_minimum, CARENCE_MOIS, phone))
 
 ##
-                        # 7) Mise à jour comptes_techniques
-                        code="MOBILEMONEY-" + regie if regie else "Autres"
-                        description="Transferts Mobile Money - " + regie if regie else "Transferts Mobile Money - Autres"
+                        # 7) Mise à jour comptes_techniques :  1) Dépenses &  2)Transferts from unknown Mobile Money.
+                        # Deux cas : (1) regie = "Autres" ou vide => code="Autres", description="Transferts Mobile Money - Autres" (2)Cas de dépense debit-credit = "D" => code="Expenses", description="Cumulative expenses"
+                        code="MOBILEMONEY-" + regie if regie in ("vodacom", "orange", "airtel", "afrimoney") else "Autres"
+                        description="Transferts Mobile Money - " + regie if regie in ("vodacom", "orange", "airtel", "afrimoney") else "Transferts Mobile Money - Autres"
                         cur.execute("""
                             INSERT INTO comptes_techniques (code, description, balance, updatedate, updateuser)
                             VALUES (%s, %s, %s, CURRENT_DATE, %s)
@@ -3108,6 +3110,19 @@ def import_mouvements():
                                 updatedate = CURRENT_DATE,
                                 updateuser = %s;
                         """, (code, description, amount, session.get("user"), amount, session.get("user")))
+
+                        if debitcredit == "D":
+                            code="Expenses"
+                            description="Cumulative expenses"
+                            cur.execute("""
+                                INSERT INTO comptes_techniques (code, description, balance, updatedate, updateuser)
+                                VALUES (%s, %s, %s, CURRENT_DATE, %s)
+                                ON CONFLICT (code)
+                                DO UPDATE SET
+                                    balance = comptes_techniques.balance + %s,
+                                    updatedate = CURRENT_DATE,
+                                    updateuser = %s;
+                            """, (code, description, amount, session.get("user"), amount, session.get("user")))
 ##
                     except Exception:
                         skipped += 1
@@ -3854,8 +3869,9 @@ style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
 
 </body></html>
 """
-#
+#=================================================
 # Endpoint#10 Transfert de cotisations (menu card)
+#=================================================
 # Note: on peut faire un seul endpoint pour les 2 actions "check" et "confirm" (simplification) car la logique de vérification est la même dans les 2 cas, et on affiche les messages d'erreur/confirmation dans la même page. Donc pas besoin de faire 2 endpoints séparés.
 @app.route("/transfer", methods=["GET","POST"])
 @login_required
