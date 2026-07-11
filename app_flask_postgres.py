@@ -4787,11 +4787,19 @@ COMPTES_PAGE = """
  .badge{background:#ebedef; padding:4px 8px; border-radius:4px; font-size:0.9em}
 </style></head><body><div class="wrap">
   <h2>⚙️ Comptes Techniques</h2>
-  <p><a href="{{ url_for('home') }}">← Retour au menu</a></p>
 
-  <a href="{{ url_for('download_csv') }}" class="btn">
-        Télécharger les données (CSV)
-  </a>
+  <div class="navigation-buttons" style="margin-top: 20px; display: flex; gap: 10px;border-radius: 20px;background: rgba(220,220,220,1);justify-content: center; align-items: center;">
+    <!-- Retour au menu -->
+    <a href="{{ url_for('home') }}">
+        <button type="button"><- Retour au menu</button>
+    </a>
+
+    <!-- Down load CSV file -->
+    <a href="{{ url_for('download_csv') }}">
+        <button type="button">Télécharger les données (CSV)</button>
+    </a>
+  </div>
+
   
   <!-- <p><a href="{{ url_for('debug_view') }}">🔍 Debug View</a></p> -->
 
