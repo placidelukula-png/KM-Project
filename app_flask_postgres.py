@@ -4809,9 +4809,9 @@ COMPTES_PAGE = """
           <td><input type="text" name="code" value="{{ c[0] }}" readonly class="badge"></td>
           <td><input type="text" name="description" value="{{ c[1] }}" readonly size="45"></td>
           <td><input type="number" name="balance" value="{{ c[2] }}" step="0.01" style="width:100px"></td>
-          <td>{{ c[3] }}</td>
+          <td><small>{{ c[3] }}</small></td>
           <td><small>{{ c[4] }}</small></td>
-          <td><button type="submit" class="btn-save">Mettre à jour</button></td>
+          <td><button type="submit" class="btn-save">Update</button></td>
         </form>
       </tr>
       {% endfor %}
@@ -4843,7 +4843,7 @@ def update_compte():
             with conn.cursor() as cur:
                 cur.execute("""
                     UPDATE comptes_techniques 
-                        description = %s,
+                    SET description = %s,
                         balance = %s, 
                         updatedate = CURRENT_DATE, 
                         updateuser = %s
