@@ -3036,84 +3036,84 @@ def import_mouvements():
                         #log.info("Mouvement inséré pour phone=%s, amount=%s, debitcredit=%s, reference=%s", phone, amount, debitcredit, reference)
                         inserted += 1
 
-                        # 2) update balance membre
-                        delta = -amount if debitcredit == "D" else amount
-                        cur.execute("""
-                        UPDATE membres
-                        SET balance = balance + %s,
-                            updatedate = CURRENT_DATE,
-                            updateuser = %s
-                        WHERE phone = %s
-                        """, (delta, session.get("user"), phone))
-
-                        if cur.rowcount:
-                            updated_balances += 1
-
-                        # 3) règle demandée: si balance < 0 alors currentstatute="inactif", s'il etait 'actif' (=> s'il etait 'actif' on le passe à 'inactif', pas pour 'suspendu' et 'radié')
-                        cur.execute("""
-                          UPDATE membres
-                          SET currentstatute = 'inactif',
-                              updatedate = CURRENT_DATE,
-                              updateuser = %s
-                          WHERE phone = %s AND balance <  %s AND currentstatute in ('actif','probatoire')   
-                        """, (session.get("user"), phone, contribution_minimum))
-                        if cur.rowcount:
-                            flagged_inactif += 1
-
-                        # 4) règle demandée: si phone du mouvement = phone d'un membre ET balance >= C (contribution minimale) ET membershipdate = "31/12/2099" alors membershipdate = date du jour (=> activation du membre)
-                        limit_date = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
-                        cur.execute("""
-                            UPDATE membres
-                            SET membershipdate = CURRENT_DATE,
-                                currentstatute = 'probatoire',
-                                updatedate = CURRENT_DATE,
-                                updateuser = %s 
-                            WHERE phone = %s AND balance >= %s AND membershipdate = %s 
-                        """, (session.get("user"), phone, contribution_minimum, limit_date))
-#####
-                        # 5) règle demandée: si phone du mouvement = phone d'un membre ET balance >= C (contribution minimale) ET membershipdate <> "31/12/2099" alors currentstatute ='probatoire' ou 'actif' (=> activation du membre)
-                        limit_date = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
-                        cur.execute("""
-                            UPDATE membres
-                            SET currentstatute = CASE 
-                                WHEN phone = %s AND balance >= %s AND membershipdate <> %s THEN 'probatoire'
-                                ELSE currentstatute
-                            END
-                            WHERE phone = %s;
-                        """, (phone, contribution_minimum, limit_date, phone))
-
-                        # 6) règle demandée: si phone du mouvement = phone d'un membre ET balance >= C (contribution minimale) ET la durée entre aujourdhui et membershipdate superieure ou egale à 6 mois (=> currentstatute='actif')
-                        limit_date = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
-                        cur.execute("""
-                            UPDATE membres
-                            SET currentstatute = CASE 
-                                WHEN phone = %s AND balance >= %s AND (
-                                EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12 +
-                                EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))
-                            ) >=%s THEN 'actif'
-                                ELSE currentstatute
-                            END
-                            WHERE phone = %s;
-                        """, (phone, contribution_minimum, CARENCE_MOIS, phone))
-
-##
-                        # 7) Mise à jour comptes_techniques :  1) Dépenses &  2)Transferts from unknown Mobile Money.
-                        # Deux cas : (1) regie = "Autres" ou vide => code="Autres", description="Transferts Mobile Money - Autres" (2)Cas de dépense debit-credit = "D" => code="Expenses", description="Cumulative expenses"
-                        code="MOBILEMONEY-" + regie if regie in ("vodacom", "orange", "airtel", "afrimoney") else "Autres"
-                        description="Transferts Mobile Money - " + regie if regie in ("vodacom", "orange", "airtel", "afrimoney") else "Transferts Mobile Money - Autres"
-                        cur.execute("""
-                            INSERT INTO comptes_techniques (code, description, balance, updatedate, updateuser)
-                            VALUES (%s, %s, %s, CURRENT_DATE, %s)
-                            ON CONFLICT (code)
-                            DO UPDATE SET
-                                balance = comptes_techniques.balance + %s,
-                                updatedate = CURRENT_DATE,
-                                updateuser = %s;
-                        """, (code, description, amount, session.get("user"), amount, session.get("user")))
+                        # 2) update balance membre : Deux cas : (1) Cas de dépense debit-credit = "D" => Gestion des comptes --> code="Expenses", description="Cumulative expenses"  (2) Gestion du membre : mise à jour de la balance, si regie balance<contribution-minimale=> inactif etc 
 
                         if debitcredit == "D":
                             code="Expenses"
                             description="Cumulative expenses"
+                            cur.execute("""
+                                INSERT INTO comptes_techniques (code, description, balance, updatedate, updateuser)
+                                VALUES (%s, %s, %s, CURRENT_DATE, %s)
+                                ON CONFLICT (code)
+                                DO UPDATE SET
+                                    balance = comptes_techniques.balance + %s,
+                                    updatedate = CURRENT_DATE,
+                                    updateuser = %s;
+                            """, (code, description, amount, session.get("user"), amount, session.get("user")))
+                        else:
+                        #delta = -amount if debitcredit == "D" else amount
+                            cur.execute("""
+                            UPDATE membres
+                            SET balance = balance + %s,
+                                updatedate = CURRENT_DATE,
+                                updateuser = %s
+                            WHERE phone = %s
+                            """, (amount, session.get("user"), phone))
+
+                            if cur.rowcount:
+                                updated_balances += 1
+
+                            # 3) règle demandée: si balance < 0 alors currentstatute="inactif", s'il etait 'actif' (=> s'il etait 'actif' on le passe à 'inactif', pas pour 'suspendu' et 'radié')
+                            cur.execute("""
+                            UPDATE membres
+                            SET currentstatute = 'inactif',
+                                updatedate = CURRENT_DATE,
+                                updateuser = %s
+                            WHERE phone = %s AND balance <  %s AND currentstatute in ('actif','probatoire')   
+                            """, (session.get("user"), phone, contribution_minimum))
+                            if cur.rowcount:
+                                flagged_inactif += 1
+
+                            # 4) règle demandée: si phone du mouvement = phone d'un membre ET balance >= C (contribution minimale) ET membershipdate = "31/12/2099" alors membershipdate = date du jour (=> activation du membre)
+                            limit_date = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
+                            cur.execute("""
+                                UPDATE membres
+                                SET membershipdate = CURRENT_DATE,
+                                    currentstatute = 'probatoire',
+                                    updatedate = CURRENT_DATE,
+                                    updateuser = %s 
+                                WHERE phone = %s AND balance >= %s AND membershipdate = %s 
+                            """, (session.get("user"), phone, contribution_minimum, limit_date))
+    #####
+                            # 5) règle demandée: si phone du mouvement = phone d'un membre ET balance >= C (contribution minimale) ET membershipdate <> "31/12/2099" alors currentstatute ='probatoire' ou 'actif' (=> activation du membre)
+                            limit_date = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
+                            cur.execute("""
+                                UPDATE membres
+                                SET currentstatute = CASE 
+                                    WHEN phone = %s AND balance >= %s AND membershipdate <> %s THEN 'probatoire'
+                                    ELSE currentstatute
+                                END
+                                WHERE phone = %s;
+                            """, (phone, contribution_minimum, limit_date, phone))
+
+                            # 6) règle demandée: si phone du mouvement = phone d'un membre ET balance >= C (contribution minimale) ET la durée entre aujourdhui et membershipdate superieure ou egale à 6 mois (=> currentstatute='actif')
+                            limit_date = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
+                            cur.execute("""
+                                UPDATE membres
+                                SET currentstatute = CASE 
+                                    WHEN phone = %s AND balance >= %s AND (
+                                    EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12 +
+                                    EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))
+                                ) >=%s THEN 'actif'
+                                    ELSE currentstatute
+                                END
+                                WHERE phone = %s;
+                            """, (phone, contribution_minimum, CARENCE_MOIS, phone))
+
+    ##
+                            # 7) Mise à jour comptes_techniques :  1) Dépenses &  2)Transferts from unknown Mobile Money.
+                            code="MOBILEMONEY-" + regie if regie in ("vodacom", "orange", "airtel", "afrimoney") else "Autres"
+                            description="Transferts Mobile Money - " + regie if regie in ("vodacom", "orange", "airtel", "afrimoney") else "Transferts Mobile Money - Autres"
                             cur.execute("""
                                 INSERT INTO comptes_techniques (code, description, balance, updatedate, updateuser)
                                 VALUES (%s, %s, %s, CURRENT_DATE, %s)
