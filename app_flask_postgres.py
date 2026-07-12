@@ -382,6 +382,29 @@ def init_db():
 #                        """)            
 #            log.info ("%s Comptes techniques mis à jour avec les cumuls par régie.", cur.rowcount)
 ###
+            cur.execute("""
+                DELETE FROM comptes_techniques WHERE description = 'cumulative mobilemoney transfers';
+            """)
+
+            log.info ("%s enregistrements effacés par régie.", cur.rowcount)
+###            
+#            cur.execute("""
+#                INSERT INTO comptes_techniques (
+#                    code,
+#                    description,
+#                    balance,
+#                    updatedate,
+#                    updateuser
+#                )
+#                SELECT
+#                    regie,
+#                    'cumulative mobilemoney transfers',
+#                    cumul,                        
+#                    '2026-04-29',
+#                    'system'
+#                FROM mouvements_regie_20260405;
+#                        """)            
+#            log.info ("%s Comptes techniques mis à jour avec les cumuls par régie.", cur.rowcount)
 #-----------------------------------------------------------------------------------
 #           # Correction exceptionnelle sur les données de base d'un adhérent.
 #            cur.execute("""
@@ -3050,6 +3073,18 @@ def import_mouvements():
                                     updatedate = CURRENT_DATE,
                                     updateuser = %s;
                             """, (code, description, amount, session.get("user"), amount, session.get("user")))
+
+                            code="MOBILEMONEY-" + regie if regie in ("vodacom", "orange", "airtel", "afrimoney") else "Autres"
+                            description="Transferts Mobile Money - " + regie if regie in ("vodacom", "orange", "airtel", "afrimoney") else "Transferts Mobile Money - Autres"
+                            cur.execute("""
+                                INSERT INTO comptes_techniques (code, description, balance, updatedate, updateuser)
+                                VALUES (%s, %s, %s, CURRENT_DATE, %s)
+                                ON CONFLICT (code)
+                                DO UPDATE SET
+                                    balance = comptes_techniques.balance - %s,
+                                    updatedate = CURRENT_DATE,
+                                    updateuser = %s;
+                            """, (code, description, amount, session.get("user"), amount, session.get("user")))                   
                         else:
                         #delta = -amount if debitcredit == "D" else amount
                             cur.execute("""
@@ -4732,8 +4767,9 @@ PARAMETRAGE_PAGE = """
 </div></body></html>
 """
 
-#-----------------------------------------------
+#-----------------------------------------------------
 # Endpoint#14 — Paramétrage des indicateurs de travail
+#-----------------------------------------------------
 # Note: on peut faire un seul endpoint pour les 2 actions "check" et "confirm" (simplification) car la logique de vérification est la même dans les 2 cas, 
 # et on affiche les messages d'erreur/confirmation dans la même page. Donc pas besoin de faire 2 endpoints séparés.
 from flask import request, redirect, url_for, flash
