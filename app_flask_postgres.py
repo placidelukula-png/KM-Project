@@ -382,11 +382,11 @@ def init_db():
 #                        """)            
 #            log.info ("%s Comptes techniques mis à jour avec les cumuls par régie.", cur.rowcount)
 ###
-            cur.execute("""
-                DELETE FROM comptes_techniques WHERE description = 'cumulative mobilemoney transfers';
-            """)
-
-            log.info ("%s enregistrements effacés par régie.", cur.rowcount)
+#            cur.execute("""
+#                DELETE FROM comptes_techniques WHERE description = 'cumulative mobilemoney transfers';
+#            """)
+#
+#            log.info ("%s enregistrements effacé(s) dans la table comptes_techniques.", cur.rowcount)
 ###            
 #            cur.execute("""
 #                INSERT INTO comptes_techniques (
@@ -1895,7 +1895,7 @@ def inscription():
     else:
         externe = False
 
-    log.info(f"Accès à /add_member (externe={externe})")  # log pour debug
+#    log.info(f"Accès à /add_member (externe={externe})")  # log pour debug
 
     return render_template_string(ADD_MEMBER_PAGE, message="",externe=externe, is_error=False)
 
@@ -2826,7 +2826,10 @@ ADD_MEMBER_PAGE = """
 
 </div></body></html>
 """
+#----------------------------------------
 # Endpoint#06 Créer un membre (menu card)
+#----------------------------------------
+
 from flask import request, session, render_template_string
 from datetime import datetime
 import psycopg # ou psycopg2 selon ta config
@@ -3236,7 +3239,9 @@ CHECK_MVT_PAGE = """
 </table>
 </div></body></html>
 """
+#-----------------------------------------
 # Endpoint#08 Check mouvements (menu card)
+#-----------------------------------------
 @app.get("/checkmouvements")
 @admin_required
 def check_mouvements():
@@ -3390,65 +3395,127 @@ DATAGENERALFOLLOWUP_PAGE = """
 
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
 
-        <div>
-          <label>Identifiant </label>
-          <input name="phone" value="{{ edit_row[1] }}" required>
+        {% if updateuser="admin" %}
+            <div>
+            <label>Identifiant </label>
+            <input name="phone" value="{{ edit_row[1] }}" required>
+            </div>
+
+            <div>
+            <label>Type d'adhérent</label>
+            <select name="membertype" required>
+                {% for t in member_types %}
+                <option value="{{ t }}" {{ 'selected' if t==edit_row[2] else '' }}>{{ t }}</option>
+                {% endfor %}
+            </select>
+            </div>
+
+            <div>
+            <label>Mentor</label>
+            <input name="mentor" value="{{ edit_row[3] }}" required>
+            </div>
+
+            <div>
+            <label>Nom de famille</label>
+            <input name="lastname" value="{{ edit_row[4] }}" required>
+            </div>
+
+            <div>
+            <label>Prénom</label>
+            <input name="firstname" value="{{ edit_row[5] }}" required>
+            </div>
+
+            <div>
+            <label>Date naissance</label>
+            <input name="birthdate" value="{{ edit_birthdate }}" required>
+            </div>
+
+            <div>
+            <label>Solde </label>
+            <input name="balance" value="{{ edit_balance }}" required>
+            </div>
+
+            <div>
+            <label>Date adhésion</label>
+            <input name="membershipdate" value="{{ edit_membershipdate }}" required>
+            </div>
+
+            <div>
+            <label>Statut</label>
+            <select name="currentstatute" required>
+                {% for s in statutes %}
+                <option value="{{ s }}" {{ 'selected' if s==edit_row[9] else '' }}>{{ s }}</option>
+                {% endfor %}
+            </select>
+            </div>
+
+            <div>
+            <label>Nouveau mot de passe (optionnel)</label>
+            <input name="password" type="password" placeholder="laisser vide pour ne pas changer">
+            </div>
         </div>
 
-        <div>
-          <label>Type d'adhérent</label>
-          <select name="membertype" required>
-            {% for t in member_types %}
-              <option value="{{ t }}" {{ 'selected' if t==edit_row[2] else '' }}>{{ t }}</option>
-            {% endfor %}
-          </select>
-        </div>
+    {% else %}  
+            <div>
+            <label>Identifiant </label>
+            <input name="phone" value="{{ edit_row[1] }}" readonly required>
+            </div>
 
-        <div>
-          <label>Mentor</label>
-          <input name="mentor" value="{{ edit_row[3] }}" required>
-        </div>
+            <div>
+            <label>Type d'adhérent</label>
+            <select name="membertype" readonly required>
+                {% for t in member_types %}
+                <option value="{{ t }}" {{ 'selected' if t==edit_row[2] else '' }}>{{ t }}</option>
+                {% endfor %}
+            </select>
+            </div>
 
-        <div>
-          <label>Nom de famille</label>
-          <input name="lastname" value="{{ edit_row[4] }}" required>
-        </div>
+            <div>
+            <label>Mentor</label>
+            <input name="mentor" value="{{ edit_row[3] }}" readonly required>
+            </div>
 
-        <div>
-          <label>Prénom</label>
-          <input name="firstname" value="{{ edit_row[5] }}" required>
-        </div>
+            <div>
+            <label>Nom de famille</label>
+            <input name="lastname" value="{{ edit_row[4] }}" readonly required>
+            </div>
 
-        <div>
-          <label>Date naissance</label>
-          <input name="birthdate" value="{{ edit_birthdate }}" required>
-        </div>
+            <div>
+            <label>Prénom</label>
+            <input name="firstname" value="{{ edit_row[5] }}" readonly required>
+            </div>
 
-        <div>
-          <label>Solde </label>
-          <input name="balance" value="{{ edit_balance }}" required>
-        </div>
+            <div>
+            <label>Date naissance</label>
+            <input name="birthdate" value="{{ edit_birthdate }}" readonly required>
+            </div>
 
-        <div>
-          <label>Date adhésion</label>
-          <input name="membershipdate" value="{{ edit_membershipdate }}" required>
-        </div>
+            <div>
+            <label>Solde </label>
+            <input name="balance" value="{{ edit_balance }}" readonly required>
+            </div>
 
-        <div>
-          <label>Statut</label>
-          <select name="currentstatute" required>
-            {% for s in statutes %}
-              <option value="{{ s }}" {{ 'selected' if s==edit_row[9] else '' }}>{{ s }}</option>
-            {% endfor %}
-          </select>
-        </div>
+            <div>
+            <label>Date adhésion</label>
+            <input name="membershipdate" value="{{ edit_membershipdate }}" readonly required>
+            </div>
 
-        <div>
-          <label>Nouveau mot de passe (optionnel)</label>
-          <input name="password" type="password" placeholder="laisser vide pour ne pas changer">
-        </div>
-      </div>
+            <div>
+            <label>Statut</label>
+            <select name="currentstatute" required>
+                {% for s in statutes %}
+                <option value="{{ s }}" {{ 'selected' if s==edit_row[9] else '' }}>{{ s }}</option>
+                {% endfor %}
+            </select>
+            </div>
 
+            <div>
+            <label>Nouveau mot de passe (optionnel)</label>
+            <input name="password" type="password" placeholder="laisser vide pour ne pas changer" readonly>
+            </div>
+        </div>
+    {% endif %}
+      
       <div class="row">
         <button class="btn" type="submit">Enregistrer</button>
         <a class="btn secondary" href="{{ url_for('datageneralfollowup') }}" style="display:inline-flex;align-items:center;justify-content:center;">Annuler</a>
@@ -3509,22 +3576,25 @@ DATAGENERALFOLLOWUP_PAGE = """
 </body>
 </html>
 """
-
+#-----------------------------------------------
 # Endpoint#09 Data general follow-up (menu card)
+#-----------------------------------------------
 @app.get("/datageneralfollowup")
 @admin_required
 def datageneralfollowup():
+    updateuser = session.get("user")
     name_id = request.args.get("name_id")
     if name_id:
         rows = fetch_all_members_name()
     else:
         rows = fetch_all_members_id()
     return render_template_string(DATAGENERALFOLLOWUP_PAGE, rows=rows, edit_row=None, edit_birthdate="",edit_membershipdate="", edit_balance=0.0,
-                                  message="", is_error=False, member_types=MEMBER_TYPES, statutes=STATUTES)
+                                  message="", is_error=False, member_types=MEMBER_TYPES, statutes=STATUTES,updateuser=updateuser, q_phone="", name_id=name_id)
 
 @app.get("/edit/<int:member_id>")
 @login_required
 def edit(member_id: int):
+    updateuser = session.get("user") 
     row = fetch_one(member_id)
     rows = fetch_all_members_id()
     phone = session.get("user")
@@ -3549,6 +3619,7 @@ def edit(member_id: int):
             user_fullname=f"{firstname} {lastname}".strip(),
             user_membertype=membertype,
             #
+            updateuser=updateuser
         )
 
     edit_birthdate = row[6].strftime("%d/%m/%Y") if row[6] else ""
@@ -3567,12 +3638,17 @@ def edit(member_id: int):
         is_error=False,
         member_types=MEMBER_TYPES,
         statutes=STATUTES,
+        #
+        user_fullname=f"{firstname} {lastname}".strip(),
+        user_membertype=membertype,
+        updateuser=updateuser
     )
 
 
 @app.post("/update/<int:member_id>")
 @login_required
 def update(member_id: int):
+    updateuser = session.get("user")
     try:
         data = validate_member_form(request.form, for_update=True)
         updateuser = session.get("user") or ADMIN_PHONE
@@ -3591,7 +3667,7 @@ def update(member_id: int):
                 balance=data["balance"],                    # <= important
                 currentstatute=data["currentstatute"],
                 updateuser=updateuser,
-                new_password_plain=new_pwd,
+                new_password_plain=new_pwd
             )
         else:
             #log.info("Le mot de passe n'a pas été modifié.")
@@ -3630,18 +3706,23 @@ def update(member_id: int):
             is_error=True,
             member_types=MEMBER_TYPES,
             statutes=STATUTES,
-        )
+            updateuser=updateuser
+            )
 
 #suppression d'adhérent (pas l'admin par défaut)
 @app.post("/delete/<int:member_id>")
 @login_required
 def delete(member_id: int):
+    updateuser=session.get("user")
+
     # empêcher suppression de l'admin par défaut
     row = fetch_one(member_id)
     if row and row[1] == ADMIN_PHONE:
         abort(403)
 
-    delete_member(member_id)
+    # exécution de la suppression (seul l'admin est autorisé à supprimer un membre)
+    if updateuser == "admin":
+        delete_member(member_id)
     return redirect(url_for("home"))
 
 
@@ -3659,6 +3740,7 @@ def add_security_headers(resp):
 def search_member():
     q_phone = (request.args.get("q_phone") or "").strip()
     name_id = (request.args.get("name_id") or "").strip()
+    updateuser = session.get("user")
 
     # si champ vide -> retour page normale
     if not q_phone and not name_id:
@@ -3679,6 +3761,7 @@ def search_member():
             statutes=STATUTES,
             q_phone=q_phone,
             name_id=name_id,
+            updateuser=updateuser
         )
 
     if name_id :
@@ -3706,6 +3789,7 @@ def search_member():
             statutes=STATUTES,
             q_phone=q_phone,
             name_id=name_id,
+            updateuser=updateuser
         )
 
     # 1 seul résultat -> ouvrir directement l'écran Edit (optionnel mais pratique)
@@ -3726,6 +3810,7 @@ def search_member():
         statutes=STATUTES,
         q_phone=q_phone,
         name_id=name_id,
+        updateuser=updateuser
     )
 
 @app.post("/statutes_update")
@@ -3741,7 +3826,7 @@ def launch_statutes_update():
     statutes_update()
     #log.info("Actualisation des statuts terminée. %s statut(s) mis à jour.", rows_updated)
     #flash(f"{rows_updated} statut(s) mis à jour avec succès", "success")
-    flash("statut(s) mis à jour avec succès", "success")
+    #flash("statut(s) mis à jour avec succès", "success")
 
     return redirect(url_for("datageneralfollowup"))
 
@@ -3904,9 +3989,9 @@ style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
 
 </body></html>
 """
-#=================================================
+#--------------------------------------------------
 # Endpoint#10 Transfert de cotisations (menu card)
-#=================================================
+#--------------------------------------------------
 # Note: on peut faire un seul endpoint pour les 2 actions "check" et "confirm" (simplification) car la logique de vérification est la même dans les 2 cas, et on affiche les messages d'erreur/confirmation dans la même page. Donc pas besoin de faire 2 endpoints séparés.
 @app.route("/transfer", methods=["GET","POST"])
 @login_required
@@ -4788,23 +4873,25 @@ def parametrage():
 
 @app.route("/update_parameters", methods=["GET", "POST"])
 def update_parameters():
-    if request.method == "POST":
-        key = request.form.get(f"keydata")
-        value_raw = request.form.get(f"quantity")
-        if value_raw is None:
-           log.warning("Aucune valeur de quantité fournie pour la clé %s , voici les data : %s.", key, rows)
-           flash("Valeur invalide pour la quantité.", "danger")
-           return redirect(url_for('parametrage'))
-        
-        new_value = Decimal(value_raw).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
-        decr = request.form.get(f"decript")
-        note = request.form.get(f"note")
-        try:
-            update_id_data(key, new_value, decript=decr, note=note)            
-            flash("Mise à jour réussie !", "success")
-        except Exception as e:
-            flash(f"Erreur lors de l'enregistrement : {e}", "danger")    
-        return redirect(url_for('parametrage'))
+    update_user = session.get("user")  # Récupération de l'utilisateur en session
+    if update_user == "admin":    
+        if request.method == "POST":
+            key = request.form.get(f"keydata")
+            value_raw = request.form.get(f"quantity")
+            if value_raw is None:
+                log.warning("Aucune valeur de quantité fournie pour la clé %s , voici les data : %s.", key, rows)
+                flash("Valeur invalide pour la quantité.", "danger")
+                return redirect(url_for('parametrage'))
+            
+            new_value = Decimal(value_raw).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+            decr = request.form.get(f"decript")
+            note = request.form.get(f"note")
+            try:
+                update_id_data(key, new_value, decript=decr, note=note)            
+                flash("Mise à jour réussie !", "success")
+            except Exception as e:
+                flash(f"Erreur lors de l'enregistrement : {e}", "danger")    
+            return redirect(url_for('parametrage'))
     
     # Si c'est un GET, on affiche simplement la page
     rows = list_id_data()
@@ -4812,12 +4899,14 @@ def update_parameters():
 
 @app.route("/id_data_delete", methods=["GET", "POST"])
 def id_data_delete():
-    if request.method == "POST":
-        data_id = request.form.get("id_data_id")
-        try:
-            delete_id_data(data_id)
-        except Exception as e:
-            flash(f"Erreur lors de la suppression : {e}", "danger")
+    update_user = session.get("user")  # Récupération de l'utilisateur en session
+    if update_user == "admin":
+        if request.method == "POST":
+            data_id = request.form.get("id_data_id")
+            try:
+                delete_id_data(data_id)
+            except Exception as e:
+                flash(f"Erreur lors de la suppression : {e}", "danger")
     return redirect(url_for("parametrage"))
 
 #-------------------------------------------------
@@ -4866,12 +4955,21 @@ COMPTES_PAGE = """
       <tr>
         <form method="POST" action="{{ url_for('update_compte') }}">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-          <td><input type="text" name="code" value="{{ c[0] }}" readonly size="19" class="badge"></td>
-          <td><input type="text" name="description" value="{{ c[1] }}" size="48"></td>
-          <td><input type="number" name="balance" value="{{ c[2] }}" step="0.01" style="width:100px"></td>
-          <td><small>{{ c[3] }}</small></td>
-          <td><small>{{ c[4] }}</small></td>
-          <td><button type="submit" class="btn-save">Update</button></td>
+          {% if updateuser="admin" %}  
+            <td><input type="text" name="code" value="{{ c[0] }}" readonly size="19" class="badge"></td>
+            <td><input type="text" name="description" value="{{ c[1] }}" size="48"></td>
+            <td><input type="number" name="balance" value="{{ c[2] }}" step="0.01" style="width:100px"></td>
+            <td><small>{{ c[3] }}</small></td>
+            <td><small>{{ c[4] }}</small></td>
+            <td><button type="submit" class="btn-save">Update</button></td>
+          {% else %}
+            <td><input type="text" name="code" value="{{ c[0] }}" readonly size="19" class="badge"></td>
+            <td><input type="text" name="description" value="{{ c[1] }}" readonly size="48"></td>
+            <td><input type="number" name="balance" value="{{ c[2] }}" readonly step="0.01" style="width:100px"></td>
+            <td><small>{{ c[3] }}</small></td>
+            <td><small>{{ c[4] }}</small></td>
+            <td><button type="submit" class="btn-save">Update</button></td>
+          {% endif %}
         </form>
       </tr>
       {% endfor %}
@@ -4880,23 +4978,27 @@ COMPTES_PAGE = """
   
 </div></body></html>
 """
-
+#-----------------------------------------------------------
 #Endpoint 15 — Comptes techniques (comptabilité) (menu card)
+#-----------------------------------------------------------
 @app.route("/gestion_comptes", methods=["GET"])
 def gestion_comptes():
+    updateuser = session.get("user")  # Récupération de l'utilisateur en session
     # Récupération de tous les comptes techniques
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("SELECT code, description, balance, updatedate, updateuser FROM comptes_techniques ORDER BY code ASC")
             comptes = cur.fetchall()
-    return render_template_string(COMPTES_PAGE, comptes=comptes)
+    return render_template_string(COMPTES_PAGE, comptes=comptes,updateuser=updateuser)
 
 @app.route("/update_compte", methods=["POST"])
 def update_compte():
+    updateuser = session.get("user")  # Récupération de l'utilisateur en session
+
     code = request.form.get("code")
     description = request.form.get("description")
     balance = request.form.get("balance")
-    user = session.get("user", "admin") # Utilisateur en session
+    user = session.get("user") # Utilisateur en session
 
     try:
         with get_conn() as conn:
@@ -4910,11 +5012,13 @@ def update_compte():
                     WHERE code = %s
                 """, (description, balance, user, code))
             conn.commit()
-        flash(f"Compte {code} mis à jour avec succès", "success")
+        #flash(f"Compte {code} mis à jour avec succès", "success")
     except Exception as e:
         flash(f"Erreur : {e}", "danger")
     
-    return redirect(url_for('gestion_comptes'))
+#    return redirect(url_for('gestion_comptes'))
+#    return render_template_string(COMPTES_PAGE, comptes=list_comptes(), updateuser=updateuser)
+    return render_template_string(COMPTES_PAGE, code=code,description=description,balance=balance,user=user, updateuser=updateuser)
 
 @app.route("/debug_view")
 def debug_view():
