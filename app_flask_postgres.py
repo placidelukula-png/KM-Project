@@ -3208,7 +3208,7 @@ CHECK_MVT_PAGE = """
 <tbody>
 {% for r in rows %}
 <tr>
-<form method="post" action="{{ url_for('check_mouvements_update', mvt_id=r[0]) }}">
+<form method="post" action="{{ url_for('check_mouvements_update', gap=10, mvt_id=r[0]) }}">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <td>{{ r[0] }}</td>
   <td><input name="phone" value="{{ r[1] }}" size="12"></td>
