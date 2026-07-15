@@ -3338,12 +3338,12 @@ def check_filters():
 @app.get("/checkmouvements")
 @admin_required
 def check_mouvements(debut=None, fin=None, cpte=None, ident=None, d_c=None):
-    #updateuser=session.get("user")
-    #debut = request.args.get("from_date", (datetime.now() - timedelta(days=30)).strftime("%d/%m/%Y"))
-    #fin = request.args.get("to_date", datetime.now().strftime("%d/%m/%Y"))
-    #cpte = request.args.get("Compte", "")
-    #ident = request.args.get("Identifiant", "")
-    #d_c = request.args.get("CodeD_C", "")   
+    updateuser=session.get("user")
+    debut = request.args.get("from_date", (datetime.now() - timedelta(days=30)).strftime("%d/%m/%Y"))
+    fin = request.args.get("to_date", datetime.now().strftime("%d/%m/%Y"))
+    cpte = request.args.get("Compte", "")
+    ident = request.args.get("Identifiant", "")
+    d_c = request.args.get("CodeD_C", "")   
 
     rows = list_all_check_mouvements(debut, fin, cpte, ident, d_c)
 #    return render_template_string(CHECK_MVT_PAGE, rows=rows,updateuser=updateuser)
