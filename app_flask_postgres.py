@@ -3232,15 +3232,18 @@ CHECK_MVT_PAGE = """
 
 <table>
 <thead>
-    <tr style="font-weight: bold; background-color: #f5f5f5;">
-        <td colspan="1" style="text-align: right;">Filtres: période</td>
+    <tr style="font-weight: bold; background-color: #f5f5f5;small">
+        <td style="text-align: right;">Filtres:</td>
+        <td> période</td>
         <td><input name="from_date" value="{{ debut.strftime('%d/%m/%Y') }}" size="6"></td>
-        <td><input name="to_date" value="{{ fin.strftime('%d/%m/%Y') }}" size="6">   Compte</td>
-        <td><input name="Compte" value="{{ cpte }}"  size="4">   Identifiant</td>
-        <td><input name="Identifiant" value="{{ ident }}"  size="4">   D/C</td>        
+        <td><input name="to_date" value="{{ fin.strftime('%d/%m/%Y') }}" size="6"></td>
+        <td> Compte</td>
+        <td><input name="Compte" value="{{ cpte }}"  size="4"></td>
+        <td> Identifiant</td>
+        <td><input name="Identifiant" value="{{ ident }}"  size="4"></td>
+        <td> D/C</td>        
         <td><input name="CodeD_C" value="{{ d_c }}"  size="1">   Montant calculé: </td>
         <td>{{ total_amount }}</td>
-        <td colspan="3"></td>
     </tr>
 </thead>
 
@@ -3334,13 +3337,13 @@ def check_filters():
 
 @app.get("/checkmouvements")
 @admin_required
-def check_mouvements():
-    updateuser=session.get("user")
-    debut = request.args.get("from_date", (datetime.now() - timedelta(days=30)).strftime("%d/%m/%Y"))
-    fin = request.args.get("to_date", datetime.now().strftime("%d/%m/%Y"))
-    cpte = request.args.get("Compte", "")
-    ident = request.args.get("Identifiant", "")
-    d_c = request.args.get("CodeD_C", "")   
+def check_mouvements(debut=None, fin=None, cpte=None, ident=None, d_c=None):
+    #updateuser=session.get("user")
+    #debut = request.args.get("from_date", (datetime.now() - timedelta(days=30)).strftime("%d/%m/%Y"))
+    #fin = request.args.get("to_date", datetime.now().strftime("%d/%m/%Y"))
+    #cpte = request.args.get("Compte", "")
+    #ident = request.args.get("Identifiant", "")
+    #d_c = request.args.get("CodeD_C", "")   
 
     rows = list_all_check_mouvements(debut, fin, cpte, ident, d_c)
 #    return render_template_string(CHECK_MVT_PAGE, rows=rows,updateuser=updateuser)
