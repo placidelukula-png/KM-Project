@@ -1106,7 +1106,7 @@ def list_all_check_mouvements(debut, fin, cpte, ident, d_c):
             cur.execute("""
                 SELECT id, phone, lastname, mvt_date, amount, debitcredit, reference, libelle, updatedate, updated_by, regie
                 FROM mouvements
-                WHERE mvt_date BETWEEN to_date(%s, 'DD/MM/YYYY') AND to_date(%s, 'DD/MM/YYYY')        
+                WHERE mvt_date BETWEEN to_date(%s, 'DD/MM/YYYY') AND to_date(%s, 'DD/MM/YYYY')
                 AND (%s::varchar IS NULL OR phone = %s)
                 AND (%s::varchar IS NULL OR regie = %s)
                 AND (%s::char(1) IS NULL OR debitcredit = %s)
@@ -3332,7 +3332,7 @@ def check_mouvements():
     total_CREDIT = sum(row[4] for row in rows if row[5] == "C")
     total_amount = total_CREDIT-total_DEBIT
 
-    return render_template_string(CHECK_MVT_PAGE, rows=rows, total_amount=total_amount,updateuser=updateuser)  
+    return render_template_string(CHECK_MVT_PAGE, rows=rows, total_amount=total_amount,updateuser=updateuser,debug_view=False, debut=datetime.strptime(debut, "%d/%m/%Y"), fin=datetime.strptime(fin, "%d/%m/%Y"), cpte=cpte, ident=ident, d_c=d_c)
 
 
 @app.post("/checkmouvements/update/<int:mvt_id>")
