@@ -3210,11 +3210,11 @@ CHECK_MVT_PAGE = """
 <tr>
 <form method="post" action="{{ url_for('check_mouvements_update', gap=3, mvt_id=r[0]) }}">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <td>{{ r[0] }} size="6"</td>
-  <td><input name="phone" value="{{ r[1] }}" size="10"></td>
-  <td>{{ r[2] }} size="6"</td>
+  <td>{{ r[0] }} </td>
+  <td><input name="phone" value="{{ r[1] }}" size="6"></td>
+  <td>{{ r[2] }} </td>
   <td><input name="mvt_date" value="{{ r[3].strftime('%d/%m/%Y') }}" size="6"></td>
-  <td><input name="amount" value="{{ r[4] }}" size="6"></td>
+  <td><input name="amount" value="{{ r[4] }}" size="4"></td>
   <td>
     <select name="debitcredit">
       <option value="D" {{ 'selected' if r[5]=='D' else '' }}>D</option>
@@ -3223,7 +3223,7 @@ CHECK_MVT_PAGE = """
   </td>
   
   <td><input name="libelle" value="{{ r[7] }}" size="20"></td>
-  <td><input name="regie" value="{{ r[10] }}" size="8"></td>
+  <td><input name="regie" value="{{ r[10] }}" size="6"></td>
   <td>
     <button class="btn" type="submit">Save</button>
 </form>
