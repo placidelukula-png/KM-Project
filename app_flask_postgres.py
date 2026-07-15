@@ -1092,20 +1092,39 @@ def list_mouvements_by_phone(phone: str):
                 ORDER BY mvt_date DESC, id DESC
             """, (phone,))
             return cur.fetchall()
+        
+def list_all_check_mouvements(debut, fin, cpte, ident, d_c):
+    # Remplacer les chaînes vides par None pour que le filtre 'IS NULL' fonctionne
+    ident = ident if ident else None
+    cpte = cpte if cpte else None
+    d_c = d_c if d_c else None
 
-def list_all_check_mouvements(debut,fin,cpte,ident,d_c):
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                SELECT id, phone, lastname, mvt_date, amount, debitcredit, reference, libelle, updatedate, updated_by,regie
+                SELECT id, phone, lastname, mvt_date, amount, debitcredit, reference, libelle, updatedate, updated_by, regie
                 FROM mouvements
-                WHERE mvt_date BETWEEN %s AND %s
-                AND (%s IS NULL OR phone = %s)
-                AND (%s IS NULL OR regie = %s)
-                AND (%s IS NULL OR debitcredit = %s)
+                WHERE mvt_date BETWEEN %s::date AND %s::date
+                AND (%s::varchar IS NULL OR phone = %s)
+                AND (%s::varchar IS NULL OR regie = %s)
+                AND (%s::char(1) IS NULL OR debitcredit = %s)
                 ORDER BY mvt_date DESC, id DESC
             """, (debut, fin, ident, ident, cpte, cpte, d_c, d_c))
             return cur.fetchall()
+
+#def list_all_check_mouvements(debut,fin,cpte,ident,d_c):
+#    with get_conn() as conn:
+#        with conn.cursor() as cur:
+#            cur.execute("""
+#                SELECT id, phone, lastname, mvt_date, amount, debitcredit, reference, libelle, updatedate, updated_by,regie
+#                FROM mouvements
+#                WHERE mvt_date BETWEEN %s AND %s
+#                AND (%s IS NULL OR phone = %s)
+#                AND (%s IS NULL OR regie = %s)
+#                AND (%s IS NULL OR debitcredit = %s)
+#                ORDER BY mvt_date DESC, id DESC
+#            """, (debut, fin, ident, ident, cpte, cpte, d_c, d_c))
+#            return cur.fetchall()
 
 def list_deces_pendants():
     with get_conn() as conn:
