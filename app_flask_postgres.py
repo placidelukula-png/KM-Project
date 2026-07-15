@@ -3233,25 +3233,33 @@ CHECK_MVT_PAGE = """
     <p><a href="{{ url_for('home') }}">← Retour</a></p>
 </div>
 
-<form id="filter_form" method="get" action="{{ url_for('check_mouvements') }}">
-    <tr style="font-weight: bold; background-color: #ffcccb;">
-        <td style="text-align: right;">FILTRES :  </td>
-        <td> période du</td>
-        <td><input name="from_date" value="{{ debut.strftime('%d/%m/%Y') }}" size="6"> au </td>
-        <td><input name="to_date" value="{{ fin.strftime('%d/%m/%Y') }}" size="6"></td>
+<tr style="background-color: #ffcccb; font-weight: bold;">
+    <td colspan="11">
+        <form id="filter_form" method="get" action="{{ url_for('check_mouvements') }}" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 10px;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            
+            <span>FILTRES :</span>
+            <span>période du</span>
+            <input name="from_date" value="{{ debut }}" size="6">
+            <span>au</span>
+            <input name="to_date" value="{{ fin }}" size="6">
 
-        <td> -->Compte</td>
-        <td><input name="Compte" value="{{ cpte }}"  size="4"></td>
-        <td> -->Identifiant</td>
-        <td><input name="Identifiant" value="{{ ident }}"  size="4"></td>
-        <td> -->D/C</td>        
-        <td><input name="CodeD_C" value="{{ d_c }}"  size="1"> -->Montant calculé: </td>
-        <td>{{ total_amount }}</td>
-    </tr>
-   
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <button class="btn3" type="submit" onclick="return confirm('Débuter recherche?')">Go</button>
-</form>
+            <span>--//Compte</span>
+            <input name="Compte" value="{{ cpte }}" size="4">
+            
+            <span>--//Identifiant</span>
+            <input name="Identifiant" value="{{ ident }}" size="4">
+            
+            <span>--//D/C</span>        
+            <input name="CodeD_C" value="{{ d_c }}" size="1">
+            
+            <span>--//Montant calculé:</span>
+            <span>{{ total_amount }}</span>
+
+            <button class="btn3" type="submit" onclick="return confirm('Débuter recherche?')"> Go ! </button>
+        </form>
+    </td>
+</tr>
 
 <table>
 
