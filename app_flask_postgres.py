@@ -3237,25 +3237,33 @@ CHECK_MVT_PAGE = """
     {% endfor %}
 {% else %}
     {% for r in rows %}
-    <tr>
-    <form method="post" action="{{ url_for('check_mouvements_update', gap=1, mvt_id=r[0]) }}">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <td>{{ r[0] }} </td>
-    <td><input name="phone" value="{{ r[1] }}" readonly size="6"></td>
-    <td><input name="lastname" value="{{ r[2] }}" readonly size="8"></td>
-    <td><input name="mvt_date" value="{{ r[3].strftime('%d/%m/%Y') }}" readonly size="6"></td>
-    <td><input name="amount" value="{{ r[4] }}" readonly size="4"></td>
-    <td>
-        <select name="debitcredit">
-        <option value="D" {{ 'selected' if r[5]=='D' else '' }}>D</option>
-        <option value="C" {{ 'selected' if r[5]=='C' else '' }}>C</option>
-        </select>
-    </td>
-    
-    <td><input name="libelle" value="{{ r[7] }}" readonly size="25"></td>
-    <td><input name="regie" value="{{ r[10] }}" readonly size="6"></td>
-    </form>
+        <tr>
+        <form method="post" action="{{ url_for('check_mouvements_update', gap=1, mvt_id=r[0]) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <td>{{ r[0] }} </td>
+        <td><input name="phone" value="{{ r[1] }}" readonly size="6"></td>
+        <td><input name="lastname" value="{{ r[2] }}" readonly size="8"></td>
+        <td><input name="mvt_date" value="{{ r[3].strftime('%d/%m/%Y') }}" readonly size="6"></td>
+        <td><input name="amount" value="{{ r[4] }}" readonly size="4"></td>
+        <td>
+            <select name="debitcredit">
+            <option value="D" {{ 'selected' if r[5]=='D' else '' }}>D</option>
+            <option value="C" {{ 'selected' if r[5]=='C' else '' }}>C</option>
+            </select>
+        </td>
+        
+        <td><input name="libelle" value="{{ r[7] }}" readonly size="25"></td>
+        <td><input name="regie" value="{{ r[10] }}" readonly size="6"></td>
+        </form>
+        </tr> <!-- Note : Pensez à fermer votre balise tr ici -->
     {% endfor %}
+
+    <!-- Ligne du total (à placer juste après la fin de la boucle) -->
+    <tr style="font-weight: bold; background-color: #f5f5f5;">
+        <td colspan="4" style="text-align: right;">Total :</td>
+        <td>{{ total_amount }}</td>
+        <td colspan="3"></td>
+    </tr>
 {% endif %}
 
 {% if not rows %}<tr><td colspan="8">Aucun mouvement.</td></tr>{% endif %}
@@ -3271,7 +3279,12 @@ CHECK_MVT_PAGE = """
 def check_mouvements():
     updateuser=session.get("user")
     rows = list_all_mouvements()
-    return render_template_string(CHECK_MVT_PAGE, rows=rows,updateuser=updateuser)
+#    return render_template_string(CHECK_MVT_PAGE, rows=rows,updateuser=updateuser)
+    # Exemple de calcul si rows est une liste de tuples
+    total_amount = sum(row[4] for row in rows)
+
+    return render_template_string(CHECK_MVT_PAGE, rows=rows, total_amount=total_amount,updateuser=updateuser)  
+
 
 @app.post("/checkmouvements/update/<int:mvt_id>")
 @admin_required
