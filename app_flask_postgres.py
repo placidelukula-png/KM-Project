@@ -3213,7 +3213,7 @@ CHECK_MVT_PAGE = """
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <td>{{ r[0] }} </td>
     <td><input name="phone" value="{{ r[1] }}" size="6"></td>
-    <td>{{ r[2] }} </td>
+    <td><input name="lastname" value="{{ r[2] }}" readonly size="8"></td>
     <td><input name="mvt_date" value="{{ r[3].strftime('%d/%m/%Y') }}" size="6"></td>
     <td><input name="amount" value="{{ r[4] }}" size="4"></td>
     <td>
@@ -3223,7 +3223,7 @@ CHECK_MVT_PAGE = """
         </select>
     </td>
     
-    <td><input name="libelle" value="{{ r[7] }}" size="20"></td>
+    <td><input name="libelle" value="{{ r[7] }}" size="25"></td>
     <td><input name="regie" value="{{ r[10] }}" size="6"></td>
     <td>
         <button class="btn" type="submit">Save</button>
@@ -3242,7 +3242,7 @@ CHECK_MVT_PAGE = """
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <td>{{ r[0] }} </td>
     <td><input name="phone" value="{{ r[1] }}" readonly size="6"></td>
-    <td>{{ r[2] }} </td>
+    <td><input name="lastname" value="{{ r[2] }}" readonly size="8"></td>
     <td><input name="mvt_date" value="{{ r[3].strftime('%d/%m/%Y') }}" readonly size="6"></td>
     <td><input name="amount" value="{{ r[4] }}" readonly size="4"></td>
     <td>
@@ -3252,7 +3252,7 @@ CHECK_MVT_PAGE = """
         </select>
     </td>
     
-    <td><input name="libelle" value="{{ r[7] }}" readonly size="20"></td>
+    <td><input name="libelle" value="{{ r[7] }}" readonly size="25"></td>
     <td><input name="regie" value="{{ r[10] }}" readonly size="6"></td>
     </form>
     {% endfor %}
@@ -3285,7 +3285,7 @@ def check_mouvements_update(mvt_id: int):
     libelle = (request.form.get("libelle") or ref).strip()  # ou tu peux ajouter un champ libellé dans le form si tu veux
     regie = (request.form.get("regie") or "").strip()
     if updateuser != "admin":
-        flash("Seul l'administrateur peut modifier ou supprimer un mouvement.", "danger")
+        flash("Seul l'Administrateur peut modifier ou supprimer un mouvement.", "danger")
         return redirect(url_for("check_mouvements"))
 
     update_mouvement(mvt_id,phone,d, amount, dc, libelle, regie)
@@ -3296,7 +3296,7 @@ def check_mouvements_update(mvt_id: int):
 def check_mouvements_delete(mvt_id: int):
     updateuser=session.get("user")
     if updateuser != "admin":
-        flash("Seul l'administrateur peut supprimer un mouvement.", "danger")
+        flash("Seul l'Administrateur peut modifier ou supprimer un mouvement.", "danger")
         return redirect(url_for("check_mouvements"))
     delete_mouvement(mvt_id)
     return redirect(url_for("check_mouvements"))
