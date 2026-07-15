@@ -3203,15 +3203,21 @@ CHECK_MVT_PAGE = """
 </style></head><body><div class="wrap">
 <h2>Check mouvements (admin)</h2>
 <p><a href="{{ url_for('home') }}">← Retour</a></p>
+
 <table>
-<thead><tr><th>ID</th><th>Phone</th><th>Nom</th><th>Date</th><th>Montant</th><th>D/C</th><th>Libellé</th><th>Regie</th><th>Action</th></tr></thead>
 <thead>
     <tr style="font-weight: bold; background-color: #f5f5f5;">
         <td colspan="4" style="text-align: right;">Total :</td>
+        <td><input name="from_date" value="{{ debut.strftime('%d/%m/%Y') }}" size="6"></td>
+        <td><input name="to_date" value="{{ fin.strftime('%d/%m/%Y') }}" size="6"></td>
+        <td><input name="Compte" value="{{ cpte }}"  size="4"></td>
+        <td><input name="Identifiant" value="{{ ident }}"  size="4"></td>        
+        <td><input name="CodeD_C" value="{{ d_c }}"  size="1"></td>
         <td>{{ total_amount }}</td>
         <td colspan="3"></td>
     </tr>
 </thead>
+<thead><tr><th>ID</th><th>Phone</th><th>Nom</th><th>Date</th><th>Montant</th><th>D/C</th><th>Libellé</th><th>Regie</th><th>Action</th></tr></thead>
 
 <tbody>
 {% if updateuser=="admin" %}
