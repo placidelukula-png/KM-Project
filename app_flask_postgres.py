@@ -3233,7 +3233,7 @@ CHECK_MVT_PAGE = """
 <table>
 <thead>
     <tr style="font-weight: bold; background-color: #f5f5f5;">
-        <td colspan="4" style="text-align: right;">Total :</td>
+        <td colspan="1" style="text-align: right;">Filtres: </td>
         <td><input name="from_date" value="{{ debut.strftime('%d/%m/%Y') }}" size="6"></td>
         <td><input name="to_date" value="{{ fin.strftime('%d/%m/%Y') }}" size="6"></td>
         <td><input name="Compte" value="{{ cpte }}"  size="4"></td>
@@ -3243,6 +3243,10 @@ CHECK_MVT_PAGE = """
         <td colspan="3"></td>
     </tr>
 </thead>
+
+<form id="filter_form" method="get" action="{{ url_for('check_mouvements') }}">
+</form>
+
 <thead><tr><th>ID</th><th>Phone</th><th>Nom</th><th>Date</th><th>Montant</th><th>D/C</th><th>Libellé</th><th>Regie</th><th>Action</th></tr></thead>
 
 <tbody>
@@ -3314,6 +3318,18 @@ CHECK_MVT_PAGE = """
 #-----------------------------------------
 # Endpoint#08 Check mouvements (menu card)
 #-----------------------------------------
+@app.get("/check_filters")
+@admin_required
+def check_filters():
+    updateuser=session.get("user")
+    debut = request.args.get("from_date", (datetime.now() - timedelta(days=30)).strftime("%d/%m/%Y"))
+    fin = request.args.get("to_date", datetime.now().strftime("%d/%m/%Y"))
+    cpte = request.args.get("Compte", "")
+    ident = request.args.get("Identifiant", "")
+    d_c = request.args.get("CodeD_C", "")   
+    return render_template_string(CHECK_MVT_PAGE,updateuser=updateuser,debug_view=False, debut=datetime.strptime(debut, "%d/%m/%Y"), fin=datetime.strptime(fin, "%d/%m/%Y"), cpte=cpte, ident=ident, d_c=d_c)
+
+
 @app.get("/checkmouvements")
 @admin_required
 def check_mouvements():
