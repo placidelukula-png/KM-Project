@@ -3227,13 +3227,14 @@ CHECK_MVT_PAGE = """
  .btn{padding:7px 10px;border:1px solid #111;border-radius:10px;background:#111;color:#fff;cursor:pointer}
  .btn2{padding:7px 10px;border:1px solid #111;border-radius:10px;background:#fff;color:#111;cursor:pointer}
 </style></head><body><div class="wrap">
-<h2>Check mouvements (admin)</h2>
-<p><a href="{{ url_for('home') }}">← Retour</a></p>
+<div style="display: flex; gap: 10px; align-items: center;">
+    <h2>Check mouvements (admin)</h2>
+    <p><a href="{{ url_for('home') }}">← Retour</a></p>
+</div>
 
 <form id="filter_form" method="get" action="{{ url_for('check_mouvements') }}">
-
-    <tr style="font-weight: bold; background-color: #f5f5f5;small">
-        <td style="text-align: right;">Filtres:</td>
+    <tr style="font-weight: bold; background-color: #ffcccb;">
+        <td style="text-align: right;">FILTRES :  </td>
         <td> période</td>
         <td><input name="from_date" value="{{ debut.strftime('%d/%m/%Y') }}" size="6"></td>
         <td><input name="to_date" value="{{ fin.strftime('%d/%m/%Y') }}" size="6"></td>
@@ -3245,8 +3246,7 @@ CHECK_MVT_PAGE = """
         <td><input name="CodeD_C" value="{{ d_c }}"  size="1">   Montant calculé: </td>
         <td>{{ total_amount }}</td>
     </tr>
-
-    
+   
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <button class="btn2" type="submit" onclick="return confirm('Débuter recherche?')">Go</button>
 </form>
