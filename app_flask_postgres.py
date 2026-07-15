@@ -3230,7 +3230,7 @@ CHECK_MVT_PAGE = """
 <h2>Check mouvements (admin)</h2>
 <p><a href="{{ url_for('home') }}">← Retour</a></p>
 
-<table>
+<form id="filter_form" method="get" action="{{ url_for('check_mouvements') }}">
 
     <tr style="font-weight: bold; background-color: #f5f5f5;small">
         <td style="text-align: right;">Filtres:</td>
@@ -3247,10 +3247,11 @@ CHECK_MVT_PAGE = """
     </tr>
 
     
-<form id="filter_form" method="get" action="{{ url_for('check_mouvements') }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <button class="btn2" type="submit" onclick="return confirm('Débuter recherche?')">Go</button>
 </form>
+
+<table>
 
 <thead><tr><th>ID</th><th>Phone</th><th>Nom</th><th>Date</th><th>Montant</th><th>D/C</th><th>Libellé</th><th>Regie</th><th>Action</th></tr></thead>
 
