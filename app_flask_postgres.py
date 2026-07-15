@@ -3231,7 +3231,7 @@ CHECK_MVT_PAGE = """
 <p><a href="{{ url_for('home') }}">← Retour</a></p>
 
 <table>
-<thead>
+
     <tr style="font-weight: bold; background-color: #f5f5f5;small">
         <td style="text-align: right;">Filtres:</td>
         <td> période</td>
@@ -3245,8 +3245,8 @@ CHECK_MVT_PAGE = """
         <td><input name="CodeD_C" value="{{ d_c }}"  size="1">   Montant calculé: </td>
         <td>{{ total_amount }}</td>
     </tr>
-</thead>
 
+    
 <form id="filter_form" method="get" action="{{ url_for('check_mouvements') }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <button class="btn2" type="submit" onclick="return confirm('Débuter recherche?')">Go</button>
