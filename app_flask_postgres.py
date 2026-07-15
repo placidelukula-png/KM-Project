@@ -3206,34 +3206,58 @@ CHECK_MVT_PAGE = """
 <table>
 <thead><tr><th>ID</th><th>Phone</th><th>Nom</th><th>Date</th><th>Montant</th><th>D/C</th><th>Libellé</th><th>Regie</th><th>Action</th></tr></thead>
 <tbody>
-{% for r in rows %}
-<tr>
-<form method="post" action="{{ url_for('check_mouvements_update', gap=1, mvt_id=r[0]) }}">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <td>{{ r[0] }} </td>
-  <td><input name="phone" value="{{ r[1] }}" size="6"></td>
-  <td>{{ r[2] }} </td>
-  <td><input name="mvt_date" value="{{ r[3].strftime('%d/%m/%Y') }}" size="6"></td>
-  <td><input name="amount" value="{{ r[4] }}" size="4"></td>
-  <td>
-    <select name="debitcredit">
-      <option value="D" {{ 'selected' if r[5]=='D' else '' }}>D</option>
-      <option value="C" {{ 'selected' if r[5]=='C' else '' }}>C</option>
-    </select>
-  </td>
-  
-  <td><input name="libelle" value="{{ r[7] }}" size="20"></td>
-  <td><input name="regie" value="{{ r[10] }}" size="6"></td>
-  <td>
-    <button class="btn" type="submit">Save</button>
-</form>
-<form method="post" action="{{ url_for('check_mouvements_delete', mvt_id=r[0]) }}" style="display:inline">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <button class="btn2" type="submit" onclick="return confirm('Supprimer?')">Delete</button>
-</form>
-  </td>
-</tr>
-{% endfor %}
+{% if updateuser=="admin" %}
+    {% for r in rows %}
+    <tr>
+    <form method="post" action="{{ url_for('check_mouvements_update', gap=1, mvt_id=r[0]) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <td>{{ r[0] }} </td>
+    <td><input name="phone" value="{{ r[1] }}" size="6"></td>
+    <td>{{ r[2] }} </td>
+    <td><input name="mvt_date" value="{{ r[3].strftime('%d/%m/%Y') }}" size="6"></td>
+    <td><input name="amount" value="{{ r[4] }}" size="4"></td>
+    <td>
+        <select name="debitcredit">
+        <option value="D" {{ 'selected' if r[5]=='D' else '' }}>D</option>
+        <option value="C" {{ 'selected' if r[5]=='C' else '' }}>C</option>
+        </select>
+    </td>
+    
+    <td><input name="libelle" value="{{ r[7] }}" size="20"></td>
+    <td><input name="regie" value="{{ r[10] }}" size="6"></td>
+    <td>
+        <button class="btn" type="submit">Save</button>
+    </form>
+    <form method="post" action="{{ url_for('check_mouvements_delete', mvt_id=r[0]) }}" style="display:inline">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="btn2" type="submit" onclick="return confirm('Supprimer?')">Delete</button>
+    </form>
+    </td>
+    </tr>
+    {% endfor %}
+{% else %}
+    {% for r in rows %}
+    <tr>
+    <form method="post" action="{{ url_for('check_mouvements_update', gap=1, mvt_id=r[0]) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <td>{{ r[0] }} </td>
+    <td><input name="phone" value="{{ r[1] }}" readonly size="6"></td>
+    <td>{{ r[2] }} </td>
+    <td><input name="mvt_date" value="{{ r[3].strftime('%d/%m/%Y') }}" readonly size="6"></td>
+    <td><input name="amount" value="{{ r[4] }}" readonly size="4"></td>
+    <td>
+        <select name="debitcredit">
+        <option value="D" {{ 'selected' if r[5]=='D' else '' }}>D</option>
+        <option value="C" {{ 'selected' if r[5]=='C' else '' }}>C</option>
+        </select>
+    </td>
+    
+    <td><input name="libelle" value="{{ r[7] }}" readonly size="20"></td>
+    <td><input name="regie" value="{{ r[10] }}" readonly size="6"></td>
+    </form>
+    {% endfor %}
+{% endif %}
+
 {% if not rows %}<tr><td colspan="8">Aucun mouvement.</td></tr>{% endif %}
 </tbody>
 </table>
@@ -3245,12 +3269,14 @@ CHECK_MVT_PAGE = """
 @app.get("/checkmouvements")
 @admin_required
 def check_mouvements():
+    updateuser=session.get("user")
     rows = list_all_mouvements()
-    return render_template_string(CHECK_MVT_PAGE, rows=rows)
+    return render_template_string(CHECK_MVT_PAGE, rows=rows,updateuser=updateuser)
 
 @app.post("/checkmouvements/update/<int:mvt_id>")
 @admin_required
 def check_mouvements_update(mvt_id: int):
+    updateuser=session.get("user")
     phone = (request.form.get("phone") or "").strip()
     d = datetime.strptime((request.form.get("mvt_date") or "").strip(), "%d/%m/%Y").date()
     amount = float((request.form.get("amount") or "0").strip())
@@ -3258,12 +3284,20 @@ def check_mouvements_update(mvt_id: int):
     #ref = (request.form.get("reference") or "").strip()
     libelle = (request.form.get("libelle") or ref).strip()  # ou tu peux ajouter un champ libellé dans le form si tu veux
     regie = (request.form.get("regie") or "").strip()
+    if updateuser != "admin":
+        flash("Seul l'administrateur peut modifier ou supprimer un mouvement.", "danger")
+        return redirect(url_for("check_mouvements"))
+
     update_mouvement(mvt_id,phone,d, amount, dc, libelle, regie)
     return redirect(url_for("check_mouvements"))
 
 @app.post("/checkmouvements/delete/<int:mvt_id>")
 @admin_required
 def check_mouvements_delete(mvt_id: int):
+    updateuser=session.get("user")
+    if updateuser != "admin":
+        flash("Seul l'administrateur peut supprimer un mouvement.", "danger")
+        return redirect(url_for("check_mouvements"))
     delete_mouvement(mvt_id)
     return redirect(url_for("check_mouvements"))
 
