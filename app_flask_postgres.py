@@ -3228,7 +3228,7 @@ CHECK_MVT_PAGE = """
  .btn2{padding:7px 10px;border:1px solid #111;border-radius:10px;background:#fff;color:#111;cursor:pointer}
  .btn3{padding:7px 10px;border:2px solid #111;border-radius:10px;background:#111;color:#fff;cursor:pointer}
 </style></head><body><div class="wrap">
-<div style="display: flex; gap: 10px; align-items: center;">
+<div style="display: flex; gap: 10px; align-items: justify-content;">
     <h2>Check mouvements (admin)</h2>
     <p><a href="{{ url_for('home') }}">← Retour</a></p>
 </div>
@@ -3239,21 +3239,21 @@ CHECK_MVT_PAGE = """
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             
             <span>FILTRES :</span>
-            <span>période du</span>
+            <span>-•période du</span>
             <input name="from_date" value="{{ debut }}" size="6">
             <span>au</span>
             <input name="to_date" value="{{ fin }}" size="6">
 
-            <span>--//Compte</span>
+            <span>-•Compte</span>
             <input name="Compte" value="{{ cpte }}" size="4">
             
-            <span>--//Identifiant</span>
+            <span>-•Identifiant</span>
             <input name="Identifiant" value="{{ ident }}" size="4">
             
-            <span>--//D/C</span>        
+            <span>-•D/C</span>        
             <input name="CodeD_C" value="{{ d_c }}" size="1">
             
-            <span>--//Montant calculé:</span>
+            <span>-•Montant calculé:</span>
             <span>{{ total_amount }}</span>
 
             <button class="btn3" type="submit" onclick="return confirm('Débuter recherche?')"> Go ! </button>
