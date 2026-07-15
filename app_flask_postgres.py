@@ -1093,14 +1093,18 @@ def list_mouvements_by_phone(phone: str):
             """, (phone,))
             return cur.fetchall()
 
-def list_all_mouvements():
+def list_all_check_mouvements(debut,fin,cpte,ident,d_c):
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
                 SELECT id, phone, lastname, mvt_date, amount, debitcredit, reference, libelle, updatedate, updated_by,regie
                 FROM mouvements
+                WHERE mvt_date BETWEEN %s AND %s
+                AND (%s IS NULL OR phone = %s)
+                AND (%s IS NULL OR regie = %s)
+                AND (%s IS NULL OR debitcredit = %s)
                 ORDER BY mvt_date DESC, id DESC
-            """)
+            """, (debut, fin, ident, ident, cpte, cpte, d_c, d_c))
             return cur.fetchall()
 
 def list_deces_pendants():
@@ -3292,7 +3296,13 @@ CHECK_MVT_PAGE = """
 @admin_required
 def check_mouvements():
     updateuser=session.get("user")
-    rows = list_all_mouvements()
+    debut = request.args.get("from_date", (datetime.now() - timedelta(days=30)).strftime("%d/%m/%Y"))
+    fin = request.args.get("to_date", datetime.now().strftime("%d/%m/%Y"))
+    cpte = request.args.get("Compte", "")
+    ident = request.args.get("Identifiant", "")
+    d_c = request.args.get("CodeD_C", "")   
+
+    rows = list_all_check_mouvements(debut, fin, cpte, ident, d_c)
 #    return render_template_string(CHECK_MVT_PAGE, rows=rows,updateuser=updateuser)
 
     # Exemple de calcul si rows est une liste de tuples
