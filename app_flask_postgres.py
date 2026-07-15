@@ -3281,7 +3281,9 @@ def check_mouvements():
     rows = list_all_mouvements()
 #    return render_template_string(CHECK_MVT_PAGE, rows=rows,updateuser=updateuser)
     # Exemple de calcul si rows est une liste de tuples
-    total_amount = sum(row[4] for row in rows)
+    total_DEBIT = sum(row[4] for row in rows if row[5] == "D")
+    total_CREDIT = sum(row[4] for row in rows if row[5] == "C")
+    total_amount = total_CREDIT-total_DEBIT
 
     return render_template_string(CHECK_MVT_PAGE, rows=rows, total_amount=total_amount,updateuser=updateuser)  
 
