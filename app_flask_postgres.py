@@ -1104,7 +1104,8 @@ def list_all_check_mouvements(debut, fin, cpte, ident, d_c):
             cur.execute("""
                 SELECT id, phone, lastname, mvt_date, amount, debitcredit, reference, libelle, updatedate, updated_by, regie
                 FROM mouvements
-                WHERE mvt_date BETWEEN %s::date AND %s::date
+                WHERE mvt_date BETWEEN to_date(%s, 'DD/MM/YYYY') AND to_date(%s, 'DD/MM/YYYY')        
+                /*WHERE mvt_date BETWEEN %s::date AND %s::date*/
                 AND (%s::varchar IS NULL OR phone = %s)
                 AND (%s::varchar IS NULL OR regie = %s)
                 AND (%s::char(1) IS NULL OR debitcredit = %s)
