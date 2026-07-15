@@ -3205,6 +3205,14 @@ CHECK_MVT_PAGE = """
 <p><a href="{{ url_for('home') }}">← Retour</a></p>
 <table>
 <thead><tr><th>ID</th><th>Phone</th><th>Nom</th><th>Date</th><th>Montant</th><th>D/C</th><th>Libellé</th><th>Regie</th><th>Action</th></tr></thead>
+<thead>
+    <tr style="font-weight: bold; background-color: #f5f5f5;">
+        <td colspan="4" style="text-align: right;">Total :</td>
+        <td>{{ total_amount }}</td>
+        <td colspan="3"></td>
+    </tr>
+</thead>
+
 <tbody>
 {% if updateuser=="admin" %}
     {% for r in rows %}
@@ -3280,6 +3288,7 @@ def check_mouvements():
     updateuser=session.get("user")
     rows = list_all_mouvements()
 #    return render_template_string(CHECK_MVT_PAGE, rows=rows,updateuser=updateuser)
+
     # Exemple de calcul si rows est une liste de tuples
     total_DEBIT = sum(row[4] for row in rows if row[5] == "D")
     total_CREDIT = sum(row[4] for row in rows if row[5] == "C")
