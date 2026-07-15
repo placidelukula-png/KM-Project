@@ -3233,18 +3233,20 @@ CHECK_MVT_PAGE = """
 <table>
 <thead>
     <tr style="font-weight: bold; background-color: #f5f5f5;">
-        <td colspan="1" style="text-align: right;">Filtres: </td>
+        <td colspan="1" style="text-align: right;">Filtres: période</td>
         <td><input name="from_date" value="{{ debut.strftime('%d/%m/%Y') }}" size="6"></td>
-        <td><input name="to_date" value="{{ fin.strftime('%d/%m/%Y') }}" size="6"></td>
-        <td><input name="Compte" value="{{ cpte }}"  size="4"></td>
-        <td><input name="Identifiant" value="{{ ident }}"  size="4"></td>        
-        <td><input name="CodeD_C" value="{{ d_c }}"  size="1"></td>
+        <td><input name="to_date" value="{{ fin.strftime('%d/%m/%Y') }}" size="6">   Compte</td>
+        <td><input name="Compte" value="{{ cpte }}"  size="4">   Identifiant</td>
+        <td><input name="Identifiant" value="{{ ident }}"  size="4">   D/C</td>        
+        <td><input name="CodeD_C" value="{{ d_c }}"  size="1">   Montant calculé: </td>
         <td>{{ total_amount }}</td>
         <td colspan="3"></td>
     </tr>
 </thead>
 
 <form id="filter_form" method="get" action="{{ url_for('check_mouvements') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="btn2" type="submit" onclick="return confirm('Débuter recherche?')">Go</button>
 </form>
 
 <thead><tr><th>ID</th><th>Phone</th><th>Nom</th><th>Date</th><th>Montant</th><th>D/C</th><th>Libellé</th><th>Regie</th><th>Action</th></tr></thead>
