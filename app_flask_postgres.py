@@ -3229,7 +3229,7 @@ CHECK_MVT_PAGE = """
  .btn3{padding:7px 10px;border:2px solid #111;border-radius:10px;background:#111;color:#fff;cursor:pointer}
 </style></head><body><div class="wrap">
 <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-    <h2 style="margin: 0;">Check mouvements (admin)</h2>
+    <h2 style="margin: 0;">Check des mouvements </h2>
     <p style="margin: 0;"><a href="{{ url_for('home') }}" class="btn2" style="text-decoration: underline dotted red none;">← Retour</a></p>
     <br>
 </div>
@@ -3245,9 +3245,9 @@ CHECK_MVT_PAGE = """
             
             <span style="color: #66101f;">&bull; FILTRES:</span>
             <span>période du</span>
-            <input name="from_date" value="{{ debut.strftime('%d/%m/%Y') }}" size="8">
+            <input name="from_date" value="{{ debut.strftime('%d/%m/%Y') }}" size="6">
             <span>au</span>
-            <input name="to_date" value="{{ fin.strftime('%d/%m/%Y') }}" size="8">
+            <input name="to_date" value="{{ fin.strftime('%d/%m/%Y') }}" size="6">
 
             <span>&bull; Compte</span>
             <input name="Compte" value="{{ cpte }}" size="8">
@@ -3277,7 +3277,7 @@ CHECK_MVT_PAGE = """
 
 {% if updateuser=="admin" %}
     <thead><tr><th>ID</th><th>Phone</th><th>Nom</th><th>Date</th><th>Montant</th><th>D/C</th><th>Libellé</th><th>Regie</th><th>Action</th></tr></thead>
-else:
+{% else %}
     <thead><tr><th>ID</th><th>Phone</th><th>Nom</th><th>Date</th><th>Montant</th><th>D/C</th><th>Libellé</th><th>Regie</th></tr></thead>
 {% endif %}
 
