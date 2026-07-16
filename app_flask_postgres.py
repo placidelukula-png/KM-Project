@@ -3229,11 +3229,10 @@ CHECK_MVT_PAGE = """
  .btn3{padding:7px 10px;border:2px solid #111;border-radius:10px;background:#111;color:#fff;cursor:pointer}
 </style></head><body><div class="wrap">
 <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-    <h2 style="margin: 0;">Check des mouvements </h2>
-    <p style="margin: 0;"><a href="{{ url_for('home') }}" class="btn2" style="text-decoration: underline dotted red none;">← Retour</a></p>
-    <br>
+    <h2>Check des mouvements </h2>
+    <p><a href="{{ url_for('home') }}" class="btn2" style="text-decoration: underline dotted red;">← Retour</a></p>
 </div>
-
+<br>
 <tr style="background-color: transparent;"> <!-- Fond transparent pour laisser place aux arrondis du formulaire -->
     <td colspan="11" style="border: none; padding: 10px 0;"> <!-- Suppression des bordures de cellule pour un rendu net -->
         <form id="filter_form" method="get" action="{{ url_for('check_mouvements') }}" 
@@ -3311,6 +3310,14 @@ CHECK_MVT_PAGE = """
     </td>
     </tr>
     {% endfor %}
+
+    <!-- Ligne du total (à placer juste après la fin de la boucle) -->
+    <tr style="font-weight: bold; background-color: #f5f5f5;">
+        <td colspan="4" style="text-align: right;">Total :</td>
+        <td>{{ total_amount }}</td>
+        <td colspan="3"></td>
+    </tr>
+
 {% else %}
     {% for r in rows %}
         <tr>
