@@ -3242,8 +3242,8 @@ CHECK_MVT_PAGE = """
             
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             
-            <span style="color: #66101f;">&bull; FILTRES:</span>
-            <span>période du</span>
+            <span style="color: #66101f;">FILTRES:</span>
+            <span>&bull; période du</span>
             <input name="from_date" value="{{ debut.strftime('%d/%m/%Y') }}" size="6">
             <span>au</span>
             <input name="to_date" value="{{ fin.strftime('%d/%m/%Y') }}" size="6">
