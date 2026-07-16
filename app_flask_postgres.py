@@ -3230,7 +3230,8 @@ CHECK_MVT_PAGE = """
 </style></head><body><div class="wrap">
 <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
     <h2 style="margin: 0;">Check mouvements (admin)</h2>
-    <p style="margin: 0;"><a href="{{ url_for('home') }}" class="btn2" style="text-decoration: none;">← Retour</a></p>
+    <p style="margin: 0;"><a href="{{ url_for('home') }}" class="btn2" style="text-decoration: underline dotted red none;">← Retour</a></p>
+    <br>
 </div>
 
 <tr style="background-color: transparent;"> <!-- Fond transparent pour laisser place aux arrondis du formulaire -->
@@ -3249,10 +3250,10 @@ CHECK_MVT_PAGE = """
             <input name="to_date" value="{{ fin.strftime('%d/%m/%Y') }}" size="8">
 
             <span>&bull; Compte</span>
-            <input name="Compte" value="{{ cpte }}" size="5">
+            <input name="Compte" value="{{ cpte }}" size="8">
             
             <span>&bull; Identifiant</span>
-            <input name="Identifiant" value="{{ ident }}" size="5">
+            <input name="Identifiant" value="{{ ident }}" size="8">
             
             <span>&bull; D/C</span>        
             <input name="CodeD_C" value="{{ d_c }}" size="1">
