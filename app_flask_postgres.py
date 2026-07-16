@@ -269,20 +269,23 @@ def init_db():
 ####        # DUMP - Prise de backup des tables principales de l'application :
 #            # Utilisez des commentaires SQL (--) à l'intérieur de la chaîne
 #            sql_commands = """
-#            -- DUMP - Création desbackups des tables principales (membres et mouvements) avec un suffixe de date pour différenciation
-#            cur.execute(""" 
-#                DROP TABLE IF EXISTS membres_BACKUP_20260418;
-#                CREATE TABLE membres_BACKUP_20260418 AS SELECT * FROM membres;
-#                );
-#            """)
+#-------------------------------------------------------------------------------------------------------------------------------------
+#            1-- DUMP - Création desbackups des tables principales (membres et mouvements) avec un suffixe de date pour différenciation
+#-------------------------------------------------------------------------------------------------------------------------------------
+            cur.execute(""" 
+                DROP TABLE IF EXISTS membres_BACKUP_20260713;
+                CREATE TABLE membres_BACKUP_20260713 AS SELECT * FROM membres;
+            """)
 
-#            DROP TABLE IF EXISTS mouvements_BACKUP_20260409;
-#            CREATE TABLE mouvements_BACKUP_20260409 AS SELECT * FROM mouvements;
-#            """
-#            cur.execute(sql_commands)
+            cur.execute(""" 
+                DROP TABLE IF EXISTS mouvements_BACKUP_20260713;
+                CREATE TABLE mouvements_BACKUP_20260713 AS SELECT * FROM mouvements;
+            """)
 
-#            sql_commands = """
-#            -- RESTAURATION - Vider les tables sources et réinjecter les données des backups
+##            sql_commands = """
+#--------------------------------------------------------------------------------------------
+#            2-- RESTAURATION - Vider les tables sources et réinjecter les données des backups
+#--------------------------------------------------------------------------------------------
 #            TRUNCATE TABLE membres;
 #            INSERT INTO membres SELECT * FROM membres_BACKUP_20260409;
 #
@@ -290,7 +293,8 @@ def init_db():
 #            INSERT INTO mouvements SELECT * FROM mouvements_BACKUP_20260409;
 #            """
 #            cur.execute(sql_commands)
-#####
+#
+#############################################################################################
 #            SELECT * INTO membres_BACKUP_20260409
 #            FROM membres;    
 #            SELECT * INTO mouvements_BACKUP_20260409 
