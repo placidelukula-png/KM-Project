@@ -3230,7 +3230,7 @@ CHECK_MVT_PAGE = """
 </style></head><body><div class="wrap">
 <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
     <h2>Check des mouvements </h2>
-    <p><a href="{{ url_for('home') }}" class="btn2" style="text-decoration: underline dotted red;">← Retour</a></p>
+    <p><a href="{{ url_for('home') }}" class="btn2" style="text-decoration: none;">← Retour</a></p>
 </div>
 <br>
 <tr style="background-color: transparent;"> <!-- Fond transparent pour laisser place aux arrondis du formulaire -->
