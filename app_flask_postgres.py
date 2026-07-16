@@ -3263,7 +3263,7 @@ CHECK_MVT_PAGE = """
                 Go !
             </button>
             
-            <span style="background-color: rgba(255,255,255,0.4); padding: 4px 8px; border-radius: 6px;">
+            <span style="background-color: rgba(255,255,255,0.4); padding: 4px 8px; border-radius: 6px;align-self: center; font-weight: bold; color: #66101f;">
                 <strong>Montant calculé:</strong> {{ total_amount }}
             </span>
 
