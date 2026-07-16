@@ -3228,7 +3228,7 @@ CHECK_MVT_PAGE = """
  .btn2{padding:7px 10px;border:1px solid #111;border-radius:10px;background:#fff;color:#111;cursor:pointer}
  .btn3{padding:7px 10px;border:2px solid #111;border-radius:10px;background:#111;color:#fff;cursor:pointer}
 </style></head><body><div class="wrap">
-<div style="display: flex; gap: 10px; align-items: left; justify-content: left;">
+<div style="display: flex; gap: 10px; align-items: center; justify-content: right;">
     <h2>Check mouvements (admin)</h2>
     <p><a href="{{ url_for('home') }}">← Retour</a></p>
 </div>
@@ -3242,7 +3242,7 @@ CHECK_MVT_PAGE = """
             
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             
-            <span style="color: #66101f;">&bull; FILTRES :</span>
+            <span style="color: #66101f;">&bull; FILTRES:</span>
             <span>période du</span>
             <input name="from_date" value="{{ debut }}" size="8">
             <span>au</span>
@@ -3255,24 +3255,30 @@ CHECK_MVT_PAGE = """
             <input name="Identifiant" value="{{ ident }}" size="5">
             
             <span>&bull; D/C</span>        
-            <input name="CodeD_C" value="{{ d_c }}" size="2">
-            
-            <span style="background-color: rgba(255,255,255,0.4); padding: 4px 8px; border-radius: 6px;">
-                <strong>Montant calculé:</strong> {{ total_amount }}
-            </span>
+            <input name="CodeD_C" value="{{ d_c }}" size="1">
 
             <!-- Ce style pousse le bouton tout à fait à droite -->
             <button class="btn3" type="submit" onclick="return confirm('Débuter recherche?')" 
                     style="margin-left: auto; padding: 8px 20px; font-weight: bold;">
                 Go !
             </button>
+            
+            <span style="background-color: rgba(255,255,255,0.4); padding: 4px 8px; border-radius: 6px;">
+                <strong>Montant calculé:</strong> {{ total_amount }}
+            </span>
+
+
         </form>
     </td>
 </tr>
 
 <table>
 
-<thead><tr><th>ID</th><th>Phone</th><th>Nom</th><th>Date</th><th>Montant</th><th>D/C</th><th>Libellé</th><th>Regie</th><th>Action</th></tr></thead>
+{% if updateuser=="admin" %}
+    <thead><tr><th>ID</th><th>Phone</th><th>Nom</th><th>Date</th><th>Montant</th><th>D/C</th><th>Libellé</th><th>Regie</th><th>Action</th></tr></thead>
+else:
+    <thead><tr><th>ID</th><th>Phone</th><th>Nom</th><th>Date</th><th>Montant</th><th>D/C</th><th>Libellé</th><th>Regie</th></tr></thead>
+{% endif %}
 
 <tbody>
 {% if updateuser=="admin" %}
@@ -3321,7 +3327,7 @@ CHECK_MVT_PAGE = """
             </select>
         </td>
         
-        <td><input name="libelle" value="{{ r[7] }}" readonly size="25"></td>
+        <td><input name="libelle" value="{{ r[7] }}" readonly size="30"></td>
         <td><input name="regie" value="{{ r[10] }}" readonly size="6"></td>
         </form>
         </tr> <!-- Note : Pensez à fermer votre balise tr ici -->
