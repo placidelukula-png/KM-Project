@@ -3228,35 +3228,44 @@ CHECK_MVT_PAGE = """
  .btn2{padding:7px 10px;border:1px solid #111;border-radius:10px;background:#fff;color:#111;cursor:pointer}
  .btn3{padding:7px 10px;border:2px solid #111;border-radius:10px;background:#111;color:#fff;cursor:pointer}
 </style></head><body><div class="wrap">
-<div style="display: flex; gap: 10px; align-items: justify-content;">
+<div style="display: flex; gap: 10px; align-items: left; justify-content: left;">
     <h2>Check mouvements (admin)</h2>
     <p><a href="{{ url_for('home') }}">← Retour</a></p>
 </div>
 
-<tr style="background-color: #ffcccb; font-weight: bold;">
-    <td colspan="11">
-        <form id="filter_form" method="get" action="{{ url_for('check_mouvements') }}" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 10px;">
+<tr style="background-color: transparent;"> <!-- Fond transparent pour laisser place aux arrondis du formulaire -->
+    <td colspan="11" style="border: none; padding: 10px 0;"> <!-- Suppression des bordures de cellule pour un rendu net -->
+        <form id="filter_form" method="get" action="{{ url_for('check_mouvements') }}" 
+              style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; 
+                     background-color: #ffcccb; border-radius: 12px; padding: 12px 20px; 
+                     box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+            
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             
-            <span>FILTRES :</span>
-            <span>-•période du</span>
-            <input name="from_date" value="{{ debut }}" size="6">
+            <span style="color: #66101f;">&bull; FILTRES :</span>
+            <span>période du</span>
+            <input name="from_date" value="{{ debut }}" size="8">
             <span>au</span>
-            <input name="to_date" value="{{ fin }}" size="6">
+            <input name="to_date" value="{{ fin }}" size="8">
 
-            <span>-•Compte</span>
-            <input name="Compte" value="{{ cpte }}" size="4">
+            <span>&bull; Compte</span>
+            <input name="Compte" value="{{ cpte }}" size="5">
             
-            <span>-•Identifiant</span>
-            <input name="Identifiant" value="{{ ident }}" size="4">
+            <span>&bull; Identifiant</span>
+            <input name="Identifiant" value="{{ ident }}" size="5">
             
-            <span>-•D/C</span>        
-            <input name="CodeD_C" value="{{ d_c }}" size="1">
+            <span>&bull; D/C</span>        
+            <input name="CodeD_C" value="{{ d_c }}" size="2">
             
-            <span>-•Montant calculé:</span>
-            <span>{{ total_amount }}</span>
+            <span style="background-color: rgba(255,255,255,0.4); padding: 4px 8px; border-radius: 6px;">
+                <strong>Montant calculé:</strong> {{ total_amount }}
+            </span>
 
-            <button class="btn3" type="submit" onclick="return confirm('Débuter recherche?')"> Go ! </button>
+            <!-- Ce style pousse le bouton tout à fait à droite -->
+            <button class="btn3" type="submit" onclick="return confirm('Débuter recherche?')" 
+                    style="margin-left: auto; padding: 8px 20px; font-weight: bold;">
+                Go !
+            </button>
         </form>
     </td>
 </tr>
