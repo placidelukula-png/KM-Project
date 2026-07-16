@@ -258,7 +258,7 @@ def init_db():
                 );
             """)
 
-#---------------------------------------------------------------------------------
+##########################################################################################
 #           PROCESSUS DE PRISE DE BACKUP & RESTAURATION DES DONNEES 
 #           (ex: avant une opération de correction en haut-volume ou 
 #            une opération de correction exceptionnelle sur les données
@@ -272,29 +272,32 @@ def init_db():
 #-------------------------------------------------------------------------------------------------------------------------------------
 #            1-- DUMP - Création desbackups des tables principales (membres et mouvements) avec un suffixe de date pour différenciation
 #-------------------------------------------------------------------------------------------------------------------------------------
-            cur.execute(""" 
-                DROP TABLE IF EXISTS membres_BACKUP_20260713;
-                CREATE TABLE membres_BACKUP_20260713 AS SELECT * FROM membres;
-            """)
+#            cur.execute(""" 
+#                DROP TABLE IF EXISTS membres_BACKUP_20260713;
+#                CREATE TABLE membres_BACKUP_20260713 AS SELECT * FROM membres;
+#            """)
 
-            cur.execute(""" 
-                DROP TABLE IF EXISTS mouvements_BACKUP_20260713;
-                CREATE TABLE mouvements_BACKUP_20260713 AS SELECT * FROM mouvements;
-            """)
+#            cur.execute(""" 
+#                DROP TABLE IF EXISTS mouvements_BACKUP_20260713;
+#                CREATE TABLE mouvements_BACKUP_20260713 AS SELECT * FROM mouvements;
+#            """)
 
 ##            sql_commands = """
 #--------------------------------------------------------------------------------------------
 #            2-- RESTAURATION - Vider les tables sources et réinjecter les données des backups
 #--------------------------------------------------------------------------------------------
 #            TRUNCATE TABLE membres;
-#            INSERT INTO membres SELECT * FROM membres_BACKUP_20260409;
+#            INSERT INTO membres SELECT * FROM membres_BACKUP_20260713;
 #
 #            TRUNCATE TABLE mouvements;
-#            INSERT INTO mouvements SELECT * FROM mouvements_BACKUP_20260409;
+#            INSERT INTO mouvements SELECT * FROM mouvements_BACKUP_20260713;
 #            """
 #            cur.execute(sql_commands)
 #
-#############################################################################################
+###############################################################################################
+
+
+
 #            SELECT * INTO membres_BACKUP_20260409
 #            FROM membres;    
 #            SELECT * INTO mouvements_BACKUP_20260409 
@@ -3279,9 +3282,9 @@ CHECK_MVT_PAGE = """
 <table>
 
 {% if updateuser=="admin" %}
-    <thead><tr><th>ID</th><th>Phone</th><th>Nom</th><th>Date</th><th>Montant</th><th>D/C</th><th>Libellé</th><th>Regie</th><th>Action</th></tr></thead>
+    <thead><tr><th>ID</th><th>Phone</th><th>Nom</th><th>Date</th><th>Montant</th><th>D/C</th><th>Libellé</th><th>Compte</th><th>Action</th></tr></thead>
 {% else %}
-    <thead><tr><th>ID</th><th>Phone</th><th>Nom</th><th>Date</th><th>Montant</th><th>D/C</th><th>Libellé</th><th>Regie</th></tr></thead>
+    <thead><tr><th>ID</th><th>Phone</th><th>Nom</th><th>Date</th><th>Montant</th><th>D/C</th><th>Libellé</th><th>Compte</th></tr></thead>
 {% endif %}
 
 <tbody>
@@ -3506,7 +3509,7 @@ DATAGENERALFOLLOWUP_PAGE = """
             <!-- BLOC 3 -->
             <form action="{{ url_for('launch_statutes_update') }}" method="POST">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button type="submit" class="btn btn-primary" style="width: 100%;" onclick="return confirm('Avez vous vérifié les indicateurs ? (C notamment)')">
+                <button type="submit" class="btn btn-primary" style="width: 100%;" onclick="return confirm('Avez vous (1) Pris un dump ? et (2) vérifié les indicateurs ? (C notamment)'   Si non, laissez faire par le super-admin)">
                     🔄 Actualiser les Statuts
                 </button>
             </form>
