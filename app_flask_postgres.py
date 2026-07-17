@@ -1872,7 +1872,7 @@ LOGIN_PAGE = """
             <div class="msg">{{ message }}</div>
         {% endif %}
 
-        <div class="small">
+        <div style="font-size: 0.5em;">
             Accès refusé aux suspendus et aux radiés
         </div>
 
