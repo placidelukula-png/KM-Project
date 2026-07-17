@@ -1818,7 +1818,7 @@ LOGIN_PAGE = """
 
     .btn2 {
         background: black;
-        style="font-size: 0.7em;
+        font-size: 0.7em;
         color: white;
         border-radius: 10px;
         justify-content: center; 
