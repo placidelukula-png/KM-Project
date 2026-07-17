@@ -1878,6 +1878,7 @@ LOGIN_PAGE = """
 
         <div class="navigation-buttons" style="margin-top: 20px; display: flex; gap: 10px;border-radius: 20px;background: rgba(220,220,220,1);justify-content: center; align-items: center;">
             <!-- Bouton Inscription -->
+            <br>
             <a href="{{ url_for('add_member_route') }}">
                 <button type="button">Veuillez vous inscrire librement</button>
             </a>
@@ -1886,6 +1887,7 @@ LOGIN_PAGE = """
             <a href="{{ url_for('infos_association') }}">
                 <button type="button">A propos de notre association</button>
             </a>
+            <br>
         </div>
         
     </div>
