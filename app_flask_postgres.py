@@ -1878,7 +1878,7 @@ LOGIN_PAGE = """
 
         <div class="navigation-buttons" style="margin-top: 20px; display: flex; gap: 10px;border-radius: 20px;background: rgba(220,220,220,1);justify-content: center; align-items: center;">
             <!-- Bouton Inscription -->
-            <br>
+            <hr>
             <a href="{{ url_for('add_member_route') }}">
                 <button type="button">Veuillez vous inscrire librement</button>
             </a>
@@ -1887,7 +1887,7 @@ LOGIN_PAGE = """
             <a href="{{ url_for('infos_association') }}">
                 <button type="button">A propos de notre association</button>
             </a>
-            <br>
+            <hr>
         </div>
         
     </div>
@@ -3511,7 +3511,7 @@ DATAGENERALFOLLOWUP_PAGE = """
             <!-- BLOC 3 -->
             <form action="{{ url_for('launch_statutes_update') }}" method="POST">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button type="submit" class="btn btn-primary" style="width: 100%;" onclick="return confirm('Avez vous (1) Pris un dump ? et (2) vérifié les indicateurs ? (C notamment)'   Si non, laissez faire par le super-admin)">
+                <button type="submit" class="btn btn-primary" style="width: 100%;" onclick="return confirm('Avez vous [1] Pris un dump ? et [2] vérifié les indicateurs ? (indicateur C notamment)   Si non, laissez faire par le super-admin')">
                     🔄 Actualiser les Statuts
                 </button>
             </form>
