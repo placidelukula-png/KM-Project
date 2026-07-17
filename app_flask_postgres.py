@@ -1879,12 +1879,12 @@ LOGIN_PAGE = """
         <div class="navigation-buttons" style="margin-top: 5px; display: flex; gap: 10px;border-radius: 20px;justify-content: center; align-items: center;">
             <!-- Bouton Inscription -->
             <a href="{{ url_for('add_member_route') }}">
-                <button type="button" class="btn btn-primary" style="font-size: 0.7em;color: #32CD32">Veuillez vous inscrire librement</button>
+                <button type="button" class="btn btn-primary" style="font-size: 0.7em;color: #32CD32",background-color: #000001;">Veuillez vous inscrire librement</button>
             </a>
 
             <!-- Bouton Infos Association rgba(25,25,112,1) or rgba(0,0,128,1)-->
             <a href="{{ url_for('infos_association') }}">
-                <button type="button" class="btn btn-primary" style="font-size: 0.7em;color: #32CD32">A propos de notre association</button>
+                <button type="button" class="btn btn-primary" style="font-size: 0.7em;color: #32CD32",background-color: #000001;">A propos de notre association</button>
             </a>
         </div>
         
@@ -4579,11 +4579,11 @@ INFOS_ASSOCIATION_PAGE = """
         </ul>
 
         <p>
-            Après le paiement, la capture d'écran du reçu de paiement émis par le service de mobile-money avec votre nom complet constitue la preuve de paiement et/ou de votre d'adhésion le cas échéant. Cette démarche simple et accessible permet à chacun de rejoindre notre communauté et de bénéficier du soutien mutuel que nous offrons.
+            Si le paiement est effectué par un téléphone enregistré en votre nom officiel, votre adhésion est automatique car le serveur informatique de la régie Mobile-money nous communiquera directement votre identité. Dans le cas contraire (téléphone non enregistré en votre nom), il sied d'accompagner votre paiement par un message sms au meme numero, qui précise votre identité. Après le paiement, la capture d'écran du reçu de paiement émis par le service de mobile-money avec votre nom complet constitue la preuve de paiement et/ou de votre d'adhésion le cas échéant. Cette démarche simple et accessible permet à chacun de rejoindre notre communauté et de bénéficier du soutien mutuel que nous offrons.
         </p>
 
         <p>
-            Nous recommandons vivement aux membres residants en dehors de la RDC d'utiliser les services offerts par les réseaux de transfert d'argent internationaux comme <strong>REMITLY</strong> accessible officiellement sous l'URL <strong>www.remitly.com</strong> (pas ailleurs). Pour le cas de 'remitly' l'utilisation des destinations mobile-money :<strong> +243824807663 pour Mpesa et +243891273191 pour Orange-money</strong> sont efficaces ; le transfert est quasi instantané. Dans ce cas, n'oubliez pas de mentionner clairement dans les libellés du transfert l'identifiant du beneficiaire (votre identifiant le cas echeant), si non accompagner votre transfert par un message téléphonique SMS, au numéro de destination, libellé comme suit : <i><P style="color: blue;">"Pour KM-Kimya à partir de '<strong>NOM DU PAYS D'Où VOUS ENVOYEZ</strong>' en faveur de '<strong>IDENTIFIANT KM-KIMYA DU BENEFICAIRE</strong>'  Montant: '<strong>LE MONTANT ENVOYÉ</strong>'"</P></i> pour nous permettre de vous identifier correctement dans notre base de données.
+            Nous recommandons vivement aux membres residants en dehors de la RDC d'utiliser les services offerts par les réseaux de transfert d'argent internationaux comme <strong>REMITLY</strong> accessible officiellement sous l'URL <strong>www.remitly.com</strong> (pas ailleurs). Pour le cas de 'remitly' l'utilisation des destinations mobile-money :<strong> +243824807663 pour Mpesa et +243891273191 pour Orange-money</strong> sont efficaces ; le transfert est quasi instantané. Dans ce cas, n'oubliez pas de mentionner clairement dans les libellés du transfert l'identifiant du bénéficiaire (votre identifiant le cas échéant), si non accompagner votre transfert par un message SMS, au même numéro de destination, libellé comme suit : <i><P style="color: blue;">"Pour KM-Kimya à partir de '<strong>NOM DU PAYS D'Où VOUS ENVOYEZ</strong>' en faveur de '<strong>IDENTIFIANT KM-KIMYA DU BENEFICAIRE</strong>'  Montant: '<strong>LE MONTANT ENVOYÉ</strong>'"</P></i> pour nous permettre de vous identifier correctement dans notre base de données.
         </p>
 
         <p>
