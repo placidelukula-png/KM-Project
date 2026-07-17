@@ -1819,7 +1819,7 @@ LOGIN_PAGE = """
     .btn2 {
         background: black;
         style="font-size: 0.7em;
-        color: #32CD32";
+        color: white;
         border-radius: 10px;
         justify-content: center; 
         align-items: center;
