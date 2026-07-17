@@ -1816,6 +1816,10 @@ LOGIN_PAGE = """
         transition: 0.3s;
     }
 
+    .btn2 {
+        background: black;
+    }
+    
     .btn:hover {
         transform: translateY(-2px);
         box-shadow: 0 5px 15px rgba(0,0,0,0.3);
@@ -1879,12 +1883,12 @@ LOGIN_PAGE = """
         <div class="navigation-buttons" style="margin-top: 5px; display: flex; gap: 10px;border-radius: 20px;justify-content: center; align-items: center;">
             <!-- Bouton Inscription -->
             <a href="{{ url_for('add_member_route') }}">
-                <button type="button" class="btn btn-primary" style="font-size: 0.7em;color: #32CD32",background-color: #000001;">Veuillez vous inscrire librement</button>
+                <button type="button" class="btn2" style="font-size: 0.7em;color: #32CD32";">Veuillez vous inscrire librement</button>
             </a>
 
             <!-- Bouton Infos Association rgba(25,25,112,1) or rgba(0,0,128,1)-->
             <a href="{{ url_for('infos_association') }}">
-                <button type="button" class="btn btn-primary" style="font-size: 0.7em;color: #32CD32",background-color: #000001;">A propos de notre association</button>
+                <button type="button" class="btn2" style="font-size: 0.7em;color: #32CD32";">A propos de notre association</button>
             </a>
         </div>
         
