@@ -1872,11 +1872,11 @@ LOGIN_PAGE = """
             <div class="msg">{{ message }}</div>
         {% endif %}
 
-        <div style="font-size: 0.5em;text-align: center;margin-top: 10px;color: rgba(0,0,0,0.7);">
+        <div style="font-size: 0.5em;text-align: center;">
             Accès refusé aux suspendus et aux radiés
         </div>
 
-        <div class="navigation-buttons" style="margin-top: 5px; display: flex; gap: 10px;border-radius: 20px;color: rgba(0,0,0,1);background-color: rgba(220,220,220,1);justify-content: center; align-items: center;">
+        <div class="navigation-buttons" style="margin-top: 5px; display: flex; gap: 10px;border-radius: 20px;color: #008000;background-color: #32CD32;justify-content: center; align-items: center;">
             <!-- Bouton Inscription -->
             <a href="{{ url_for('add_member_route') }}">
                 <button type="button" class="btn btn-primary" style="font-size: 0.7em;">Veuillez vous inscrire librement</button>
