@@ -1876,15 +1876,15 @@ LOGIN_PAGE = """
             Accès refusé aux suspendus et aux radiés
         </div>
 
-        <div class="navigation-buttons" style="margin-top: 20px; display: flex; gap: 10px;border-radius: 20px;background: rgba(220,220,220,1);justify-content: center; align-items: center;">
+        <div class="navigation-buttons" style="margin-top: 20px; display: flex; gap: 10px;border-radius: 20px;background: rgba(220,220,220,2);justify-content: center; align-items: center;">
             <!-- Bouton Inscription -->
             <a href="{{ url_for('add_member_route') }}">
-                <button type="button" class="btn btn-primary" style="font-size: 0.4em;">Veuillez vous inscrire librement</button>
+                <button type="button" class="btn btn-primary" style="font-size: 0.6em;">Veuillez vous inscrire librement</button>
             </a>
 
             <!-- Bouton Infos Association rgba(25,25,112,1) or rgba(0,0,128,1)-->
             <a href="{{ url_for('infos_association') }}">
-                <button type="button" class="btn btn-primary" style="font-size: 0.4em;">A propos de notre association</button>
+                <button type="button" class="btn btn-primary" style="font-size: 0.6em;">A propos de notre association</button>
             </a>
         </div>
         
