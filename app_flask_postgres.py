@@ -269,18 +269,33 @@ def init_db():
 ####        # DUMP - Prise de backup des tables principales de l'application :
 #            # Utilisez des commentaires SQL (--) à l'intérieur de la chaîne
 #            sql_commands = """
-#-------------------------------------------------------------------------------------------------------------------------------------
-#            1-- DUMP - Création desbackups des tables principales (membres et mouvements) avec un suffixe de date pour différenciation
-#-------------------------------------------------------------------------------------------------------------------------------------
-#            cur.execute(""" 
-#                DROP TABLE IF EXISTS membres_BACKUP_20260713;
-#                CREATE TABLE membres_BACKUP_20260713 AS SELECT * FROM membres;
-#            """)
+#----------------------------------------------------------------------------------------------------------------------------
+#            1-- DUMP - Création des backups de toutes les tables (membres, mouvements, deces, id_data et comptes_techniques) 
+#----------------------------------------------------------------------------------------------------------------------------
+            cur.execute(""" 
+                DROP TABLE IF EXISTS membres_BACKUP_20260719;
+                CREATE TABLE membres_BACKUP_20260719 AS SELECT * FROM membres;
+            """)
 
-#            cur.execute(""" 
-#                DROP TABLE IF EXISTS mouvements_BACKUP_20260713;
-#                CREATE TABLE mouvements_BACKUP_20260713 AS SELECT * FROM mouvements;
-#            """)
+            cur.execute(""" 
+                DROP TABLE IF EXISTS mouvements_BACKUP_20260719;
+                CREATE TABLE mouvements_BACKUP_20260719 AS SELECT * FROM mouvements;
+            """)
+
+            cur.execute(""" 
+                DROP TABLE IF EXISTS deces_BACKUP_20260719;
+                CREATE TABLE deces_BACKUP_20260719 AS SELECT * FROM deces;
+            """)
+
+            cur.execute(""" 
+                DROP TABLE IF EXISTS id_data_BACKUP_20260719;
+                CREATE TABLE id_data_BACKUP_20260719 AS SELECT * FROM id_data;
+            """)
+
+            cur.execute(""" 
+                DROP TABLE IF EXISTS comptes_techniques_BACKUP_20260719;
+                CREATE TABLE comptes_techniques_BACKUP_20260719 AS SELECT * FROM comptes_techniques;
+            """)
 
 ##            sql_commands = """
 #--------------------------------------------------------------------------------------------
