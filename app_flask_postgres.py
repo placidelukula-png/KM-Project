@@ -301,11 +301,30 @@ def init_db():
 #--------------------------------------------------------------------------------------------
 #            2-- RESTAURATION - Vider les tables sources et réinjecter les données des backups
 #--------------------------------------------------------------------------------------------
-#            TRUNCATE TABLE membres;
-#            INSERT INTO membres SELECT * FROM membres_BACKUP_20260713;
-#
-#            TRUNCATE TABLE mouvements;
-#            INSERT INTO mouvements SELECT * FROM mouvements_BACKUP_20260713;
+            cur.execute(""" 
+               TRUNCATE TABLE membres;
+               INSERT INTO membres SELECT * FROM membres_BACKUP_20260719;
+            """)
+
+            cur.execute(""" 
+               TRUNCATE TABLE mouvements;
+               INSERT INTO mouvements SELECT * FROM mouvements_BACKUP_20260719;
+            """)
+
+            cur.execute(""" 
+               TRUNCATE TABLE deces;
+               INSERT INTO deces SELECT * FROM deces_BACKUP_20260719;
+            """)
+
+            cur.execute(""" 
+               TRUNCATE TABLE id_data;
+               INSERT INTO id_data SELECT * FROM id_data_BACKUP_20260719;
+            """)
+            cur.execute(""" 
+               TRUNCATE TABLE comptes_techniques;
+               INSERT INTO comptes_techniques SELECT * FROM comptes_techniques_BACKUP_20260719;
+            """)
+
 #            """
 #            cur.execute(sql_commands)
 #
@@ -807,9 +826,29 @@ def create_prestation_mouvements(deceased_phone, prestation):
             S = cur.fetchone()
             S = S[0] if S else Decimal("0")
 
-#
-            C = (Decimal(1+S) * prestation) / Decimal(N)
-            C = C.quantize(Decimal("0.01"))
+            # M = Mode de travail (CF = Contributions fixes, PF = Prestations fixes)
+            cur.execute("""
+                SELECT decript
+                FROM id_data
+                WHERE keydata = 'id-data04'  -- clé fixée pour le mode de travail
+                ORDER BY id DESC
+                LIMIT 1 
+            """)
+            M = cur.fetchone()
+            Mode = M[0] if M else "PF"  # par défaut, on est en mode Prestations fixes (calcul de C à partir de P, S et N)      
+            if Mode == "CF" :
+                cur.execute("""
+                    SELECT COALESCE(quantity, 0)
+                    FROM id_data
+                    WHERE keydata = 'id-data03'  -- clé fixée pour la contribution fixée (contribution spécifique au lieu de la calculer à partir de P, S et N)
+                    ORDER BY id DESC
+                    LIMIT 1
+                """)
+                C = cur.fetchone()
+                C = C[0] if C else Decimal("0") 
+            else:
+                C = (Decimal(1+S) * prestation) / Decimal(N)
+                C = C.quantize(Decimal("0.01"))
 #
             reference = f"PREST-{datetime.utcnow().timestamp()}"
 
