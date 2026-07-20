@@ -272,30 +272,30 @@ def init_db():
 #----------------------------------------------------------------------------------------------------------------------------
 #            1-- DUMP - Création des backups de toutes les tables (membres, mouvements, deces, id_data et comptes_techniques) 
 #----------------------------------------------------------------------------------------------------------------------------
-            cur.execute(""" 
-                DROP TABLE IF EXISTS membres_BACKUP_20260720_ko;
-                CREATE TABLE membres_BACKUP_20260720_ko AS SELECT * FROM membres;
-            """)
+#            cur.execute(""" 
+#                DROP TABLE IF EXISTS membres_BACKUP_20260720_ko;
+#                CREATE TABLE membres_BACKUP_20260720_ko AS SELECT * FROM membres;
+#            """)
 
-            cur.execute(""" 
-                DROP TABLE IF EXISTS mouvements_BACKUP_20260720_ko;
-                CREATE TABLE mouvements_BACKUP_20260720_ko AS SELECT * FROM mouvements;
-            """)
+#            cur.execute(""" 
+#                DROP TABLE IF EXISTS mouvements_BACKUP_20260720_ko;
+#                CREATE TABLE mouvements_BACKUP_20260720_ko AS SELECT * FROM mouvements;
+#            """)
 
-            cur.execute(""" 
-                DROP TABLE IF EXISTS deces_BACKUP_20260720_ko;
-                CREATE TABLE deces_BACKUP_20260720_ko AS SELECT * FROM deces;
-            """)
+#            cur.execute(""" 
+#                DROP TABLE IF EXISTS deces_BACKUP_20260720_ko;
+#                CREATE TABLE deces_BACKUP_20260720_ko AS SELECT * FROM deces;
+#            """)
 
-            cur.execute(""" 
-                DROP TABLE IF EXISTS id_data_BACKUP_20260720_ko;
-                CREATE TABLE id_data_BACKUP_20260720_ko AS SELECT * FROM id_data;
-            """)
+#            cur.execute(""" 
+#                DROP TABLE IF EXISTS id_data_BACKUP_20260720_ko;
+#                CREATE TABLE id_data_BACKUP_20260720_ko AS SELECT * FROM id_data;
+#            """)
 
-            cur.execute(""" 
-                DROP TABLE IF EXISTS comptes_techniques_BACKUP_20260720_ko;
-                CREATE TABLE comptes_techniques_BACKUP_20260720_ko AS SELECT * FROM comptes_techniques;
-            """)
+#            cur.execute(""" 
+#                DROP TABLE IF EXISTS comptes_techniques_BACKUP_20260720_ko;
+#                CREATE TABLE comptes_techniques_BACKUP_20260720_ko AS SELECT * FROM comptes_techniques;
+#            """)
 
 ##            sql_commands = """
 #--------------------------------------------------------------------------------------------
@@ -3731,7 +3731,7 @@ DATAGENERALFOLLOWUP_PAGE = """
           <td>{{ r[4] }}</td>
           <td>{{ r[5] }}</td>
           <td>{{ r[9] }}</td>
-          <td>{{ r[15].strftime('%d/%m/%Y') }}</td>
+          <td>{{ r[14].strftime('%d/%m/%Y') }}</td>
           <td>{{ r[12] }}</td>
           <td>
             <a href="{{ url_for('edit', member_id=r[0]) }}">Edit</a>
