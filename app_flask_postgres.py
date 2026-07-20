@@ -273,28 +273,28 @@ def init_db():
 #            1-- DUMP - Création des backups de toutes les tables (membres, mouvements, deces, id_data et comptes_techniques) 
 #----------------------------------------------------------------------------------------------------------------------------
             cur.execute(""" 
-                DROP TABLE IF EXISTS membres_BACKUP_20260719;
-                CREATE TABLE membres_BACKUP_20260719 AS SELECT * FROM membres;
+                DROP TABLE IF EXISTS membres_BACKUP_20260720_ko;
+                CREATE TABLE membres_BACKUP_20260720_ko AS SELECT * FROM membres;
             """)
 
             cur.execute(""" 
-                DROP TABLE IF EXISTS mouvements_BACKUP_20260719;
-                CREATE TABLE mouvements_BACKUP_20260719 AS SELECT * FROM mouvements;
+                DROP TABLE IF EXISTS mouvements_BACKUP_20260720_ko;
+                CREATE TABLE mouvements_BACKUP_20260720_ko AS SELECT * FROM mouvements;
             """)
 
             cur.execute(""" 
-                DROP TABLE IF EXISTS deces_BACKUP_20260719;
-                CREATE TABLE deces_BACKUP_20260719 AS SELECT * FROM deces;
+                DROP TABLE IF EXISTS deces_BACKUP_20260720_ko;
+                CREATE TABLE deces_BACKUP_20260720_ko AS SELECT * FROM deces;
             """)
 
             cur.execute(""" 
-                DROP TABLE IF EXISTS id_data_BACKUP_20260719;
-                CREATE TABLE id_data_BACKUP_20260719 AS SELECT * FROM id_data;
+                DROP TABLE IF EXISTS id_data_BACKUP_20260720_ko;
+                CREATE TABLE id_data_BACKUP_20260720_ko AS SELECT * FROM id_data;
             """)
 
             cur.execute(""" 
-                DROP TABLE IF EXISTS comptes_techniques_BACKUP_20260719;
-                CREATE TABLE comptes_techniques_BACKUP_20260719 AS SELECT * FROM comptes_techniques;
+                DROP TABLE IF EXISTS comptes_techniques_BACKUP_20260720_ko;
+                CREATE TABLE comptes_techniques_BACKUP_20260720_ko AS SELECT * FROM comptes_techniques;
             """)
 
 ##            sql_commands = """
@@ -810,7 +810,7 @@ def create_prestation_mouvements(deceased_phone, prestation):
 #
             C = (Decimal(1+S) * prestation) / Decimal(N)
             C = C.quantize(Decimal("0.01"))
-
+#
             reference = f"PREST-{datetime.utcnow().timestamp()}"
 
             # 1️⃣ CREDIT prestation
@@ -3713,11 +3713,11 @@ DATAGENERALFOLLOWUP_PAGE = """
         <tr>
           <th style="width:70px;">ID</th>
           <th>Identifiant</th>
-          <th>Mentor</th>
+          <th>Solde</th>
           <th>Nom de famille</th>
           <th>Prénom</th>
           <th>Statut</th>
-          <th>Update</th>
+          <th>Adhésion</th>
           <th>Update by</th>
           <th style="width:160px;">Action</th>
         </tr>
@@ -3731,7 +3731,7 @@ DATAGENERALFOLLOWUP_PAGE = """
           <td>{{ r[4] }}</td>
           <td>{{ r[5] }}</td>
           <td>{{ r[9] }}</td>
-          <td>{{ r[11].strftime('%d/%m/%Y') }}</td>
+          <td>{{ r[15].strftime('%d/%m/%Y') }}</td>
           <td>{{ r[12] }}</td>
           <td>
             <a href="{{ url_for('edit', member_id=r[0]) }}">Edit</a>
