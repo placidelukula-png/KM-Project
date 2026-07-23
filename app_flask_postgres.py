@@ -14,7 +14,7 @@ import logging
 from datetime import datetime, timedelta, timezone
 from functools import wraps
 import select
-from tkinter import INSERT
+#from tkinter import INSERT
 from weakref import ref
 
 import psycopg
