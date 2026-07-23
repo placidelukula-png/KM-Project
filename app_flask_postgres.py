@@ -14,6 +14,7 @@ import logging
 from datetime import datetime, timedelta, timezone
 from functools import wraps
 import select
+from tkinter import INSERT
 from weakref import ref
 
 import psycopg
@@ -301,29 +302,30 @@ def init_db():
 #--------------------------------------------------------------------------------------------
 #            2-- RESTAURATION - Vider les tables sources et réinjecter les données des backups
 #--------------------------------------------------------------------------------------------
-            cur.execute(""" 
-               TRUNCATE TABLE membres;
-               INSERT INTO membres SELECT * FROM membres_BACKUP_20260719;
-            """)
+#            cur.execute(""" 
+#               TRUNCATE TABLE membres;
+#               INSERT INTO membres SELECT * FROM membres_BACKUP_20260719;
+#            """)
 
-            cur.execute(""" 
-               TRUNCATE TABLE mouvements;
-               INSERT INTO mouvements SELECT * FROM mouvements_BACKUP_20260719;
-            """)
+#            cur.execute(""" 
+#               TRUNCATE TABLE mouvements;
+#               INSERT INTO mouvements SELECT * FROM mouvements_BACKUP_20260719;
+#            """)
 
-            cur.execute(""" 
-               TRUNCATE TABLE deces;
-               INSERT INTO deces SELECT * FROM deces_BACKUP_20260719;
-            """)
+#            cur.execute(""" 
+#               TRUNCATE TABLE deces;
+#               INSERT INTO deces SELECT * FROM deces_BACKUP_20260719;
+#           """)    
 
-            cur.execute(""" 
-               TRUNCATE TABLE id_data;
-               INSERT INTO id_data SELECT * FROM id_data_BACKUP_20260719;
-            """)
-            cur.execute(""" 
-               TRUNCATE TABLE comptes_techniques;
-               INSERT INTO comptes_techniques SELECT * FROM comptes_techniques_BACKUP_20260719;
-            """)
+#            cur.execute(""" 
+#               TRUNCATE TABLE id_data;
+#               INSERT INTO id_data SELECT * FROM id_data_BACKUP_20260719;
+#           """)
+
+#            cur.execute(""" 
+#               TRUNCATE TABLE comptes_techniques;
+#               INSERT INTO comptes_techniques SELECT * FROM comptes_techniques_BACKUP_20260719;
+#            """)
 
 #            """
 #            cur.execute(sql_commands)
@@ -568,7 +570,7 @@ def init_db():
 #            cur.execute("""
 #                UPDATE membres 
 #                SET membershipdate = date '2024-05-16' 
-#                WHERE membershipdate <= date '2026-05-16' AND (currentstatute = 'probatoire' OR currentstatute = 'actif')
+#                WHERE membershipdate <= date '2026-05-16' 
 #            """)
 #
 #            # Fixation de la prestation visée.
@@ -4269,7 +4271,7 @@ def transfer():
 
                 create_transfert(from_phone, to_phone, amount, ref,d)
 
-                message, is_error = "Contribution transférée. félicitation pour le généreux partage !", False
+                message, is_error = "Contribution transférée. OK !", False
                 to_phone, amount, found_name = "", 0.0, ""
             except Exception as e:
                 message, is_error = f"Erreur: {e}", True
@@ -4365,7 +4367,7 @@ def donation():
             d = datetime.strptime(date.today().strftime("%d/%m/%Y"), "%d/%m/%Y")
             ref = f"DON-{uuid.uuid4().hex[:10]}"
             create_donation(donation, ref, d)
-            message, is_error = "Donation enregistrée. Merci pour votre générosité !", False
+            message, is_error = "Donation enregistrée. Merci pour votre généreux soutien !", False
         except Exception as e:
             message, is_error = f"Erreur: {e}", True
             log.exception("Erreur lors de l'enregistrement du mouvement de donation: %s", e)                
@@ -4694,26 +4696,26 @@ FAQ_PAGE = """
     <p><a href="{{ url_for('infos_association') }}" class="btn-back">← Retour</a></p>
 
     <ul>
-    <li><a href="#chapitre0">Comment faire pour adhérer le plus simplement possible à l’Association KM-Kimya ?</a></li>  
-    <li><a href="#chapitre1">Quelle est la mission et l'objectif de l’Association KM-Kimya ?</a></li>
-    <li><a href="#chapitre2">Qui peut adhérer à l'Association ?</a></li>
-    <li><a href="#chapitre3">Quel est le principe de fonctionnement et les modalités d'adhésion ?</a></li>
-    <li><a href="#chapitre4">Est ce que le paiement est obligatoire pour être membre de l’Association KM-Kimya ?</a></li>
-    <li><a href="#chapitre5">Qu'est ce qui garantit que l'information sur le décès d'un membre éligible sera portée à la connaissance de l'Organisation ?</a></li>
-    <li><a href="#chapitre6">Un étranger ou un congolais résidant à l'étranger peut il adhérer à une association congolaise (RDC) ?</a></li>
-    <li><a href="#chapitre7">Comment procéder aux paiements sur terrain au Congo (RDC)?</a></li>
-    <li><a href="#chapitre8">Comment procéder aux paiements si on réside à l'étranger ?</a></li>
-    <li><a href="#chapitre9">Qui perçoit les contributions des membres ?</a></li>
-    <li><a href="#chapitre10">Quand commence la couverture pour un membre actif?</a></li>
-    <li><a href="#chapitre11">Comment procéder si la personne à inscrire n'a pas de téléphone ?</a></li>
-    <li><a href="#chapitre12">Si je quitte l'Association, serai-je remboursé ?</a></li>
-    <li><a href="#chapitre13">Comment puis-je aider si j'ai les moyens?</a></li>
-    <li><a href="#chapitre14">Pourquoi payer seulement 5.5$ mais pas plus pour une prestation plus impactante ?</a></li>
-    <li><a href="#chapitre15">Pourquoi doit on mettre un mot de passe sur le compte ?</a></li>
-    <li><a href="#chapitre16">Comment ouvre t-on un lien ou un URL à partir d'un téléphone android?</a></li>
-    <li><a href="#chapitre17">Pourquoi une campagne de recrutement, la sensibilisation est-elle nécessaire ?</a></li>
-    <li><a href="#chapitre18">Pourquoi est-il imprudent et improductif de n'avoir que le minimum de 5.5$ dans le compte sur la plateforme ?</a></li>
-
+    <li><a href="#chapitre0">0. Comment faire pour adhérer le plus simplement possible à l’Association KM-Kimya ?</a></li>  
+    <li><a href="#chapitre1">1. Quelle est la mission et l'objectif de l’Association KM-Kimya ?</a></li>
+    <li><a href="#chapitre2">2. Qui peut adhérer à l'Association ?</a></li>
+    <li><a href="#chapitre3">3. Quel est le principe de fonctionnement et les modalités d'adhésion ?</a></li>
+    <li><a href="#chapitre4">4. Est ce que le paiement est obligatoire pour être membre de l’Association KM-Kimya ?</a></li>
+    <li><a href="#chapitre5">5. Qu'est ce qui garantit que l'information sur le décès d'un membre éligible sera portée à la connaissance de l'Organisation ?</a></li>
+    <li><a href="#chapitre6">6. Un étranger ou un congolais résidant à l'étranger peut il adhérer à une association congolaise (RDC) ?</a></li>
+    <li><a href="#chapitre7">7. Comment procéder aux paiements sur terrain au Congo (RDC)?</a></li>
+    <li><a href="#chapitre8">8. Comment procéder aux paiements si on réside à l'étranger ?</a></li>
+    <li><a href="#chapitre9">9. Qui perçoit les contributions des membres ?</a></li>
+    <li><a href="#chapitre10">10. Quels sont les objectifs immediat, à court terme et moyen terme de l'Association actuellement ?</a></li>
+    <li><a href="#chapitre11">11. Quand commence la couverture pour un membre actif?</a></li>
+    <li><a href="#chapitre12">12. Comment procéder si la personne à inscrire n'a pas de téléphone ?</a></li>
+    <li><a href="#chapitre13">13. Si je quitte l'Association, serai-je remboursé ?</a></li>
+    <li><a href="#chapitre14">14. Comment puis-je aider si j'ai les moyens?</a></li>
+    <li><a href="#chapitre15">15. Pourquoi payer seulement 5.5$ mais pas plus pour une prestation plus impactante ?</a></li>
+    <li><a href="#chapitre16">16. Pourquoi doit on mettre un mot de passe sur le compte ?</a></li>
+    <li><a href="#chapitre17">17. Comment ouvre t-on un lien ou un URL à partir d'un téléphone android?</a></li>
+    <li><a href="#chapitre18">18. Pourquoi une campagne de recrutement, la sensibilisation est-elle nécessaire ?</a></li>
+    <li><a href="#chapitre19">19. Pourquoi est-il imprudent et improductif de n'avoir que le minimum de 5.5$ dans le compte sur la plateforme ?</a></li>
     </ul>
     <br>
     <br> 
@@ -4724,7 +4726,7 @@ FAQ_PAGE = """
     
 
     <!-- 2. LE CONTENU DÉTAILLÉ -->
-    <h2 id="chapitre0">Comment faire pour adhérer le plus simplement possible à l’Association KM-Kimya ?</h2>
+    <h2 id="chapitre0">0. Comment faire pour adhérer le plus simplement possible à l’Association KM-Kimya ?</h2>
     <div class="pge">
         <p>
         La procédure d'adhésion à KM-Kimya la plus simple passe par 2 étapes (1) INSCRIPTION et (2) PAIEMENT(de la première contribution) :
@@ -4741,7 +4743,7 @@ FAQ_PAGE = """
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
     <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
-    <h2 id="chapitre1">Mission et objectif de l'Association KM-Kimya</h2>
+    <h2 id="chapitre1">1. Mission et objectif de l'Association KM-Kimya</h2>
     <div class="pge">
         <p>
         Notre association a pour mission principale 
@@ -4763,7 +4765,7 @@ FAQ_PAGE = """
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
     <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
        
-    <h2 id="chapitre2">Qui peut adhérer à l'Association ?</h2>
+    <h2 id="chapitre2">2. Qui peut adhérer à l'Association ?</h2>
     <div class="pge">
         <p>
         L'Association accueille toute personne, qui adhère à ses objectifs et accepte ses règles et procédures, sans distinction de nationalité, religion ou autre. Elle interesse principalement les personnes résidant au Congo (RDC). Toutefois, les ressortissants congolais ou toute autre personne de nationalité étrangère vivant hors de la RDC peut adhérer pour assister des proches résidants au pays.
@@ -4772,7 +4774,7 @@ FAQ_PAGE = """
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
     <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
-    <h2 id="chapitre3">Le principe de fonctionnement et les modalités d'adhésion</h2>
+    <h2 id="chapitre3">3. Le principe de fonctionnement et les modalités d'adhésion</h2>
     <div class="pge">
         <p>
         L’association regroupe des personnes qui s’engagent à verser une contribution financière en cas de décès d’un autre membre  du groupe (contribution uniquement en cas de décès d’un membre du groupe à condition que celui-ci soit en règle avec les procédures de l’association). En contrepartie, l’Association KM-Kimya assure le maximum d’efficience et de transparence dans la gestion des opérations pour garantir l’équité conformément aux attentes de tous. 
@@ -4789,7 +4791,7 @@ FAQ_PAGE = """
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
     <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
-    <h2 id="chapitre4">Est-ce que le paiement est obligatoire pour être membre de l'Association KM-Kimya ?</h2>
+    <h2 id="chapitre4">4. Est-ce que le paiement est obligatoire pour être membre de l'Association KM-Kimya ?</h2>
     <div class="pge">
         <p>
         Oui ; à l'adhésion le paiement de votre première contribution à la prestation de KM-Kimya lors du prochain décès dans le groupe est obligatoire. L'exigence du paiement préalable de la contribution permet à km-kimya d'intervenir rapidement (délai de moins de 72 heures) auprès de la famille et des proches du membre défunt.
@@ -4798,7 +4800,7 @@ FAQ_PAGE = """
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
     <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
-    <h2 id="chapitre5">Qu'est ce qui garantit que l'information sur le décès d'un membre éligible sera portée à la connaissance de l'Organisation rapidement et efficacement ?</h2>
+    <h2 id="chapitre5">5. Qu'est ce qui garantit que l'information sur le décès d'un membre éligible sera portée à la connaissance de l'Organisation rapidement et efficacement ?</h2>
     <div class="pge">
         <p>
         Ce risque est en effet considerable pour un membre de l'Association indépendant isolé. A cet effet, veuillez noter que sur la plateforme km-kimya.org, il existe un trio sacré que l'adhérent est tenu de garder à jour, de son vivant. Il s'agit du trio 'Adhérent<>Mentor<>Bénéficiaire'. Bien entretenu, ce trio assure qu'il soit quasi impossible que le décès d'un membre éligible ne puisse être porté à la connaissance de l'Organisation de façon appropriée, rapide et efficace par son Mentor ou par le Bénéficiaire.</p>
@@ -4811,7 +4813,7 @@ FAQ_PAGE = """
     <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
 
-    <h2 id="chapitre6">Un étranger ou un congolais résidant à l'étranger peut il adhérer à une association qui opère sur terrain au Congo (RDC) ?</h2>
+    <h2 id="chapitre6">6. Un étranger ou un congolais résidant à l'étranger peut il adhérer à une association qui opère sur terrain au Congo (RDC) ?</h2>
     <div class="pge">
         <p>
         Oui, absolument, un étranger ou un congolais résidant à l'etranger peut adhérer à une association congolaise. Ceci est conforme à la loi 004/2001 qui régit les associations en République Démocratique du Congo.</p>
@@ -4823,7 +4825,7 @@ FAQ_PAGE = """
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
     <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
-    <h2 id="chapitre7">Comment procéder aux paiements sur terrain au Congo (RDC) ?</h2>
+    <h2 id="chapitre7">7. Comment procéder aux paiements sur terrain au Congo (RDC) ?</h2>
     <div class="pge">
         <p>
         Pour les membres résidant en RDC, le paiement de la contribution se fait exclusivement par mobile-money via l'un des quatre numéros ci-dessous par le téléphone dont le numéro sans préfixes est l’ identifiant choisi lors de l’inscription. 
@@ -4839,7 +4841,7 @@ FAQ_PAGE = """
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
     <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
-    <h2 id="chapitre8">Comment procéder aux paiements pour les membres résidant en dehors de la RDC ?</h2>
+    <h2 id="chapitre8">8. Comment procéder aux paiements pour les membres résidant en dehors de la RDC ?</h2>
     <div class="pge">
         <p>
         Nous recommandons vivement aux membres résidants en dehors de la RDC d'utiliser les services offerts par les réseaux de transfert d'argent internationaux comme <strong>REMITLY</strong> accessible officiellement sous l'URL <strong>www.remitly.com</strong> (pas ailleurs). Pour le cas de 'remitly' l'utilisation des destinations mobile-money :<strong> +243824807663 pour Mpesa et +243891273191 pour Orange-money</strong> sont efficaces ; le transfert est quasi instantané. Dans ce cas, n'oubliez pas de mentionner dans les libellés du transfert l'identifiant exact du beneficiaire (le cas echeant votre identifiant), si non accompagner votre transfert par un message téléphonique SMS, au numéro de destination, libellé comme suit : <i><P style="color: blue;">"Pour KM-Kimya à partir de '<strong>NOM DU PAYS D'Où VOUS ENVOYEZ</strong>' en faveur de '<strong>IDENTIFIANT KM-KIMYA DU BENEFICAIRE</strong>'  Montant: '<strong>LE MONTANT ENVOYÉ</strong>'"</P></i> pour nous permettre de vous identifier correctement (en tant que destinataire beneficiaire du transfert) dans la base de données.
@@ -4848,7 +4850,7 @@ FAQ_PAGE = """
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
     <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
-    <h2 id="chapitre9">Qui perçoit les contributions des membres ?</h2>
+    <h2 id="chapitre9">9. Qui perçoit les contributions des membres ?</h2>
     <div class="pge">
         <p>
         Les contributions des membres sont perçues par la trésorerie de l'Association dans 4 comptes mobile-money (les quatres numeros de telephone) qui provisoirement sont au nom de M. Emmanuel Kalume Burhama, qui est le membre de km-kimya responsable de la trésorerie de l'Association en attendant que l'Association obtienne la peronnalité juridique et un compte officiel.
@@ -4861,7 +4863,7 @@ FAQ_PAGE = """
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
     <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
-    <h2 id="chapitre10">Quels sont les objectifs immediat, à court terme et moyen terme de l'Association actuellement ?</h2>
+    <h2 id="chapitre10">10. Quels sont les objectifs immediat, à court terme et moyen terme de l'Association actuellement ?</h2>
     <div class="pge">
         <p>
         Dans l'immediat, KM-Kimya souhaite démarrer ses activités avec un groupe pilote de 100 membres pour tester et ajuster son modèle de fonctionnement. Durant cette phase la contribution individuelle est de 5.5$ dont 5 pour la prestation KM-Kimya en cas de décès et 0.5 pour les frais administratifs. A ce stade la prestation est donc de 500$ en cas de décès d'un membre du groupe.
@@ -4876,7 +4878,7 @@ FAQ_PAGE = """
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
     <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
-    <h2 id="chapitre11">Quand commence la couverture pour le membre actif ?</h2>
+    <h2 id="chapitre11">11. Quand commence la couverture pour le membre actif ?</h2>
     <div class="pge">
         <p>
         Comme prescrit dans le projet de Statuts et de ROI, la couverture d' un nouveau membre demarre seulement après une periode de probation (ou délai de carence) fixée à six (6) mois. Cette période est cruciale pour l'Association ; elle la met à l'abris d'une tricherie courante appelée "asymetrie d'information" ou "selection adverse" qui, dans le contexte de KM-Kimya, consisterait à faire adhérer à l'Association un malade grave (en phase finale) juste avant son décès afin de lui faire bénéficier de l'aide financière sans avoir contribué au groupe. 
@@ -4891,7 +4893,7 @@ FAQ_PAGE = """
     <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
     
-    <h2 id="chapitre12">Comment procéder si la personne à inscrire n'a pas de téléphone ?</h2>
+    <h2 id="chapitre12">12. Comment procéder si la personne à inscrire n'a pas de téléphone ?</h2>
     <div class="pge">
         <p>
         Cette situation est prevue dans les Statuts et Règlement Interieur. Etant donné que les transactions financières sont numériques par mobile-money, un membre sans téléphone doit absolument être sous la dépendance d'un autre membre appelé 'mentor' qui l'accompagnera dans sa discipline financière par rapport aux procédures. Son identifiant sera son nom (ou une partie de son nom) en veillant toutefois de ne pas donner un nom déjà attribué. En outre, dans ce cas, il faut veiller à ce que l'identifiant soit en un seul mot et en majuscule pour éviter les confusions et les erreurs de saisie. Le mentor est responsable de la gestion du compte du membre sans téléphone, y compris le suivi des paiements et la communication avec l'Association. Cette approche garantit que même les personnes sans accès direct à la technologie peuvent bénéficier du soutien de l'Association tout en assurant une gestion efficace et sécurisée de leurs contributions. 
@@ -4901,7 +4903,7 @@ FAQ_PAGE = """
      <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>   
 
 
-    <h2 id="chapitre13">Si je quitte l'Association, serai-je remboursé ?</h2>
+    <h2 id="chapitre13">13. Si je quitte l'Association, serai-je remboursé ?</h2>
     <div class="pge">
         <p>
         Si vous quittez l'Association, le solde de votre compte vous sera retourné par le réseau mobile-money que vous utilisiez couramment pour les paiements.
@@ -4912,14 +4914,14 @@ FAQ_PAGE = """
     <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
     
-    <h2 id="chapitre14">Comment puis-je aider si j'ai les moyens?</h2>
+    <h2 id="chapitre14">14. Comment puis-je aider si j'ai les moyens?</h2>
     <div class="pge">
         <p>
         Plusieurs voies sont offertes pour aider l'Association. (1) Vous pouvez faire un don direct (par un des 4 comptes mobile-money publiés, paiement accompagné au besoin d'un message sms explicatif envoyé au même numéro), (2) participer aux événements de sensibilisation, ou proposer votre temps et compétences pour soutenir les activités.
         Plus pratiquement, nous pouvons citer des exemples concrets d'aide précieuse : (3) aider à faire connaitre l'Association autour de vous pour nous aider à atteindre plus de personnes, (4) nous aider à faire le suivi des paiements des prestations sur terrain en RDC pour nous assurer que les contributions sont bien arrivées et attribuées aux bons destinataires, (5) nous aider à organiser des campagnes de collecte de fonds pour l'appui au fonctionnement administratif et technique de KM-Kimya.
         </p>
         <p>
-        Pour des missions spécifiques (de gestion de l'information, de communication, d'administaration numérique etc.) dont la charge et la complexité excèdent le cadre habituel du volontariat, l'Association s'engage par dette. Pour ces cas, l'Association est ouverte à toutes les formes d'aide pour éponger les coûts, nous encourageons les membres à s'impliquer activement en terme de donations ou d'appui à la recherche de partenariats pour aider KM-Kimya à tenir le coup.
+        Pour des missions spécifiques (de gestion de l'information, de communication, d'administaration numérique etc.) dont la charge et la complexité excèdent le cadre habituel du volontariat, l'Association s'engage par dette; créances difficiles certes mais incontournables. Pour ces cas, l'Association est ouverte à toutes les formes d'aide pour éponger les coûts, nous encourageons les membres à s'impliquer activement en terme de donations ou d'appui à la recherche de partenariats pour aider KM-Kimya à tenir le coup.
         </p>
         <p>
         Les cas de créances difficiles sont notamment ; les travaux de conception et d'implémentation de la plateforme km-kimya.org sur l'Internet et dans un futur proche (quand le nombre d’adhérents augmente, le travail d’administration augmente, le bénévolat ne peut y arriver efficacement) la nécessité d'installer au moins une personne (un secrétariat) en permanence pour garantir la pérennité de l'Association et la continuité de son impact social.
@@ -4929,7 +4931,7 @@ FAQ_PAGE = """
     <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
     
-    <h2 id="chapitre15">Pourquoi payer seulement 5.5$ mais pas plus pour une action plus impactante ?</h2>
+    <h2 id="chapitre15">15. Pourquoi payer seulement 5.5$ mais pas plus pour une action plus impactante ?</h2>
     <div class="pge">
         <p>
         Les personnes capables de contribuer de manière consistente ont généralement d'autres couvertures, notamment des assurances-vie robustes; il n'ont pas besoin d'une organisation comme KM-Kimya. Pour le public cible de KM-Kimya, même les 5.5$ sont elevés. L'objectif est de rendre l'adhésion accessible au plus grand nombre, en particulier à ceux qui sont les plus vulnérables et qui n'ont pas accès à d'autres formes de protection financière. En fixant une contribution modeste, nous espérons encourager une large participation et créer un impact significatif au sein de notre communauté.
@@ -4938,7 +4940,7 @@ FAQ_PAGE = """
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
     <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
-    <h2 id="chapitre16">Pourquoi doit-on mettre un mot de passe sur le compte ?</h2>
+    <h2 id="chapitre16">16. Pourquoi doit-on mettre un mot de passe sur le compte ?</h2>
     <div class="pge">
         <p>
         Le compte du membre est sécurisé par un mot de passe pour garantir la confidentialité et la sécurité des informations financières et personnelles. Les données personnelles sont protégées pour assurer la vie privée des membres. Une personne de mauvaise foi pourrait tenter d'accéder à ces informations sans autorisation. Par exemple, une personne malveillante peut, par la fonctionnalité 'transfert de crédit', déverser tout ou partie de votre solde dans le compte d'un autre membre.
@@ -4947,7 +4949,7 @@ FAQ_PAGE = """
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
     <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
-    <h2 id="chapitre16">Comment ouvre t-on un lien ou un URL à partir d'un téléphone android?</h2>
+    <h2 id="chapitre17">17. Comment ouvre t-on un lien ou un URL à partir d'un téléphone android?</h2>
     <div class="pge">
         <p>
         Cette question élémentaire est fréquente chez les utilisateurs de smartphones Android. Autant elle est élémentaire, autant il n'est pas aisé d'y répondre.
@@ -4969,7 +4971,7 @@ FAQ_PAGE = """
     </div>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
 
-    <h2 id="chapitre17">Pourquoi une campagne de recrutement, la sensibilisation est-elle nécessaire ?</h2>
+    <h2 id="chapitre18">18. Pourquoi une campagne de recrutement, la sensibilisation est-elle nécessaire ?</h2>
     <div class="pge">
         <p>
         L'action de KM-Kimya est communautaire; elle est basée sur la collaboration et l'engagement d'un grand nombre de membres. Une entrée massive augmente le nombre de contributions et donne le pouvoir de remettre un montant conséquent afin de permettre d’absorber les frais des funérailles (plus il y a des membres, plus le montant à verser à la famille éprouvée est élevé). Une campagne de recrutement et de sensibilisation est nécessaire pour attirer de nouveaux membres et informer le public sur les activités de l'Association. Elle permet de renforcer la visibilité de l'organisation et de mobiliser plus de personnes autour de ses valeurs et objectifs.
@@ -4978,7 +4980,7 @@ FAQ_PAGE = """
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
     <a href="{{ url_for('FAQ_PAGE') }}" class="btn-back">← Retour aux questions </a>
 
-    <h2 id="chapitre18">Pourquoi est-il imprudent et improductif de n'avoir que le minimum de 5.5$ dans le compte sur la plateforme ?</h2>
+    <h2 id="chapitre19">19. Pourquoi est-il imprudent et improductif de n'avoir que le minimum de 5.5$ dans le compte sur la plateforme ?</h2>
     <div class="pge">
         <p>
         Toute analyse previsionnelle montre que le plus grand risque qu'encourt l'Association est la survenue accidentelle de deux ou trois décès successsifs de membres éligibles à la prestation dans un laps de temps limité. Dans ce cas, l'obligation promise d'intervention dans les 72 heures (auprès de la famille éprouvée) sera mise à mal par le délai de renflouement du trésor de l'Association par la collecte de fonds auprès des membres.
