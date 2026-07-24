@@ -302,30 +302,30 @@ def init_db():
 #--------------------------------------------------------------------------------------------
 #            2-- RESTAURATION - Vider les tables sources et réinjecter les données des backups
 #--------------------------------------------------------------------------------------------
-#            cur.execute(""" 
-#               TRUNCATE TABLE membres;
-#               INSERT INTO membres SELECT * FROM membres_BACKUP_20260719;
-#            """)
+            cur.execute(""" 
+               TRUNCATE TABLE membres;
+               INSERT INTO membres SELECT * FROM membres_BACKUP_20260720;
+            """)
 
-#            cur.execute(""" 
-#               TRUNCATE TABLE mouvements;
-#               INSERT INTO mouvements SELECT * FROM mouvements_BACKUP_20260719;
-#            """)
+            cur.execute(""" 
+               TRUNCATE TABLE mouvements;
+               INSERT INTO mouvements SELECT * FROM mouvements_BACKUP_20260720;
+            """)
 
-#            cur.execute(""" 
-#               TRUNCATE TABLE deces;
-#               INSERT INTO deces SELECT * FROM deces_BACKUP_20260719;
-#           """)    
+            cur.execute(""" 
+               TRUNCATE TABLE deces;
+               INSERT INTO deces SELECT * FROM deces_BACKUP_20260720;
+           """)    
 
-#            cur.execute(""" 
-#               TRUNCATE TABLE id_data;
-#               INSERT INTO id_data SELECT * FROM id_data_BACKUP_20260719;
-#           """)
+            cur.execute(""" 
+               TRUNCATE TABLE id_data;
+               INSERT INTO id_data SELECT * FROM id_data_BACKUP_20260720;
+           """)
 
-#            cur.execute(""" 
-#               TRUNCATE TABLE comptes_techniques;
-#               INSERT INTO comptes_techniques SELECT * FROM comptes_techniques_BACKUP_20260719;
-#            """)
+            cur.execute(""" 
+               TRUNCATE TABLE comptes_techniques;
+               INSERT INTO comptes_techniques SELECT * FROM comptes_techniques_BACKUP_20260720;
+            """)
 
 #            """
 #            cur.execute(sql_commands)
@@ -4974,7 +4974,7 @@ FAQ_PAGE = """
     <h2 id="chapitre18">18. Pourquoi une campagne de recrutement, la sensibilisation est-elle nécessaire ?</h2>
     <div class="pge">
         <p>
-        L'action de KM-Kimya est communautaire; elle est basée sur la collaboration et l'engagement d'un grand nombre de membres. Une entrée massive augmente le nombre de contributions et donne le pouvoir de remettre un montant conséquent afin de permettre d’absorber les frais des funérailles (plus il y a des membres, plus le montant à verser à la famille éprouvée est élevé). Une campagne de recrutement et de sensibilisation est nécessaire pour attirer de nouveaux membres et informer le public sur les activités de l'Association. Elle permet de renforcer la visibilité de l'organisation et de mobiliser plus de personnes autour de ses valeurs et objectifs.
+        L'action de KM-Kimya est communautaire; elle est basée sur la collaboration et l'engagement d'un grand nombre de membres. Une entrée massive augmente le nombre de contributions et donne le pouvoir de remettre un montant conséquent afin de permettre d’absorber les frais des funérailles (plus il y a des membres, plus le montant à verser à la famille éprouvée est élevé). Une campagne de recrutement et de sensibilisation est nécessaire pour attirer de nouveaux membres et informer le public sur les activités de l'Association. Elle permet à KM-Kimya ASBL de renforcer la visibilité de l'organisation et de mobiliser plus de personnes autour de ses valeurs et objectifs.
         </p>
     </div>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
