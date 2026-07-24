@@ -273,66 +273,64 @@ def init_db():
 #----------------------------------------------------------------------------------------------------------------------------
 #            1-- DUMP - Création des backups de toutes les tables (membres, mouvements, deces, id_data et comptes_techniques) 
 #----------------------------------------------------------------------------------------------------------------------------
-#            cur.execute(""" 
-#                DROP TABLE IF EXISTS membres_BACKUP_20260720_ko;
-#                CREATE TABLE membres_BACKUP_20260720_ko AS SELECT * FROM membres;
-#            """)
+            cur.execute(""" 
+                DROP TABLE IF EXISTS membres_BACKUP_20260724;
+                CREATE TABLE membres_BACKUP_20260724 AS SELECT * FROM membres;
+            """)
 
-#            cur.execute(""" 
-#                DROP TABLE IF EXISTS mouvements_BACKUP_20260720_ko;
-#                CREATE TABLE mouvements_BACKUP_20260720_ko AS SELECT * FROM mouvements;
-#            """)
+            cur.execute(""" 
+                DROP TABLE IF EXISTS mouvements_BACKUP_20260724;
+                CREATE TABLE mouvements_BACKUP_20260724 AS SELECT * FROM mouvements;
+            """)
 
-#            cur.execute(""" 
-#                DROP TABLE IF EXISTS deces_BACKUP_20260720_ko;
-#                CREATE TABLE deces_BACKUP_20260720_ko AS SELECT * FROM deces;
-#            """)
+            cur.execute(""" 
+                DROP TABLE IF EXISTS deces_BACKUP_20260724;
+                CREATE TABLE deces_BACKUP_20260724 AS SELECT * FROM deces;
+            """)
 
-#            cur.execute(""" 
-#                DROP TABLE IF EXISTS id_data_BACKUP_20260720_ko;
-#                CREATE TABLE id_data_BACKUP_20260720_ko AS SELECT * FROM id_data;
-#            """)
+            cur.execute(""" 
+                DROP TABLE IF EXISTS id_data_BACKUP_20260724;
+                CREATE TABLE id_data_BACKUP_20260724 AS SELECT * FROM id_data;
+            """)
 
-#            cur.execute(""" 
-#                DROP TABLE IF EXISTS comptes_techniques_BACKUP_20260720_ko;
-#                CREATE TABLE comptes_techniques_BACKUP_20260720_ko AS SELECT * FROM comptes_techniques;
-#            """)
+            cur.execute(""" 
+                DROP TABLE IF EXISTS comptes_techniques_BACKUP_20260724;
+                CREATE TABLE comptes_techniques_BACKUP_20260724 AS SELECT * FROM comptes_techniques;
+            """)
 
 ##            sql_commands = """
 #--------------------------------------------------------------------------------------------
 #            2-- RESTAURATION - Vider les tables sources et réinjecter les données des backups
 #--------------------------------------------------------------------------------------------
-            cur.execute(""" 
-               TRUNCATE TABLE membres;
-               INSERT INTO membres SELECT * FROM membres_BACKUP_20260720;
-            """)
+#            cur.execute(""" 
+#               TRUNCATE TABLE membres;
+#               INSERT INTO membres SELECT * FROM membres_BACKUP_20260720;
+#            """)
 
-            cur.execute(""" 
-               TRUNCATE TABLE mouvements;
-               INSERT INTO mouvements SELECT * FROM mouvements_BACKUP_20260720;
-            """)
+#            cur.execute(""" 
+#               TRUNCATE TABLE mouvements;
+#               INSERT INTO mouvements SELECT * FROM mouvements_BACKUP_20260720;
+#            """)
 
-            cur.execute(""" 
-               TRUNCATE TABLE deces;
-               INSERT INTO deces SELECT * FROM deces_BACKUP_20260720;
-           """)    
+#            cur.execute(""" 
+#               TRUNCATE TABLE deces;
+#               INSERT INTO deces SELECT * FROM deces_BACKUP_20260720;
+#            """)
 
-            cur.execute(""" 
-               TRUNCATE TABLE id_data;
-               INSERT INTO id_data SELECT * FROM id_data_BACKUP_20260720;
-           """)
+#            cur.execute(""" 
+#               TRUNCATE TABLE id_data;
+#               INSERT INTO id_data SELECT * FROM id_data_BACKUP_20260720;
+#           """)
 
-            cur.execute(""" 
-               TRUNCATE TABLE comptes_techniques;
-               INSERT INTO comptes_techniques SELECT * FROM comptes_techniques_BACKUP_20260720;
-            """)
+#            cur.execute(""" 
+#               TRUNCATE TABLE comptes_techniques;
+#               INSERT INTO comptes_techniques SELECT * FROM comptes_techniques_BACKUP_20260720;
+#            """)
 
 #            """
 #            cur.execute(sql_commands)
 #
 ###############################################################################################
-
-
 
 #            SELECT * INTO membres_BACKUP_20260409
 #            FROM membres;    
@@ -1399,12 +1397,21 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
             #   b) Update de 'membershipdate' et 'currentstatute' en fonction de la date d'adhésion et du solde du membre qui reçoit (to) et du membre qui donne (from) :           
             #       (*) cas de date d'adhésion 2099-12-31 (membre potentiel) : '
             if me[15] == datetime.strptime("31/12/2099", "%d/%m/%Y").date() or to_member[15] == datetime.strptime("31/12/2099", "%d/%m/%Y").date():
-                cur.execute("""
-                    UPDATE membres
-                    SET membershipdate = CURRENT_DATE,
-                        currentstatute = 'probatoire'
-                    WHERE phone in (%s, %s) and balance >= %s;
-                """, (from_phone, to_phone, C))
+                if me[15] == datetime.strptime("31/12/2099", "%d/%m/%Y").date():
+                    cur.execute("""
+                        UPDATE membres
+                        SET membershipdate = CURRENT_DATE,
+                            currentstatute = 'probatoire'
+                        WHERE phone in (%s, %s) and balance >= %s;
+                    """, (from_phone, to_phone, C))
+
+                if to_member[15] == datetime.strptime("31/12/2099", "%d/%m/%Y").date():
+                    cur.execute("""
+                        UPDATE membres
+                        SET membershipdate = CURRENT_DATE,
+                            currentstatute = 'probatoire'
+                        WHERE phone in (%s, %s) and balance >= %s;
+                    """, (from_phone, to_phone, C))
 
                 cur.execute("""
                     UPDATE membres
@@ -4271,7 +4278,7 @@ def transfer():
 
                 create_transfert(from_phone, to_phone, amount, ref,d)
 
-                message, is_error = "Contribution transférée. OK !", False
+                message, is_error = "Crédit transférée. OK !", False
                 to_phone, amount, found_name = "", 0.0, ""
             except Exception as e:
                 message, is_error = f"Erreur: {e}", True
