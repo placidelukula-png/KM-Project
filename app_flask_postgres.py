@@ -1927,11 +1927,9 @@ LOGIN_PAGE = """
 
     <div class="right">
         <h2>Connexion KM-Kimya</h2>
-
         <div style="font-size: 0.5em;text-align: center;">
-            courriel : contact@km-kimya.fr
+            courriel : contact@km-kimya.org
         </div>    
-
         <form method="post" action="{{ url_for('login') }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
