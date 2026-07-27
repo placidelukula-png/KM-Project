@@ -1928,6 +1928,10 @@ LOGIN_PAGE = """
     <div class="right">
         <h2>Connexion KM-Kimya</h2>
 
+        <div style="font-size: 0.5em;text-align: center;">
+            courriel : contact@km-kimya.fr
+        </div>    
+
         <form method="post" action="{{ url_for('login') }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
@@ -4278,7 +4282,7 @@ def transfer():
 
                 create_transfert(from_phone, to_phone, amount, ref,d)
 
-                message, is_error = "Crédit transférée. OK !", False
+                message, is_error = "Crédit transféré. OK !", False
                 to_phone, amount, found_name = "", 0.0, ""
             except Exception as e:
                 message, is_error = f"Erreur: {e}", True
