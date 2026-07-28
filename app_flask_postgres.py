@@ -1801,6 +1801,10 @@ LOGIN_PAGE = """
 
   <style>
     body {
+        page-break-before: auto;
+        page-break-after: auto;
+        page-break-inside: avoid;
+
         margin: 0;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
