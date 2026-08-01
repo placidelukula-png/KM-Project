@@ -1801,10 +1801,6 @@ LOGIN_PAGE = """
 
   <style>
     body {
-        page-break-before: auto;
-        page-break-after: auto;
-        page-break-inside: avoid;
-
         margin: 0;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
@@ -4080,9 +4076,11 @@ def download_csv():
                 COPY (
 /*                      SELECT * FROM mouvements WHERE regie IS NOT NULL*/
 /*                      SELECT phone, firstname, lastname, adresse FROM membres WHERE currentstatute IN ('probatoire', 'actif') */
-                      SELECT phone, firstname, lastname, balance, adresse FROM membres WHERE mentor = '818329793' OR phone = '818329793' 
+/*                      SELECT phone, firstname, lastname, balance, adresse FROM membres WHERE mentor = '818329793' OR phone = '818329793' */
 /*                      SELECT phone, firstname, lastname, balance, adresse FROM membres WHERE membershipdate <= date '2026-05-16' AND (currentstatute = 'probatoire' OR currentstatute = 'actif') */
-                       ) TO STDOUT WITH CSV HEADER
+                      SELECT phone, firstname, lastname, balance, mentor FROM membres WHERE membershipdate = date '2099-12-31'
+
+                                                 ) TO STDOUT WITH CSV HEADER
             """) as copy:
                 for data in copy:
                     output.write(data)
