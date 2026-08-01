@@ -4078,9 +4078,8 @@ def download_csv():
 /*                      SELECT phone, firstname, lastname, adresse FROM membres WHERE currentstatute IN ('probatoire', 'actif') */
 /*                      SELECT phone, firstname, lastname, balance, adresse FROM membres WHERE mentor = '818329793' OR phone = '818329793' */
 /*                      SELECT phone, firstname, lastname, balance, adresse FROM membres WHERE membershipdate <= date '2026-05-16' AND (currentstatute = 'probatoire' OR currentstatute = 'actif') */
-                      SELECT phone, firstname, lastname, balance, mentor FROM membres WHERE membershipdate = date '2099-12-31'
-
-                                                 ) TO STDOUT WITH CSV HEADER
+                      SELECT phone, firstname, lastname, balance, mentor FROM membres WHERE membershipdate < date '2099-12-31' AND balance < 5.50
+                      ) TO STDOUT WITH CSV HEADER
             """) as copy:
                 for data in copy:
                     output.write(data)
