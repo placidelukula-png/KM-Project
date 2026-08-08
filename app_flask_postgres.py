@@ -1962,7 +1962,7 @@ LOGIN_PAGE = """
             </a>
         </div>
 
-        <div style="font-size: 1.5em;text-align: center;">
+        <div style="font-size: 1.0em;text-align: center;color: green;">
             * Pour la dignité des familles & la cohésion communautaire *
         </div>
         
