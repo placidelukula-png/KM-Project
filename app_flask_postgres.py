@@ -1961,8 +1961,8 @@ LOGIN_PAGE = """
                 <button type="button" class="btn2">A propos de notre association</button>
             </a>
         </div>
-
-        <div style="font-size: 1.0em;text-align: center;color: green;">
+        <br>
+        <div style="font-size: 0.8em;text-align: center;color: green;">
             * Pour la dignité des familles & la cohésion communautaire *
         </div>
         
