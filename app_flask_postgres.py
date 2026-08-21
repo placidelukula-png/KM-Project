@@ -274,28 +274,28 @@ def init_db():
 #            1-- DUMP - Création des backups de toutes les tables (membres, mouvements, deces, id_data et comptes_techniques) 
 #----------------------------------------------------------------------------------------------------------------------------
             cur.execute(""" 
-                DROP TABLE IF EXISTS membres_BACKUP_20260724;
-                CREATE TABLE membres_BACKUP_20260724 AS SELECT * FROM membres;
+                DROP TABLE IF EXISTS membres_BACKUP;
+                CREATE TABLE membres_BACKUP AS SELECT * FROM membres;
             """)
 
             cur.execute(""" 
-                DROP TABLE IF EXISTS mouvements_BACKUP_20260724;
-                CREATE TABLE mouvements_BACKUP_20260724 AS SELECT * FROM mouvements;
+                DROP TABLE IF EXISTS mouvements_BACKUP;
+                CREATE TABLE mouvements_BACKUP AS SELECT * FROM mouvements;
             """)
 
             cur.execute(""" 
-                DROP TABLE IF EXISTS deces_BACKUP_20260724;
-                CREATE TABLE deces_BACKUP_20260724 AS SELECT * FROM deces;
+                DROP TABLE IF EXISTS deces_BACKUP;
+                CREATE TABLE deces_BACKUP AS SELECT * FROM deces;
             """)
 
             cur.execute(""" 
-                DROP TABLE IF EXISTS id_data_BACKUP_20260724;
-                CREATE TABLE id_data_BACKUP_20260724 AS SELECT * FROM id_data;
+                DROP TABLE IF EXISTS id_data_BACKUP;
+                CREATE TABLE id_data_BACKUP AS SELECT * FROM id_data;
             """)
 
             cur.execute(""" 
-                DROP TABLE IF EXISTS comptes_techniques_BACKUP_20260724;
-                CREATE TABLE comptes_techniques_BACKUP_20260724 AS SELECT * FROM comptes_techniques;
+                DROP TABLE IF EXISTS comptes_techniques_BACKUP;
+                CREATE TABLE comptes_techniques_BACKUP AS SELECT * FROM comptes_techniques;
             """)
 
 ##            sql_commands = """
@@ -304,27 +304,27 @@ def init_db():
 #--------------------------------------------------------------------------------------------
 #            cur.execute(""" 
 #               TRUNCATE TABLE membres;
-#               INSERT INTO membres SELECT * FROM membres_BACKUP_20260720;
+#               INSERT INTO membres SELECT * FROM membres_BACKUP;
 #            """)
 
 #            cur.execute(""" 
 #               TRUNCATE TABLE mouvements;
-#               INSERT INTO mouvements SELECT * FROM mouvements_BACKUP_20260720;
+#               INSERT INTO mouvements SELECT * FROM mouvements_BACKUP;
 #            """)
 
 #            cur.execute(""" 
 #               TRUNCATE TABLE deces;
-#               INSERT INTO deces SELECT * FROM deces_BACKUP_20260720;
+#               INSERT INTO deces SELECT * FROM deces_BACKUP;
 #            """)
 
 #            cur.execute(""" 
 #               TRUNCATE TABLE id_data;
-#               INSERT INTO id_data SELECT * FROM id_data_BACKUP_20260720;
+#               INSERT INTO id_data SELECT * FROM id_data_BACKUP;
 #           """)
 
 #            cur.execute(""" 
 #               TRUNCATE TABLE comptes_techniques;
-#               INSERT INTO comptes_techniques SELECT * FROM comptes_techniques_BACKUP_20260720;
+#               INSERT INTO comptes_techniques SELECT * FROM comptes_techniques_BACKUP;
 #            """)
 
 #            """
