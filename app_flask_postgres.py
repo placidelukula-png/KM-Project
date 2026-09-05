@@ -3055,10 +3055,10 @@ FR_MONTHS = {
     "juin": 6, "jun": 6,
     "juil": 7, "juillet": 7,"jul": 7, "juil": 7, "july": 7,
     "aout": 8, "août": 8, "aug": 8,
-    "sept": 9,
-    "oct": 10,
-    "nov": 11,
-    "dec": 12, "déc": 12,
+    "sept": 9, "septembre": 9, "sep": 9,
+    "oct": 10, "octobre": 10,
+    "nov": 11, "novembre": 11, 
+    "dec": 12, "déc": 12, 
 }
 
 def parse_date_fr(s: str) -> date:
@@ -3738,7 +3738,7 @@ DATAGENERALFOLLOWUP_PAGE = """
 
             <div>
             <label>Statut</label>
-            <select name="currentstatute" required>
+            <select name="currentstatute" readonly required>
                 {% for s in statutes %}
                 <option value="{{ s }}" {{ 'selected' if s==edit_row[9] else '' }}>{{ s }}</option>
                 {% endfor %}
