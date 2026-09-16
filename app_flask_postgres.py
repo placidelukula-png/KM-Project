@@ -1402,16 +1402,16 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
                         UPDATE membres
                         SET membershipdate = CURRENT_DATE,
                             currentstatute = 'probatoire'
-                        WHERE phone in (%s, %s) and balance >= %s;
-                    """, (from_phone, to_phone, C))
+                        WHERE phone = %s and balance >= %s;
+                    """, (from_phone, C))
 
                 if to_member[15] == datetime.strptime("31/12/2099", "%d/%m/%Y").date():
                     cur.execute("""
                         UPDATE membres
                         SET membershipdate = CURRENT_DATE,
                             currentstatute = 'probatoire'
-                        WHERE phone in (%s, %s) and balance >= %s;
-                    """, (from_phone, to_phone, C))
+                        WHERE phone = %s and balance >= %s;
+                    """, (to_phone, C))
 
                 cur.execute("""
                     UPDATE membres
@@ -1428,8 +1428,8 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
 
                 from_balance = me[10]
                 to_balance = to_member[10]
-                log.info("from_phone=%s,from_balance=%s, >>> to_phone=%s, to_balance=%s", from_phone, from_balance, to_phone, to_balance)
-    #####
+            ### log.info("from_phone=%s,from_balance=%s, >>> to_phone=%s, to_balance=%s", from_phone, from_balance, to_phone, to_balance)
+    
                 #pour celui qui reçoit : 
                 if  to_month < CARENCE_MOIS :
                     cur.execute("""
@@ -1438,7 +1438,7 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
                             WHEN phone = %s AND balance >= %s THEN 'probatoire'
                             ELSE 'inactif'
                         END
-                        WHERE phone in (%s);
+                        WHERE phone = %s;
                     """, (to_phone,C,to_phone))
 
                 if  to_month >=  CARENCE_MOIS :
@@ -1459,7 +1459,7 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
                             WHEN phone = %s AND balance >= %s THEN 'probatoire'
                             ELSE 'inactif'
                         END
-                        WHERE phone in (%s);
+                        WHERE phone = %s;
                     """, (from_phone,C,from_phone))
 
                 if  from_month >= CARENCE_MOIS:
@@ -1469,7 +1469,7 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
                             WHEN phone = %s AND balance >= %s THEN 'actif'
                             ELSE 'inactif'
                         END
-                        WHERE phone IN (%s);
+                        WHERE phone = %s;
                     """, (from_phone,C,from_phone))
         conn.commit()
 
