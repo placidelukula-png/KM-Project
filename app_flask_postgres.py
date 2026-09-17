@@ -1420,15 +1420,15 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
                 """, (from_phone, to_phone, C))
             else:
             #       (*) cas de dates ordinaires (càd differentes de 2099-12-31): '
-                from_month = diff_month(me[15],today)
-                to_month = diff_month(to_member[15],today)
+                from_month = (-1) * diff_month(me[15],today)
+                to_month = (-1) * diff_month(to_member[15],today)
 
                 log.info("from_phone=%s, to_phone=%s, >>> from_month=%s, to_month=%s", from_phone, to_phone, from_month, to_month)
                 limit_date = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
 
                 from_balance = me[10]
                 to_balance = to_member[10]
-            ### log.info("from_phone=%s,from_balance=%s, >>> to_phone=%s, to_balance=%s", from_phone, from_balance, to_phone, to_balance)
+                log.info("from_phone=%s,from_balance=%s, >>> to_phone=%s, to_balance=%s", from_phone, from_balance, to_phone, to_balance)
     
                 #pour celui qui reçoit : 
                 if  to_month < CARENCE_MOIS :
