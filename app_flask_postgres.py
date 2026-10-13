@@ -1194,10 +1194,16 @@ def list_deces_pendants():
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                SELECT id, phone, date_deces, declared_by, reference, created_at,statut
+/*                SELECT id, phone, date_deces, declared_by, reference, created_at,statut
                 FROM deces
                 WHERE statut in ('déclaré', 'validé')
                 ORDER BY date_deces DESC, id DESC
+*/
+                SELECT membres.id, membres.phone, membres.lastname, deces.date_deces,deces.declared_by, deces.reference, deces.created_at, deces.statut
+                FROM membres left join deces on membres.phone = deces.phone
+                WHERE deces.statut in ('déclaré', 'validé')
+                ORDER BY date_deces DESC                
+
             """)
             return cur.fetchall()
 
@@ -4425,7 +4431,7 @@ DEUILS_PENDANTS_PAGE = """
 <h2>Deuils pendants</h2>
 <p><a href="{{ url_for('home') }}">← Retour</a></p>
 <table>
-<thead><tr><th>ID</th><th>Identifiant du défunt</th><th>Date de décès</th><th>déclaré par</th><th>Statut</th><th>Action</th></tr></thead>
+<thead><tr><th>IX</th><th>Id du défunt</th><th>Nom du défunt</th><th>Date de décès</th><th>déclaré par</th><th>Statut</th><th>Action</th></tr></thead>
 <tbody>
 {% for r in rows %}
 <tr>
@@ -4433,22 +4439,23 @@ DEUILS_PENDANTS_PAGE = """
   <td>{{ r[1] }}</td>
   <td>{{ r[2] }}</td>
   <td>{{ r[3] }}</td>
+  <td>{{ r[4] }}</td>
 
   <td>
     <form method="post" action="{{ url_for('deuils_pendants_update', id=r[0]) }}" style="display:inline;">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <select name="statut" required>
-        <option value="déclaré" {{ 'selected' if r[6]=='déclaré' else '' }}>déclaré</option>
-        <option value="validé" {{ 'selected' if r[6]=='validé' else '' }}>validé</option>
-        <option value="non-éligible" {{ 'selected' if r[6]=='non-éligible' else '' }}>non-éligible</option>
-        <option value="comptabilisé" {{ 'selected' if r[6]=='comptabilisé' else '' }}>comptabilisé</option>
+        <option value="déclaré" {{ 'selected' if r[7]=='déclaré' else '' }}>déclaré</option>
+        <option value="validé" {{ 'selected' if r[7]=='validé' else '' }}>validé</option>
+        <option value="non-éligible" {{ 'selected' if r[7]=='non-éligible' else '' }}>non-éligible</option>
+        <option value="comptabilisé" {{ 'selected' if r[7]=='comptabilisé' else '' }}>comptabilisé</option>
       </select>
       <button class="btn" type="submit">Save</button>
     </form>
   </td>
 
   <td>
-    {% if r[6] == "validé" %}
+    {% if r[7] == "validé" %}
       <form method="post"
             action="{{ url_for('trigger_prestation', deces_id=r[0]) }}"
             onsubmit="return confirm('Confirmer le déclenchement comptable ?');"
@@ -4462,7 +4469,7 @@ DEUILS_PENDANTS_PAGE = """
 {% endfor %}
 
 {% if not rows %}
-<tr><td colspan="6">Aucun décès pendant.</td></tr>
+<tr><td colspan="7">Aucun décès pendant.</td></tr>
 {% endif %}
 </tbody>
 </table>
