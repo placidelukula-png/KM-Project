@@ -326,7 +326,7 @@ def init_db():
 #               TRUNCATE TABLE comptes_techniques;
 #               INSERT INTO comptes_techniques SELECT * FROM comptes_techniques_BACKUP;
 #            """)
-
+#######
 #            """
 #            cur.execute(sql_commands)
 #
@@ -4490,14 +4490,14 @@ def deuils_pendants_update(id: int):
     statut = (request.form.get("statut") or "déclaré").strip()
     #ref = (request.form.get("reference") or "").strip()
 
-    #log.info("Tentative de mise à jour du statut du décès, index: %d, statut: %s, erreur: %s", id, statut, "Aucune erreur détectée")  # Log initial avant validation
+    log.info("Tentative de mise à jour du statut du décès, index: %d, statut: %s, erreur: %s", id, statut, "Aucune erreur détectée")  # Log initial avant validation
 
     if request.method == "POST":
        try :
          if statut not in ("déclaré", "validé", "non-éligible", "comptabilisé"):
             raise ValueError("Statut invalide.")
 
-         #log.info("demarrage de la mise à jour du statut du décès, index: %d, statut: %s, erreur: %s", id, statut, "Aucune erreur détectée")
+         log.info("demarrage de la mise à jour du statut du décès, index: %d, statut: %s, erreur: %s", id, statut, "Aucune erreur détectée")
 
          update_deces(id, statut)
          message, is_error = "Statut mis à jour OK.", False
@@ -4533,7 +4533,7 @@ def trigger_prestation(deces_id):
             if not row:
                 abort(404)
 
-            #log.info("Données du décès pour déclenchement prestation, index: %d, phone: %s, prestation: %s, statut: %s", deces_id, row[0], row[1], row[2])
+            log.info("Données du décès pour déclenchement prestation, index: %d, phone: %s, prestation: %s, statut: %s", deces_id, row[0], row[1], row[2])
 
             phone = row[0]
             prestation = float(row[1])
