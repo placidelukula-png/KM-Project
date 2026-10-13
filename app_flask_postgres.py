@@ -1199,7 +1199,7 @@ def list_deces_pendants():
                 WHERE statut in ('déclaré', 'validé')
                 ORDER BY date_deces DESC, id DESC
 */
-                SELECT membres.id, membres.phone, membres.lastname, deces.date_deces,deces.declared_by, deces.reference, deces.created_at, deces.statut
+                SELECT deces.id, membres.phone, membres.lastname, deces.date_deces,deces.declared_by, deces.reference, deces.created_at, deces.statut
                 FROM membres left join deces on membres.phone = deces.phone
                 WHERE deces.statut in ('déclaré', 'validé')
                 ORDER BY date_deces DESC                
