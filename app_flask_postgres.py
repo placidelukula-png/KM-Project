@@ -4828,7 +4828,7 @@ FAQ_PAGE = """
         Ce risque est en effet considerable pour un membre de l'Association indépendant isolé. A cet effet, veuillez noter que sur la plateforme km-kimya.org, il existe un trio sacré que l'adhérent est tenu de garder à jour, de son vivant. Il s'agit du trio 'Adhérent<>Mentor<>Bénéficiaire'. Bien entretenu, ce trio assure qu'il soit quasi impossible que le décès d'un membre éligible ne puisse être porté à la connaissance de l'Organisation de façon appropriée, rapide et efficace par son Mentor ou par le Bénéficiaire.</p>
         <p>
         <p>
-        Toutefois, la déclaration d'un décès de membre est un devoir pour tout membre qui est au courant de l'information. La voie appropriée pour signaler un décès est le bouton 'Déclarer un décès' du Menu principal sur le site internet https://www.km-kimya.org, en utilisant l'identifiant (nº tél sans prefixes) du défunt.
+        Toutefois, la déclaration d'un décès de membre est un devoir pour tout membre qui est au courant de l'information. La voie appropriée pour signaler un décès est le bouton 'Déclarer un décès' du Menu principal de votre compte sur la plate-forme (https://www.km-kimya.org), en utilisant l'identifiant (nº tél sans prefixes) du défunt.
         </p>
     </div>
     <div class="saut-de-page"></div> <!-- Saut de page pour une meilleure lisibilité -->
