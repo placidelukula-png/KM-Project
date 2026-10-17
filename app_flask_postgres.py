@@ -929,12 +929,24 @@ def create_prestation_mouvements(deceased_phone, prestation):
                     WHERE code=%s
                     """,(C,account))
 
+#>> correction du 20261015 : solde du membre effectif inactif ou suspendu est débité en contrepartie le montant a été crédité sur un compte technique ci-dessus)
+                    if m[14] is not None:  # membershipdate
+                       if m[14] < today:  # membre effectif (membre avec date d'adhésion passée)
+                           cur.execute("""
+                           UPDATE membres
+                           SET balance = balance - %s,
+                               updatedate=CURRENT_DATE,
+                               updateuser='system'
+                           WHERE phone=%s
+                           """,(C,phone))
+#<< correction du 20261015 : solde du membre effectif inactif ou suspendu (il est débité mais le montant a été crédité sur un compte technique)
+
         conn.commit()
 
 
-# ----------------------------
+# ----------------------------------------------------
 # Queries (ORDER des colonnes = contrat avec le HTML)
-# ----------------------------
+# ----------------------------------------------------
 # Contrat tuple (r[index]) :
 # 0 id
 # 1 phone
@@ -4086,10 +4098,10 @@ def download_csv():
                 COPY (
 /*                      SELECT * FROM mouvements WHERE regie IS NOT NULL*/
 /*                      SELECT phone, firstname, lastname, adresse FROM membres WHERE currentstatute IN ('probatoire', 'actif') */
-                      SELECT phone, firstname, lastname, balance, adresse FROM membres WHERE mentor = '998690548' OR phone = '998690548' 
+/*                      SELECT phone, firstname, lastname, balance, adresse FROM membres WHERE mentor = '998690548' OR phone = '998690548' */
 /*                      SELECT phone, firstname, lastname, balance, currentstatute FROM membres WHERE mentor = '996572572' OR phone = '996572572' */
 /*                      SELECT phone, firstname, lastname, balance, adresse FROM membres WHERE membershipdate <= date '2026-05-16' AND (currentstatute = 'probatoire' OR currentstatute = 'actif') */
-/*                      SELECT phone, firstname, lastname, balance, mentor FROM membres WHERE membershipdate < date '2099-12-31' AND balance < 5.50 */
+                      SELECT phone, firstname, lastname, balance, mentor FROM membres WHERE membershipdate < date '2099-12-31' AND balance < 5.50 
                       ) TO STDOUT WITH CSV HEADER
             """) as copy:
                 for data in copy:
