@@ -298,7 +298,31 @@ def init_db():
                 CREATE TABLE comptes_techniques_BACKUP AS SELECT * FROM comptes_techniques;
             """)
 
-##            sql_commands = """
+#
+########################### >> traitement exceptionel à effacer immediatement apres execution
+            cur.execute("""
+                           UPDATE membres
+                           SET balance = balance - 5.5,
+                               updatedate=CURRENT_DATE,
+                               updateuser='system'
+                           WHERE phone in ('499257734',
+                                           '810008517',
+                                           '812195998',
+                                           '817061245',
+                                           '819164527',
+                                           '830060548',
+                                           '848426529',
+                                           '850685275',
+                                           '975211676',
+                                           '981578963',
+                                           '994455903',
+                                           '998016067',  
+                                           '999114114') AND membershipdate < CURRENT_DATE
+                           """)
+########################### << traitement exceptionel à effacer immediatement apres execution
+#
+
+# ##            sql_commands = """
 #--------------------------------------------------------------------------------------------
 #            2-- RESTAURATION - Vider les tables sources et réinjecter les données des backups
 #--------------------------------------------------------------------------------------------
