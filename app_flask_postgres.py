@@ -328,14 +328,14 @@ def init_db():
                            ('499257734', 'Kaite Mutijima', 'Henri', CURRENT_DATE, 5.5, 'D', 'REF001 haut volume', 'Contribution décès de Donat Tombo Isumba 997721564', CURRENT_DATE, 'system'),
                            ('810008517', 'Mboyo Marie Cathérine', 'Tshefu', CURRENT_DATE, 5.5, 'D', 'REF002 haut volume', 'Contribution décès de Tombo Isumba 997721564', CURRENT_DATE, 'system'),
                            ('812195998', 'Mavanga Pierkhin', 'Mme Bundebele Bazata', CURRENT_DATE, 5.5, 'D', 'REF003 haut volume', 'Contribution décès de Donat Tombo Isumba 997721564', CURRENT_DATE, 'system'),
-                           ('817061245', 'Bundebele', 'Andy Demba', CURRENT_DATE, 5.5, 'D', 'REF004 haut volume', 'Contribution décès de Tombo Isumba 997721564', CURRENT_DATE, 'system')
+                           ('817061245', 'Bundebele', 'Andy Demba', CURRENT_DATE, 5.5, 'D', 'REF004 haut volume', 'Contribution décès de Tombo Isumba 997721564', CURRENT_DATE, 'system'),
                            ('819164527', 'Marie Claire', 'Kahemula', CURRENT_DATE, 5.5, 'D', 'REF005 haut volume', 'Contribution décès de Donat Tombo Isumba 997721564', CURRENT_DATE, 'system'),
-                           ('830060548', 'Romain', 'Kulondwa Lurhakumbira', CURRENT_DATE, 5.5, 'D', 'REF006 haut volume', 'Contribution décès de Tombo Isumba 997721564', CURRENT_DATE, 'system')
+                           ('830060548', 'Romain', 'Kulondwa Lurhakumbira', CURRENT_DATE, 5.5, 'D', 'REF006 haut volume', 'Contribution décès de Tombo Isumba 997721564', CURRENT_DATE, 'system'),
                            ('848426529', 'Yannick', 'Foyi Litho', CURRENT_DATE, 5.5, 'D', 'REF007 haut volume', 'Contribution décès de Donat Tombo Isumba 997721564', CURRENT_DATE, 'system'),
-                           ('850685275', 'Maurice Thys', 'Babeki Nkazi', CURRENT_DATE, 5.5, 'D', 'REF008 haut volume', 'Contribution décès de Tombo Isumba 997721564', CURRENT_DATE, 'system')
-                           ('975211676', 'Constance', 'Chibashwira', CURRENT_DATE, 5.5, 'D', 'REF009 haut volume', 'Contribution décès de Tombo Isumba 997721564', CURRENT_DATE, 'system')
+                           ('850685275', 'Maurice Thys', 'Babeki Nkazi', CURRENT_DATE, 5.5, 'D', 'REF008 haut volume', 'Contribution décès de Tombo Isumba 997721564', CURRENT_DATE, 'system'),
+                           ('975211676', 'Constance', 'Chibashwira', CURRENT_DATE, 5.5, 'D', 'REF009 haut volume', 'Contribution décès de Tombo Isumba 997721564', CURRENT_DATE, 'system'),
                            ('981578963', 'Yvonne-Esther', 'Barhame', CURRENT_DATE, 5.5, 'D', 'REF010 haut volume', 'Contribution décès de Donat Tombo Isumba 997721564', CURRENT_DATE, 'system'),
-                           ('994455903', 'Pierre', 'Muyanga', CURRENT_DATE, 5.5, 'D', 'REF011 haut volume', 'Contribution décès de Tombo Isumba 997721564', CURRENT_DATE, 'system')
+                           ('994455903', 'Pierre', 'Muyanga', CURRENT_DATE, 5.5, 'D', 'REF011 haut volume', 'Contribution décès de Tombo Isumba 997721564', CURRENT_DATE, 'system'),
                            ('998016067', 'Pascal', 'Ntwali', CURRENT_DATE, 5.5, 'D', 'REF012 haut volume', 'Contribution décès de Donat Tombo Isumba 997721564', CURRENT_DATE, 'system'),
                            ('999114114', 'Assani', 'Mushombe', CURRENT_DATE, 5.5, 'D', 'REF013 haut volume', 'Contribution décès de Tombo Isumba 997721564', CURRENT_DATE, 'system')
                            """)
