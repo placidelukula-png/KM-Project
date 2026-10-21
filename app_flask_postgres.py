@@ -322,23 +322,23 @@ def init_db():
 ########################### << traitement exceptionel à effacer immediatement apres execution
 #
 ########################### >> traitement exceptionel à effacer immediatement apres execution
-            cur.execute("""
-                           INSERT INTO mouvements (phone, firstname, lastname, mvt_date, amount, debitcredit, reference, libelle, updatedate, updated_by)
-                           VALUES 
-                           ('499257734', 'Kaite Mutijima', 'Henri', CURRENT_DATE, 5.5, 'D', 'REF001 haut volume', 'Contribution décès de Donat Tombo Isumba 997721564', CURRENT_DATE, 'system'),
-                           ('810008517', 'Mboyo Marie Cathérine', 'Tshefu', CURRENT_DATE, 5.5, 'D', 'REF002 haut volume', 'Contribution décès de Tombo Isumba 997721564', CURRENT_DATE, 'system'),
-                           ('812195998', 'Mavanga Pierkhin', 'Mme Bundebele Bazata', CURRENT_DATE, 5.5, 'D', 'REF003 haut volume', 'Contribution décès de Donat Tombo Isumba 997721564', CURRENT_DATE, 'system'),
-                           ('817061245', 'Bundebele', 'Andy Demba', CURRENT_DATE, 5.5, 'D', 'REF004 haut volume', 'Contribution décès de Tombo Isumba 997721564', CURRENT_DATE, 'system'),
-                           ('819164527', 'Marie Claire', 'Kahemula', CURRENT_DATE, 5.5, 'D', 'REF005 haut volume', 'Contribution décès de Donat Tombo Isumba 997721564', CURRENT_DATE, 'system'),
-                           ('830060548', 'Romain', 'Kulondwa Lurhakumbira', CURRENT_DATE, 5.5, 'D', 'REF006 haut volume', 'Contribution décès de Tombo Isumba 997721564', CURRENT_DATE, 'system'),
-                           ('848426529', 'Yannick', 'Foyi Litho', CURRENT_DATE, 5.5, 'D', 'REF007 haut volume', 'Contribution décès de Donat Tombo Isumba 997721564', CURRENT_DATE, 'system'),
-                           ('850685275', 'Maurice Thys', 'Babeki Nkazi', CURRENT_DATE, 5.5, 'D', 'REF008 haut volume', 'Contribution décès de Tombo Isumba 997721564', CURRENT_DATE, 'system'),
-                           ('975211676', 'Constance', 'Chibashwira', CURRENT_DATE, 5.5, 'D', 'REF009 haut volume', 'Contribution décès de Tombo Isumba 997721564', CURRENT_DATE, 'system'),
-                           ('981578963', 'Yvonne-Esther', 'Barhame', CURRENT_DATE, 5.5, 'D', 'REF010 haut volume', 'Contribution décès de Donat Tombo Isumba 997721564', CURRENT_DATE, 'system'),
-                           ('994455903', 'Pierre', 'Muyanga', CURRENT_DATE, 5.5, 'D', 'REF011 haut volume', 'Contribution décès de Tombo Isumba 997721564', CURRENT_DATE, 'system'),
-                           ('998016067', 'Pascal', 'Ntwali', CURRENT_DATE, 5.5, 'D', 'REF012 haut volume', 'Contribution décès de Donat Tombo Isumba 997721564', CURRENT_DATE, 'system'),
-                           ('999114114', 'Assani', 'Mushombe', CURRENT_DATE, 5.5, 'D', 'REF013 haut volume', 'Contribution décès de Tombo Isumba 997721564', CURRENT_DATE, 'system')
-                           """)
+#            cur.execute("""
+#                           INSERT INTO mouvements (phone, firstname, lastname, mvt_date, amount, debitcredit, reference, libelle, updatedate, updated_by)
+#                           VALUES 
+#                           ('499257734', 'Kaite Mutijima', 'Henri', CURRENT_DATE, 5.5, 'D', 'REF001 haut volume', 'Contribution décès de Donat Tombo Isumba 997721564', CURRENT_DATE, 'system'),
+#                           ('810008517', 'Mboyo Marie Cathérine', 'Tshefu', CURRENT_DATE, 5.5, 'D', 'REF002 haut volume', 'Contribution décès de Tombo Isumba 997721564', CURRENT_DATE, 'system'),
+#                           ('812195998', 'Mavanga Pierkhin', 'Mme Bundebele Bazata', CURRENT_DATE, 5.5, 'D', 'REF003 haut volume', 'Contribution décès de Donat Tombo Isumba 997721564', CURRENT_DATE, 'system'),
+#                           ('817061245', 'Bundebele', 'Andy Demba', CURRENT_DATE, 5.5, 'D', 'REF004 haut volume', 'Contribution décès de Tombo Isumba 997721564', CURRENT_DATE, 'system'),
+#                           ('819164527', 'Marie Claire', 'Kahemula', CURRENT_DATE, 5.5, 'D', 'REF005 haut volume', 'Contribution décès de Donat Tombo Isumba 997721564', CURRENT_DATE, 'system'),
+#                           ('830060548', 'Romain', 'Kulondwa Lurhakumbira', CURRENT_DATE, 5.5, 'D', 'REF006 haut volume', 'Contribution décès de Tombo Isumba 997721564', CURRENT_DATE, 'system'),
+#                           ('848426529', 'Yannick', 'Foyi Litho', CURRENT_DATE, 5.5, 'D', 'REF007 haut volume', 'Contribution décès de Donat Tombo Isumba 997721564', CURRENT_DATE, 'system'),
+#                           ('850685275', 'Maurice Thys', 'Babeki Nkazi', CURRENT_DATE, 5.5, 'D', 'REF008 haut volume', 'Contribution décès de Tombo Isumba 997721564', CURRENT_DATE, 'system'),
+#                           ('975211676', 'Constance', 'Chibashwira', CURRENT_DATE, 5.5, 'D', 'REF009 haut volume', 'Contribution décès de Tombo Isumba 997721564', CURRENT_DATE, 'system'),
+#                           ('981578963', 'Yvonne-Esther', 'Barhame', CURRENT_DATE, 5.5, 'D', 'REF010 haut volume', 'Contribution décès de Donat Tombo Isumba 997721564', CURRENT_DATE, 'system'),
+#                           ('994455903', 'Pierre', 'Muyanga', CURRENT_DATE, 5.5, 'D', 'REF011 haut volume', 'Contribution décès de Tombo Isumba 997721564', CURRENT_DATE, 'system'),
+#                           ('998016067', 'Pascal', 'Ntwali', CURRENT_DATE, 5.5, 'D', 'REF012 haut volume', 'Contribution décès de Donat Tombo Isumba 997721564', CURRENT_DATE, 'system'),
+#                           ('999114114', 'Assani', 'Mushombe', CURRENT_DATE, 5.5, 'D', 'REF013 haut volume', 'Contribution décès de Tombo Isumba 997721564', CURRENT_DATE, 'system')
+#                           """)
 ########################### << traitement exceptionel à effacer immediatement apres execution
 
 # ##            sql_commands = """
@@ -916,7 +916,8 @@ def create_prestation_mouvements(deceased_phone, prestation):
             UPDATE membres
             SET balance = balance + %s,
                 updatedate=CURRENT_DATE,
-                updateuser='system'
+                updateuser='system',
+                currentstatute = 'radié'
             WHERE phone=%s
             """,(prestation,deceased_phone))
 
@@ -4140,11 +4141,12 @@ def download_csv():
             with cur.copy("""
                 COPY (
 /*                      SELECT * FROM mouvements WHERE regie IS NOT NULL*/
+                      SELECT * FROM comptes_techniques ORDER BY code ASC
 /*                      SELECT phone, firstname, lastname, adresse FROM membres WHERE currentstatute IN ('probatoire', 'actif') */
 /*                      SELECT phone, firstname, lastname, balance, adresse FROM membres WHERE mentor = '998690548' OR phone = '998690548' */
 /*                      SELECT phone, firstname, lastname, balance, currentstatute FROM membres WHERE mentor = '996572572' OR phone = '996572572' */
 /*                      SELECT phone, firstname, lastname, balance, adresse FROM membres WHERE membershipdate <= date '2026-05-16' AND (currentstatute = 'probatoire' OR currentstatute = 'actif') */
-                      SELECT phone, firstname, lastname, balance, mentor FROM membres WHERE membershipdate < date '2099-12-31' AND balance < 5.50 
+/*                      SELECT phone, firstname, lastname, balance, mentor FROM membres WHERE membershipdate < date '2099-12-31' AND balance < 5.50 */ 
                       ) TO STDOUT WITH CSV HEADER
             """) as copy:
                 for data in copy:
@@ -4608,7 +4610,7 @@ def trigger_prestation(deces_id):
              WHERE phone=%s
              """,('radié', phone))
             conn.commit()
-            #log.info("L'adhérant avec phone %s radié suite à la confirmation de son décès.", phone)
+            #log.info("L'adhérant avec phone %s est radié suite à la confirmation de son décès.", phone)
 
     create_prestation_mouvements(phone, prestation)
 
