@@ -647,13 +647,13 @@ def init_db():
 #            # Correction en haut-volume (explication: fixation du MODE D'ADHESION partant de la date d'adhésion et la date de naissance pour tous les membres :
             cur.execute("""
                 UPDATE membres 
-                SET membershipmode = "pionnier" 
+                SET membershipmode = 'pionnier' 
                 WHERE membershipdate <= date '2026-05-16' 
             """)
 
             cur.execute("""
                 UPDATE membres 
-                SET membershipmode = "ordinaire" 
+                SET membershipmode = 'ordinaire' 
                 WHERE membershipdate > date '2026-05-16' AND EXTRACT(YEAR FROM membershipdate) - EXTRACT(YEAR FROM birthdate) < 70
             """)
 
