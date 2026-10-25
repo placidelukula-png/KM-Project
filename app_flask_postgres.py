@@ -267,15 +267,13 @@ def init_db():
 ##############################################################################################################
 #       SQL d'initialisation des données de base (ex: pour un nouveau déploiement de l'application)
 ##############################################################################################################
+#* SQL 01 :  Ajout de la colonne membershipmode à la table membres si elle n'existe pas  */
+#            cur.execute("""
+#                ALTER TABLE membres
+#                ADD COLUMN IF NOT EXISTS membershipmode TEXT NOT NULL DEFAULT 'senior'
+#                    """)
 
-#       # Ajout de la colonne membershipmode à la table membres si elle n'existe pas déjà
-            cur.execute("""
-                ALTER TABLE membres
-                ADD COLUMN IF NOT EXISTS membershipmode TEXT NOT NULL DEFAULT 'senior'
-                    """)
-
-
-#       # PROCESSUS DE PRISE DE BACKUP & RESTAURATION DES DONNEES 
+#* SQL 02 :  PROCESSUS DE PRISE DE BACKUP & RESTAURATION DES DONNEES 
 #           (ex: avant une opération de correction en haut-volume ou 
 #            une opération de correction exceptionnelle sur les données
 #            de base d'un adhérent) 
@@ -288,31 +286,31 @@ def init_db():
 #----------------------------------------------------------------------------------------------------------------------------
 #            1-- DUMP - Création des backups de toutes les tables (membres, mouvements, deces, id_data et comptes_techniques) 
 #----------------------------------------------------------------------------------------------------------------------------
-#            cur.execute(""" 
-#                DROP TABLE IF EXISTS membres_BACKUP;
-#                CREATE TABLE membres_BACKUP AS SELECT * FROM membres;
-#            """)
+            cur.execute(""" 
+                DROP TABLE IF EXISTS membres_BACKUP;
+                CREATE TABLE membres_BACKUP AS SELECT * FROM membres;
+            """)
 
-#            cur.execute(""" 
-#                DROP TABLE IF EXISTS mouvements_BACKUP;
-#                CREATE TABLE mouvements_BACKUP AS SELECT * FROM mouvements;
-#            """)
+            cur.execute(""" 
+                DROP TABLE IF EXISTS mouvements_BACKUP;
+                CREATE TABLE mouvements_BACKUP AS SELECT * FROM mouvements;
+            """)
 
-#            cur.execute(""" 
-#                DROP TABLE IF EXISTS deces_BACKUP;
-#                CREATE TABLE deces_BACKUP AS SELECT * FROM deces;
-#            """)
+            cur.execute(""" 
+                DROP TABLE IF EXISTS deces_BACKUP;
+                CREATE TABLE deces_BACKUP AS SELECT * FROM deces;
+            """)
 
-#            cur.execute(""" 
-#                DROP TABLE IF EXISTS id_data_BACKUP;
-#                CREATE TABLE id_data_BACKUP AS SELECT * FROM id_data;
-#            """)
+            cur.execute(""" 
+                DROP TABLE IF EXISTS id_data_BACKUP;
+                CREATE TABLE id_data_BACKUP AS SELECT * FROM id_data;
+            """)
 
-#            cur.execute(""" 
-#                DROP TABLE IF EXISTS comptes_techniques_BACKUP;
-#                CREATE TABLE comptes_techniques_BACKUP AS SELECT * FROM comptes_techniques;
-#            """)
-
+            cur.execute(""" 
+                DROP TABLE IF EXISTS comptes_techniques_BACKUP;
+                CREATE TABLE comptes_techniques_BACKUP AS SELECT * FROM comptes_techniques;
+            """)
+#
 #
 ########################### >> traitement exceptionel à effacer immediatement apres execution
 #            cur.execute("""
@@ -355,7 +353,7 @@ def init_db():
 #                           ('999114114', 'Assani', 'Mushombe', CURRENT_DATE, 5.5, 'D', 'REF013 haut volume', 'Contribution décès de Tombo Isumba 997721564', CURRENT_DATE, 'system')
 #                           """)
 ########################### << traitement exceptionel à effacer immediatement apres execution
-
+#
 # ##            sql_commands = """
 #--------------------------------------------------------------------------------------------
 #            2-- RESTAURATION - Vider les tables sources et réinjecter les données des backups
@@ -389,7 +387,7 @@ def init_db():
 #            cur.execute(sql_commands)
 #
 ###############################################################################################
-
+#
 #            SELECT * INTO membres_BACKUP_20260409
 #            FROM membres;    
 #            SELECT * INTO mouvements_BACKUP_20260409 
@@ -400,7 +398,7 @@ def init_db():
 #            FROM deces;                        
 #            SELECT * INTO comptes_techniques_BACKUP_20260409    
 #            FROM comptes_techniques;
-                        
+#                        
 #            # RESTAURATION - Vider la table source et réinjecter les données du backup                 
 #            TRUNCATE TABLE membres;
 #            INSERT INTO membres 
@@ -419,7 +417,9 @@ def init_db():
 #            SELECT * FROM id_data_BACKUP_20260409;
 #                        """)
 #-----------------------------------------------------------------------------------
-###           # Correction en haut-volume (ex: régularisation des comptes techniques par régie à partir des données de la table mouvements)
+
+#* SQL 03 :  Differentes initialisations des données : 
+# Correction en haut-volume (ex: régularisation des comptes techniques par régie à partir des données de la table mouvements)
 #            cur.execute("""
 #                UPDATE comptes_techniques
 #                SET code ='MOBILEMONEY-airtel',
@@ -505,7 +505,7 @@ def init_db():
 #                        """)            
 #            log.info ("%s Comptes techniques mis à jour avec les cumuls par régie.", cur.rowcount)
 #-----------------------------------------------------------------------------------
-#           # Correction exceptionnelle sur les données de base d'un adhérent.
+            # Correction exceptionnelle sur les données de base d'un adhérent.
 #            cur.execute("""
 #                UPDATE membres
 #                SET phone = '817670140',
@@ -643,8 +643,25 @@ def init_db():
 #                SET quantity = 1.1  -- exemple de valeur pour la marge de sécurité
 #                WHERE keydata = 'id-data02'
 #            """)
-#            
+
+#            # Correction en haut-volume (explication: fixation du MODE D'ADHESION partant de la date d'adhésion et la date de naissance pour tous les membres :
+            cur.execute("""
+                UPDATE membres 
+                SET membershipmode = "pionnier" 
+                WHERE membershipdate <= date '2026-05-16' 
+            """)
+
+            cur.execute("""
+                UPDATE membres 
+                SET membershipmode = "ordinaire" 
+                WHERE membershipdate > date '2026-05-16' AND EXTRACT(YEAR FROM membershipdate) - EXTRACT(YEAR FROM birthdate) < 70
+            """)
+
+##### fin SQL D'INITIALISATION DES DONNEES DE BASE
         conn.commit()
+
+
+
 
 #from dateutil.relativedelta import relativedelta
 #def diff_month(d1, d2):
