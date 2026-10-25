@@ -3755,6 +3755,11 @@ DATAGENERALFOLLOWUP_PAGE = """
             </div>
 
             <div>
+            <label>Mode d'adhésion</label>
+            <input name="membershipmode" value="{{ edit_membershipmode }}" required>
+            </div>
+
+            <div>
             <label>Statut</label>
             <select name="currentstatute" required>
                 {% for s in statutes %}
@@ -3815,6 +3820,11 @@ DATAGENERALFOLLOWUP_PAGE = """
             </div>
 
             <div>
+            <label>Mode d'adhésion</label>
+            <input name="membershipmode" value="{{ edit_membershipmode }}" readonly required>
+            </div>
+
+            <div>
             <label>Statut</label>
             <select name="currentstatute" readonly required>
                 {% for s in statutes %}
@@ -3850,6 +3860,7 @@ DATAGENERALFOLLOWUP_PAGE = """
           <th>Prénom</th>
           <th>Statut</th>
           <th>Adhésion</th>
+          <th>Mode d'adhésion</th>
           <th>Update by</th>
           <th style="width:160px;">Action</th>
         </tr>
