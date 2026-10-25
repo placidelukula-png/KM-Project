@@ -188,10 +188,15 @@ def init_db():
                   beneficiaire   TEXT NOT NULL DEFAULT 'admin',
                   cotisations    DECIMAL(18,2) NOT NULL DEFAULT 0,
                   donations      DECIMAL(18,2) NOT NULL DEFAULT 0,
+                  membershipmode TEXT NOT NULL DEFAULT 'senior',
+
                   CONSTRAINT membres_membertype_chk
                     CHECK (membertype IN ('membre','independant','mentor','admin')),
                   CONSTRAINT membres_currentstatute_chk
-                    CHECK (currentstatute IN ('probatoire','actif','inactif','suspendu','radié'))
+                    CHECK (currentstatute IN ('probatoire','actif','inactif','suspendu','radié')),
+                  CONSTRAINT membres_membershipmode_chk
+                    CHECK (membershipmode IN ('pionnier','ordinaire','senior'))
+
                 );
             """)
             cur.execute("CREATE INDEX IF NOT EXISTS idx_membres_lastname ON membres(lastname);")
@@ -259,8 +264,18 @@ def init_db():
                 );
             """)
 
-##########################################################################################
-#           PROCESSUS DE PRISE DE BACKUP & RESTAURATION DES DONNEES 
+##############################################################################################################
+#       SQL d'initialisation des données de base (ex: pour un nouveau déploiement de l'application)
+##############################################################################################################
+
+#       # Ajout de la colonne membershipmode à la table membres si elle n'existe pas déjà
+            cur.execute("""
+                ALTER TABLE membres
+                ADD COLUMN IF NOT EXISTS membershipmode TEXT NOT NULL DEFAULT 'senior'
+                    """)
+
+
+#       # PROCESSUS DE PRISE DE BACKUP & RESTAURATION DES DONNEES 
 #           (ex: avant une opération de correction en haut-volume ou 
 #            une opération de correction exceptionnelle sur les données
 #            de base d'un adhérent) 
@@ -273,30 +288,30 @@ def init_db():
 #----------------------------------------------------------------------------------------------------------------------------
 #            1-- DUMP - Création des backups de toutes les tables (membres, mouvements, deces, id_data et comptes_techniques) 
 #----------------------------------------------------------------------------------------------------------------------------
-            cur.execute(""" 
-                DROP TABLE IF EXISTS membres_BACKUP;
-                CREATE TABLE membres_BACKUP AS SELECT * FROM membres;
-            """)
+#            cur.execute(""" 
+#                DROP TABLE IF EXISTS membres_BACKUP;
+#                CREATE TABLE membres_BACKUP AS SELECT * FROM membres;
+#            """)
 
-            cur.execute(""" 
-                DROP TABLE IF EXISTS mouvements_BACKUP;
-                CREATE TABLE mouvements_BACKUP AS SELECT * FROM mouvements;
-            """)
+#            cur.execute(""" 
+#                DROP TABLE IF EXISTS mouvements_BACKUP;
+#                CREATE TABLE mouvements_BACKUP AS SELECT * FROM mouvements;
+#            """)
 
-            cur.execute(""" 
-                DROP TABLE IF EXISTS deces_BACKUP;
-                CREATE TABLE deces_BACKUP AS SELECT * FROM deces;
-            """)
+#            cur.execute(""" 
+#                DROP TABLE IF EXISTS deces_BACKUP;
+#                CREATE TABLE deces_BACKUP AS SELECT * FROM deces;
+#            """)
 
-            cur.execute(""" 
-                DROP TABLE IF EXISTS id_data_BACKUP;
-                CREATE TABLE id_data_BACKUP AS SELECT * FROM id_data;
-            """)
+#            cur.execute(""" 
+#                DROP TABLE IF EXISTS id_data_BACKUP;
+#                CREATE TABLE id_data_BACKUP AS SELECT * FROM id_data;
+#            """)
 
-            cur.execute(""" 
-                DROP TABLE IF EXISTS comptes_techniques_BACKUP;
-                CREATE TABLE comptes_techniques_BACKUP AS SELECT * FROM comptes_techniques;
-            """)
+#            cur.execute(""" 
+#                DROP TABLE IF EXISTS comptes_techniques_BACKUP;
+#                CREATE TABLE comptes_techniques_BACKUP AS SELECT * FROM comptes_techniques;
+#            """)
 
 #
 ########################### >> traitement exceptionel à effacer immediatement apres execution
@@ -525,6 +540,7 @@ def init_db():
 #                  ALTER COLUMN membershipdate SET DEFAULT DATE('2099-12-31');
 #            """)
 
+#            cur.execute("""
 #                ALTER TABLE membres
 #                ADD COLUMN IF NOT EXISTS cotisations DECIMAL(18,2) NOT NULL DEFAULT 0,
 #                ADD COLUMN IF NOT EXISTS donations DECIMAL(18,2) NOT NULL DEFAULT 0;
@@ -3251,7 +3267,7 @@ def import_mouvements():
                             """, (code, description, amount, session.get("user"), amount, session.get("user")))
 
                             code="MOBILEMONEY-" + regie if regie in ("vodacom", "orange", "airtel", "afrimoney") else "Autres"
-                            description="Transferts Mobile Money - " + regie if regie in ("vodacom", "orange", "airtel", "afrimoney") else "Transferts Mobile Money - Autres"
+                            description="EXTERNAL - Transferts Mobile Money - " + regie if regie in ("vodacom", "orange", "airtel", "afrimoney") else "Transferts Mobile Money - Autres"
                             cur.execute("""
                                 INSERT INTO comptes_techniques (code, description, balance, updatedate, updateuser)
                                 VALUES (%s, %s, %s, CURRENT_DATE, %s)
@@ -3324,7 +3340,7 @@ def import_mouvements():
     ##
                             # 7) Mise à jour comptes_techniques :  1) Dépenses &  2)Transferts from unknown Mobile Money.
                             code="MOBILEMONEY-" + regie if regie in ("vodacom", "orange", "airtel", "afrimoney") else "Autres"
-                            description="Transferts Mobile Money - " + regie if regie in ("vodacom", "orange", "airtel", "afrimoney") else "Transferts Mobile Money - Autres"
+                            description="EXTERNAL - Transferts Mobile Money - " + regie if regie in ("vodacom", "orange", "airtel", "afrimoney") else "Transferts Mobile Money - Autres"
                             cur.execute("""
                                 INSERT INTO comptes_techniques (code, description, balance, updatedate, updateuser)
                                 VALUES (%s, %s, %s, CURRENT_DATE, %s)
@@ -3848,6 +3864,7 @@ DATAGENERALFOLLOWUP_PAGE = """
           <td>{{ r[5] }}</td>
           <td>{{ r[9] }}</td>
           <td>{{ r[14].strftime('%d/%m/%Y') }}</td>
+          <td>{{ r[15] }}</td>
           <td>{{ r[12] }}</td>
           <td>
             <a href="{{ url_for('edit', member_id=r[0]) }}">Edit</a>
@@ -3886,7 +3903,7 @@ def datageneralfollowup():
         rows = fetch_all_members_name()
     else:
         rows = fetch_all_members_id()
-    return render_template_string(DATAGENERALFOLLOWUP_PAGE, rows=rows, edit_row=None, edit_birthdate="",edit_membershipdate="", edit_balance=0.0,
+    return render_template_string(DATAGENERALFOLLOWUP_PAGE, rows=rows, edit_row=None, edit_birthdate="",edit_membershipdate="", edit_membershipmode="", edit_balance=0.0,
                                   message="", is_error=False, member_types=MEMBER_TYPES, statutes=STATUTES,updateuser=updateuser, q_phone="", name_id=name_id)
 
 @app.get("/edit/<int:member_id>")
@@ -3905,6 +3922,7 @@ def edit(member_id: int):
             edit_row=None,
             edit_birthdate="",
             edit_membershipdate="",
+            edit_membershipmode="",
             edit_balance=0.0,
             #message=f"Member ID {member_id} introuvable.",
             #is_error=True,
@@ -3922,6 +3940,7 @@ def edit(member_id: int):
 
     edit_birthdate = row[6].strftime("%d/%m/%Y") if row[6] else ""
     edit_membershipdate = row[14].strftime("%d/%m/%Y")
+    membershipmode = row[15] if row[15] is not None else ""
     edit_balance = float(row[10]) if row[10] is not None else 0.0
 
     
@@ -3931,6 +3950,7 @@ def edit(member_id: int):
         edit_row=row,
         edit_birthdate=edit_birthdate,
         edit_membershipdate=edit_membershipdate,
+        edit_membershipmode=membershipmode,
         edit_balance=edit_balance,
         message="",
         is_error=False,
@@ -3962,6 +3982,7 @@ def update(member_id: int):
                 firstname=data["firstname"],
                 birthdate_date=data["birthdate"],           # <= important (clé = "birthdate")
                 membershipdate=data["membershipdate"],      # <= important
+                membershipmode=data["membershipmode"],      # <= important
                 balance=data["balance"],                    # <= important
                 currentstatute=data["currentstatute"],
                 updateuser=updateuser,
@@ -3978,6 +3999,7 @@ def update(member_id: int):
                 firstname=data["firstname"],
                 birthdate_date=data["birthdate"],           # <= important (clé = "birthdate")
                 membershipdate=data["membershipdate"],      # <= important
+                membershipmode=data["membershipmode"],      # <= important
                 balance=data["balance"],                    # <= important
                 currentstatute=data["currentstatute"],
                 updateuser=updateuser,
@@ -3991,6 +4013,7 @@ def update(member_id: int):
         row = fetch_one(member_id)
         edit_birthdate = row[6].strftime("%d/%m/%Y") if row and row[6] else ""
         edit_membershipdate = row[14].strftime("%d/%m/%Y") if row and row[14] else ""
+        edit_membershipmode = row[15] if row and row[15] is not None else ""
         edit_balance = float(row[10]) if row and row[10] is not None else 0.0
 
         return render_template_string(
@@ -3999,6 +4022,7 @@ def update(member_id: int):
             edit_row=row,
             edit_birthdate=edit_birthdate,
             edit_membershipdate=edit_membershipdate,
+            edit_membershipmode=edit_membershipmode,
             edit_balance=edit_balance,
             message=f"Erreur: {str(e)}",
             is_error=True,
