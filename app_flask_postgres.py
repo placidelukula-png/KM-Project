@@ -1026,7 +1026,7 @@ def create_prestation_mouvements(deceased_phone, prestation):
 
 SELECT_membres = """
     SELECT id, phone, membertype, mentor, lastname, firstname, birthdate,
-           idtype, idpicture_url, currentstatute, balance, updatedate, updateuser, password_hash, membershipdate
+           idtype, idpicture_url, currentstatute, balance, updatedate, updateuser, password_hash, membershipdate, membershipmode
     FROM membres
 """
 #
@@ -1058,7 +1058,7 @@ def create_member_minimal(cur, phone: str, firstname: str, lastname: str):
     cur.execute("""
         INSERT INTO membres
         (phone, membertype, mentor, lastname, firstname, birthdate, idtype, idpicture_url,
-         currentstatute, updatedate, updateuser, password_hash, membershipdate)
+         currentstatute, updatedate, updateuser, password_hash, membershipdate, membershipmode)
         VALUES
         (%s, %s, %s, %s, %s, %s, %s, NULL, %s, CURRENT_DATE, %s, %s, %s)
         ON CONFLICT (phone) DO NOTHING;
@@ -3951,7 +3951,7 @@ def edit(member_id: int):
 
     edit_birthdate = row[6].strftime("%d/%m/%Y") if row[6] else ""
     edit_membershipdate = row[14].strftime("%d/%m/%Y")
-    membershipmode = row[15] if row[15] is not None else ""
+    edit_membershipmode = row[15] if row[15] is not None else ""
     edit_balance = float(row[10]) if row[10] is not None else 0.0
 
     
@@ -3961,7 +3961,7 @@ def edit(member_id: int):
         edit_row=row,
         edit_birthdate=edit_birthdate,
         edit_membershipdate=edit_membershipdate,
-        edit_membershipmode=membershipmode,
+        edit_membershipmode=edit_membershipmode,
         edit_balance=edit_balance,
         message="",
         is_error=False,
