@@ -645,19 +645,19 @@ def init_db():
 #            """)
 
 #            # Correction en haut-volume (explication: fixation du MODE D'ADHESION partant de la date d'adhésion et la date de naissance pour tous les membres :
-            cur.execute("""
-                UPDATE membres 
-                SET membershipmode = 'pionnier' 
-                WHERE membershipdate <= date '2026-05-16' 
-            """)
+#            cur.execute("""
+#                UPDATE membres 
+#                SET membershipmode = 'pionnier' 
+#                WHERE membershipdate <= date '2026-05-16' 
+#            """)
+#
+#            cur.execute("""
+#                UPDATE membres 
+#                SET membershipmode = 'ordinaire' 
+#                WHERE membershipdate > date '2026-05-16' AND EXTRACT(YEAR FROM membershipdate) - EXTRACT(YEAR FROM birthdate) < 70
+#            """)
 
-            cur.execute("""
-                UPDATE membres 
-                SET membershipmode = 'ordinaire' 
-                WHERE membershipdate > date '2026-05-16' AND EXTRACT(YEAR FROM membershipdate) - EXTRACT(YEAR FROM birthdate) < 70
-            """)
-
-##### fin SQL D'INITIALISATION DES DONNEES DE BASE
+##### fin des SQLs D'INITIALISATION DES DONNEES DE BASE
         conn.commit()
 
 
@@ -1493,20 +1493,40 @@ def create_transfert(from_phone: str, to_phone: str, amount: float, ref_base: st
             #       (*) cas de date d'adhésion 2099-12-31 (membre potentiel) : '
             if me[15] == datetime.strptime("31/12/2099", "%d/%m/%Y").date() or to_member[15] == datetime.strptime("31/12/2099", "%d/%m/%Y").date():
                 if me[15] == datetime.strptime("31/12/2099", "%d/%m/%Y").date():
-                    cur.execute("""
-                        UPDATE membres
-                        SET membershipdate = CURRENT_DATE,
-                            currentstatute = 'probatoire'
-                        WHERE phone = %s and balance >= %s;
-                    """, (from_phone, C))
+                    if today.year - me[6].year >= 70:
+                        cur.execute("""
+                            UPDATE membres
+                            SET membershipdate = CURRENT_DATE,
+                                currentstatute = 'probatoire',
+                                membershipmode = 'senior'
+                            WHERE phone = %s and balance >= %s;
+                        """, (from_phone, C))
+                    else:
+                        cur.execute("""
+                            UPDATE membres
+                            SET membershipdate = CURRENT_DATE,
+                                currentstatute = 'probatoire',
+                                membershipmode = 'ordinaire'
+                            WHERE phone = %s and balance >= %s;
+                        """, (from_phone, C))
 
                 if to_member[15] == datetime.strptime("31/12/2099", "%d/%m/%Y").date():
-                    cur.execute("""
-                        UPDATE membres
-                        SET membershipdate = CURRENT_DATE,
-                            currentstatute = 'probatoire'
-                        WHERE phone = %s and balance >= %s;
-                    """, (to_phone, C))
+                    if today.year - to_member[6].year >= 70:
+                        cur.execute("""
+                            UPDATE membres
+                            SET membershipdate = CURRENT_DATE,
+                                currentstatute = 'probatoire',
+                                membershipmode = 'senior'
+                            WHERE phone = %s and balance >= %s;
+                        """, (to_phone, C))
+                    else:   
+                        cur.execute("""
+                            UPDATE membres
+                            SET membershipdate = CURRENT_DATE,
+                                currentstatute = 'probatoire',
+                                membershipmode = 'ordinaire'
+                            WHERE phone = %s and balance >= %s;
+                        """, (to_phone, C))
 
                 cur.execute("""
                     UPDATE membres
@@ -1852,11 +1872,20 @@ def statutes_update():
             cur.execute("""
                 UPDATE membres
                 SET membershipdate = CURRENT_DATE,
+                    membershipmode = 'senior',
                     currentstatute = 'probatoire'
-                WHERE balance >= %s AND (membershipdate = %s OR membershipdate IS NULL)
+                WHERE balance >= %s AND (membershipdate = %s OR membershipdate IS NULL) AND (EXTRACT(YEAR FROM age(CURRENT_DATE, birthdate)) >= 70)
+            """, (C, limit_date))
+        
+            cur.execute("""
+                UPDATE membres
+                SET membershipdate = CURRENT_DATE,
+                    membershipmode = 'ordinaire',
+                    currentstatute = 'probatoire'
+                WHERE balance >= %s AND (membershipdate = %s OR membershipdate IS NULL) AND (EXTRACT(YEAR FROM age(CURRENT_DATE, birthdate)) < 70)
             """, (C, limit_date))
 
-            log.info("Mise à jour des membres avec date d'adhesion autre que la date limite et solde suffisant.")
+            #log.info("Mise à jour des membres avec date d'adhesion autre que la date limite et solde suffisant.")
 
             cur.execute("""
                 UPDATE membres
@@ -1875,7 +1904,18 @@ def statutes_update():
                     ELSE 'inactif'
                   END
                 WHERE membershipdate <> %s
-            """, (CARENCE_MOIS, C, CARENCE_MOIS, C, limit_date))
+            """, (CARENCE_MOIS, C, CARENCE_MOIS, C,limit_date))
+
+            #
+            # LES CAS DES 'SENIORS' (>=70 ans) est traité ici: un senior 'actif' doit avoir 24 mois d'ancienneté, si non il reste 'probatoire'.
+            cur.execute("""
+                UPDATE membres
+                SET currentstatute = 'probatoire'
+                  WHERE EXTRACT(YEAR FROM age(CURRENT_DATE, birthdate)) >= 70 AND (EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12 + 
+                        EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))) < 24 AND currentstatute = %s 
+            """, (C, 'actif'))
+            #
+
             rows_updated = cur.rowcount
 
         conn.commit()
@@ -3320,14 +3360,32 @@ def import_mouvements():
 
                             # 4) règle demandée: si phone du mouvement = phone d'un membre ET balance >= C (contribution minimale) ET membershipdate = "31/12/2099" alors membershipdate = date du jour (=> activation du membre)
                             limit_date = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
-                            cur.execute("""
-                                UPDATE membres
-                                SET membershipdate = CURRENT_DATE,
-                                    currentstatute = 'probatoire',
-                                    updatedate = CURRENT_DATE,
-                                    updateuser = %s 
-                                WHERE phone = %s AND balance >= %s AND membershipdate = %s 
-                            """, (session.get("user"), phone, contribution_minimum, limit_date))
+                            today = datetime.now().date()
+                            #
+                            # Rechercher le membre pour vérifier sa date de naissance et déterminer s'il a 70 ans ou plus
+                            cur.execute("SELECT * FROM membres WHERE phone = %s", (phone,))
+                            member = cur.fetchone()
+                            #
+                            if today.year - member[6].year >= 70:
+                                cur.execute("""
+                                    UPDATE membres
+                                    SET membershipdate = CURRENT_DATE,
+                                        currentstatute = 'probatoire',
+                                        membershipmode = 'senior',
+                                        updatedate = CURRENT_DATE,
+                                        updateuser = %s 
+                                    WHERE phone = %s AND balance >= %s AND membershipdate = %s 
+                                """, (session.get("user"), phone, contribution_minimum, limit_date))
+                            else:
+                                cur.execute("""
+                                    UPDATE membres
+                                    SET membershipdate = CURRENT_DATE,
+                                        currentstatute = 'probatoire',
+                                        membershipmode = 'ordinaire',
+                                        updatedate = CURRENT_DATE,
+                                        updateuser = %s 
+                                    WHERE phone = %s AND balance >= %s AND membershipdate = %s 
+                                """, (session.get("user"), phone, contribution_minimum, limit_date))
     #####
                             # 5) règle demandée: si phone du mouvement = phone d'un membre ET balance >= C (contribution minimale) ET membershipdate <> "31/12/2099" alors currentstatute ='probatoire' ou 'actif' (=> activation du membre)
                             limit_date = datetime.strptime("31/12/2099", "%d/%m/%Y").date()
