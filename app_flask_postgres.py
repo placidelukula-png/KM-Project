@@ -286,30 +286,30 @@ def init_db():
 #----------------------------------------------------------------------------------------------------------------------------
 #            1-- DUMP - Création des backups de toutes les tables (membres, mouvements, deces, id_data et comptes_techniques) 
 #----------------------------------------------------------------------------------------------------------------------------
-            cur.execute(""" 
-                DROP TABLE IF EXISTS membres_BACKUP;
-                CREATE TABLE membres_BACKUP AS SELECT * FROM membres;
-            """)
+#            cur.execute(""" 
+#                DROP TABLE IF EXISTS membres_BACKUP;
+#                CREATE TABLE membres_BACKUP AS SELECT * FROM membres;
+#            """)
 
-            cur.execute(""" 
-                DROP TABLE IF EXISTS mouvements_BACKUP;
-                CREATE TABLE mouvements_BACKUP AS SELECT * FROM mouvements;
-            """)
+#            cur.execute(""" 
+#                DROP TABLE IF EXISTS mouvements_BACKUP;
+#                CREATE TABLE mouvements_BACKUP AS SELECT * FROM mouvements;
+#            """)
 
-            cur.execute(""" 
-                DROP TABLE IF EXISTS deces_BACKUP;
-                CREATE TABLE deces_BACKUP AS SELECT * FROM deces;
-            """)
+#            cur.execute(""" 
+#                DROP TABLE IF EXISTS deces_BACKUP;
+#                CREATE TABLE deces_BACKUP AS SELECT * FROM deces;
+#            """)
 
-            cur.execute(""" 
-                DROP TABLE IF EXISTS id_data_BACKUP;
-                CREATE TABLE id_data_BACKUP AS SELECT * FROM id_data;
-            """)
+#            cur.execute(""" 
+#                DROP TABLE IF EXISTS id_data_BACKUP;
+#                CREATE TABLE id_data_BACKUP AS SELECT * FROM id_data;
+#            """)
 
-            cur.execute(""" 
-                DROP TABLE IF EXISTS comptes_techniques_BACKUP;
-                CREATE TABLE comptes_techniques_BACKUP AS SELECT * FROM comptes_techniques;
-            """)
+#            cur.execute(""" 
+#                DROP TABLE IF EXISTS comptes_techniques_BACKUP;
+#                CREATE TABLE comptes_techniques_BACKUP AS SELECT * FROM comptes_techniques;
+#            """)
 #
 #
 ########################### >> traitement exceptionel à effacer immediatement apres execution
@@ -1913,7 +1913,7 @@ def statutes_update():
                 SET currentstatute = 'probatoire'
                   WHERE EXTRACT(YEAR FROM age(CURRENT_DATE, birthdate)) >= 70 AND (EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12 + 
                         EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))) < 24 AND currentstatute = %s 
-            """, (C, 'actif'))
+            """, ('actif'))
             #
 
             rows_updated = cur.rowcount
