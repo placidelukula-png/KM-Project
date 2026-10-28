@@ -1876,6 +1876,7 @@ def statutes_update():
                     currentstatute = 'probatoire'
                 WHERE balance >= %s AND (membershipdate = %s OR membershipdate IS NULL) AND (EXTRACT(YEAR FROM age(CURRENT_DATE, birthdate)) >= 70)
             """, (C, limit_date))
+            rows_updated = cur.rowcount
         
             cur.execute("""
                 UPDATE membres
@@ -1884,6 +1885,7 @@ def statutes_update():
                     currentstatute = 'probatoire'
                 WHERE balance >= %s AND (membershipdate = %s OR membershipdate IS NULL) AND (EXTRACT(YEAR FROM age(CURRENT_DATE, birthdate)) < 70)
             """, (C, limit_date))
+            rows_updated = rows_updated + cur.rowcount
 
             #log.info("Mise à jour des membres avec date d'adhesion autre que la date limite et solde suffisant.")
 
@@ -1905,6 +1907,7 @@ def statutes_update():
                   END
                 WHERE membershipdate <> %s
             """, (CARENCE_MOIS, C, CARENCE_MOIS, C,limit_date))
+            rows_updated = rows_updated + cur.rowcount
 
             #
             # LES CAS DES 'SENIORS' (>=70 ans) est traité ici: un senior 'actif' doit avoir 24 mois d'ancienneté, si non il reste 'probatoire'.
@@ -1915,7 +1918,7 @@ def statutes_update():
                         EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))) < 24 AND currentstatute = %s 
             """, ('actif',))
             #['actif'] 
-            rows_updated = cur.rowcount
+            rows_updated = rows_updated + cur.rowcount
 
         conn.commit()
         log.info("Actualisation des statuts terminée. %s statut(s) mis à jour.", rows_updated)
