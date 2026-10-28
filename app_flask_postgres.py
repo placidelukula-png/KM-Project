@@ -4252,7 +4252,7 @@ def download_csv():
                 COPY (
 /*                      SELECT * FROM mouvements WHERE regie IS NOT NULL*/
 /*                      SELECT * FROM comptes_techniques ORDER BY code ASC */
-                      SELECT phone, firstname, lastname, adresse FROM membres WHERE membershipmode = 'senior' AND currentstatute = 'actif'                         
+                      SELECT phone, firstname, lastname, birthdate, membershipmode, currentstatute FROM membres WHERE membershipmode = 'senior'                         
 /*                      SELECT phone, firstname, lastname, adresse FROM membres WHERE currentstatute IN ('probatoire', 'actif') */
 /*                      SELECT phone, firstname, lastname, balance, adresse FROM membres WHERE mentor = '998690548' OR phone = '998690548' */
 /*                      SELECT phone, firstname, lastname, balance, currentstatute FROM membres WHERE mentor = '996572572' OR phone = '996572572' */
