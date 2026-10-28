@@ -1913,9 +1913,8 @@ def statutes_update():
                 SET currentstatute = 'probatoire'
                   WHERE EXTRACT(YEAR FROM age(CURRENT_DATE, birthdate)) >= 70 AND (EXTRACT(YEAR FROM age(CURRENT_DATE, membershipdate)) * 12 + 
                         EXTRACT(MONTH FROM age(CURRENT_DATE, membershipdate))) < 24 AND currentstatute = %s 
-            """, ('actif'))
-            #
-
+            """, ('actif',))
+            #['actif'] 
             rows_updated = cur.rowcount
 
         conn.commit()
