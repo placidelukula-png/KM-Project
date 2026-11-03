@@ -4254,9 +4254,9 @@ def download_csv():
                 COPY (
 /*                      SELECT * FROM mouvements WHERE regie IS NOT NULL*/
 /*                      SELECT * FROM comptes_techniques ORDER BY code ASC */
-                      SELECT phone, firstname, lastname, birthdate, balance, membershipmode, membershipdate, currentstatute FROM membres WHERE membershipdate <= CURRENT_DATE
+/*                      SELECT phone, firstname, lastname, birthdate, balance, membershipmode, membershipdate, currentstatute FROM membres WHERE membershipdate <= CURRENT_DATE */
 /*                      SELECT phone, firstname, lastname, adresse FROM membres WHERE currentstatute IN ('probatoire', 'actif') */
-/*                      SELECT phone, firstname, lastname, balance, adresse FROM membres WHERE mentor = '998690548' OR phone = '998690548' */
+                      SELECT phone, firstname, lastname, balance FROM membres WHERE mentor = '818329793' OR phone = '818329793' 
 /*                      SELECT phone, firstname, lastname, balance, currentstatute FROM membres WHERE mentor = '996572572' OR phone = '996572572' */
 /*                      SELECT phone, firstname, lastname, balance, adresse FROM membres WHERE membershipdate <= date '2026-05-16' AND (currentstatute = 'probatoire' OR currentstatute = 'actif') */
 /*                      SELECT phone, firstname, lastname, balance, mentor FROM membres WHERE membershipdate < date '2099-12-31' AND balance < 5.50 */ 
