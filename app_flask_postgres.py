@@ -286,30 +286,30 @@ def init_db():
 #----------------------------------------------------------------------------------------------------------------------------
 #            1-- DUMP - Création des backups de toutes les tables (membres, mouvements, deces, id_data et comptes_techniques) 
 #----------------------------------------------------------------------------------------------------------------------------
-#            cur.execute(""" 
-#                DROP TABLE IF EXISTS membres_BACKUP;
-#                CREATE TABLE membres_BACKUP AS SELECT * FROM membres;
-#            """)
+            cur.execute(""" 
+                DROP TABLE IF EXISTS membres_BACKUP;
+                CREATE TABLE membres_BACKUP AS SELECT * FROM membres;
+            """)
 
-#            cur.execute(""" 
-#                DROP TABLE IF EXISTS mouvements_BACKUP;
-#                CREATE TABLE mouvements_BACKUP AS SELECT * FROM mouvements;
-#            """)
+            cur.execute(""" 
+                DROP TABLE IF EXISTS mouvements_BACKUP;
+                CREATE TABLE mouvements_BACKUP AS SELECT * FROM mouvements;
+            """)
 
-#            cur.execute(""" 
-#                DROP TABLE IF EXISTS deces_BACKUP;
-#                CREATE TABLE deces_BACKUP AS SELECT * FROM deces;
-#            """)
+            cur.execute(""" 
+                DROP TABLE IF EXISTS deces_BACKUP;
+                CREATE TABLE deces_BACKUP AS SELECT * FROM deces;
+            """)
 
-#            cur.execute(""" 
-#                DROP TABLE IF EXISTS id_data_BACKUP;
-#                CREATE TABLE id_data_BACKUP AS SELECT * FROM id_data;
-#            """)
+            cur.execute(""" 
+                DROP TABLE IF EXISTS id_data_BACKUP;
+                CREATE TABLE id_data_BACKUP AS SELECT * FROM id_data;
+            """)
 
-#            cur.execute(""" 
-#                DROP TABLE IF EXISTS comptes_techniques_BACKUP;
-#                CREATE TABLE comptes_techniques_BACKUP AS SELECT * FROM comptes_techniques;
-#            """)
+            cur.execute(""" 
+                DROP TABLE IF EXISTS comptes_techniques_BACKUP;
+                CREATE TABLE comptes_techniques_BACKUP AS SELECT * FROM comptes_techniques;
+            """)
 #
 #
 ########################### >> traitement exceptionel à effacer immediatement apres execution
@@ -4256,10 +4256,10 @@ def download_csv():
 /*                      SELECT * FROM comptes_techniques ORDER BY code ASC */
 /*                      SELECT phone, firstname, lastname, birthdate, balance, membershipmode, membershipdate, currentstatute FROM membres WHERE membershipdate <= CURRENT_DATE */
 /*                      SELECT phone, firstname, lastname, adresse FROM membres WHERE currentstatute IN ('probatoire', 'actif') */
-                      SELECT phone, firstname, lastname, balance FROM membres WHERE mentor = '818329793' OR phone = '818329793' 
+/*                      SELECT phone, firstname, lastname, balance FROM membres WHERE mentor = '818329793' OR phone = '818329793' */
 /*                      SELECT phone, firstname, lastname, balance, currentstatute FROM membres WHERE mentor = '996572572' OR phone = '996572572' */
 /*                      SELECT phone, firstname, lastname, balance, adresse FROM membres WHERE membershipdate <= date '2026-05-16' AND (currentstatute = 'probatoire' OR currentstatute = 'actif') */
-/*                      SELECT phone, firstname, lastname, balance, mentor FROM membres WHERE membershipdate < date '2099-12-31' AND balance < 5.50 */ 
+                      SELECT phone, firstname, lastname, balance, mentor, membershipdate FROM membres WHERE membershipdate < date '2099-12-31' AND balance < 5.50
                       ) TO STDOUT WITH CSV HEADER
             """) as copy:
                 for data in copy:
