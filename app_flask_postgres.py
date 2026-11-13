@@ -3685,6 +3685,7 @@ DATAGENERALFOLLOWUP_PAGE = """
     table { width:100%; border-collapse: collapse; margin-top: 10px; font-size: 0.95em; }
     th, td { padding: 10px; border-bottom: 1px solid #eee; text-align:left; vertical-align: top; }
     th { background:#f6f6f6; }
+    .passage_OK { background:#eaffea; border:1px solid #b8ffb8; color:#0a5a0a; padding: 10px 12px; border-radius: 10px; margin: 12px 0; }
     .small { font-size: 0.92em; color:#444; }
     a { color:#0b57d0; text-decoration:none; }
     a:hover { text-decoration:underline; }
@@ -3775,8 +3776,6 @@ DATAGENERALFOLLOWUP_PAGE = """
 
     {% endwith %}
 </div>
-
-
   {% if edit_row %}
   <div class="card">
     <!-- <h18 style="margin-top:0;">Adhérent d'index n° {{ edit_row[0] }}</h18> -->
@@ -3786,7 +3785,12 @@ DATAGENERALFOLLOWUP_PAGE = """
 
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
 
+
+
         {% if updateuser=="admin" %}
+
+            <div class="passage_OK"> Taquet ADMIN </div>
+
             <div>
             <label>Identifiant </label>
             <input name="phone" value="{{ edit_row[1] }}" required>
