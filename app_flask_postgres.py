@@ -3685,7 +3685,7 @@ DATAGENERALFOLLOWUP_PAGE = """
     table { width:100%; border-collapse: collapse; margin-top: 10px; font-size: 0.95em; }
     th, td { padding: 10px; border-bottom: 1px solid #eee; text-align:left; vertical-align: top; }
     th { background:#f6f6f6; }
-    .passage_OK { background:#eaffea; border:1px solid #b8ffb8; color:#0a5a0a; padding: 10px 12px; border-radius: 10px; margin: 12px 0; }
+    .passage_OK { background:#eaffea; border:1px solid #b8ffb8; color:red; padding: 10px 12px; border-radius: 10px; margin: 12px 0; }
     .small { font-size: 0.92em; color:#444; }
     a { color:#0b57d0; text-decoration:none; }
     a:hover { text-decoration:underline; }
