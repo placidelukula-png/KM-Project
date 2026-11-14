@@ -1141,7 +1141,7 @@ def insert_member(phone, membertype, mentor, lastname, firstname, birthdate_date
 
 def update_member(
     member_id, phone, membertype, mentor, lastname, firstname,
-    birthdate_date, membershipdate, balance,
+    birthdate_date, membershipdate, membershipmode, balance,
     currentstatute, updateuser, new_password_plain: str | None
 ):
     with get_conn() as conn:
@@ -1151,24 +1151,24 @@ def update_member(
                 cur.execute("""
                     UPDATE membres
                     SET phone=%s, membertype=%s, mentor=%s, lastname=%s, firstname=%s,
-                        birthdate=%s, membershipdate=%s, balance=%s, currentstatute=%s,
+                        birthdate=%s, membershipdate=%s, membershipmode=%s, balance=%s, currentstatute=%s,
                         updatedate=CURRENT_DATE, updateuser=%s, password_hash=%s
                     WHERE id=%s
                 """, (
                     phone, membertype, mentor, lastname, firstname,
-                    birthdate_date, membershipdate, balance, currentstatute,
+                    birthdate_date, membershipdate, membershipmode, balance, currentstatute,
                     updateuser, pwd_hash, member_id
                 ))
             else:
                 cur.execute("""
                     UPDATE membres
                     SET phone=%s, membertype=%s, mentor=%s, lastname=%s, firstname=%s,
-                        birthdate=%s, membershipdate=%s, balance=%s, currentstatute=%s,
+                        birthdate=%s, membershipdate=%s, membershipmode=%s, balance=%s, currentstatute=%s,
                         updatedate=CURRENT_DATE, updateuser=%s
                     WHERE id=%s
                 """, (
                     phone, membertype, mentor, lastname, firstname,
-                    birthdate_date, membershipdate, balance, currentstatute,
+                    birthdate_date, membershipdate, membershipmode, balance, currentstatute,
                     updateuser, member_id
                 ))
         conn.commit()
@@ -1723,6 +1723,8 @@ def validate_member_form(form, for_update=False):
     firstname = _strip(form.get("firstname"))
     birthdate_str = _strip(form.get("birthdate"))
     membershipdate_str = _strip(form.get("membershipdate"))
+    membershipmode_str = _strip(form.get("membershipmode"))
+
   
     balance_str = _strip(form.get("balance")) or None
     currentstatute = _strip(form.get("currentstatute"))
@@ -1733,6 +1735,7 @@ def validate_member_form(form, for_update=False):
 
     if membertype not in MEMBER_TYPES:
         raise ValueError("membertype invalide.")
+    
     if currentstatute not in STATUTES:
         raise ValueError("currentstatute invalide.")
 
@@ -1752,6 +1755,7 @@ def validate_member_form(form, for_update=False):
         "firstname": firstname,
         "birthdate": birthdate_date,
         "membershipdate": membershipdate_date,
+        "membershipmode": membershipmode_str,
         "balance": balance_decimal,
         "currentstatute": currentstatute,
         "password": password,
@@ -3787,7 +3791,7 @@ DATAGENERALFOLLOWUP_PAGE = """
 
         {% if updateuser=="admin" %}
 
-            <div class="passage_OK"> ! ATTENTION Les modif peuvent être enregistrées ! </div>
+            <div class="passage_OK"> ! ATTENTION ! Les modif peuvent être enregistrées </div>
 
             <div>
             <label>Identifiant </label>
@@ -3851,6 +3855,11 @@ DATAGENERALFOLLOWUP_PAGE = """
             <label>Nouveau mot de passe (optionnel)</label>
             <input name="password" type="password" placeholder="laisser vide pour ne pas changer">
             </div>
+
+            {% if message %}
+            <div class="msg {{ 'error' if is_error else 'ok' }}">{{ message }}</div>
+            {% endif %}
+
         </div>
 
     {% else %}  
@@ -3917,6 +3926,11 @@ DATAGENERALFOLLOWUP_PAGE = """
             <input name="password" type="password" placeholder="laisser vide pour ne pas changer" readonly>
             </div>
         </div>
+
+        {% if message %}
+            <div class="msg {{ 'error' if is_error else 'ok' }}">{{ message }}</div>
+        {% endif %}
+
     {% endif %}
       
       <div class="row">
