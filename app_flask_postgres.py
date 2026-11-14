@@ -3787,7 +3787,7 @@ DATAGENERALFOLLOWUP_PAGE = """
 
         {% if updateuser=="admin" %}
 
-            <div class="passage_OK"> ! ATTENTION Les modifications peuvent être enregistrées ! </div>
+            <div class="passage_OK"> ! ATTENTION Les modif peuvent être enregistrées ! </div>
 
             <div>
             <label>Identifiant </label>
